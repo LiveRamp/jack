@@ -1,0 +1,3 @@
+Do you use Ruby/Rails and Java in your company? We do. And we're sick and tired of maintaining two different sets of schemas, models, and whatnot!
+
+To that end, we've created java_active_record, which is a set of scripts that allows you to generate fully functional Java database models from your ActiveRecord models and migrations. 
