@@ -1,0 +1,12 @@
+databases_namespace: com.rapleaf.db_schemas
+databases: 
+  -
+    root_namespace: com.rapleaf.db_schemas.maindb
+    db_name: MainDb
+    schema_rb: maindb/db/schema.rb
+    models: maindb/app/models
+  -
+    root_namespace: com.rapleaf.db_schemas.spruce_db3
+    db_name: SpruceDb
+    schema_rb: spruce_db/db/schema.rb
+    models: spruce_db/app/models
