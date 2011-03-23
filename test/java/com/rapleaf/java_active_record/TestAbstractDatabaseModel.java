@@ -1,14 +1,11 @@
-package com.rapleaf.db_schemas;
+package com.rapleaf.java_active_record;
 
 import java.util.Collections;
 import java.util.Set;
 
-import com.rapleaf.db_schemas.maindb.iface.ICustomerDataSetPersistence;
-import com.rapleaf.db_schemas.maindb.models.Customer;
-import com.rapleaf.db_schemas.maindb.models.CustomerDataSet;
-import com.rapleaf.support.DatabaseConnection;
+import junit.framework.TestCase;
 
-public class TestAbstractDatabaseModel extends DbSchemasTestCase {
+public class TestAbstractDatabaseModel extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("maindb");
   private static final DatabaseConnection DATABASE_CONNECTION2 = new DatabaseConnection("spruce_db");
   private final IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1, DATABASE_CONNECTION2);
