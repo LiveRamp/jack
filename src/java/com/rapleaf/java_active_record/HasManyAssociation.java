@@ -1,11 +1,10 @@
-package com.rapleaf.db_schemas;
+package com.rapleaf.java_active_record;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
 
 public class HasManyAssociation<T extends ModelWithId> implements Serializable {
-
   private final IModelPersistence<T> persistence;
   private final String foreignKey;
   private final Long id;

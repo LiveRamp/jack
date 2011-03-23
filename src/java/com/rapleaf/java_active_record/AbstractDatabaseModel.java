@@ -1,4 +1,4 @@
-package com.rapleaf.db_schemas;
+package com.rapleaf.java_active_record;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
-
-import com.rapleaf.support.DatabaseConnection;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
   protected static interface AttrSetter {
