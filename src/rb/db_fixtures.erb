@@ -9,7 +9,7 @@ import com.rapleaf.support.DatabaseConnection;
 
 public class Base<%=db_name%>Fixtures extends DbFixtures {
 
-  static final DatabaseConnection db = new DatabaseConnection("<%=db_name.downcase%>");
+  static final DatabaseConnection db = new DatabaseConnection("<%=db_name.downcase.sub(/sprucedb/, "spruce_db")%>");
   static final Statement stmt = db.getStatement();
 
   public static void setup() throws SQLException {
