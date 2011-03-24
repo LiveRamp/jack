@@ -15,6 +15,7 @@ require File.expand_path(File.dirname(__FILE__) + "/template_processor")
 
 project_yml = ARGV[0]
 output_dir = ARGV[1]
+base_dir = File.dirname(project_yml)
 
 project_defn = ProjectDefn.new(YAML.load(File.open(project_yml)))
 
@@ -37,8 +38,8 @@ model_defns_by_namespace_table_names = {}
 # initial pass to establish all the tables
 project_defn.databases.each do |database_defn|
   model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
-  
-  model_defns = SchemaRbParser.parse(database_defn.schema_rb)
+
+  model_defns = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
   model_defns.each do |model_defn|
     model_defn.database_defn = database_defn
     model_defn.namespace = database_defn.namespace
@@ -50,8 +51,8 @@ end
 project_defn.databases.each do |database|
   by_table_name = model_defns_by_namespace_table_names[database.namespace]
 
-  ModelsDirProcessor.process(database, by_table_name)
-  
+  ModelsDirProcessor.process(base_dir, database, by_table_name)
+
   by_table_name.values.each do |model_defn|
     model_defn.associations.each do |assoc_defn|
       assoc_defn.find_model(model_defns_by_namespace_table_names)
@@ -63,10 +64,3 @@ end
 
 # third pass to generate the files
 TemplateProcessor.process(project_defn, output_dir, model_defns_by_namespace_table_names)
-# 
-# 
-# projects.each do |project|
-#   by_table_name = model_defns_by_namespace_table_names[project["root_namespace"]]
-# 
-#   TemplateProcessor.process(project, output_dir, by_table_name.values.sort_by{|x| x.table_name}, model_defns_by_namespace_table_names)
-# end

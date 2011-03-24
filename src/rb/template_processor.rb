@@ -1,3 +1,4 @@
+
 class TemplateProcessor
   private
 
@@ -39,7 +40,7 @@ class TemplateProcessor
   end
   
   def self.process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)
-    output_dir = output_dir + database_defn.namespace.gsub(".", "/")
+    output_dir = output_dir.dup + "/" + database_defn.namespace.gsub(".", "/")
 
     FileUtils.mkdir_p("#{output_dir}")
     FileUtils.mkdir_p("#{output_dir}/models/")

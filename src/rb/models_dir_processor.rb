@@ -1,6 +1,6 @@
 class ModelsDirProcessor
-  def self.process(database_defn, model_defns_by_table_name)
-    models_dir = database_defn.models_dir
+  def self.process(base_dir, database_defn, model_defns_by_table_name)
+    models_dir = base_dir + "/" + database_defn.models_dir
     Dir.open(models_dir) do |dir|
       dir.each do |model_file_name|
         if model_file_name =~ /\.rb$/

@@ -43,7 +43,12 @@ class AssociationDefn
     end
 
     if @type == "belongs_to"
-      @foreign_key_java_type = model_defn.fields.select{|f| f.name == @foreign_key}[0].java_type
+      x = model_defn.fields.select{|f| f.name == @foreign_key}[0]
+      if x
+        @foreign_key_java_type = x.java_type
+      else
+        raise "In #{@name}, Unable to find a field named #{@foreign_key} on model #{model_defn.model_name}"
+      end
     end
 
     @assoc_model = nil
