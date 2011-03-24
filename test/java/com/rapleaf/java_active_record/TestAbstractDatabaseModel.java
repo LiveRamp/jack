@@ -1,6 +1,7 @@
 package com.rapleaf.java_active_record;
 
 import java.nio.ByteBuffer;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -73,29 +74,30 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertTrue(u1 == u2);
   }
 
+  public void testFindAllAndCache() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    Set<User> allUsers = users.findAll();
+    assertTrue(allUsers.contains(u1));
+    assertTrue(allUsers.contains(u2));
+    assertTrue(allUsers.contains(u3));
+
+    User u1_1 = users.find(u1.getId());
+    // make sure caching worked as expected
+    boolean found = false;
+    for (User user : allUsers) {
+      if (user == u1_1) {
+        found = true;
+        break;
+      }
+    }
+    assertTrue("No User instance equivalent to u1_1 was found!", found);
+  }
+
   public void oldTestIt() throws Exception {
-//
-//    // test caching
-//    cds1 = cdsp.find(cds1.getId());
-//    CustomerDataSet anotherInstance = cdsp.find(cds1.getId());
-//    assertTrue(anotherInstance == cds1);
-//
-//    // test findAll
-//    Set<CustomerDataSet> all = cdsp.findAll();
-//    cds1 = cdsp.find(cds1.getId());
-//    assertEquals(2, all.size());
-//    assertTrue(all.contains(cds1));
-//    assertTrue(all.contains(cds2));
-//    // make sure caching worked as expected
-//    boolean found = false;
-//    for (CustomerDataSet cdsIter : all) {
-//      if (cdsIter == cds1) {
-//        found = true;
-//        break;
-//      }
-//    }
-//    assertTrue("No CDS instance equivalent to cds1 was found!", found);
-//
 //    assertEquals(Collections.singleton(cds1), cdsp.findAll("name = \"name\""));
 //    assertEquals(Collections.singleton(cds2), cdsp.findAll("num_records > 10"));
 //    assertEquals(Collections.EMPTY_SET, cdsp.findAll("description = \"I dont' exist\""));
