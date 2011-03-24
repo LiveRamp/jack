@@ -41,6 +41,28 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertTrue(bryand.getSomeBoolean());
   }
 
+  public void testFind() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    long t0 = System.currentTimeMillis();
+    long t1 = t0 + 10;
+    long t2 = t0 + 20;
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
+    User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
+
+    User bryand_again = users.find(bryand.getId());
+    assertEquals("bryand", bryand_again.getHandle());
+    assertEquals(Long.valueOf(t0), bryand_again.getCreatedAtMillis());
+    assertEquals(Integer.valueOf(5), bryand_again.getNumPosts());
+    // need to figure out what the appropriate rounding is...
+//    assertEquals(Long.valueOf(t1), bryand_again.getSomeDate());
+    // need to figure out what the appropriate roudning is...
+//    assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
+    assertEquals("this is a relatively long string", bryand_again.getBio());
+    assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
+    assertEquals(1.2, bryand_again.getSomeFloat());
+    assertTrue(bryand_again.getSomeBoolean());
+  }
+
   public void oldTestIt() throws Exception {
 //    ICustomerDataSetPersistence cdsp = dbs.getMainDb().customerDataSets();
 //
