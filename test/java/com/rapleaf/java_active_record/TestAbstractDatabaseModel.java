@@ -145,46 +145,31 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
-  public void oldTestIt() throws Exception {
-//    // test belongs_to associations
-//    Customer cust = dbs.getMainDb().customers().create("test", "username", "blah", 1L, 0, "", 1, "", "", "", "", "", null, null, 1, 1, 1L, null, 1, 1, 1, 1, 1, "test", 1, false);
-//    cds1.setCustomerId((int)cust.getId());
-//    cdsp.save(cds1);
-//
-//    CustomerDataSet cdsX = cdsp.find(cds1.getId());
-//    assertEquals(cust.getId(), cdsX.getCustomer().getId());
-//
-//    // test has_many associations
-////    cust.get
-//
-//    // test finding a saved record
-//    CustomerDataSet foundCDS = cdsp.find(cds1.getId());
-//    assertEquals(cds1.getId(), foundCDS.getId());
-//    assertEquals(cds1.getNumRecords(), foundCDS.getNumRecords());
-//    assertEquals(cds1.getCdsImportRequestId(), foundCDS.getCdsImportRequestId());
-//    assertEquals(cds1.getCustomerId(), foundCDS.getCustomerId());
-//
-//    // test lookup by foreign key
-//    foundCDS.setCdsImportRequestId(7);
-//    assertTrue(cdsp.save(foundCDS));
-//    cds1 = cdsp.find(foundCDS.getId());
-//    assertEquals(Integer.valueOf(7), cds1.getCdsImportRequestId());
-//
-//    assertTrue(cdsp.findAllByForeignKey("cds_import_request_id", 2).isEmpty());
-//    assertEquals(Collections.singleton(foundCDS), cdsp.findAllByForeignKey("cds_import_request_id", 7));
-//
-//    assertNotNull(cdsp.create(10, 1, 2, "name", "description", null));
-//
-//    // test saving and deleting nulls
-//    foundCDS.setNumRecords(null);
-//    assertTrue(cdsp.save(foundCDS));
-//    foundCDS = cdsp.find(foundCDS.getId());
-//    assertEquals(null, foundCDS.getNumRecords());
-//
-//    // test delete
-//    long id = foundCDS.getId();
-//    cdsp.delete(foundCDS);
-//    foundCDS = cdsp.find(id);
-//    assertNull(foundCDS);
+  public void testFindByForeignKey() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = posts.create("title", 0L, 1);
+
+    assertTrue(posts.findAllByForeignKey("user_id", -1).isEmpty());
+    assertEquals(Collections.singleton(post), posts.findAllByForeignKey("user_id", 1));
+  }
+
+  public void testNullTreatment() throws Exception {
+//  assertNotNull(cdsp.create(10, 1, 2, "name", "description", null));
+    //
+//        // test saving and deleting nulls
+//        foundCDS.setNumRecords(null);
+//        assertTrue(cdsp.save(foundCDS));
+//        foundCDS = cdsp.find(foundCDS.getId());
+//        assertEquals(null, foundCDS.getNumRecords());
+    fail();
+  }
+  
+  public void testDelete() throws Exception {
+//  // test delete
+//  long id = foundCDS.getId();
+//  cdsp.delete(foundCDS);
+//  foundCDS = cdsp.find(id);
+//  assertNull(foundCDS);
+    fail();
   }
 }
