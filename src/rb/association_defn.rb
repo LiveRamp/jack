@@ -37,7 +37,7 @@ class AssociationDefn
           when "has_one"
             @foreign_key = "#{@name}_id"
           when "has_many"
-            @foreign_key = "#{@name.singularize}_id"
+            @foreign_key = "#{model_defn.model_name.downcase.singularize}_id"
         end
       end
     end

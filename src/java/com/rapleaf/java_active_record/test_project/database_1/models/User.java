@@ -47,7 +47,7 @@ public class User extends ModelWithId {
     this.__some_binary = some_binary;
     this.__some_float = some_float;
     this.__some_boolean = some_boolean;
-    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "post_id", id);
+    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
     this.__assoc_followers = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "followed_id", id);
     this.__assoc_followees = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "follower_id", id);

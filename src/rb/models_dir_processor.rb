@@ -1,3 +1,4 @@
+
 class ModelsDirProcessor
   def self.process(base_dir, database_defn, model_defns_by_table_name)
     models_dir = base_dir + "/" + database_defn.models_dir
@@ -42,5 +43,4 @@ class ModelsDirProcessor
     end
     matching_lines.map{|l| AssociationDefn.new(l, model_defn)}
   end
-  
 end
