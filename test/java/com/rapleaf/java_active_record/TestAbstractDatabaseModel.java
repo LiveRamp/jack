@@ -50,6 +50,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
 
     User bryand_again = users.find(bryand.getId());
+    assertEquals(bryand.getId(), bryand_again.getId());
     assertEquals("bryand", bryand_again.getHandle());
     assertEquals(Long.valueOf(t0), bryand_again.getCreatedAtMillis());
     assertEquals(Integer.valueOf(5), bryand_again.getNumPosts());
