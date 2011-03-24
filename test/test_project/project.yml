@@ -7,6 +7,6 @@ databases:
     models: database_1/app/models
   # -
   #   root_namespace: com.rapleaf.java_active_record.test_project.database_2
-  #   db_name: DataBase2
+  #   db_name: Database2
   #   schema_rb: database_2/db/schema.rb
   #   models: database_2/app/models
