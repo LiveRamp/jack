@@ -154,16 +154,16 @@ public class TestAbstractDatabaseModel extends TestCase {
   }
 
   public void testNullTreatment() throws Exception {
-//  assertNotNull(cdsp.create(10, 1, 2, "name", "description", null));
-    //
-//        // test saving and deleting nulls
-//        foundCDS.setNumRecords(null);
-//        assertTrue(cdsp.save(foundCDS));
-//        foundCDS = cdsp.find(foundCDS.getId());
-//        assertEquals(null, foundCDS.getNumRecords());
-    fail();
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = posts.create(null, 10L, 1);
+    assertNotNull(post);
+    post.setUserId(null);
+    posts.save(post);
+    post = posts.find(post.getId());
+    assertNull(post.getUserId());
+    assertNull(post.getUser());
   }
-  
+
   public void testDelete() throws Exception {
 //  // test delete
 //  long id = foundCDS.getId();
