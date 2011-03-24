@@ -8,7 +8,9 @@ import junit.framework.TestCase;
 
 import com.rapleaf.java_active_record.test_project.DatabasesImpl;
 import com.rapleaf.java_active_record.test_project.IDatabases;
+import com.rapleaf.java_active_record.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IUserPersistence;
+import com.rapleaf.java_active_record.test_project.database_1.models.Post;
 import com.rapleaf.java_active_record.test_project.database_1.models.User;
 
 public class TestAbstractDatabaseModel extends TestCase {
@@ -109,7 +111,13 @@ public class TestAbstractDatabaseModel extends TestCase {
   }
 
   public void testBelongsTo() throws Exception {
-    fail();
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    // TODO: this cast shouldn't be necessary
+    Post p1 = posts.create("title", System.currentTimeMillis(), (int)u1.getId());
+    assertEquals(u1, p1.getUser());
   }
 
   public void testHasOne() throws Exception {
