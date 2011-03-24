@@ -34,6 +34,7 @@ public class User extends ModelWithId {
   private final HasManyAssociation<Comment> __assoc_comments;
   private final HasManyAssociation<Follower> __assoc_followers;
   private final HasManyAssociation<Follower> __assoc_followees;
+  private final HasOneAssociation<Image> __assoc_image;
 
   public User(long id, final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
     super(id);
@@ -50,6 +51,7 @@ public class User extends ModelWithId {
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
     this.__assoc_followers = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "followed_id", id);
     this.__assoc_followees = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "follower_id", id);
+    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "image_id", id);
   }
 
   public String getHandle(){
@@ -138,6 +140,10 @@ public class User extends ModelWithId {
   
   public Set<Follower> getFollowees() throws IOException {
     return __assoc_followees.get();
+  }
+  
+  public Image getImage() throws IOException {
+    return __assoc_image.get();
   }
 }
 

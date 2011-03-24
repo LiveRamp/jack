@@ -9,6 +9,7 @@ import com.rapleaf.java_active_record.test_project.database_1.IDatabase1;
 import com.rapleaf.java_active_record.DatabaseConnection;
 import com.rapleaf.java_active_record.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IFollowerPersistence;
+import com.rapleaf.java_active_record.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IUserPersistence;
 
@@ -17,12 +18,14 @@ import com.rapleaf.java_active_record.test_project.IDatabases;
 public class Database1Impl implements IDatabase1 {
   private final ICommentPersistence comments;
   private final IFollowerPersistence followers;
+  private final IImagePersistence images;
   private final IPostPersistence posts;
   private final IUserPersistence users;
 
   public Database1Impl(DatabaseConnection conn, IDatabases databases) {
     this.comments = new BaseCommentPersistenceImpl(conn, databases);
     this.followers = new BaseFollowerPersistenceImpl(conn, databases);
+    this.images = new BaseImagePersistenceImpl(conn, databases);
     this.posts = new BasePostPersistenceImpl(conn, databases);
     this.users = new BaseUserPersistenceImpl(conn, databases);
   }
@@ -31,6 +34,9 @@ public class Database1Impl implements IDatabase1 {
   }
   public IFollowerPersistence followers(){
     return followers;
+  }
+  public IImagePersistence images(){
+    return images;
   }
   public IPostPersistence posts(){
     return posts;

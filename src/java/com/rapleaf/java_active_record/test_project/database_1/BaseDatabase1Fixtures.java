@@ -19,6 +19,7 @@ public class BaseDatabase1Fixtures extends DbFixtures {
   public static void setup() throws SQLException {
     stmt.execute(getTruncateTableStmt("comments"));
     stmt.execute(getTruncateTableStmt("followers"));
+    stmt.execute(getTruncateTableStmt("images"));
     stmt.execute(getTruncateTableStmt("posts"));
     stmt.execute(getTruncateTableStmt("users"));
   }

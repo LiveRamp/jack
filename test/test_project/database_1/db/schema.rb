@@ -23,6 +23,10 @@ ActiveRecord::Schema.define(:version => 20110324000133) do
     t.integer "followed_id"
   end
 
+  create_table "images", :force => true do |t|
+    t.integer "user_id"
+  end
+
   create_table "posts", :force => true do |t|
     t.string  "title"
     t.date    "posted_at_millis"

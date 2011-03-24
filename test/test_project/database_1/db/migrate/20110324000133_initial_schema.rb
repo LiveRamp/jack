@@ -15,6 +15,10 @@ class InitialSchema < ActiveRecord::Migration
       # t.bytes :some_bytes
     end
 
+    create_table :images do |t|
+      t.integer :user_id
+    end
+
     # try a belongs_to style association
     create_table :posts do |t|
       t.string :title
