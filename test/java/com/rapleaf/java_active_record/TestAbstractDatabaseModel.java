@@ -1,15 +1,19 @@
 package com.rapleaf.java_active_record;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
 import com.rapleaf.java_active_record.test_project.DatabasesImpl;
 import com.rapleaf.java_active_record.test_project.IDatabases;
+import com.rapleaf.java_active_record.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.java_active_record.test_project.database_1.iface.IUserPersistence;
+import com.rapleaf.java_active_record.test_project.database_1.models.Image;
 import com.rapleaf.java_active_record.test_project.database_1.models.Post;
 import com.rapleaf.java_active_record.test_project.database_1.models.User;
 
@@ -121,11 +125,24 @@ public class TestAbstractDatabaseModel extends TestCase {
   }
 
   public void testHasOne() throws Exception {
-    fail();
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    IImagePersistence images = dbs.getDatabase1().images();
+    Image image = images.create((int) u1.getId());
+    assertEquals(u1, image.getUser());
   }
 
   public void testHasMany() throws Exception {
-    fail();
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post p1 = posts.create("title1", System.currentTimeMillis(), (int)u1.getId());
+    Post p2 = posts.create("title2", System.currentTimeMillis(), (int)u1.getId());
+    Post p3 = posts.create("title3", System.currentTimeMillis(), (int)u1.getId());
+
+    assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
   public void oldTestIt() throws Exception {
