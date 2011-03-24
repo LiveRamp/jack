@@ -48,9 +48,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           stmt.setInt(3, num_posts);
         }
         if (some_date == null) {
-          stmt.setNull(4, java.sql.Types.BIGINT);
+          stmt.setNull(4, java.sql.Types.DATE);
         } else {
-          stmt.setLong(4, some_date);
+          stmt.setDate(4, new Date(some_date));
         }
         if (some_datetime == null) {
           stmt.setNull(5, java.sql.Types.DATE);
@@ -100,9 +100,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       stmt.setInt(3, model.getNumPosts());
     }
     if (model.getSomeDate() == null) {
-      stmt.setNull(4, java.sql.Types.BIGINT);
+      stmt.setNull(4, java.sql.Types.DATE);
     } else {
-      stmt.setLong(4, model.getSomeDate());
+      stmt.setDate(4, new Date(model.getSomeDate()));
     }
     if (model.getSomeDatetime() == null) {
       stmt.setNull(5, java.sql.Types.DATE);
@@ -138,7 +138,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 rs.getString("handle"),
 getLongOrNull(rs, "created_at_millis"),
 getIntOrNull(rs, "num_posts"),
-rs.getLong("some_date"),
+getDateAsLong(rs, "some_date"),
 getDateAsLong(rs, "some_datetime"),
 rs.getString("bio"),
 rs.getBytes("some_binary"),

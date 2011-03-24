@@ -41,7 +41,7 @@ class FieldDefn
       :string=>'CHAR', 
       :datetime=>'DATE', 
       :varbinary=>'VARBINARY', 
-      :date=>'BIGINT', 
+      :date=>'DATE', 
       :text=>'CHAR', 
       :binary=>'BINARY', 
       :float=>'DOUBLE', 
@@ -63,7 +63,7 @@ class FieldDefn
       :string=>'String', 
       :datetime=>'Timestamp', 
       :varbinary=>'Bytes', 
-      :date=>'Long', 
+      :date=>'Date', 
       :text=>'String', 
       :binary=>'Bytes', 
       :float=>'Double', 
@@ -82,10 +82,13 @@ class FieldDefn
   end
   
   def prep_stmt_modifier(x)
-    if data_type == :datetime
-      "new Timestamp(#{x})"
-    else
-      x
+    case data_type
+      when :datetime
+        "new Timestamp(#{x})"
+      when :date
+        "new Date(#{x})"
+      else
+        x
     end
   end
 
@@ -106,7 +109,9 @@ class FieldDefn
         is_long? ? "getLongOrNull(rs, \"#{name}\")" : "getIntOrNull(rs, \"#{name}\")"
       when :bigint
         "getLongOrNull(rs, \"#{name}\")"
-      when :datetime
+      when :datetime 
+        "getDateAsLong(rs, \"#{name}\")"
+      when :date 
         "getDateAsLong(rs, \"#{name}\")"
       else
         "rs.get#{prep_stmt_type}(\"#{name}\")"

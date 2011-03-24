@@ -38,9 +38,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
           stmt.setString(1, title);
         }
         if (posted_at_millis == null) {
-          stmt.setNull(2, java.sql.Types.BIGINT);
+          stmt.setNull(2, java.sql.Types.DATE);
         } else {
-          stmt.setLong(2, posted_at_millis);
+          stmt.setDate(2, new Date(posted_at_millis));
         }
         if (user_id == null) {
           stmt.setNull(3, java.sql.Types.INTEGER);
@@ -60,9 +60,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       stmt.setString(1, model.getTitle());
     }
     if (model.getPostedAtMillis() == null) {
-      stmt.setNull(2, java.sql.Types.BIGINT);
+      stmt.setNull(2, java.sql.Types.DATE);
     } else {
-      stmt.setLong(2, model.getPostedAtMillis());
+      stmt.setDate(2, new Date(model.getPostedAtMillis()));
     }
     if (model.getUserId() == null) {
       stmt.setNull(3, java.sql.Types.INTEGER);
@@ -76,7 +76,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
     return new Post(rs.getLong("id"),
 rs.getString("title"),
-rs.getLong("posted_at_millis"),
+getDateAsLong(rs, "posted_at_millis"),
 getIntOrNull(rs, "user_id"),
       databases
     );
