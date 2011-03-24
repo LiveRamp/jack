@@ -165,11 +165,10 @@ public class TestAbstractDatabaseModel extends TestCase {
   }
 
   public void testDelete() throws Exception {
-//  // test delete
-//  long id = foundCDS.getId();
-//  cdsp.delete(foundCDS);
-//  foundCDS = cdsp.find(id);
-//  assertNull(foundCDS);
-    fail();
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = posts.create(null, 10L, 1);
+    long id = post.getId();
+    posts.delete(id);
+    assertNull(posts.find(id));
   }
 }
