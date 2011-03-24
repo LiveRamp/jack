@@ -64,17 +64,16 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertTrue(bryand_again.getSomeBoolean());
   }
 
+  public void testFindCache() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User user = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    User u1 = users.find(user.getId());
+    User u2 = users.find(user.getId());
+    assertTrue(u1 == u2);
+  }
+
   public void oldTestIt() throws Exception {
-//    ICustomerDataSetPersistence cdsp = dbs.getMainDb().customerDataSets();
-//
-//    // test creation of models
-//    CustomerDataSet cds1 = cdsp.create(1, 2, 3, "name", "description", null);
-//    CustomerDataSet cds2 = cdsp.create(10, 20, 30, "other_name", "other_description", null);
-//
-//    assertEquals(Integer.valueOf(2), cds1.getCdsImportRequestId());
-//    assertEquals(Integer.valueOf(1), cds1.getCustomerId());
-//    assertEquals(Integer.valueOf(3), cds1.getNumRecords());
-//    assertTrue(cds1.getId() > 0);
 //
 //    // test caching
 //    cds1 = cdsp.find(cds1.getId());
