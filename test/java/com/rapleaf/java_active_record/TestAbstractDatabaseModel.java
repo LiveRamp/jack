@@ -1,6 +1,7 @@
 package com.rapleaf.java_active_record;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -97,11 +98,29 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertTrue("No User instance equivalent to u1_1 was found!", found);
   }
 
+  public void testFindAllWithConditions() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    assertEquals(Collections.singleton(u1), users.findAll("handle = 'bryand'"));
+    assertEquals(Collections.singleton(u2), users.findAll("handle = 'thomask'"));
+  }
+
+  public void testBelongsTo() throws Exception {
+    fail();
+  }
+
+  public void testHasOne() throws Exception {
+    fail();
+  }
+
+  public void testHasMany() throws Exception {
+    fail();
+  }
+
   public void oldTestIt() throws Exception {
-//    assertEquals(Collections.singleton(cds1), cdsp.findAll("name = \"name\""));
-//    assertEquals(Collections.singleton(cds2), cdsp.findAll("num_records > 10"));
-//    assertEquals(Collections.EMPTY_SET, cdsp.findAll("description = \"I dont' exist\""));
-//
 //    // test belongs_to associations
 //    Customer cust = dbs.getMainDb().customers().create("test", "username", "blah", 1L, 0, "", 1, "", "", "", "", "", null, null, 1, 1, 1L, null, 1, 1, 1, 1, 1, "test", 1, false);
 //    cds1.setCustomerId((int)cust.getId());
