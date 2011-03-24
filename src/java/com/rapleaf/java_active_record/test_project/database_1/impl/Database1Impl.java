@@ -29,18 +29,23 @@ public class Database1Impl implements IDatabase1 {
     this.posts = new BasePostPersistenceImpl(conn, databases);
     this.users = new BaseUserPersistenceImpl(conn, databases);
   }
+
   public ICommentPersistence comments(){
     return comments;
   }
+
   public IFollowerPersistence followers(){
     return followers;
   }
+
   public IImagePersistence images(){
     return images;
   }
+
   public IPostPersistence posts(){
     return posts;
   }
+
   public IUserPersistence users(){
     return users;
   }

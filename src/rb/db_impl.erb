@@ -23,6 +23,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   }
 
   <% model_defns.each do |model_defn| %>
+
   public <%= model_defn.iface_name %> <%= model_defn.persistence_getter %>{
     return <%= model_defn.table_name %>;
   }
