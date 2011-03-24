@@ -75,9 +75,9 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   @Override
   protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
     return new Comment(rs.getLong("id"),
-rs.getString("content"),
-getIntOrNull(rs, "commenter_id"),
-getIntOrNull(rs, "commented_on_id"),
+      rs.getString("content"),
+      getIntOrNull(rs, "commenter_id"),
+      getIntOrNull(rs, "commented_on_id"),
       databases
     );
   }

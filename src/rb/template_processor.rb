@@ -3,7 +3,7 @@ class TemplateProcessor
   private
 
   def self.adjust(s) 
-    s.gsub(/^\s+<%/, "<%")
+    s.gsub(/^\s+<%(.*).%>$/, "<%\\1%>")
   end
 
   def self.load_template(file_name)

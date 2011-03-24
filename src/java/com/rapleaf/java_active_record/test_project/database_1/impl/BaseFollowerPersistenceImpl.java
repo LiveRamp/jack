@@ -65,8 +65,8 @@ public class BaseFollowerPersistenceImpl extends AbstractDatabaseModel<Follower>
   @Override
   protected Follower instanceFromResultSet(ResultSet rs) throws SQLException {
     return new Follower(rs.getLong("id"),
-getIntOrNull(rs, "follower_id"),
-getIntOrNull(rs, "followed_id"),
+      getIntOrNull(rs, "follower_id"),
+      getIntOrNull(rs, "followed_id"),
       databases
     );
   }

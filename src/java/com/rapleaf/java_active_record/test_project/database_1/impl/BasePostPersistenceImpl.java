@@ -75,9 +75,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   @Override
   protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
     return new Post(rs.getLong("id"),
-rs.getString("title"),
-getDateAsLong(rs, "posted_at_millis"),
-getIntOrNull(rs, "user_id"),
+      rs.getString("title"),
+      getDateAsLong(rs, "posted_at_millis"),
+      getIntOrNull(rs, "user_id"),
       databases
     );
   }

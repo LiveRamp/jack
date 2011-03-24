@@ -135,15 +135,15 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   @Override
   protected User instanceFromResultSet(ResultSet rs) throws SQLException {
     return new User(rs.getLong("id"),
-rs.getString("handle"),
-getLongOrNull(rs, "created_at_millis"),
-getIntOrNull(rs, "num_posts"),
-getDateAsLong(rs, "some_date"),
-getDateAsLong(rs, "some_datetime"),
-rs.getString("bio"),
-rs.getBytes("some_binary"),
-rs.getDouble("some_float"),
-rs.getBoolean("some_boolean"),
+      rs.getString("handle"),
+      getLongOrNull(rs, "created_at_millis"),
+      getIntOrNull(rs, "num_posts"),
+      getDateAsLong(rs, "some_date"),
+      getDateAsLong(rs, "some_datetime"),
+      rs.getString("bio"),
+      rs.getBytes("some_binary"),
+      rs.getDouble("some_float"),
+      rs.getBoolean("some_boolean"),
       databases
     );
   }

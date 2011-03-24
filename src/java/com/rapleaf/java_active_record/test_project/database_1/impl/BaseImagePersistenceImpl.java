@@ -55,7 +55,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   @Override
   protected Image instanceFromResultSet(ResultSet rs) throws SQLException {
     return new Image(rs.getLong("id"),
-getIntOrNull(rs, "user_id"),
+      getIntOrNull(rs, "user_id"),
       databases
     );
   }
