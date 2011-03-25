@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.rapleaf.java_active_record.AbstractDatabaseModelWithId;
+import com.rapleaf.java_active_record.AbstractDatabaseModel;
 import com.rapleaf.java_active_record.DatabaseConnection;
 
 import com.rapleaf.java_active_record.test_project.database_1.models.Post;
@@ -21,7 +21,7 @@ import com.rapleaf.java_active_record.test_project.database_1.iface.IPostPersist
 
 import com.rapleaf.java_active_record.test_project.IDatabases;
 
-public class BasePostPersistenceImpl extends AbstractDatabaseModelWithId<Post> implements IPostPersistence {
+public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> implements IPostPersistence {
   private final IDatabases databases;
 
   public BasePostPersistenceImpl(DatabaseConnection conn, IDatabases databases) {

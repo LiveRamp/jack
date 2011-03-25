@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.rapleaf.java_active_record.AbstractDatabaseModelWithId;
+import com.rapleaf.java_active_record.AbstractDatabaseModel;
 import com.rapleaf.java_active_record.DatabaseConnection;
 
 import com.rapleaf.java_active_record.test_project.database_1.models.Follower;
@@ -21,7 +21,7 @@ import com.rapleaf.java_active_record.test_project.database_1.iface.IFollowerPer
 
 import com.rapleaf.java_active_record.test_project.IDatabases;
 
-public class BaseFollowerPersistenceImpl extends AbstractDatabaseModelWithId<Follower> implements IFollowerPersistence {
+public class BaseFollowerPersistenceImpl extends AbstractDatabaseModel<Follower> implements IFollowerPersistence {
   private final IDatabases databases;
 
   public BaseFollowerPersistenceImpl(DatabaseConnection conn, IDatabases databases) {

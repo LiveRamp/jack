@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.rapleaf.java_active_record.AbstractDatabaseModelWithId;
+import com.rapleaf.java_active_record.AbstractDatabaseModel;
 import com.rapleaf.java_active_record.DatabaseConnection;
 
 import com.rapleaf.java_active_record.test_project.database_1.models.User;
@@ -21,7 +21,7 @@ import com.rapleaf.java_active_record.test_project.database_1.iface.IUserPersist
 
 import com.rapleaf.java_active_record.test_project.IDatabases;
 
-public class BaseUserPersistenceImpl extends AbstractDatabaseModelWithId<User> implements IUserPersistence {
+public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> implements IUserPersistence {
   private final IDatabases databases;
 
   public BaseUserPersistenceImpl(DatabaseConnection conn, IDatabases databases) {
