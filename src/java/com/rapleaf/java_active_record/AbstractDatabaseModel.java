@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
+public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extends Number> implements IModelPersistence<T, ID> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -24,14 +22,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   private final DatabaseConnection conn;
   private final String tableName;
 
-  protected final Map<Long, T> cachedById = new HashMap<Long, T>();
-
-  protected final Map<String, Map<Integer, List<T>>> belongsToCache = new HashMap<String, Map<Integer, List<T>>>();
-  protected final Map<String, SerializableMethod> belongsToAssociations = new HashMap<String, SerializableMethod>();
-
-  protected final Map<String, Map<Integer, List<T>>> integerIndexCache = new HashMap<String, Map<Integer, List<T>>>();
   private final List<String> fieldNames;
   private final String updateStatement;
+
+  protected final Map<ID, T> cachedById = new HashMap<ID, T>();
 
   protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
@@ -87,7 +81,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return sb.toString();
   }
 
-  public T find(long id) throws IOException {
+  public T find(ID id) throws IOException {
     T model = cachedById.get(id);
     if (model != null) {
       return model;
@@ -107,79 +101,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   protected PreparedStatement getSaveStmt() {
     return conn.getPreparedStatement(updateStatement);
   }
-
-//  protected void addModelToPersistenceCache(T1 model) {
-//    for(Map.Entry<String, SerializableMethod> entry : belongsToAssociations.entrySet()) {
-//      Map<Integer, List<T1>> cache = belongsToCache.get(entry.getKey());
-//      Integer id;
-//      try {
-//        id = (Integer) entry.getValue().getMethod().invoke(model, (Object[])null);
-//      } catch (Exception e) {
-//        throw new RuntimeException(e);
-//      }
-//      if (!cache.containsKey(id)) {
-//        cache.put(id, new ArrayList<T1>());
-//      }
-//      cache.get(id).add(model);
-//    }
-//  }
-  
-  public List<T> getAllByForeignKey(String foreignKey, int id) throws IOException {
-    return getAllByKey(foreignKey, id, belongsToCache);
-  }
-
-  public List<T> getAllByIntegerIndexKey(String index, int value) throws IOException {
-    return getAllByKey(index, value, integerIndexCache);
-  }
-
-  private List<T> getAllByKey(String index, int value, Map<String, Map<Integer, List<T>>> cacheMap) throws IOException {
-    if(!cacheMap.containsKey(index)) {
-      throw new IllegalArgumentException("No such index or foreign key " + index);
-    }
-
-    Map<Integer, List<T>> cache = cacheMap.get(index);
-
-    List<T> result= cache.get(value);
-    if(result != null) {
-      return Collections.unmodifiableList(result);
-    }
-
-    result = new ArrayList<T>();
-
-    try {
-      ResultSet rs = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE " + index + "=" + value).executeQuery();
-      while(rs.next()) {
-        T model = instanceFromResultSet(rs);
-        if (model != null) {
-          result.add(model);
-        }
-      }
-      rs.close();
-    } catch (SQLException e) {
-      throw new IOException(e);
-    }
-
-    cache.put(value, result);
-    return Collections.unmodifiableList(result);
-  }
-
-  public void clearCacheByForeignKey(String foreignKey, int id) throws IOException {
-    throw new NotImplementedException();
-//    clearCacheByKey(foreignKey, id, belongsToCache);
-  }
-
-  public void clearCacheByIntegerIndexKey(String index, int value) throws IOException {
-    throw new NotImplementedException();
-//    clearCacheByKey(index, value, integerIndexCache);
-  }
-
-//  private void clearCacheByKey(String index, int value, Map<String, Map<Integer, List<T>>> cacheMap) throws IOException {
-//    if (!cacheMap.containsKey(index)) {
-//      throw new IllegalArgumentException("No such index or foreign key");
-//    }
-//
-//    cacheMap.get(index).remove(value);
-//  }
 
   protected final static Integer getIntOrNull(ResultSet rs, String column) throws SQLException {
     Integer value = rs.getInt(column);
@@ -206,14 +127,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public void clearCacheByForeignKey(String foreignKey, long id) {
-    // TODO Auto-generated method stub
-    
+    throw new NotImplementedException();
   }
 
   @Override
-  public void clearCacheById(long id) throws IOException {
-    // TODO Auto-generated method stub
-    
+  public void clearCacheById(ID id) throws IOException {
+    cachedById.remove(id);
   }
 
   @Override
@@ -270,7 +189,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   }
 
   @Override
-  public boolean delete(long id) throws IOException {
+  public boolean delete(ID id) throws IOException {
     try {
       cachedById.remove(id);
       return conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id)).executeUpdate() == 1;

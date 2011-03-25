@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.Serializable;
 
 
-public class BelongsToAssociation<T extends ModelWithId, N extends Number> implements Serializable {
-  private final IModelPersistence<T> persistence;
-  private final N id;
+public class BelongsToAssociation<T extends ModelWithId<ID>, ID extends Number> implements Serializable {
+  private final IModelPersistence<T, ID> persistence;
+  private final ID id;
   private T cache;
 
-  public BelongsToAssociation(IModelPersistence<T> persistence, N id) {
+  public BelongsToAssociation(IModelPersistence<T, ID> persistence, ID id) {
     this.persistence = persistence;
     this.id = id;
   }
@@ -17,13 +17,13 @@ public class BelongsToAssociation<T extends ModelWithId, N extends Number> imple
   public T get() throws IOException {
     if (id == null) return null;
     if (cache == null) {
-      cache = persistence.find(id.longValue());
+      cache = persistence.find(id);
     }
     return cache;
   }
 
   public void clearCache() throws IOException {
-    persistence.clearCacheById(id.longValue());
+    persistence.clearCacheById(id);
     cache = null;
   }
 }

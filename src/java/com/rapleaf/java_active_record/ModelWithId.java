@@ -2,15 +2,14 @@ package com.rapleaf.java_active_record;
 
 import java.io.Serializable;
 
-public abstract class ModelWithId implements Serializable {
+public abstract class ModelWithId<ID extends Number> implements Serializable {
+  private final ID id;
 
-  private final long id;
-
-  protected ModelWithId(long id) {
+  protected ModelWithId(ID id) {
     this.id = id;
   }
 
-  public long getId() {
+  public ID getId() {
     return id;
   }
 
@@ -18,7 +17,7 @@ public abstract class ModelWithId implements Serializable {
   public int hashCode() {
     final int prime = 31;
     long result = 1;
-    result = prime * result + id;
+    result = prime * result + id.longValue();
     return (int) result;
   }
 
