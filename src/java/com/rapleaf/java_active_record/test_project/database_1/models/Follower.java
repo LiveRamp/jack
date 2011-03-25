@@ -58,4 +58,3 @@ public class Follower extends ModelWithId {
     return __assoc_followed.get();
   }
 }
-

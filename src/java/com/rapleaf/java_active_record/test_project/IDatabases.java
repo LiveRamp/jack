@@ -11,4 +11,3 @@ import java.io.Serializable;
 public interface IDatabases extends Serializable {
   public IDatabase1 getDatabase1();
 }
-

@@ -68,4 +68,3 @@ public class Comment extends ModelWithId {
     return __assoc_post.get();
   }
 }
-

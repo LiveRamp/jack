@@ -42,4 +42,3 @@ public class Image extends ModelWithId {
     return __assoc_user.get();
   }
 }
-

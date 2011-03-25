@@ -10,15 +10,15 @@ class TemplateProcessor
     ERB.new(adjust(File.read(File.dirname(__FILE__) + "/" + file_name)), nil, "<>")
   end
 
-  DB_INTERFACE_TEMPLATE = load_template("db_interface.erb")
-  DB_IMPL_TEMPLATE = load_template("db_impl.erb")
-  DB_FIXTURES_TEMPLATE = load_template("db_fixtures.erb")
-  PERSISTENCE_INTERFACE_TEMPLATE = load_template("persistence_interface.erb")
-  MODEL_TEMPLATE = load_template("model.erb")
-  PERSISTENCE_IMPL_TEMPLATE = load_template("persistence_impl.erb")
+  DB_INTERFACE_TEMPLATE = load_template("templates/db_interface.erb")
+  DB_IMPL_TEMPLATE = load_template("templates/db_impl.erb")
+  DB_FIXTURES_TEMPLATE = load_template("templates/db_fixtures.erb")
+  PERSISTENCE_INTERFACE_TEMPLATE = load_template("templates/persistence_interface.erb")
+  MODEL_TEMPLATE = load_template("templates/model.erb")
+  PERSISTENCE_IMPL_TEMPLATE = load_template("templates/persistence_impl.erb")
 
-  DATABASES_IFACE_TEMPLATE = load_template("databases_iface.erb")
-  DATABASES_IMPL_TEMPLATE = load_template("databases_impl.erb")
+  DATABASES_IFACE_TEMPLATE = load_template("templates/databases_iface.erb")
+  DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
 
   public
 
