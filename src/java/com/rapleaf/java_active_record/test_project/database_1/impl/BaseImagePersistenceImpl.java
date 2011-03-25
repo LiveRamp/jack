@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.rapleaf.java_active_record.AbstractDatabaseModel;
+import com.rapleaf.java_active_record.AbstractDatabaseModelWithId;
 import com.rapleaf.java_active_record.DatabaseConnection;
 
 import com.rapleaf.java_active_record.test_project.database_1.models.Image;
@@ -21,7 +21,7 @@ import com.rapleaf.java_active_record.test_project.database_1.iface.IImagePersis
 
 import com.rapleaf.java_active_record.test_project.IDatabases;
 
-public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> implements IImagePersistence {
+public class BaseImagePersistenceImpl extends AbstractDatabaseModelWithId<Image> implements IImagePersistence {
   private final IDatabases databases;
 
   public BaseImagePersistenceImpl(DatabaseConnection conn, IDatabases databases) {

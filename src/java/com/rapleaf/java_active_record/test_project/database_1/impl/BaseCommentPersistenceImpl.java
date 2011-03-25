@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import com.rapleaf.java_active_record.AbstractDatabaseModel;
+import com.rapleaf.java_active_record.AbstractDatabaseModelWithId;
 import com.rapleaf.java_active_record.DatabaseConnection;
 
 import com.rapleaf.java_active_record.test_project.database_1.models.Comment;
@@ -21,7 +21,7 @@ import com.rapleaf.java_active_record.test_project.database_1.iface.ICommentPers
 
 import com.rapleaf.java_active_record.test_project.IDatabases;
 
-public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> implements ICommentPersistence {
+public class BaseCommentPersistenceImpl extends AbstractDatabaseModelWithId<Comment> implements ICommentPersistence {
   private final IDatabases databases;
 
   public BaseCommentPersistenceImpl(DatabaseConnection conn, IDatabases databases) {

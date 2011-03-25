@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
+public abstract class AbstractDatabaseModelWithId<T extends ModelWithId> implements IModelPersistence<T> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -33,7 +33,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   private final List<String> fieldNames;
   private final String updateStatement;
 
-  protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
+  protected AbstractDatabaseModelWithId(DatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
