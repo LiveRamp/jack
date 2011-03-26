@@ -1,11 +1,12 @@
 class ModelDefn
   attr_accessor :namespace, :database_defn
-  attr_reader :fields, :table_name, :model_name
+  attr_reader :fields, :table_name, :model_name, :migration_number
   attr_accessor :associations
 
-  def initialize(decl_line)
+  def initialize(decl_line, migration_number)
     @fields = []
     @associations = []
+    @migration_number = migration_number
 
     @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
     @model_name = @table_name.singularize.camelcase
