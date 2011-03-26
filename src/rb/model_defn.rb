@@ -1,6 +1,6 @@
 class ModelDefn
-  attr_accessor :model_name, :namespace, :database_defn
-  attr_reader :fields, :table_name
+  attr_accessor :namespace, :database_defn
+  attr_reader :fields, :table_name, :model_name
   attr_accessor :associations
 
   def initialize(decl_line)
@@ -8,6 +8,8 @@ class ModelDefn
     @associations = []
 
     @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
+    @model_name = @table_name.singularize.camelcase
+
     if decl_line =~ /:id => false/
       raise "Table #{@table_name} appears not to have a primary key, which is currently unsupported."
     end
