@@ -30,7 +30,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
-    long __id = realCreate(new AttrSetter() {
+    int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (title == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -74,7 +74,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   @Override
   protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Post(rs.getLong("id"),
+    return new Post(rs.getInt("id"),
       rs.getString("title"),
       getDateAsLong(rs, "posted_at_millis"),
       getIntOrNull(rs, "user_id"),

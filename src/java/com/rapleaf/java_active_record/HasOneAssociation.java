@@ -3,29 +3,28 @@ package com.rapleaf.java_active_record;
 import java.io.IOException;
 import java.io.Serializable;
 
-public class HasOneAssociation<T extends ModelWithId, ID extends Number> implements Serializable {
-  private final IModelPersistence<T, ?> persistence;
+public class HasOneAssociation<T extends ModelWithId> implements Serializable {
+  private final IModelPersistence<T> persistence;
   private final String foreignKey;
-  private final ID id;
+  private final int id;
   private T cached;
 
-  public HasOneAssociation(IModelPersistence<T, ?> persistence,
-      String foreignKey, ID id) {
+  public HasOneAssociation(IModelPersistence<T> persistence,
+      String foreignKey, int id) {
     this.persistence = persistence;
     this.foreignKey = foreignKey;
     this.id = id;
   }
 
   public T get() throws IOException {
-    if (id == null) return null;
     if (cached == null) {
-      cached = (T) persistence.findAllByForeignKey(foreignKey, id.longValue()).toArray()[0];
+      cached = (T) persistence.findAllByForeignKey(foreignKey, id).toArray()[0];
     }
     return cached;
   }
 
   public void clearCache() throws IOException {
-    persistence.clearCacheByForeignKey(foreignKey, id.longValue());
+    persistence.clearCacheByForeignKey(foreignKey, id);
     cached = null;
   }
 }

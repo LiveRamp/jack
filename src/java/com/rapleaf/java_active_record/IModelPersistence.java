@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 
-public interface IModelPersistence<T extends ModelWithId<ID>, ID extends Number> extends Serializable {
+public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   /**
    * Update an existing T instance in the persistence.
    * @param model
@@ -20,13 +20,13 @@ public interface IModelPersistence<T extends ModelWithId<ID>, ID extends Number>
    * @return
    * @throws IOException
    */
-  public T find(ID id) throws IOException;
+  public T find(int id) throws IOException;
 
-  public void clearCacheById(ID id) throws IOException;
+  public void clearCacheById(int id) throws IOException;
 
-  public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
+  public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException;
 
-  public void clearCacheByForeignKey(String foreignKey, long id);
+  public void clearCacheByForeignKey(String foreignKey, int id);
 
   /**
    * Effectively the same as delete(model.getId()).
@@ -42,7 +42,7 @@ public interface IModelPersistence<T extends ModelWithId<ID>, ID extends Number>
    * @return
    * @throws IOException
    */
-  public boolean delete(ID id) throws IOException;
+  public boolean delete(int id) throws IOException;
 
   /**
    * Delete all records in this persistence.

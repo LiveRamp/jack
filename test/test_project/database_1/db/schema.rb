@@ -18,11 +18,6 @@ ActiveRecord::Schema.define(:version => 20110324000133) do
     t.integer "commented_on_id"
   end
 
-  create_table "followers", :id => false, :force => true do |t|
-    t.integer "follower_id"
-    t.integer "followed_id"
-  end
-
   create_table "images", :force => true do |t|
     t.integer "user_id"
   end

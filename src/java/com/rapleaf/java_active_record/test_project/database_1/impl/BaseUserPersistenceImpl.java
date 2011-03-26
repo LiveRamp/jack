@@ -30,7 +30,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public User create(final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
-    long __id = realCreate(new AttrSetter() {
+    int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (handle == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -134,7 +134,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   @Override
   protected User instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new User(rs.getLong("id"),
+    return new User(rs.getInt("id"),
       rs.getString("handle"),
       getLongOrNull(rs, "created_at_millis"),
       getIntOrNull(rs, "num_posts"),

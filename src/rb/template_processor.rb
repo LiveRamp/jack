@@ -85,7 +85,7 @@ class TemplateProcessor
   def self.render_create_method(model_defn, signature, only_not_null = false)
     field_names = "Arrays.asList(#{model_defn.fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| "\"#{x.name}\""}.join(", ")})"
     s =  "\n  public #{model_defn.model_name} create(#{signature}) throws IOException {\n"
-    s << "    long __id = realCreate(new AttrSetter() {\n"
+    s << "    int __id = realCreate(new AttrSetter() {\n"
     s << "      public void set(PreparedStatement stmt) throws SQLException {\n"
     x = 1
     model_defn.fields.each do |field_defn|

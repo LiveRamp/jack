@@ -30,7 +30,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException {
-    long __id = realCreate(new AttrSetter() {
+    int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (content == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -74,7 +74,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   @Override
   protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Comment(rs.getLong("id"),
+    return new Comment(rs.getInt("id"),
       rs.getString("content"),
       getIntOrNull(rs, "commenter_id"),
       getIntOrNull(rs, "commented_on_id"),

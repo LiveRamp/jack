@@ -24,15 +24,15 @@ public class Post extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private final BelongsToAssociation<User, Integer> __assoc_user;
+  private final BelongsToAssociation<User> __assoc_user;
   private final HasManyAssociation<Comment> __assoc_comments;
 
-  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
+  public Post(int id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
     super(id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User, Integer>(databases.getDatabase1().users(), user_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", id);
   }
 

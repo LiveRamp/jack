@@ -22,12 +22,12 @@ public class Image extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private final BelongsToAssociation<User, Integer> __assoc_user;
+  private final BelongsToAssociation<User> __assoc_user;
 
-  public Image(long id, final Integer user_id, IDatabases databases) {
+  public Image(int id, final Integer user_id, IDatabases databases) {
     super(id);
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User, Integer>(databases.getDatabase1().users(), user_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
   }
 
   public Integer getUserId(){

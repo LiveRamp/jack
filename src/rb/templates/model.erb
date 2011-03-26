@@ -30,7 +30,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   private final <%= assoc.java_type %> <%= assoc.field_name %>;
   <% end %>
 
-  public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
+  public <%= model_defn.model_name %>(int id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
     super(id);
   <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;

@@ -46,7 +46,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   @Override
   protected <%= model_defn.model_name %> instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new <%= model_defn.model_name %>(rs.getLong("id"),
+    return new <%= model_defn.model_name %>(rs.getInt("id"),
     <% model_defn.fields.each do |field_defn| %>
       <%= field_defn.get_from_rs %>,
     <% end %>

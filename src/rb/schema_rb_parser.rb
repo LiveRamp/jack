@@ -9,10 +9,11 @@ class SchemaRbParser
     line_no = 0
     # debugger
     while line_no < file_lines.size
+      line = file_lines[line_no]
       if file_lines[line_no] =~ /create_table/
-        model_defn = ModelDefn.new
+        model_defn = ModelDefn.new(file_lines[line_no])
 
-        model_defn.table_name = file_lines[line_no].match(/^\s*create_table "([^")]*)".*$/)[1]
+        # model_defn.table_name = file_lines[line_no].match(/^\s*create_table "([^")]*)".*$/)[1]
         model_defn.model_name = model_defn.table_name.singularize.camelcase
 
         # start sucking up the column statements

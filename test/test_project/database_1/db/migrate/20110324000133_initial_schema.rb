@@ -28,17 +28,18 @@ class InitialSchema < ActiveRecord::Migration
     
     # bigint primary key!
     # also, renamed associations so we can test the craziness in the models
-    create_table :comments, :id => :bigint do |t|
+    # create_table :comments, :id => :bigint do |t|
+    create_table :comments do |t|
       t.text :content
       t.integer :commenter_id
       t.integer :commented_on_id
     end
 
-    # no primary key!!!
-    create_table :followers, :id => false do |t|
-      t.integer :follower_id
-      t.integer :followed_id
-    end
+    # # no primary key!!!
+    # create_table :followers, :id => false do |t|
+    #   t.integer :follower_id
+    #   t.integer :followed_id
+    # end
   end
 
   def self.down

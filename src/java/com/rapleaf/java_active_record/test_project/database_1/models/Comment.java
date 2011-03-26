@@ -24,16 +24,16 @@ public class Comment extends ModelWithId {
   private Integer __commented_on_id;
 
   // Associations
-  private final BelongsToAssociation<User, Integer> __assoc_user;
-  private final BelongsToAssociation<Post, Integer> __assoc_post;
+  private final BelongsToAssociation<User> __assoc_user;
+  private final BelongsToAssociation<Post> __assoc_post;
 
-  public Comment(long id, final String content, final Integer commenter_id, final Integer commented_on_id, IDatabases databases) {
+  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, IDatabases databases) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
-    this.__assoc_user = new BelongsToAssociation<User, Integer>(databases.getDatabase1().users(), commenter_id);
-    this.__assoc_post = new BelongsToAssociation<Post, Integer>(databases.getDatabase1().posts(), commented_on_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), commenter_id);
+    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id);
   }
 
   public String getContent(){

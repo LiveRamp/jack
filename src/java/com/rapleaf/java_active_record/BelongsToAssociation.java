@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.Serializable;
 
 
-public class BelongsToAssociation<T extends ModelWithId<ID>, ID extends Number> implements Serializable {
-  private final IModelPersistence<T, ID> persistence;
-  private final ID id;
+public class BelongsToAssociation<T extends ModelWithId> implements Serializable {
+  private final IModelPersistence<T> persistence;
+  private final Integer id;
   private T cache;
 
-  public BelongsToAssociation(IModelPersistence<T, ID> persistence, ID id) {
+  public BelongsToAssociation(IModelPersistence<T> persistence, Integer id) {
     this.persistence = persistence;
     this.id = id;
   }

@@ -30,7 +30,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Image create(final Integer user_id) throws IOException {
-    long __id = realCreate(new AttrSetter() {
+    int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (user_id == null) {
           stmt.setNull(1, java.sql.Types.INTEGER);
@@ -54,7 +54,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   @Override
   protected Image instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Image(rs.getLong("id"),
+    return new Image(rs.getInt("id"),
       getIntOrNull(rs, "user_id"),
       databases
     );

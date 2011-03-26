@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extends Number> implements IModelPersistence<T, ID> {
+public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -25,7 +25,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extend
   private final List<String> fieldNames;
   private final String updateStatement;
 
-  protected final Map<ID, T> cachedById = new HashMap<ID, T>();
+  protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
 
   protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
@@ -56,14 +56,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extend
 
   protected abstract T instanceFromResultSet(ResultSet rs) throws SQLException;
 
-  protected long realCreate(AttrSetter attrSetter, String insertStatement) throws IOException {
+  protected int realCreate(AttrSetter attrSetter, String insertStatement) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(insertStatement);
     try {
       attrSetter.set(stmt);
       stmt.execute();
       ResultSet generatedKeys = stmt.getGeneratedKeys();
       generatedKeys.next();
-      long newId = generatedKeys.getLong(1);
+      int newId = generatedKeys.getInt(1);
       return newId;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -81,7 +81,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extend
     return sb.toString();
   }
 
-  public T find(ID id) throws IOException {
+  public T find(int id) throws IOException {
     T model = cachedById.get(id);
     if (model != null) {
       return model;
@@ -126,17 +126,17 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extend
   }
 
   @Override
-  public void clearCacheByForeignKey(String foreignKey, long id) {
+  public void clearCacheByForeignKey(String foreignKey, int id) {
     throw new NotImplementedException();
   }
 
   @Override
-  public void clearCacheById(ID id) throws IOException {
+  public void clearCacheById(int id) throws IOException {
     cachedById.remove(id);
   }
 
   @Override
-  public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException {
+  public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(String.format("SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
     ResultSet rs = null;
     try {
@@ -189,7 +189,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<ID>, ID extend
   }
 
   @Override
-  public boolean delete(ID id) throws IOException {
+  public boolean delete(int id) throws IOException {
     try {
       cachedById.remove(id);
       return conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id)).executeUpdate() == 1;

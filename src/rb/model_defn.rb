@@ -1,11 +1,21 @@
 class ModelDefn
-  attr_accessor :table_name, :model_name, :namespace, :database_defn
-  attr_reader :fields
+  attr_accessor :model_name, :namespace, :database_defn
+  attr_reader :fields, :table_name
   attr_accessor :associations
 
-  def initialize()
+  def initialize(decl_line)
     @fields = []
     @associations = []
+
+    @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
+    if decl_line =~ /:id => false/
+      raise "Table #{@table_name} appears not to have a primary key, which is currently unsupported."
+    end
+
+    # check if the primary key has been renamed
+    if decl_line =~ /:primary_key => "|'/
+      raise "Table #{@table_name} appears to have a renamed primary key, which is currently unsupported."
+    end
   end
   
   def iface_name

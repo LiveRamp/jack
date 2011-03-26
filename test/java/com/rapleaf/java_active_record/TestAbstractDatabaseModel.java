@@ -28,7 +28,6 @@ public class TestAbstractDatabaseModel extends TestCase {
     dbs.getDatabase1().users().deleteAll();
     dbs.getDatabase1().posts().deleteAll();
     dbs.getDatabase1().comments().deleteAll();
-    dbs.getDatabase1().followers().deleteAll();
   }
 
   public void testCreate() throws Exception {
@@ -119,8 +118,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    // TODO: this cast shouldn't be necessary
-    Post p1 = posts.create("title", System.currentTimeMillis(), (int)u1.getId());
+    Post p1 = posts.create("title", System.currentTimeMillis(), u1.getId());
     assertEquals(u1, p1.getUser());
   }
 
@@ -129,7 +127,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IImagePersistence images = dbs.getDatabase1().images();
-    Image image = images.create((int) u1.getId());
+    Image image = images.create(u1.getId());
     assertEquals(u1, image.getUser());
   }
 
@@ -138,9 +136,9 @@ public class TestAbstractDatabaseModel extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title1", System.currentTimeMillis(), (int)u1.getId());
-    Post p2 = posts.create("title2", System.currentTimeMillis(), (int)u1.getId());
-    Post p3 = posts.create("title3", System.currentTimeMillis(), (int)u1.getId());
+    Post p1 = posts.create("title1", System.currentTimeMillis(), u1.getId());
+    Post p2 = posts.create("title2", System.currentTimeMillis(), u1.getId());
+    Post p3 = posts.create("title3", System.currentTimeMillis(), u1.getId());
 
     assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
@@ -167,7 +165,7 @@ public class TestAbstractDatabaseModel extends TestCase {
   public void testDelete() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1);
-    long id = post.getId();
+    int id = post.getId();
     posts.delete(id);
     assertNull(posts.find(id));
   }

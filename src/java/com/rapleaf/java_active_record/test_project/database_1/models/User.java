@@ -32,11 +32,9 @@ public class User extends ModelWithId {
   // Associations
   private final HasManyAssociation<Post> __assoc_posts;
   private final HasManyAssociation<Comment> __assoc_comments;
-  private final HasManyAssociation<Follower> __assoc_followers;
-  private final HasManyAssociation<Follower> __assoc_followees;
   private final HasOneAssociation<Image> __assoc_image;
 
-  public User(long id, final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
+  public User(int id, final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
     super(id);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -49,8 +47,6 @@ public class User extends ModelWithId {
     this.__some_boolean = some_boolean;
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
-    this.__assoc_followers = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "followed_id", id);
-    this.__assoc_followees = new HasManyAssociation<Follower>(databases.getDatabase1().followers(), "follower_id", id);
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "image_id", id);
   }
 
@@ -132,14 +128,6 @@ public class User extends ModelWithId {
   
   public Set<Comment> getComments() throws IOException {
     return __assoc_comments.get();
-  }
-  
-  public Set<Follower> getFollowers() throws IOException {
-    return __assoc_followers.get();
-  }
-  
-  public Set<Follower> getFollowees() throws IOException {
-    return __assoc_followees.get();
   }
   
   public Image getImage() throws IOException {
