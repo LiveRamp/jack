@@ -60,5 +60,17 @@ If you have more than one project, here's the setup we suggest. (We use this our
 Running the Generator
 ====
 
+Running the Jack generator is easy. From a fresh clone, do the following:
+
+    export PATH=$PATH:`pwd`/src/rb
+
+Then, change directories to wherever your project.yml lives and run:
+
+    ruby jack.rb project.yml /path/for/generated/code
+
+Assuming everything is configured correctly, that's it.
+
+__ Note: We know that the path thing stinks. We're going to improve this in a future version. __
+
 Layout of the Generated Code
 ====
