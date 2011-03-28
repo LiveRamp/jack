@@ -74,3 +74,33 @@ _Note: We know that the path thing stinks. We're going to improve this in a futu
 
 Layout of the Generated Code
 ====
+
+The Java code that Jack produces is designed around interfaces so that it is very modular and mockable.
+
+### Models ###
+
+The generated models contain getters and setters for all the fields, as well as getters for detected associations. In contrast to ActiveRecord models, there are no CRUD methods on the Java models.
+
+### Model Persistences ###
+
+This is where the CRUD methods live. The generic base class supports:
+
+- find
+- find all (with and without conditions)
+- finding by foreign key
+- delete by id or instance
+- delete all
+- save (update)
+- cache manipulators
+
+while there is a unique, per-model interface and implementation that additionally provides:
+
+- create
+
+### Databases ###
+
+You get one Database per database entry in your project.yml. Their main purpose is to provide a collection of all the individual model persistences.
+
+### All Databases ###
+
+Finally, there is one overarching Databases class that serves as a collection for all of the databases configured in your project.yml. Generally, this is what you will instantiate, though you can subsequently get the Database or Persistence instance you actually care about and use that.
