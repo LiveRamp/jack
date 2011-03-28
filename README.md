@@ -70,7 +70,7 @@ Then, change directories to wherever your project.yml lives and run:
 
 Assuming everything is configured correctly, that's it.
 
-_ Note: We know that the path thing stinks. We're going to improve this in a future version. _
+_Note: We know that the path thing stinks. We're going to improve this in a future version._
 
 Layout of the Generated Code
 ====
