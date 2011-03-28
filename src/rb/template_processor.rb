@@ -15,6 +15,8 @@
 class TemplateProcessor
   private
 
+  JACK_NAMESPACE = "com.rapleaf.jack"
+
   def self.adjust(s) 
     s.gsub(/^\s+<%(.*).%>$/, "<%\\1%>")
   end

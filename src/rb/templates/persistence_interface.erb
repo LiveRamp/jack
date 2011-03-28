@@ -20,7 +20,7 @@ package <%= root_package %>.iface;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import java.io.IOException;
 
-import com.rapleaf.java_active_record.IModelPersistence;
+import <%= JACK_NAMESPACE %>.IModelPersistence;
 
 public interface <%= model_defn.iface_name %> extends IModelPersistence<<%= model_defn.model_name %>> {
   public <%= model_defn.model_name %> create(<%= create_signature_full %>) throws IOException;

@@ -1,4 +1,4 @@
-package com.rapleaf.java_active_record;
+package com.rapleaf.jack;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -8,14 +8,15 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.rapleaf.java_active_record.test_project.DatabasesImpl;
-import com.rapleaf.java_active_record.test_project.IDatabases;
-import com.rapleaf.java_active_record.test_project.database_1.iface.IImagePersistence;
-import com.rapleaf.java_active_record.test_project.database_1.iface.IPostPersistence;
-import com.rapleaf.java_active_record.test_project.database_1.iface.IUserPersistence;
-import com.rapleaf.java_active_record.test_project.database_1.models.Image;
-import com.rapleaf.java_active_record.test_project.database_1.models.Post;
-import com.rapleaf.java_active_record.test_project.database_1.models.User;
+import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.test_project.DatabasesImpl;
+import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
+import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
+import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
+import com.rapleaf.jack.test_project.database_1.models.Image;
+import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.models.User;
 
 public class TestAbstractDatabaseModel extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");

@@ -17,7 +17,7 @@
 package <%= root_package %>.impl;
 
 import <%= root_package %>.I<%=db_name%>;
-import com.rapleaf.java_active_record.DatabaseConnection;
+import <%= JACK_NAMESPACE %>.DatabaseConnection;
 
 <% model_defns.each do |model_defn| %>
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
