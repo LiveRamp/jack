@@ -12,10 +12,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.rapleaf.java_active_record;
+package com.rapleaf.jack;
 
-import java.io.Serializable;
-
-public interface IDb extends Serializable {
-
+public class DbFixtures {
+  protected static String getTruncateTableStmt(String tableName) {
+    return "truncate table " + tableName;
+  }
 }

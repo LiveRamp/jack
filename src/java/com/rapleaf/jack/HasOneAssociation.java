@@ -12,32 +12,33 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.rapleaf.java_active_record;
+package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-
-public class BelongsToAssociation<T extends ModelWithId> implements Serializable {
+public class HasOneAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
-  private final Integer id;
-  private T cache;
+  private final String foreignKey;
+  private final int id;
+  private T cached;
 
-  public BelongsToAssociation(IModelPersistence<T> persistence, Integer id) {
+  public HasOneAssociation(IModelPersistence<T> persistence,
+      String foreignKey, int id) {
     this.persistence = persistence;
+    this.foreignKey = foreignKey;
     this.id = id;
   }
 
   public T get() throws IOException {
-    if (id == null) return null;
-    if (cache == null) {
-      cache = persistence.find(id);
+    if (cached == null) {
+      cached = (T) persistence.findAllByForeignKey(foreignKey, id).toArray()[0];
     }
-    return cache;
+    return cached;
   }
 
   public void clearCache() throws IOException {
-    persistence.clearCacheById(id);
-    cache = null;
+    persistence.clearCacheByForeignKey(foreignKey, id);
+    cached = null;
   }
 }
