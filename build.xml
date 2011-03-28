@@ -1,4 +1,4 @@
-<project name="java_active_record" default="dist" basedir=".">
+<project name="jack" default="dist" basedir=".">
   <property name="version" value="0.1.0" />
 
   <property environment="env" />
@@ -23,7 +23,7 @@
 
   <property name="config.dir" location="${basedir}/config"/>
 
-  <property name="jar.file" location="${build}/java_active_record.jar" />
+  <property name="jar.file" location="${build}/jack.jar" />
 
   <fileset id="jars" dir="${lib}" includes="*.jar" />
 
