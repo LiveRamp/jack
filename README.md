@@ -45,6 +45,18 @@ The project definition file is a YAML file that tells Jack where to find your Ra
 
 ### Rails Projects ###
 
+Jack supports generating code for an arbitrary number of inter-related Rails 3 projects. If you only have one Rails project, then things are easy - just configure your project.yml appropriately.
+
+If you have more than one project, here's the setup we suggest. (We use this ourselves.)
+
+    /all_my_databases
+      /project.yml 
+      /rails_project_1
+      /rails_project_2
+    /ruby_project_that_uses_rails_project_2
+      /include/rails_project_2              # <= svn external to /all_my_databases/rails_project_2
+
+
 Running the Generator
 ====
 
