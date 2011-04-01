@@ -68,7 +68,13 @@
     </exec>
   </target>
 
-  <target name="test" depends="compile-test,setup-db" description="Run the unit test suite">
+  <target name="generate">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c test/regen_code.sh" />
+    </exec>
+  </target>
+
+  <target name="test" depends="compile-test,setup-db,generate" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
       printsummary="yes" showoutput="${test.output}" 
