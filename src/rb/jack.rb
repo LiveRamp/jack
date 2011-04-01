@@ -14,40 +14,48 @@
 
 require File.expand_path(File.dirname(__FILE__)) + "/requires.rb"
 
-project_yml = ARGV[0]
-output_dir = ARGV[1]
-base_dir = File.dirname(project_yml)
+class Jack
+  def self.run(argv)
+    project_yml = argv[0]
+    output_dir = argv[1]
+    base_dir = File.dirname(project_yml)
 
-project_defn = ProjectDefn.new(YAML.load(File.open(project_yml)))
+    project_defn = ProjectDefn.new(YAML.load(File.open(project_yml)))
 
-model_defns_by_namespace_table_names = {}
+    model_defns_by_namespace_table_names = {}
 
-# initial pass to establish all the tables
-project_defn.databases.each do |database_defn|
-  model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
+    # initial pass to establish all the tables
+    project_defn.databases.each do |database_defn|
+      model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
 
-  model_defns = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
-  model_defns.each do |model_defn|
-    model_defn.database_defn = database_defn
-    model_defn.namespace = database_defn.namespace
-    by_table_name[model_defn.table_name] = model_defn
-  end
-end
-
-# second pass to accumulate all the associations
-project_defn.databases.each do |database|
-  by_table_name = model_defns_by_namespace_table_names[database.namespace]
-
-  ModelsDirProcessor.process(base_dir, database, by_table_name)
-
-  by_table_name.values.each do |model_defn|
-    model_defn.associations.each do |assoc_defn|
-      assoc_defn.find_model(model_defns_by_namespace_table_names)
+      model_defns = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
+      model_defns.each do |model_defn|
+        model_defn.database_defn = database_defn
+        model_defn.namespace = database_defn.namespace
+        by_table_name[model_defn.table_name] = model_defn
+      end
     end
-    model_defn.associations.reject!{|assoc_defn| assoc_defn.defunct}
-    model_defn.validate
+
+    # second pass to accumulate all the associations
+    project_defn.databases.each do |database|
+      by_table_name = model_defns_by_namespace_table_names[database.namespace]
+
+      ModelsDirProcessor.process(base_dir, database, by_table_name)
+
+      by_table_name.values.each do |model_defn|
+        model_defn.associations.each do |assoc_defn|
+          assoc_defn.find_model(model_defns_by_namespace_table_names)
+        end
+        model_defn.associations.reject!{|assoc_defn| assoc_defn.defunct}
+        model_defn.validate
+      end
+    end
+
+    # third pass to generate the files
+    TemplateProcessor.process(project_defn, output_dir, model_defns_by_namespace_table_names)
   end
 end
 
-# third pass to generate the files
-TemplateProcessor.process(project_defn, output_dir, model_defns_by_namespace_table_names)
+if $0 == __FILE__
+  Jack.run(ARGV)
+end
