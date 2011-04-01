@@ -173,7 +173,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       rs = stmt.executeQuery();
       ret = new HashSet<T>();
       while (rs.next()) {
-        ret.add(instanceFromResultSet(rs));
+        T inst = instanceFromResultSet(rs);
+        cachedById.put(inst.getId(), inst);
+        ret.add(inst);
       }
       
       foreignKeyCache.put(id, ret);
