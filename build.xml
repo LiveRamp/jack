@@ -61,14 +61,14 @@
 
   <target name="setup-db">
     <exec executable="/bin/sh" failonerror="true">
-      <arg line="-c cat test/databases.sql | mysql -uroot" />
+      <arg line="-c test/create_databases.sh" />
     </exec>
     <exec executable="/bin/sh" failonerror="true">
       <arg line="test/migrate_project.sh test/test_project/database_1" />
     </exec>
   </target>
 
-  <target name="test" depends="compile-test" description="Run the unit test suite">
+  <target name="test" depends="compile-test,setup-db" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
       printsummary="yes" showoutput="${test.output}" 
