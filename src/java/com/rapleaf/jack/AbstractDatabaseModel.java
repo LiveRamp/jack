@@ -40,6 +40,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   private final String updateStatement;
 
   protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
+  protected final Map<String, Map<Integer, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Integer, Set<T>>>();
 
   protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
@@ -141,7 +142,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public void clearCacheByForeignKey(String foreignKey, int id) {
-    throw new NotImplementedException();
+    Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
+    if (foreignKeyCache != null) {
+      foreignKeyCache.remove(id);
+    }
   }
 
   @Override
@@ -151,14 +155,31 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException {
+    Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
+    Set<T> ret;
+    if (foreignKeyCache != null) {
+      ret = foreignKeyCache.get(id);
+      if (ret != null) {
+        return ret;
+      }
+    } else {
+      foreignKeyCache = new HashMap<Integer, Set<T>>();
+      cachedByForeignKey.put(foreignKey, foreignKeyCache);
+    }
+    
     PreparedStatement stmt = conn.getPreparedStatement(String.format("SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
-      Set<T> ret = new HashSet<T>();
+      ret = new HashSet<T>();
       while (rs.next()) {
-        ret.add(instanceFromResultSet(rs));
+        T inst = instanceFromResultSet(rs);
+        cachedById.put(inst.getId(), inst);
+        ret.add(inst);
       }
+      
+      foreignKeyCache.put(id, ret);
+      
       return ret;
     } catch (SQLException e) {
       throw new IOException(e);

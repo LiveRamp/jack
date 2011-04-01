@@ -11,9 +11,11 @@ import junit.framework.TestCase;
 import com.rapleaf.jack.DatabaseConnection;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
+import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
@@ -79,6 +81,30 @@ public class TestAbstractDatabaseModel extends TestCase {
     User u1 = users.find(user.getId());
     User u2 = users.find(user.getId());
     assertTrue(u1 == u2);
+  }
+
+  public void testFindAllByForeignKey() throws Exception {
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    int userId = 1;
+    Comment c1 = comments.create("comment1", userId, 1);
+    Comment c2 = comments.create("comment2", userId, 1);
+    Comment c3 = comments.create("comment3", userId, 1);
+
+    Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
+    assertEquals(3, userComments.size());
+    //TODO: test that elements of set are correct
+  }
+
+  public void testFindAllByForeignKeyCache() throws Exception {
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    int userId = 1;
+    comments.create("comment1", userId, 1);
+    comments.create("comment2", userId, 1);
+    comments.create("comment3", userId, 1);
+
+    Set<Comment> c1 = comments.findAllByForeignKey("commenter_id", userId);
+    Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
+    assertTrue(c1 == c2);
   }
 
   public void testFindAllAndCache() throws Exception {
