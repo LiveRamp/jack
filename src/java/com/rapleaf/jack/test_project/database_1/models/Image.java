@@ -39,8 +39,14 @@ public class Image extends ModelWithId {
   public void setUserId(Integer newval){
     this.__user_id = newval;
   }
-  
+
   public User getUser() throws IOException {
     return __assoc_user.get();
+  }
+
+  public String toString() {
+    return "<Image "
+      + "user_id: " + __user_id
+      + ">";
   }
 }

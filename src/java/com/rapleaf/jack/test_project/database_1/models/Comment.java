@@ -61,12 +61,20 @@ public class Comment extends ModelWithId {
   public void setCommentedOnId(Integer newval){
     this.__commented_on_id = newval;
   }
-  
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
-  
+
   public Post getPost() throws IOException {
     return __assoc_post.get();
+  }
+
+  public String toString() {
+    return "<Comment "
+      + "content: " + __content
+      + "commenter_id: " + __commenter_id
+      + "commented_on_id: " + __commented_on_id
+      + ">";
   }
 }

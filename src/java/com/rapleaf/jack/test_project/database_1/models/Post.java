@@ -61,12 +61,20 @@ public class Post extends ModelWithId {
   public void setUserId(Integer newval){
     this.__user_id = newval;
   }
-  
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
-  
+
   public Set<Comment> getComments() throws IOException {
     return __assoc_comments.get();
+  }
+
+  public String toString() {
+    return "<Post "
+      + "title: " + __title
+      + "posted_at_millis: " + __posted_at_millis
+      + "user_id: " + __user_id
+      + ">";
   }
 }

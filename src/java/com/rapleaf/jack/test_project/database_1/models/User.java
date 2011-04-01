@@ -123,16 +123,30 @@ public class User extends ModelWithId {
   public void setSomeBoolean(Boolean newval){
     this.__some_boolean = newval;
   }
-  
+
   public Set<Post> getPosts() throws IOException {
     return __assoc_posts.get();
   }
-  
+
   public Set<Comment> getComments() throws IOException {
     return __assoc_comments.get();
   }
-  
+
   public Image getImage() throws IOException {
     return __assoc_image.get();
+  }
+
+  public String toString() {
+    return "<User "
+      + "handle: " + __handle
+      + "created_at_millis: " + __created_at_millis
+      + "num_posts: " + __num_posts
+      + "some_date: " + __some_date
+      + "some_datetime: " + __some_datetime
+      + "bio: " + __bio
+      + "some_binary: " + __some_binary
+      + "some_float: " + __some_float
+      + "some_boolean: " + __some_boolean
+      + ">";
   }
 }
