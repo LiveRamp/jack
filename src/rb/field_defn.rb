@@ -18,6 +18,15 @@ class FieldDefn
     @data_type = data_type
     @args = args
     @ordinal = ordinal
+    
+    @nullable = true
+    if args[":not_null"] && args[":not_null"] == "true"
+      @nullable = false
+    end
+  end
+
+  def nullable?
+    @nullable
   end
 
   def is_long?
