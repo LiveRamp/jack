@@ -28,11 +28,11 @@ class AssociationDefn
     else
       case @type
         when "belongs_to"
-          @assoc_model_name = camelize(@name)
+          @assoc_model_name = @name.camelcase
         when "has_one"
-          @assoc_model_name = camelize(@name)
+          @assoc_model_name = @name.camelcase
         when "has_many"
-          @assoc_model_name = camelize(@name.singularize)
+          @assoc_model_name = @name.singularize.camelcase
       end
     end
 

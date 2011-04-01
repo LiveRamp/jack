@@ -147,9 +147,9 @@ class FieldDefn
 
   def getter
     if data_type == :boolean
-      "is#{camelize(name)}()"
+      "is#{name.camelcase}()"
     else
-      "get#{camelize(name)}()"
+      "get#{name.camelcase}()"
     end
   end
   

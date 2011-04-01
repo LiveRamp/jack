@@ -63,7 +63,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
     return __<%= field_defn.name %>;
   }
 
-  public void set<%= camelize(field_defn.name) %>(<%= field_defn.java_type %> newval){
+  public void set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
     this.__<%= field_defn.name %> = newval;
   }
 <% end %>
