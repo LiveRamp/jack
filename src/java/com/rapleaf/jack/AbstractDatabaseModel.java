@@ -155,20 +155,27 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException {
+    Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
+    Set<T> ret;
+    if (foreignKeyCache != null) {
+      ret = foreignKeyCache.get(id);
+      if (ret != null) {
+        return ret;
+      }
+    } else {
+      foreignKeyCache = new HashMap<Integer, Set<T>>();
+      cachedByForeignKey.put(foreignKey, foreignKeyCache);
+    }
+    
     PreparedStatement stmt = conn.getPreparedStatement(String.format("SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
-      Set<T> ret = new HashSet<T>();
+      ret = new HashSet<T>();
       while (rs.next()) {
         ret.add(instanceFromResultSet(rs));
       }
       
-      Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
-      if (foreignKeyCache == null) {
-        foreignKeyCache = new HashMap<Integer, Set<T>>();
-        cachedByForeignKey.put(foreignKey, foreignKeyCache);
-      }
       foreignKeyCache.put(id, ret);
       
       return ret;

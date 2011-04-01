@@ -90,7 +90,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     Comment c2 = comments.create("comment2", userId, 1);
     Comment c3 = comments.create("comment3", userId, 1);
 
-    Set<Comment> userComments = comments.findAllByForeignKey("user_id", userId);
+    Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
     //TODO: test that elements of set are correct
   }
@@ -102,8 +102,8 @@ public class TestAbstractDatabaseModel extends TestCase {
     comments.create("comment2", userId, 1);
     comments.create("comment3", userId, 1);
 
-    Set<Comment> c1 = comments.findAllByForeignKey("user_id", userId);
-    Set<Comment> c2 = comments.findAllByForeignKey("user_id", userId);
+    Set<Comment> c1 = comments.findAllByForeignKey("commenter_id", userId);
+    Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
     assertTrue(c1 == c2);
   }
 
