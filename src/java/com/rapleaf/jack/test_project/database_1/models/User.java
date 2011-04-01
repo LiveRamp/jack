@@ -116,7 +116,7 @@ public class User extends ModelWithId {
     this.__some_float = newval;
   }
 
-  public Boolean getSomeBoolean(){
+  public Boolean isSomeBoolean(){
     return __some_boolean;
   }
 

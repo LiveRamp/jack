@@ -107,7 +107,11 @@ class FieldDefn
 
 
   def getter
-    "get#{camelize(name)}()"
+    if data_type == :boolean
+      "is#{camelize(name)}()"
+    else
+      "get#{camelize(name)}()"
+    end
   end
   
   def post_modifier
