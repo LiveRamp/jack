@@ -69,9 +69,17 @@ public class <%=model_defn.model_name%> extends ModelWithId {
 <% end %>
 
 <% model_defn.associations.each do |a| %>
-  
+
   public <%= a.assoc_getter_type %> <%= a.assoc_getter %>() throws IOException {
     return <%= a.field_name %>.get();
   }
 <% end %>
+
+  public String toString() {
+    return "<<%= model_defn.model_name %> "
+      <% model_defn.fields.each do |field_defn| %>
+      + "<%= field_defn.name %>: " + __<%= field_defn.name %>
+      <% end %>
+      + ">";
+  }
 }

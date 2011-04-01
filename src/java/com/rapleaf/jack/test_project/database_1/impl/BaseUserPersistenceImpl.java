@@ -126,10 +126,10 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     } else {
       stmt.setDouble(8, model.getSomeFloat());
     }
-    if (model.getSomeBoolean() == null) {
+    if (model.isSomeBoolean() == null) {
       stmt.setNull(9, java.sql.Types.BOOLEAN);
     } else {
-      stmt.setBoolean(9, model.getSomeBoolean());
+      stmt.setBoolean(9, model.isSomeBoolean());
     }
     stmt.setLong(10, model.getId());
   }

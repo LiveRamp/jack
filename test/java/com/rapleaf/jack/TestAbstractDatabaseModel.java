@@ -48,7 +48,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals("this is a relatively long string", bryand.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand.getSomeBinary()));
     assertEquals(1.2, bryand.getSomeFloat());
-    assertTrue(bryand.getSomeBoolean());
+    assertTrue(bryand.isSomeBoolean());
   }
 
   public void testFind() throws Exception {
@@ -71,7 +71,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals("this is a relatively long string", bryand_again.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
     assertEquals(1.2, bryand_again.getSomeFloat());
-    assertTrue(bryand_again.getSomeBoolean());
+    assertTrue(bryand_again.isSomeBoolean());
   }
 
   public void testFindCache() throws Exception {
