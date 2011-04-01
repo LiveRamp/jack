@@ -24,7 +24,7 @@ class SchemaRbParser
       line = file_lines.shift
       if line =~ /ActiveRecord::Schema.define\(:version => \d+\) do/
         migration_number = line.match(/ActiveRecord::Schema.define\(:version => (\d+)\) do/)[1]
-      elsif line =~ /create_table/
+      elsif line =~ /create_table/ && line !~ /schema_info/
         model_defn = ModelDefn.new(line, migration_number)
 
         ordinal = 0
