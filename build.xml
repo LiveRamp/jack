@@ -74,6 +74,12 @@
     </exec>
   </target>
 
+  <target name="rspec">
+    <exec executable="rspec" failonerror="true">
+      <arg line="test/rb" />
+    </exec>
+  </target>
+
   <target name="test" depends="compile-test,setup-db,generate" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
