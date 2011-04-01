@@ -2,9 +2,9 @@ class InitialSchema < ActiveRecord::Migration
   def self.up
     # get a table that has an example of every type
     create_table :users do |t|
-      t.string :handle
+      t.string :handle, :null => false
       t.integer :created_at_millis, :limit => 8
-      t.integer :num_posts
+      t.integer :num_posts, :null => false
       t.date :some_date
       t.datetime :some_datetime
       t.text :bio

@@ -23,7 +23,7 @@ public class User extends ModelWithId {
   // Fields
   private String __handle;
   private Long __created_at_millis;
-  private Integer __num_posts;
+  private int __num_posts;
   private Long __some_date;
   private Long __some_datetime;
   private String __bio;
@@ -36,7 +36,7 @@ public class User extends ModelWithId {
   private final HasManyAssociation<Comment> __assoc_comments;
   private final HasOneAssociation<Image> __assoc_image;
 
-  public User(int id, final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
+  public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
     super(id);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -68,11 +68,11 @@ public class User extends ModelWithId {
     this.__created_at_millis = newval;
   }
 
-  public Integer getNumPosts(){
+  public int getNumPosts(){
     return __num_posts;
   }
 
-  public void setNumPosts(Integer newval){
+  public void setNumPosts(int newval){
     this.__num_posts = newval;
   }
 

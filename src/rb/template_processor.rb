@@ -67,7 +67,7 @@ class TemplateProcessor
 
     model_defns.each do |model_defn|
       create_signature_full = model_defn.fields.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-      create_signature_small = model_defn.fields.select{|field_defn| field_defn.args[":null"] == "false"}.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
+      create_signature_small = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
       create_signature_small = create_signature_full == create_signature_small || create_signature_small.empty? ? nil : create_signature_small
 
       file = File.new("#{output_dir}/models/#{model_defn.model_name}.java", "w")
@@ -104,12 +104,16 @@ class TemplateProcessor
     s << "      public void set(PreparedStatement stmt) throws SQLException {\n"
     x = 1
     model_defn.fields.each do |field_defn|
-      if field_defn.args[":null"] == "false" || !only_not_null
-        s << "        if (#{field_defn.name} == null) {\n"
-        s << "          stmt.setNull(#{x}, java.sql.Types.#{field_defn.sql_type});\n"
-        s << "        } else {\n"
+      if !field_defn.nullable? || !only_not_null
+        if field_defn.nullable?
+          s << "        if (#{field_defn.name} == null) {\n"
+          s << "          stmt.setNull(#{x}, java.sql.Types.#{field_defn.sql_type});\n"
+          s << "        } else {\n"
+        end
         s << "          stmt.set#{field_defn.prep_stmt_type}(#{x}, #{field_defn.prep_stmt_modifier(field_defn.name)});\n"
-        s << "        }\n"
+        if field_defn.nullable?
+          s << "        }\n"
+        end
         x+= 1
       end
     end

@@ -13,5 +13,6 @@ import java.io.IOException;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface IUserPersistence extends IModelPersistence<User> {
-  public User create(final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException;
+  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException;
+  public User create(final String handle, final int num_posts) throws IOException;
 }

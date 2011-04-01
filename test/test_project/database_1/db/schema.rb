@@ -29,9 +29,9 @@ ActiveRecord::Schema.define(:version => 20110324000133) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "handle"
+    t.string   "handle",                         :null => false
     t.integer  "created_at_millis", :limit => 8
-    t.integer  "num_posts"
+    t.integer  "num_posts",                      :null => false
     t.date     "some_date"
     t.datetime "some_datetime"
     t.text     "bio"

@@ -31,24 +31,16 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     this.databases = databases;
   }
 
-  public User create(final String handle, final Long created_at_millis, final Integer num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
-        if (handle == null) {
-          stmt.setNull(1, java.sql.Types.CHAR);
-        } else {
           stmt.setString(1, handle);
-        }
         if (created_at_millis == null) {
           stmt.setNull(2, java.sql.Types.INTEGER);
         } else {
           stmt.setLong(2, created_at_millis);
         }
-        if (num_posts == null) {
-          stmt.setNull(3, java.sql.Types.INTEGER);
-        } else {
           stmt.setInt(3, num_posts);
-        }
         if (some_date == null) {
           stmt.setNull(4, java.sql.Types.DATE);
         } else {
@@ -84,11 +76,19 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
   }
 
+  public User create(final String handle, final int num_posts) throws IOException {
+    int __id = realCreate(new AttrSetter() {
+      public void set(PreparedStatement stmt) throws SQLException {
+          stmt.setString(1, handle);
+          stmt.setInt(2, num_posts);
+      }
+    }, getInsertStatement(Arrays.asList("handle", "num_posts")));
+    return new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
+  }
+
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
-    if (model.getHandle() == null) {
-      stmt.setNull(1, java.sql.Types.CHAR);
-    } else {
+    {
       stmt.setString(1, model.getHandle());
     }
     if (model.getCreatedAtMillis() == null) {
@@ -96,9 +96,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     } else {
       stmt.setLong(2, model.getCreatedAtMillis());
     }
-    if (model.getNumPosts() == null) {
-      stmt.setNull(3, java.sql.Types.INTEGER);
-    } else {
+    {
       stmt.setInt(3, model.getNumPosts());
     }
     if (model.getSomeDate() == null) {

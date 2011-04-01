@@ -40,7 +40,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
     assertEquals("bryand", bryand.getHandle());
     assertEquals(Long.valueOf(t0), bryand.getCreatedAtMillis());
-    assertEquals(Integer.valueOf(5), bryand.getNumPosts());
+    assertEquals(5, bryand.getNumPosts());
     assertEquals(Long.valueOf(t1), bryand.getSomeDate());
     assertEquals(Long.valueOf(t2), bryand.getSomeDatetime());
     assertEquals("this is a relatively long string", bryand.getBio());
@@ -61,7 +61,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(bryand.getId(), bryand_again.getId());
     assertEquals("bryand", bryand_again.getHandle());
     assertEquals(Long.valueOf(t0), bryand_again.getCreatedAtMillis());
-    assertEquals(Integer.valueOf(5), bryand_again.getNumPosts());
+    assertEquals(5, bryand_again.getNumPosts());
     // need to figure out what the appropriate rounding is...
 //    assertEquals(Long.valueOf(t1), bryand_again.getSomeDate());
     // need to figure out what the appropriate roudning is...
