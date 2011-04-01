@@ -58,8 +58,23 @@
   <target name="compile-test" depends="dist,init-test">
     <javac debug="true" srcdir="${test.src.dir}" destdir="${build.test}" classpathref="test.classpath" />
   </target>
-  
-  <target name="test" depends="compile-test" description="Run the unit test suite">
+
+  <target name="setup-db">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c test/create_databases.sh" />
+    </exec>
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="test/migrate_project.sh test/test_project/database_1" />
+    </exec>
+  </target>
+
+  <target name="generate">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c test/regen_code.sh" />
+    </exec>
+  </target>
+
+  <target name="test" depends="compile-test,setup-db,generate" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
       printsummary="yes" showoutput="${test.output}" 
@@ -109,16 +124,14 @@
   
   <!-- TODO: need to build several jars here -->
   <target name="dist" depends="compile" description="Build a distributable jar">
-    <!-- <mkdir dir="${build}/META-INF"/> -->
-    <!-- <copy file="${thrift.root}/LICENSE" tofile="${build}/META-INF/LICENSE.txt"/> -->
-    <!-- <copy file="${thrift.root}/NOTICE" tofile="${build}/META-INF/NOTICE.txt"/> -->
     <jar jarfile="${jar.file}">
       <fileset dir="${build.classes}">
+        <exclude name="**/test_project/**/*.class"/>
         <include name="**/*.class" />
-        <!-- <include name="META-INF/*.txt" /> -->
       </fileset>
       <fileset dir="${src.java}">
         <include name="**/*.java" />
+        <exclude name="**/test_project/**/*.java"/>
       </fileset>
     </jar>
   </target>

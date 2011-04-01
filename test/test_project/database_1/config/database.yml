@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  database: java_active_record_database_1
+  database: jack_1
   user: root
   socket: /tmp/mysql.sock
   pool: 5
