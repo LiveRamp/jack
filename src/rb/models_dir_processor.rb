@@ -37,7 +37,7 @@ class ModelsDirProcessor
         parse_associations(model_content_lines, "has_many", md, ":through") +
         parse_associations(model_content_lines, "has_one", md)
     else
-      raise "didn't find a match for #{table_name}"
+      puts "didn't find a match for #{table_name}"
     end
   end
 
