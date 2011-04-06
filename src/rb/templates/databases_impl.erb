@@ -35,7 +35,7 @@ public class DatabasesImpl implements IDatabases {
 
   public DatabasesImpl() {
     <% project_defn.databases.each do |db| %>
-    this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.downcase.sub(/sprucedb/, "spruce_db") %>"), this);
+    this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this);
     <% end %>
   }
 
