@@ -1,7 +1,22 @@
 require 'rubygems'
 require 'erb'
 require "fileutils"
-require "rails"
+
+# Set up gems listed in the Gemfile.
+gemfile = ARGV[0]
+begin
+  ENV['BUNDLE_GEMFILE'] = gemfile
+  require 'bundler'
+  Bundler.setup
+rescue Bundler::GemNotFound => e
+  STDERR.puts e.message
+  STDERR.puts "Try running `bundle install`."
+  exit!
+end if File.exist?(gemfile)
+
+
+require 'rails/all'
+
 
 
 require File.expand_path(File.dirname(__FILE__) + "/association_defn")
