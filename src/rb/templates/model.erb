@@ -51,7 +51,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;
   <% end %>
-  
+
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
   <% end %>
@@ -76,9 +76,9 @@ public class <%=model_defn.model_name%> extends ModelWithId {
 <% end %>
 
   public String toString() {
-    return "<<%= model_defn.model_name %> "
+    return "<<%= model_defn.model_name %>"
       <% model_defn.fields.each do |field_defn| %>
-      + "<%= field_defn.name %>: " + __<%= field_defn.name %>
+      + " <%= field_defn.name %>: " + __<%= field_defn.name %>
       <% end %>
       + ">";
   }
