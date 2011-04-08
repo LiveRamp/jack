@@ -16,8 +16,8 @@ require File.expand_path(File.dirname(__FILE__)) + "/requires.rb"
 
 class Jack
   def self.run(argv)
-    project_yml = argv[1]
-    output_dir = argv[2]
+    project_yml = argv[0]
+    output_dir = argv[1]
     base_dir = File.dirname(project_yml)
 
     project_defn = ProjectDefn.new(YAML.load(File.open(project_yml)))
