@@ -55,7 +55,7 @@
     <javac srcdir="${src.java}" destdir="${build.classes}" debug="true" classpathref="compile.classpath" />
   </target>
   
-  <target name="init-test">
+  <target name="init-test" depends="init">
     <mkdir dir="${build.test}" />
   </target>
 
@@ -69,7 +69,7 @@
     </exec>
   </target>
 
-  <target name="setup-db" depends="configure-ruby-database-yml">
+  <target name="setup-db" depends="init-test,configure-ruby-database-yml">
     <exec executable="/bin/sh" failonerror="true">
       <arg line="-c 'test/create_databases.sh ${db.user} ${db.pass}'" />
     </exec>
