@@ -80,6 +80,9 @@
 
   <target name="generate">
     <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c bundle install" />
+    </exec>
+    <exec executable="/bin/sh" failonerror="true">
       <arg line="-c test/regen_code.sh" />
     </exec>
   </target>
