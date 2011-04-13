@@ -3,7 +3,7 @@ development:
   database: jack_1
   username: root
   password: 
-  socket: /tmp/mysql.sock
+  host: localhost
   pool: 5
   timeout: 5000
 
