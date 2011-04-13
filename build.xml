@@ -63,7 +63,13 @@
     <javac debug="true" srcdir="${test.src.dir}" destdir="${build.test}" classpathref="test.classpath" />
   </target>
 
-  <target name="setup-db">
+  <target name="configure-ruby-database-yml">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/update_database_yml.sh test/test_project/database_1/config/database.yml ${db.user} ${db.pass}'" />
+    </exec>
+  </target>
+
+  <target name="setup-db" depends="configure-ruby-database-yml">
     <exec executable="/bin/sh" failonerror="true">
       <arg line="-c 'test/create_databases.sh ${db.user} ${db.pass}'" />
     </exec>
@@ -84,16 +90,13 @@
     </exec>
   </target>
 
-  <target name="configure-database-yml">
+  <target name="configure-java-database-yml">
     <exec executable="/bin/sh" failonerror="true">
       <arg line="-c 'test/update_database_yml.sh config/database.yml ${db.user} ${db.pass}'" />
     </exec>
-    <exec executable="/bin/sh" failonerror="true">
-      <arg line="-c 'test/update_database_yml.sh test_project/database_1/config/database.yml ${db.user} ${db.pass}'" />
-    </exec>
   </target>
 
-  <target name="junit-test" depends="compile-test,configure-database-yml" description="Run the unit test suite">
+  <target name="junit-test" depends="compile-test,configure-java-database-yml" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
       printsummary="yes" showoutput="${test.output}" 
