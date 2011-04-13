@@ -1,6 +1,10 @@
 <project name="jack" default="dist" basedir=".">
   <property name="version" value="0.1.0" />
 
+  <!-- pull the database creds from the sys properties -->
+  <property name="db.user" value="root"/>
+  <property name="db.pass" value=""/>
+
   <property environment="env" />
 
   <property name="src" location="src" />
@@ -61,7 +65,7 @@
 
   <target name="setup-db">
     <exec executable="/bin/sh" failonerror="true">
-      <arg line="-c test/create_databases.sh" />
+      <arg line="-c 'test/create_databases.sh ${db.user} ${db.pass}'" />
     </exec>
     <exec executable="/bin/sh" failonerror="true">
       <arg line="test/migrate_project.sh test/test_project/database_1" />
