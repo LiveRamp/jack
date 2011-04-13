@@ -86,7 +86,10 @@
 
   <target name="configure-database-yml">
     <exec executable="/bin/sh" failonerror="true">
-      <arg line="-c 'test/update_database_yml.sh ${db.user} ${db.pass}'" />
+      <arg line="-c 'test/update_database_yml.sh config/database.yml ${db.user} ${db.pass}'" />
+    </exec>
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/update_database_yml.sh test_project/database_1/config/database.yml ${db.user} ${db.pass}'" />
     </exec>
   </target>
 

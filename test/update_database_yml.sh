@@ -1,2 +1,3 @@
 #!/bin/sh
-cat config/database.yml.prototype | sed "s/username: root/username: $1/" | sed "s/password: /password: $2/" > config/database.yml
+cat $1 | sed -E "s/user(name)?: root/username: $2/" | sed -E "s/pass(word)?: /password: $3/" > build/database.yml.tmp
+cp build/database.yml.tmp $1
