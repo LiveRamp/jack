@@ -74,7 +74,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
         }
       }
     }, getInsertStatement(Arrays.asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_boolean")));
-    return new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
+    User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
+    cachedById.put(__id, newInst);
+    return newInst;
   }
 
   public User create(final String handle, final int num_posts) throws IOException {
@@ -84,7 +86,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           stmt.setInt(2, num_posts);
       }
     }, getInsertStatement(Arrays.asList("handle", "num_posts")));
-    return new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
+    User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
+    cachedById.put(__id, newInst);
+    return newInst;
   }
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {

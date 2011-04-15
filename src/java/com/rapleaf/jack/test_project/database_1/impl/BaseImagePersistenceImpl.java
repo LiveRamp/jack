@@ -42,7 +42,9 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         }
       }
     }, getInsertStatement(Arrays.asList("user_id")));
-    return new Image(__id, user_id, databases);
+    Image newInst = new Image(__id, user_id, databases);
+    cachedById.put(__id, newInst);
+    return newInst;
   }
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {

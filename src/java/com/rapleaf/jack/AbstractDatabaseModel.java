@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
-
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;

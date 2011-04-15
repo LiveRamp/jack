@@ -8,7 +8,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.rapleaf.jack.DatabaseConnection;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -49,6 +48,8 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand.getSomeBinary()));
     assertEquals(1.2, bryand.getSomeFloat());
     assertTrue(bryand.isSomeBoolean());
+    
+    assertTrue(bryand == users.find(bryand.getId()));
   }
 
   public void testFind() throws Exception {
@@ -66,7 +67,7 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(5, bryand_again.getNumPosts());
     // need to figure out what the appropriate rounding is...
 //    assertEquals(Long.valueOf(t1), bryand_again.getSomeDate());
-    // need to figure out what the appropriate roudning is...
+    // need to figure out what the appropriate rounding is...
 //    assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
     assertEquals("this is a relatively long string", bryand_again.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
