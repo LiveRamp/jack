@@ -88,8 +88,8 @@
   </target>
 
   <target name="rspec">
-    <exec executable="rspec" failonerror="true">
-      <arg line="test/rb" />
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c bundle exec rspec test/rb" />
     </exec>
   </target>
 
