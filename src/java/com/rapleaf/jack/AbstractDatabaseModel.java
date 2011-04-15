@@ -73,15 +73,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   protected int realCreate(AttrSetter attrSetter, String insertStatement) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(insertStatement);
+    ResultSet generatedKeys = null;
     try {
       attrSetter.set(stmt);
       stmt.execute();
-      ResultSet generatedKeys = stmt.getGeneratedKeys();
+      generatedKeys = stmt.getGeneratedKeys();
       generatedKeys.next();
       int newId = generatedKeys.getInt(1);
       return newId;
     } catch (SQLException e) {
       throw new IOException(e);
+    } finally {
+      if (generatedKeys != null) {
+        try {
+          generatedKeys.close();
+          stmt.close();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
     }
   }
 
@@ -101,12 +111,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     if (model != null) {
       return model;
     }
-
+    ResultSet rs = null;
     try {
-      ResultSet rs = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id=" + id).executeQuery();
+      rs = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id=" + id).executeQuery();
       model = rs.next() ? instanceFromResultSet(rs) : null;
     } catch (SQLException e) {
       throw new IOException(e);
+    } finally {
+      if (rs != null) {
+        try {
+          rs.close();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
     }
 
     cachedById.put(id, model);

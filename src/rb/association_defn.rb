@@ -102,7 +102,7 @@ class AssociationDefn
         return
       end
     end
-    puts "couldn't find a table named #{other_table_name}"
+    puts "couldn't find a table named #{other_table_name} #{self.inspect}"
     @defunct = true
   end
   
