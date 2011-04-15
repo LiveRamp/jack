@@ -84,13 +84,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     } catch (SQLException e) {
       throw new IOException(e);
     } finally {
-      if (generatedKeys != null) {
-        try {
+      try {
+        if (generatedKeys != null) {
           generatedKeys.close();
-          stmt.close();
-        } catch (SQLException e) {
-          throw new IOException(e);
         }
+        stmt.close();
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
   }
@@ -111,19 +111,21 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     if (model != null) {
       return model;
     }
+    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id=" + id);
     ResultSet rs = null;
     try {
-      rs = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id=" + id).executeQuery();
+      rs = stmt.executeQuery();
       model = rs.next() ? instanceFromResultSet(rs) : null;
     } catch (SQLException e) {
       throw new IOException(e);
     } finally {
-      if (rs != null) {
-        try {
+      try {
+        if (rs != null) {
           rs.close();
-        } catch (SQLException e) {
-          throw new IOException(e);
         }
+        stmt.close();
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
 
@@ -206,6 +208,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
         if (rs != null) {
           rs.close();
         }
+        stmt.close();
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -220,7 +223,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     try {
       setAttrs(model, saveStmt);
       saveStmt.execute();
-      return saveStmt.getUpdateCount() == 1;
+      boolean success = saveStmt.getUpdateCount() == 1;
+      saveStmt.close();
+      return success;
     } catch (SQLException e) {
       throw new IOException(e);
     }
@@ -243,9 +248,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public boolean delete(int id) throws IOException {
+    PreparedStatement stmt = conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id));
     try {
       cachedById.remove(id);
-      return conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id)).executeUpdate() == 1;
+      boolean success = stmt.executeUpdate() == 1;
+      stmt.close();
+      return success;
     } catch (SQLException e) {
       throw new IOException(e);
     }
@@ -258,8 +266,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public boolean deleteAll() throws IOException {
+    PreparedStatement stmt = conn.getPreparedStatement(String.format("TRUNCATE TABLE %s", tableName));
     try {
-      return conn.getPreparedStatement(String.format("TRUNCATE TABLE %s", tableName)).executeUpdate() >= 0;
+      boolean success = stmt.executeUpdate() >= 0;
+      stmt.close();
+      return success;
     } catch (SQLException e) {
       throw new IOException(e);
     }
@@ -287,12 +298,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     } catch (SQLException e) {
       throw new IOException(e);
     } finally {
-      if (rs != null) {
-        try {
+      try {
+        if (rs != null) {
           rs.close();
-        } catch (SQLException e) {
-          throw new IOException(e);
         }
+        stmt.close();
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
   }
