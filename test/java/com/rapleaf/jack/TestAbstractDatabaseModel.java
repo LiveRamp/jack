@@ -93,7 +93,9 @@ public class TestAbstractDatabaseModel extends TestCase {
 
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
-    //TODO: test that elements of set are correct
+    assertTrue(userComments.contains(c1));
+    assertTrue(userComments.contains(c2));
+    assertTrue(userComments.contains(c3));
   }
 
   public void testFindAllByForeignKeyCache() throws Exception {
