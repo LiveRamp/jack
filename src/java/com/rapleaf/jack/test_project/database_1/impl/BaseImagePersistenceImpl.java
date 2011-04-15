@@ -31,6 +31,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     this.databases = databases;
   }
 
+
   public Image create(final Integer user_id) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -43,7 +44,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     }, getInsertStatement(Arrays.asList("user_id")));
     return new Image(__id, user_id, databases);
   }
-
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {

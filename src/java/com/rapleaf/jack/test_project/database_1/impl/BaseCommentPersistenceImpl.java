@@ -31,6 +31,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     this.databases = databases;
   }
 
+
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -53,7 +54,6 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id")));
     return new Comment(__id, content, commenter_id, commented_on_id, databases);
   }
-
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {

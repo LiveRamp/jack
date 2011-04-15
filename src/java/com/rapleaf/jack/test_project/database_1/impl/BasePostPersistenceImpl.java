@@ -31,6 +31,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     this.databases = databases;
   }
 
+
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -53,7 +54,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id")));
     return new Post(__id, title, posted_at_millis, user_id, databases);
   }
-
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
     if (model.getTitle() == null) {

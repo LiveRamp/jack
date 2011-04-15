@@ -47,6 +47,8 @@ EOF
   DATABASES_IFACE_TEMPLATE = load_template("templates/databases_iface.erb")
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
 
+  CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
+
   public
 
   def self.process(project_defn, output_dir, model_defns_by_namespace_table_names)
@@ -110,30 +112,6 @@ EOF
   end
 
   def self.render_create_method(model_defn, signature, only_not_null = false)
-    field_names = "Arrays.asList(#{model_defn.fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| "\"#{x.name}\""}.join(", ")})"
-    s =  "\n  public #{model_defn.model_name} create(#{signature}) throws IOException {\n"
-    s << "    int __id = realCreate(new AttrSetter() {\n"
-    s << "      public void set(PreparedStatement stmt) throws SQLException {\n"
-    x = 1
-    model_defn.fields.each do |field_defn|
-      if !field_defn.nullable? || !only_not_null
-        if field_defn.nullable?
-          s << "        if (#{field_defn.name} == null) {\n"
-          s << "          stmt.setNull(#{x}, java.sql.Types.#{field_defn.sql_type});\n"
-          s << "        } else {\n"
-        end
-        s << "          stmt.set#{field_defn.prep_stmt_type}(#{x}, #{field_defn.prep_stmt_modifier(field_defn.name)});\n"
-        if field_defn.nullable?
-          s << "        }\n"
-        end
-        x+= 1
-      end
-    end
-    s << "      }\n"
-    s << "    }, getInsertStatement(#{field_names}));\n"
-
-    names_only = model_defn.fields.map{|field_defn| field_defn.args[":null"] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ")
-    s << "    return new #{model_defn.model_name}(__id#{names_only.empty? ? "" : ", "}#{names_only}, databases);\n"
-    s << "  }\n"
+    CREATE_METHOD_TEMPLATE.result(binding)
   end
 end

@@ -31,6 +31,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     this.databases = databases;
   }
 
+
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -85,7 +86,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     }, getInsertStatement(Arrays.asList("handle", "num_posts")));
     return new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
   }
-
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {
