@@ -57,5 +57,13 @@ class Jack
 end
 
 if $0 == __FILE__
-  Jack.run(ARGV)
+  if ARGV.size == 2
+    Jack.run(ARGV)
+  else
+    puts <<-END
+Wrong number of arguments.
+Usage: 
+  ruby src/rb/jack.rb <path to project.yml> <path where output should be generated>
+    END
+  end
 end
