@@ -7,7 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -21,7 +21,7 @@ public class Database1Impl implements IDatabase1 {
   private final IPostPersistence posts;
   private final IUserPersistence users;
 
-  public Database1Impl(DatabaseConnection conn, IDatabases databases) {
+  public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.comments = new BaseCommentPersistenceImpl(conn, databases);
     this.images = new BaseImagePersistenceImpl(conn, databases);
     this.posts = new BasePostPersistenceImpl(conn, databases);

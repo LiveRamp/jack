@@ -31,7 +31,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     public void set(PreparedStatement stmt) throws SQLException;
   }
 
-  private final DatabaseConnection conn;
+  private final BaseDatabaseConnection conn;
   private final String tableName;
 
   private final List<String> fieldNames;
@@ -40,7 +40,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
   protected final Map<String, Map<Integer, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Integer, Set<T>>>();
 
-  protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
+  protected AbstractDatabaseModel(BaseDatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
@@ -63,7 +63,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return sb.toString();
   }
 
-  protected DatabaseConnection getConn() {
+  protected BaseDatabaseConnection getConn() {
     return conn;
   }
 

@@ -36,7 +36,7 @@ import org.jvyaml.YAML;
  * All public methods methods of DatabaseConnection throw RuntimeExceptions
  * (rather than IO or SQL exceptions).
  */
-public class DatabaseConnection implements Serializable {
+public class DatabaseConnection extends BaseDatabaseConnection {
   private String mysqlUrl;
   private String username;
   private String password;
@@ -45,13 +45,11 @@ public class DatabaseConnection implements Serializable {
 
   private static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
 
-  private transient Connection conn = null;
-
   public DatabaseConnection(String dbname_key) throws RuntimeException {
     this(dbname_key, DEFAULT_EXPIRATION);
   }
-
-  public DatabaseConnection(String dbname_key, long expiration) throws RuntimeException {
+  
+  public DatabaseConnection(String dbname_key, long expiration) {
     try {
       // load database info from config folder
       Map env_info = (Map)YAML.load(new FileReader("config/environment.yml"));
@@ -89,60 +87,6 @@ public class DatabaseConnection implements Serializable {
       updateExpiration();
       return conn;
     } catch(Exception e) { //IOEx., SQLEx.
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Re-establish the connection in case it has been sitting idle for too 
-   * long and has been claimed by the server
-   */
-  public Connection resetConnection() {
-    if (conn != null) {
-      try {
-        conn.close();
-      } catch (Exception e) {
-        // do nothing
-      }
-    }
-    conn = null;
-    return getConnection();
-  }
-
-  /**
-   * Creates a connection using the argument credentials. Useful for when 
-   * MapReduce workers machines need to make database connections, as they 
-   * don't have access to the local config file. Returns true if the new 
-   * connection is made and false if a connection already exists.
-   */
-  public boolean connect() {
-    if (conn == null) {
-      conn = getConnection();
-      return true;
-    } else
-      return false;
-  }
-
-  /**
-   * Creates a Statement object that can be used to send SQL queries to the RapLeaf 
-   * database.
-   */
-  public Statement getStatement() {
-    try {
-      return getConnection().createStatement();
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Creates a PreparedStatement object that can be used to send SQL queries to the 
-   * RapLeaf database.
-   */
-  public PreparedStatement getPreparedStatement(String statement) {
-    try {
-      return getConnection().prepareStatement(statement);
-    } catch(SQLException e) {
       throw new RuntimeException(e);
     }
   }

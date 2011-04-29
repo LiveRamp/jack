@@ -26,7 +26,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
-import <%= JACK_NAMESPACE %>.DatabaseConnection;
+import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
@@ -36,7 +36,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model_defn.model_name %>> implements <%= model_defn.iface_name %> {
   private final IDatabases databases;
 
-  public <%= model_defn.impl_name %>(DatabaseConnection conn, IDatabases databases) {
+  public <%= model_defn.impl_name %>(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "<%= model_defn.table_name %>", Arrays.asList(<%= model_defn.fields.map{|x| "\"#{x.name}\""}.join(", ") %>));
     this.databases = databases;
   }

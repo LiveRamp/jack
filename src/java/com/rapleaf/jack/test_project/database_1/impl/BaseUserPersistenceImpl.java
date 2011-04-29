@@ -16,7 +16,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.BaseDatabaseConnection;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> implements IUserPersistence {
   private final IDatabases databases;
 
-  public BaseUserPersistenceImpl(DatabaseConnection conn, IDatabases databases) {
+  public BaseUserPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "users", Arrays.asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_boolean"));
     this.databases = databases;
   }
