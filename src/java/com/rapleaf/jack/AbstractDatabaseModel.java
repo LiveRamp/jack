@@ -276,7 +276,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public Set<T> findAll() throws IOException {
-    return findAll("true");
+    return findAll("1=1");
   }
 
   @Override
