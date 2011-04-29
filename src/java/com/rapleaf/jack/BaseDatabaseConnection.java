@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public abstract class BaseDatabaseConnection implements Serializable {
 
-  transient Connection conn = null;
+  protected transient Connection conn = null;
   
   /**
    * Get a Connection to a MySQL database.
