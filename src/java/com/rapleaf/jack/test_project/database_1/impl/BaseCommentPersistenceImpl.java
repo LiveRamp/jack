@@ -54,8 +54,11 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id")));
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {

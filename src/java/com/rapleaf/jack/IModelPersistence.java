@@ -41,6 +41,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException;
 
   public void clearCacheByForeignKey(String foreignKey, int id);
+  
+  public void clearForeignKeyCache();
 
   /**
    * Effectively the same as delete(model.getId()).

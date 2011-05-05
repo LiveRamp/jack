@@ -170,6 +170,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   public void clearCacheById(int id) throws IOException {
     cachedById.remove(id);
   }
+  
+  @Override
+  public void clearForeignKeyCache() {
+    cachedByForeignKey.clear();
+  }
 
   @Override
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException {
@@ -223,6 +228,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       saveStmt.execute();
       boolean success = saveStmt.getUpdateCount() == 1;
       saveStmt.close();
+      if(success) {
+        cachedById.put(model.getId(), model);
+      }
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -248,9 +257,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   public boolean delete(int id) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id));
     try {
-      cachedById.remove(id);
       boolean success = stmt.executeUpdate() == 1;
       stmt.close();
+      if(success) {
+        cachedById.remove(id);
+      }
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -268,6 +280,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     try {
       boolean success = stmt.executeUpdate() >= 0;
       stmt.close();
+      cachedById.clear();
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);

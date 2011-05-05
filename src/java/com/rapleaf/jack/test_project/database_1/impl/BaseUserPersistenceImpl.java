@@ -76,8 +76,11 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     }, getInsertStatement(Arrays.asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_boolean")));
     User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
 
   public User create(final String handle, final int num_posts) throws IOException {
     int __id = realCreate(new AttrSetter() {
@@ -88,8 +91,11 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     }, getInsertStatement(Arrays.asList("handle", "num_posts")));
     User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {
