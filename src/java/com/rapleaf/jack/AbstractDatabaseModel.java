@@ -157,7 +157,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id in (" + ")");
+      PreparedStatement stmt = conn.getPreparedStatement(statementString.toString());
       ResultSet rs = null;
       try {
         rs = stmt.executeQuery();

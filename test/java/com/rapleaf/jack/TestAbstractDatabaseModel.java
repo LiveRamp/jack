@@ -93,6 +93,8 @@ public class TestAbstractDatabaseModel extends TestCase {
     User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, true);
     users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, true);
 
+    users.clearCacheById(bryand.getId());
+    users.clearCacheById(notBryand.getId());
     Set<Integer> keysToSearch = new HashSet<Integer>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
@@ -140,6 +142,38 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(notBryand_again.getSomeBinary()));
     assertEquals(1.2, notBryand_again.getSomeFloat());
     assertTrue(notBryand_again.isSomeBoolean());
+  }
+
+
+  public void testFindSetFromCache() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    long t0 = System.currentTimeMillis();
+    long t1 = t0 + 10;
+    long t2 = t0 + 20;
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
+    User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
+    User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, true);
+    users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, true);
+
+    Set<Integer> keysToSearch = new HashSet<Integer>();
+    keysToSearch.add(bryand.getId());
+    keysToSearch.add(notBryand.getId());
+    Set<User> foundValues = users.find(keysToSearch);
+    
+    assertEquals(2, foundValues.size());
+    Iterator<User> iter = foundValues.iterator();
+    User bryand_again = users.find(bryand.getId());
+    User notBryand_again = users.find(notBryand.getId());
+    while(iter.hasNext()) {
+      User curUser = iter.next();
+      if(curUser.getId() == bryand.getId()) {
+        assertTrue(bryand_again == curUser);
+      } else if(curUser.getId() == notBryand.getId()) {
+        assertTrue(notBryand_again == curUser);
+      } else {
+        fail("Unexpected user id: " + curUser.getId());
+      }
+    }
   }
 
   public void testFindCache() throws Exception {
