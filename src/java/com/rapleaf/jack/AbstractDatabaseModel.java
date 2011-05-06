@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,6 +130,56 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
     cachedById.put(id, model);
     return model;
+  }
+  
+  public Set<T> find(Set<Integer> ids) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+    Set<Integer> notCachedIds = new HashSet<Integer>();
+    for(Integer id : ids) {
+      T model = cachedById.get(id);
+      if(model != null) {
+        foundSet.add(model);
+      } else {
+        notCachedIds.add(id);
+      }
+    }
+    if(!notCachedIds.isEmpty()) {
+      StringBuilder statementString = new StringBuilder();
+      statementString.append("SELECT * FROM ");
+      statementString.append(tableName);
+      statementString.append(" WHERE id in (");
+      Iterator<Integer> iter = notCachedIds.iterator();
+      while(iter.hasNext()) {
+        Integer obj = iter.next();
+        statementString.append(obj.toString());
+        if(iter.hasNext()) {
+          statementString.append(",");
+        }
+      }
+      statementString.append(")");
+      PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id in (" + ")");
+      ResultSet rs = null;
+      try {
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          cachedById.put(inst.getId(), inst);
+          foundSet.add(inst);
+        }
+      } catch(SQLException e) {
+        throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    return foundSet;
   }
 
   protected PreparedStatement getSaveStmt() {

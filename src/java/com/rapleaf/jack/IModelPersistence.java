@@ -35,6 +35,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @throws IOException
    */
   public T find(int id) throws IOException;
+  
+  public Set<T> find(Set<Integer> ids) throws IOException;
 
   public void clearCacheById(int id) throws IOException;
 
