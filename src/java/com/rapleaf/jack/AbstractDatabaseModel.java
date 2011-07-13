@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     public void set(PreparedStatement stmt) throws SQLException;
   }
 
-  private final DatabaseConnection conn;
+  private final BaseDatabaseConnection conn;
   private final String tableName;
 
   private final List<String> fieldNames;
@@ -40,7 +41,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
   protected final Map<String, Map<Integer, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Integer, Set<T>>>();
 
-  protected AbstractDatabaseModel(DatabaseConnection conn, String tableName, List<String> fieldNames) {
+  protected AbstractDatabaseModel(BaseDatabaseConnection conn, String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
@@ -63,7 +64,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return sb.toString();
   }
 
-  protected DatabaseConnection getConn() {
+  protected BaseDatabaseConnection getConn() {
     return conn;
   }
 
@@ -130,6 +131,56 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     cachedById.put(id, model);
     return model;
   }
+  
+  public Set<T> find(Set<Integer> ids) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+    Set<Integer> notCachedIds = new HashSet<Integer>();
+    for(Integer id : ids) {
+      T model = cachedById.get(id);
+      if(model != null) {
+        foundSet.add(model);
+      } else {
+        notCachedIds.add(id);
+      }
+    }
+    if(!notCachedIds.isEmpty()) {
+      StringBuilder statementString = new StringBuilder();
+      statementString.append("SELECT * FROM ");
+      statementString.append(tableName);
+      statementString.append(" WHERE id in (");
+      Iterator<Integer> iter = notCachedIds.iterator();
+      while(iter.hasNext()) {
+        Integer obj = iter.next();
+        statementString.append(obj.toString());
+        if(iter.hasNext()) {
+          statementString.append(",");
+        }
+      }
+      statementString.append(")");
+      PreparedStatement stmt = conn.getPreparedStatement(statementString.toString());
+      ResultSet rs = null;
+      try {
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          cachedById.put(inst.getId(), inst);
+          foundSet.add(inst);
+        }
+      } catch(SQLException e) {
+        throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    return foundSet;
+  }
 
   protected PreparedStatement getSaveStmt() {
     return conn.getPreparedStatement(updateStatement);
@@ -169,6 +220,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   @Override
   public void clearCacheById(int id) throws IOException {
     cachedById.remove(id);
+  }
+  
+  @Override
+  public void clearForeignKeyCache() {
+    cachedByForeignKey.clear();
   }
 
   @Override
@@ -223,6 +279,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       saveStmt.execute();
       boolean success = saveStmt.getUpdateCount() == 1;
       saveStmt.close();
+      if(success) {
+        cachedById.put(model.getId(), model);
+      }
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -248,9 +308,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   public boolean delete(int id) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id));
     try {
-      cachedById.remove(id);
       boolean success = stmt.executeUpdate() == 1;
       stmt.close();
+      if(success) {
+        cachedById.remove(id);
+      }
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -268,6 +331,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     try {
       boolean success = stmt.executeUpdate() >= 0;
       stmt.close();
+      cachedById.clear();
+      clearForeignKeyCache();
       return success;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -276,7 +341,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public Set<T> findAll() throws IOException {
-    return findAll("true");
+    return findAll("1=1");
   }
 
   @Override

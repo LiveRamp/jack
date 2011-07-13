@@ -20,14 +20,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import <%= JACK_NAMESPACE %>.DbFixtures;
+import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 import <%= JACK_NAMESPACE %>.DatabaseConnection;
 
 public class Base<%=db_name%>Fixtures extends DbFixtures {
 
-  static final DatabaseConnection db = new DatabaseConnection("<%=db_name.underscore%>");
-  static final Statement stmt = db.getStatement();
-
   public static void setup() throws SQLException {
+    setup(new DatabaseConnection("<%=db_name.underscore%>"));
+  }
+
+  public static void setup(BaseDatabaseConnection conn) throws SQLException {
+    Statement stmt = conn.getStatement();
 
   <% model_defns.each do |model_defn| %>
     stmt.execute(getTruncateTableStmt("<%= model_defn.table_name %>"));

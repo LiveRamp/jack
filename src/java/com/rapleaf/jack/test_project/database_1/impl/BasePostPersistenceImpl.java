@@ -16,7 +16,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.BaseDatabaseConnection;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> implements IPostPersistence {
   private final IDatabases databases;
 
-  public BasePostPersistenceImpl(DatabaseConnection conn, IDatabases databases) {
+  public BasePostPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "posts", Arrays.asList("title", "posted_at_millis", "user_id"));
     this.databases = databases;
   }
@@ -54,8 +54,11 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id")));
     Post newInst = new Post(__id, title, posted_at_millis, user_id, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
     if (model.getTitle() == null) {

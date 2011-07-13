@@ -10,14 +10,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.rapleaf.jack.DbFixtures;
+import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.DatabaseConnection;
 
 public class BaseDatabase1Fixtures extends DbFixtures {
 
-  static final DatabaseConnection db = new DatabaseConnection("database1");
-  static final Statement stmt = db.getStatement();
-
   public static void setup() throws SQLException {
+    setup(new DatabaseConnection("database1"));
+  }
+
+  public static void setup(BaseDatabaseConnection conn) throws SQLException {
+    Statement stmt = conn.getStatement();
     stmt.execute(getTruncateTableStmt("comments"));
     stmt.execute(getTruncateTableStmt("images"));
     stmt.execute(getTruncateTableStmt("posts"));

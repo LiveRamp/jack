@@ -16,7 +16,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.BaseDatabaseConnection;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> implements IImagePersistence {
   private final IDatabases databases;
 
-  public BaseImagePersistenceImpl(DatabaseConnection conn, IDatabases databases) {
+  public BaseImagePersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "images", Arrays.asList("user_id"));
     this.databases = databases;
   }
@@ -44,8 +44,11 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     }, getInsertStatement(Arrays.asList("user_id")));
     Image newInst = new Image(__id, user_id, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {

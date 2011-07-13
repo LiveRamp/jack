@@ -1,9 +1,11 @@
 package com.rapleaf.jack;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -73,6 +75,105 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
     assertEquals(1.2, bryand_again.getSomeFloat());
     assertTrue(bryand_again.isSomeBoolean());
+  }
+  
+  public void testFindEmptySet() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    Set<User> foundValues = users.find(new HashSet<Integer>());
+    assertEquals(0, foundValues.size());
+  }
+  
+  public void testFindSet() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    long t0 = System.currentTimeMillis();
+    long t1 = t0 + 10;
+    long t2 = t0 + 20;
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
+    User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
+    User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, true);
+    users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, true);
+
+    users.clearCacheById(bryand.getId());
+    users.clearCacheById(notBryand.getId());
+    Set<Integer> keysToSearch = new HashSet<Integer>();
+    keysToSearch.add(bryand.getId());
+    keysToSearch.add(notBryand.getId());
+    Set<User> foundValues = users.find(keysToSearch);
+    
+    assertEquals(2, foundValues.size());
+    Iterator<User> iter = foundValues.iterator();
+    User bryand_again = null;
+    User notBryand_again = null;
+    while(iter.hasNext()) {
+      User curUser = iter.next();
+      if(curUser.getId() == bryand.getId()) {
+        bryand_again = curUser;
+      } else if(curUser.getId() == notBryand.getId()) {
+        notBryand_again = curUser;
+      } else {
+        fail("Unexpected user id: " + curUser.getId());
+      }
+    }
+    assertNotNull(bryand_again);
+    assertNotNull(notBryand_again);
+
+    assertEquals(bryand.getId(), bryand_again.getId());
+    assertEquals("bryand", bryand_again.getHandle());
+    assertEquals(Long.valueOf(t0), bryand_again.getCreatedAtMillis());
+    assertEquals(5, bryand_again.getNumPosts());
+    // need to figure out what the appropriate rounding is...
+//    assertEquals(Long.valueOf(t1), bryand_again.getSomeDate());
+    // need to figure out what the appropriate rounding is...
+//    assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
+    assertEquals("this is a relatively long string", bryand_again.getBio());
+    assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
+    assertEquals(1.2, bryand_again.getSomeFloat());
+    assertTrue(bryand_again.isSomeBoolean());
+    
+    assertEquals(notBryand.getId(), notBryand_again.getId());
+    assertEquals("notBryand", notBryand_again.getHandle());
+    assertEquals(Long.valueOf(t0), notBryand_again.getCreatedAtMillis());
+    assertEquals(3, notBryand_again.getNumPosts());
+    // need to figure out what the appropriate rounding is...
+//    assertEquals(Long.valueOf(t1), bryand_again.getSomeDate());
+    // need to figure out what the appropriate rounding is...
+//    assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
+    assertEquals("another relatively long string", notBryand_again.getBio());
+    assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(notBryand_again.getSomeBinary()));
+    assertEquals(1.2, notBryand_again.getSomeFloat());
+    assertTrue(notBryand_again.isSomeBoolean());
+  }
+
+
+  public void testFindSetFromCache() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    long t0 = System.currentTimeMillis();
+    long t1 = t0 + 10;
+    long t2 = t0 + 20;
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
+    User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
+    User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, true);
+    users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, true);
+
+    Set<Integer> keysToSearch = new HashSet<Integer>();
+    keysToSearch.add(bryand.getId());
+    keysToSearch.add(notBryand.getId());
+    Set<User> foundValues = users.find(keysToSearch);
+    
+    assertEquals(2, foundValues.size());
+    Iterator<User> iter = foundValues.iterator();
+    User bryand_again = users.find(bryand.getId());
+    User notBryand_again = users.find(notBryand.getId());
+    while(iter.hasNext()) {
+      User curUser = iter.next();
+      if(curUser.getId() == bryand.getId()) {
+        assertTrue(bryand_again == curUser);
+      } else if(curUser.getId() == notBryand.getId()) {
+        assertTrue(notBryand_again == curUser);
+      } else {
+        fail("Unexpected user id: " + curUser.getId());
+      }
+    }
   }
 
   public void testFindCache() throws Exception {

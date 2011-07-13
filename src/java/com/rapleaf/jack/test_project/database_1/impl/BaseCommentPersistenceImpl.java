@@ -16,7 +16,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.BaseDatabaseConnection;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> implements ICommentPersistence {
   private final IDatabases databases;
 
-  public BaseCommentPersistenceImpl(DatabaseConnection conn, IDatabases databases) {
+  public BaseCommentPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "comments", Arrays.asList("content", "commenter_id", "commented_on_id"));
     this.databases = databases;
   }
@@ -54,8 +54,11 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id")));
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, databases);
     cachedById.put(__id, newInst);
+    clearForeignKeyCache();
     return newInst;
   }
+
+
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {
