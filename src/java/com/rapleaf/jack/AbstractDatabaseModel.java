@@ -269,6 +269,56 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     }
   }
 
+  @Override
+  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids) throws IOException {
+    Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
+    Set<T> foundSet = new HashSet<T>();
+    Set<Integer> notCachedIds = new HashSet<Integer>();
+    if (foreignKeyCache != null) {
+      for(Integer id : ids) {
+        Set<T> results = foreignKeyCache.get(id);
+        if(results != null) {
+          foundSet.addAll(results);
+        } else {
+          notCachedIds.add(id);
+        }
+      }
+    } else {
+      foreignKeyCache = new HashMap<Integer, Set<T>>();
+      cachedByForeignKey.put(foreignKey, foreignKeyCache);
+      notCachedIds = ids;
+    }
+
+    if(!notCachedIds.isEmpty()) {
+      StringBuilder statementString = new StringBuilder();
+      statementString.append("SELECT * FROM ");
+      statementString.append(tableName);
+      statementString.append(" WHERE " + foreignKey + " in (");
+      Iterator<Integer> iter = notCachedIds.iterator();
+      while(iter.hasNext()) {
+        Integer obj = iter.next();
+        statementString.append(obj.toString());
+        if(iter.hasNext()) {
+          statementString.append(",");
+        }
+      }
+      statementString.append(")");
+      PreparedStatement stmt = conn.getPreparedStatement(statementString.toString());
+      ResultSet rs = null;
+      try {
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          cachedById.put(inst.getId(), inst);
+          foundSet.add(inst);
+        }
+      } catch(SQLException e) {
+        throw new IOException(e);
+      } 
+    }
+    return foundSet;
+  }
+  
   protected abstract void setAttrs(T model, PreparedStatement stmt) throws SQLException;
 
   @Override

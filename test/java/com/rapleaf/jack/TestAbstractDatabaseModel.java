@@ -234,6 +234,36 @@ public class TestAbstractDatabaseModel extends TestCase {
     assertTrue("No User instance equivalent to u1_1 was found!", found);
   }
 
+  public void testFindAllByForeignKeyFromSet() throws Exception {
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    int userId = 1;
+    int otherUserId = 2;
+    Comment c1 = comments.create("comment1", userId, 1);
+    Comment c2 = comments.create("comment2", userId, 1);
+    Comment c3 = comments.create("comment3", userId, 1);
+    Comment c4 = comments.create("comment4", otherUserId, 1);
+    Comment c5 = comments.create("comment5", 3, 1);
+
+    Set<Integer> commenterIds = new HashSet<Integer>();
+    commenterIds.add(userId);
+    commenterIds.add(otherUserId);
+    Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
+    assertEquals(4, userComments.size());
+    assertTrue(userComments.contains(c1));
+    assertTrue(userComments.contains(c2));
+    assertTrue(userComments.contains(c3));
+    assertTrue(userComments.contains(c4));
+    assertFalse(userComments.contains(c5));
+
+    Set<Comment> userCommentsSecondQuery = comments.findAllByForeignKey("commenter_id", commenterIds);
+    assertEquals(4, userCommentsSecondQuery.size());
+    assertTrue(userCommentsSecondQuery.contains(c1));
+    assertTrue(userCommentsSecondQuery.contains(c2));
+    assertTrue(userCommentsSecondQuery.contains(c3));
+    assertTrue(userCommentsSecondQuery.contains(c4));
+    assertFalse(userCommentsSecondQuery.contains(c5));
+  }
+
   public void testFindAllWithConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
