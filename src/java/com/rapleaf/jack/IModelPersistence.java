@@ -20,6 +20,11 @@ import java.util.Set;
 
 
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
+
+  public interface RecordSelector<T extends ModelWithId> {
+    public boolean selectRecord(T record);
+  }
+  
   /**
    * Update an existing T instance in the persistence.
    * @param model
@@ -74,4 +79,6 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public Set<T> findAll() throws IOException;
 
   public Set<T> findAll(String conditions) throws IOException;
+  
+  public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
 }

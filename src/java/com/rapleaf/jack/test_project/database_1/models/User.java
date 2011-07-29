@@ -136,6 +136,38 @@ public class User extends ModelWithId {
     return __assoc_image.get();
   }
 
+  @Override
+  public Object getField(String fieldName) {
+    if (fieldName.equals("handle")) {
+      return getHandle();
+    }
+    if (fieldName.equals("created_at_millis")) {
+      return getCreatedAtMillis();
+    }
+    if (fieldName.equals("num_posts")) {
+      return getNumPosts();
+    }
+    if (fieldName.equals("some_date")) {
+      return getSomeDate();
+    }
+    if (fieldName.equals("some_datetime")) {
+      return getSomeDatetime();
+    }
+    if (fieldName.equals("bio")) {
+      return getBio();
+    }
+    if (fieldName.equals("some_binary")) {
+      return getSomeBinary();
+    }
+    if (fieldName.equals("some_float")) {
+      return getSomeFloat();
+    }
+    if (fieldName.equals("some_boolean")) {
+      return isSomeBoolean();
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public String toString() {
     return "<User"
       + " handle: " + __handle

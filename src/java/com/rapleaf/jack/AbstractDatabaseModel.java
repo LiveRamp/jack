@@ -421,4 +421,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       }
     }
   }
+  
+  @Override
+  public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException {
+    return findAll(conditions);
+  }
 }

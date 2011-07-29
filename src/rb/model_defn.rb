@@ -42,6 +42,10 @@ class ModelDefn
   def impl_name
     "Base#{model_name}PersistenceImpl"
   end
+
+  def mock_impl_name
+    "BaseMock#{model_name}PersistenceImpl"
+  end
   
   def persistence_getter
     x = table_name.camelcase

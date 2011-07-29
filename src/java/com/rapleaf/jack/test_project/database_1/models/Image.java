@@ -44,6 +44,14 @@ public class Image extends ModelWithId {
     return __assoc_user.get();
   }
 
+  @Override
+  public Object getField(String fieldName) {
+    if (fieldName.equals("user_id")) {
+      return getUserId();
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public String toString() {
     return "<Image"
       + " user_id: " + __user_id

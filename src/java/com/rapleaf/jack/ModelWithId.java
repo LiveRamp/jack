@@ -48,4 +48,6 @@ public abstract class ModelWithId implements Serializable {
       return false;
     return true;
   }
+  
+  public abstract Object getField(String fieldName);
 }

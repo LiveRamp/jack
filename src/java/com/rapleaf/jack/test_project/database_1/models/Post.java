@@ -70,6 +70,20 @@ public class Post extends ModelWithId {
     return __assoc_comments.get();
   }
 
+  @Override
+  public Object getField(String fieldName) {
+    if (fieldName.equals("title")) {
+      return getTitle();
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return getPostedAtMillis();
+    }
+    if (fieldName.equals("user_id")) {
+      return getUserId();
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public String toString() {
     return "<Post"
       + " title: " + __title

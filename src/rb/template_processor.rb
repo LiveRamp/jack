@@ -39,15 +39,19 @@ EOF
 
   DB_INTERFACE_TEMPLATE = load_template("templates/db_interface.erb")
   DB_IMPL_TEMPLATE = load_template("templates/db_impl.erb")
+  MOCK_DB_IMPL_TEMPLATE = load_template("templates/mock_db_impl.erb")
   DB_FIXTURES_TEMPLATE = load_template("templates/db_fixtures.erb")
   PERSISTENCE_INTERFACE_TEMPLATE = load_template("templates/persistence_interface.erb")
+  MOCK_PERSISTENCE_IMPL_TEMPLATE = load_template("templates/mock_persistence_impl.erb")
   MODEL_TEMPLATE = load_template("templates/model.erb")
   PERSISTENCE_IMPL_TEMPLATE = load_template("templates/persistence_impl.erb")
 
   DATABASES_IFACE_TEMPLATE = load_template("templates/databases_iface.erb")
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
+  MOCK_DATABASES_IMPL_TEMPLATE = load_template("templates/mock_databases_impl.erb")
 
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
+  MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
 
   public
 
@@ -66,6 +70,10 @@ EOF
     file = File.new("#{output_dir}/DatabasesImpl.java", "w")
     file.puts(DATABASES_IMPL_TEMPLATE.result(binding))
     file.close
+
+    file = File.new("#{output_dir}/MockDatabasesImpl.java", "w")
+    file.puts(MOCK_DATABASES_IMPL_TEMPLATE.result(binding))
+    file.close
   end
   
   def self.process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)
@@ -75,6 +83,7 @@ EOF
     FileUtils.mkdir_p("#{output_dir}/models/")
     FileUtils.mkdir_p("#{output_dir}/iface/")
     FileUtils.mkdir_p("#{output_dir}/impl/")
+    FileUtils.mkdir_p("#{output_dir}/mock_impl/")
 
     db_name = database_defn.name
     root_package = database_defn.namespace
@@ -95,6 +104,10 @@ EOF
       file = File.new("#{output_dir}/impl/#{model_defn.impl_name}.java", "w")
       file.puts(PERSISTENCE_IMPL_TEMPLATE.result(binding));
       file.close
+
+      file = File.new("#{output_dir}/mock_impl/#{model_defn.mock_impl_name}.java", "w")
+      file.puts(MOCK_PERSISTENCE_IMPL_TEMPLATE.result(binding));
+      file.close
     end
 
     file = File.new("#{output_dir}/I#{db_name}.java", "w")
@@ -105,6 +118,10 @@ EOF
     file.puts(DB_IMPL_TEMPLATE.result(binding))
     file.close
     
+    file = File.new("#{output_dir}/mock_impl/Mock#{db_name}Impl.java", "w")
+    file.puts(MOCK_DB_IMPL_TEMPLATE.result(binding))
+    file.close
+    
     file = File.new("#{output_dir}/Base#{db_name}Fixtures.java", "w")
     file.puts(DB_FIXTURES_TEMPLATE.result(binding))
     file.close
@@ -113,5 +130,9 @@ EOF
 
   def self.render_create_method(model_defn, signature, only_not_null = false)
     CREATE_METHOD_TEMPLATE.result(binding)
+  end
+
+  def self.render_mock_create_method(model_defn, signature, only_not_null = false)
+    MOCK_CREATE_METHOD_TEMPLATE.result(binding)
   end
 end

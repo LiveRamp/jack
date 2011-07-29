@@ -51,7 +51,7 @@
     <mkdir dir="${build.classes}"/>
   </target>
 
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,generate-mysql-flex">
     <javac srcdir="${src.java}" destdir="${build.classes}" debug="true" classpathref="compile.classpath" />
   </target>
   
@@ -84,6 +84,13 @@
     </exec>
     <exec executable="/bin/sh" failonerror="true">
       <arg line="-c test/regen_code.sh" />
+    </exec>
+  </target>
+
+  <target name="generate-mysql-flex">
+    <delete file="src/java/com/rapleaf/jack/util/MysqlFlex.java"/>
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'java -cp jflex/JFlex.jar JFlex.Main -d src/java/com/rapleaf/jack/util src/jflex/mysql.flex'" />
     </exec>
   </target>
 

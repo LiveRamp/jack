@@ -70,6 +70,20 @@ public class Comment extends ModelWithId {
     return __assoc_post.get();
   }
 
+  @Override
+  public Object getField(String fieldName) {
+    if (fieldName.equals("content")) {
+      return getContent();
+    }
+    if (fieldName.equals("commenter_id")) {
+      return getCommenterId();
+    }
+    if (fieldName.equals("commented_on_id")) {
+      return getCommentedOnId();
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public String toString() {
     return "<Comment"
       + " content: " + __content
