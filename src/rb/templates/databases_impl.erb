@@ -30,9 +30,9 @@ import <%= db.namespace %>.impl.<%= db.name %>Impl;
 <% end %>
 
 public class DatabasesImpl implements IDatabases {
+  private static final IDatabases mockDatabases = new MockDatabasesImpl();
   <% project_defn.databases.each do |db| %>
   private final I<%= db.name %> <%= db.name.underscore %>;
-  private static final IDatabases mockDatabases = new MockDatabasesImpl();
   <% end %>
 
   public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
