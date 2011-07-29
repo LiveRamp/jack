@@ -27,12 +27,12 @@ import <%= JACK_NAMESPACE %>.DatabaseConnection;
 <% project_defn.databases.each do |db| %>
 import <%= db.namespace %>.I<%= db.name %>;
 import <%= db.namespace %>.impl.<%= db.name %>Impl;
-import <%= db.namespace %>.mock_impl.Mock<%= db.name %>Impl;
 <% end %>
 
 public class DatabasesImpl implements IDatabases {
   <% project_defn.databases.each do |db| %>
   private final I<%= db.name %> <%= db.name.underscore %>;
+  private static final IDatabases mockDatabases = new MockDatabasesImpl();
   <% end %>
 
   public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
@@ -52,7 +52,7 @@ public class DatabasesImpl implements IDatabases {
     Boolean use_mock = (Boolean)env_info.get("use_mock_db");
     if (use_mock != null && use_mock) {
     <% project_defn.databases.each do |db| %>
-      this.<%= db.name.underscore %> = new Mock<%= db.name %>Impl(this);
+      this.<%= db.name.underscore %> = mockDatabases.get<%= db.name %>();
     <% end %>
     } else {
     <% project_defn.databases.each do |db| %>
