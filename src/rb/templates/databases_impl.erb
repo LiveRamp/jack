@@ -50,7 +50,7 @@ public class DatabasesImpl implements IDatabases {
       throw new RuntimeException(e);
     }
     Boolean use_mock = (Boolean)env_info.get("use_mock_db");
-    if (use_mock) {
+    if (use_mock != null && use_mock) {
     <% project_defn.databases.each do |db| %>
       this.<%= db.name.underscore %> = new Mock<%= db.name %>Impl(this);
     <% end %>

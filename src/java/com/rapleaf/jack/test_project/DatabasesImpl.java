@@ -34,7 +34,7 @@ public class DatabasesImpl implements IDatabases {
       throw new RuntimeException(e);
     }
     Boolean use_mock = (Boolean)env_info.get("use_mock_db");
-    if (use_mock) {
+    if (use_mock != null && use_mock) {
       this.database1 = new MockDatabase1Impl(this);
     } else {
       this.database1 = new Database1Impl(new DatabaseConnection("database1"), this);
