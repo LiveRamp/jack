@@ -18,8 +18,8 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 
 public class DatabasesImpl implements IDatabases {
-  private final IDatabase1 database1;
   private static final IDatabases mockDatabases = new MockDatabasesImpl();
+  private final IDatabase1 database1;
 
   public DatabasesImpl(BaseDatabaseConnection database1_connection) {
     this.database1 = new Database1Impl(database1_connection, this);

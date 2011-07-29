@@ -6,24 +6,23 @@
  */
 package com.rapleaf.jack.test_project.database_1;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import com.rapleaf.jack.DbFixtures;
-import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.test_project.DatabasesImpl;
+import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseDatabase1Fixtures extends DbFixtures {
 
-  public static void setup() throws SQLException {
-    setup(new DatabaseConnection("database1"));
+  public static void setup() throws SQLException, IOException {
+    setup(new DatabasesImpl());
   }
 
-  public static void setup(BaseDatabaseConnection conn) throws SQLException {
-    Statement stmt = conn.getStatement();
-    stmt.execute(getTruncateTableStmt("comments"));
-    stmt.execute(getTruncateTableStmt("images"));
-    stmt.execute(getTruncateTableStmt("posts"));
-    stmt.execute(getTruncateTableStmt("users"));
+  public static void setup(IDatabases databases) throws SQLException, IOException {
+    databases.getDatabase1().comments().deleteAll();
+    databases.getDatabase1().images().deleteAll();
+    databases.getDatabase1().posts().deleteAll();
+    databases.getDatabase1().users().deleteAll();
   }
 }
