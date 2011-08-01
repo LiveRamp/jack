@@ -19,24 +19,23 @@ public class MysqlToJavaScriptTranslator {
       case 0: // ','
       case 3: // '('
       case 4: // ')'
-      case 10:
-      case 11:
-      case 12:
-      case 13:
-      case 16:
-      case 17:
-      case 18:
-      case 19:
-      case 20:
-      case 21:
-      case 22:
-      case 23:
+      case 10: // '+'
+      case 11: // '-'
+      case 12: // '*'
+      case 13: // '/'
+      case 16: // '<'
+      case 17: // '<='
+      case 18: // '>'
+      case 19: // '>='
+      case 20: // '&'
+      case 21: // '|'
+      case 22: // '&&'
+      case 23: // '||'
       case 39: // !=
-      case 64:
-      case 65:
+      case 64: // Float
         sb.append(token.text);
         break;
-      case 14:
+      case 14: // '=='
         sb.append("==");
         break;
       case 24: // LIKE

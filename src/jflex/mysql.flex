@@ -1,12 +1,9 @@
 package com.rapleaf.jack.util;
 import java.io.IOException;
-/* this is the scanner example from the JLex website 
-   (with small modifications to make it more readable) */
 
 %%
 
 %{
-  private int comment_count = 0;
 %} 
 
 %class MysqlFlex

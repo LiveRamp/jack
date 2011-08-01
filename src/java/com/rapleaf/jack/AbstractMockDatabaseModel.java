@@ -1,8 +1,6 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
