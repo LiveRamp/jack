@@ -289,6 +289,28 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     
   }
   
+  public void testFindAllWithNumericInConditions() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND num_posts in (1 , 5)"));
+    assertEquals(Collections.singleton(u2), users.findAll("5 < 4 OR num_posts in (3 , 7)"));
+    assertEquals(Collections.singleton(u2), users.findAll("num_posts not in (1 , 5) OR 5 < 4"));
+    assertEquals(Collections.singleton(u1), users.findAll("num_posts not in (3 , 7) AND 5 > 4"));
+  }
+
+  public void testFindAllWithStringInConditions() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND handle in (\"bryand\" , 'asdf')"));
+    assertEquals(Collections.singleton(u2), users.findAll("5 < 4 OR handle in ('thomask' , 'aswer')"));
+    assertEquals(Collections.singleton(u2), users.findAll("handle not in ('asd' , 'bryand') OR 5 < 4"));
+    assertEquals(Collections.singleton(u1), users.findAll("handle not in (\"thomask\" , 'wers') AND 5 > 4"));
+  }
+  
   public void testFindAllWithEscapedQuotesInStrings() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);

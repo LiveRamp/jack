@@ -74,8 +74,7 @@ Ident={ALPHA}({ALPHA}|{DIGIT}|_)*
   {NONNEWLINE_WHITE_SPACE_CHAR}+ { }
 
   \"{STRING_TEXT}\" {
-    String str =  yytext().substring(1,yylength()-1);
-    return (new Token(60,str));
+    return (new Token(60,yytext()));
   }
   
   \"{STRING_TEXT} {
@@ -84,8 +83,7 @@ Ident={ALPHA}({ALPHA}|{DIGIT}|_)*
   } 
 
   \'{SINGLE_QUOTED_STRING_TEXT}\' {
-    String str =  yytext().substring(1,yylength()-1);
-    return (new Token(62,str));
+    return (new Token(62,yytext()));
   }
   
   \'{SINGLE_QUOTED_STRING_TEXT} {

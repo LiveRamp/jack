@@ -32,17 +32,19 @@ public class MysqlToJavaScriptTranslator {
       case 22: // '&&'
       case 23: // '||'
       case 39: // !=
+      case 60: // Double quoted String
+      case 62: // Single quoted String
       case 64: // Float
         sb.append(token.text);
         break;
-      case 14: // '=='
+      case 14: // '='
         sb.append("==");
         break;
       case 24: // LIKE
       {
         Token next = yylex.yylex();
         if(next.index == 60 || next.index == 62) {
-          String regex = next.text;
+          String regex = next.text.substring(1, next.text.length()-1);
           if(regex.contains("\\")) {
             throw new IOException("Escape characters in the LIKE regex are not currently supported");
           }
@@ -63,6 +65,8 @@ public class MysqlToJavaScriptTranslator {
       case 26: // AND
         sb.append("&&");
         break;
+      case 28: // IN
+        throw new IOException("IN must be preceded by an identifier");
       case 32: // IS NULL
         sb.append("== null");
         break;
@@ -88,11 +92,13 @@ public class MysqlToJavaScriptTranslator {
           sb.append("unknown");
         }
         break;
+      case 43: // NOT IN
+        throw new IOException("NOT IN must be preceded by an identifier");
       case 44: // NOT LIKE 
       {
         Token next = yylex.yylex();
         if(next.index == 60 || next.index == 62) {
-          String regex = next.text;
+          String regex = next.text.substring(1, next.text.length()-1);
           if(regex.contains("\\")) {
             throw new IOException("Escape characters in the NOT LIKE regex are not currently supported");
           }
@@ -107,15 +113,68 @@ public class MysqlToJavaScriptTranslator {
         }
       }
         break;
-      case 60: // Double quoted String
-        sb.append('"' + token.text + '"');
-        break;
-      case 62: // Single quoted String
-        sb.append("'" + token.text + "'");
-        break;
       case 66: // Identifier
-        sb.append(token.text);
         referencedFields.add(token.text);
+        Token next = yylex.yylex();
+        if(next == null) {
+          break;
+        }
+        if(next.index == 28) { // IN
+          sb.append("(");
+          next = yylex.yylex();
+          if(next == null || next.index != 3) { // '('
+            throw new IOException("IN must be followed by '('");
+          }
+          next = yylex.yylex();
+          if(next == null) {
+            throw new IOException("Unmatched open parenthases");
+          }
+          sb.append(token.text + "==" + next.text);
+          while(true) {
+            next = yylex.yylex();
+            if(next == null) {
+              throw new IOException("Unmatched open parenthases");
+            }
+            if(next.index == 4) { // ')'
+              break;
+            }
+            if(next.index != 0) {// ','
+              throw new IOException("Values in () must be comma separated");
+            }
+            Token nextValue = yylex.yylex();
+            sb.append("||" + token.text + "==" + nextValue.text);
+          }
+          sb.append(")");
+        } else if(next.index == 43) { // NOT IN
+          sb.append("(");
+          next = yylex.yylex();
+          if(next == null || next.index != 3) { // '('
+            throw new IOException("IN must be followed by '('");
+          }
+          next = yylex.yylex();
+          if(next == null) {
+            throw new IOException("Unmatched open parenthases");
+          }
+          sb.append(token.text + "!=" + next.text);
+          while(true) {
+            next = yylex.yylex();
+            if(next == null) {
+              throw new IOException("Unmatched open parenthases");
+            }
+            if(next.index == 4) { // ')'
+              break;
+            }
+            if(next.index != 0) {// ','
+              throw new IOException("Values in () must be comma separated");
+            }
+            Token nextValue = yylex.yylex();
+            sb.append("&&" + token.text + "!=" + nextValue.text);
+          }
+          sb.append(")");
+        } else {
+          sb.append(token.text);
+          yylex.yypushback(next.text.length());
+        } 
         break;
       default: // Not supported 1,2,5-9,15,24,27, etc
         throw new IOException("Unsupported token: " + token.text);
@@ -124,4 +183,14 @@ public class MysqlToJavaScriptTranslator {
     return sb.toString();
   }
   
+  private static final void stringifyToken(Token token, StringBuilder sb, Set<String> referencedFields) throws IOException {
+    switch(token.index) {
+    case 66:
+      sb.append(token.text);
+      referencedFields.add(token.text);
+      break;
+    default:
+      throw new IOException("Unsupported token");
+    }
+  }
 }
