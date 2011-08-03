@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
+public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
+    IModelPersistence<T> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -41,16 +42,19 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
   protected final Map<String, Map<Integer, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Integer, Set<T>>>();
 
-  protected AbstractDatabaseModel(BaseDatabaseConnection conn, String tableName, List<String> fieldNames) {
+  protected AbstractDatabaseModel(BaseDatabaseConnection conn,
+      String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
-    updateStatement = String.format("UPDATE %s SET %s WHERE id = ?;", tableName, getSetFieldsPrepStatementSection());
+    updateStatement = String.format(
+        "INSERT INTO %s SET %s , id=? ON DUPLICATE KEY UPDATE %s;", tableName,
+        getSetFieldsPrepStatementSection(), getUpdateOnInsertPrepStatementSection());
   }
 
   protected String getInsertStatement(List<String> fieldNames) {
-    return String.format("INSERT INTO %s (%s) VALUES(%s);",
-        tableName, escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
+    return String.format("INSERT INTO %s (%s) VALUES(%s);", tableName,
+        escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
   }
 
   private String getSetFieldsPrepStatementSection() {
@@ -64,13 +68,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return sb.toString();
   }
 
+  private String getUpdateOnInsertPrepStatementSection() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < fieldNames.size(); i++) {
+      if (i != 0) {
+        sb.append(",");
+      }
+      sb.append("`").append(fieldNames.get(i)).append("` = VALUES(`").append(fieldNames.get(i)).append("`)");
+    }
+    return sb.toString();
+  }
+
   protected BaseDatabaseConnection getConn() {
     return conn;
   }
 
   protected abstract T instanceFromResultSet(ResultSet rs) throws SQLException;
 
-  protected int realCreate(AttrSetter attrSetter, String insertStatement) throws IOException {
+  protected int realCreate(AttrSetter attrSetter, String insertStatement)
+      throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(insertStatement);
     ResultSet generatedKeys = null;
     try {
@@ -110,7 +126,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     if (model != null) {
       return model;
     }
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM " + tableName + " WHERE id=" + id);
+    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
+        + tableName + " WHERE id=" + id);
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
@@ -131,33 +148,34 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     cachedById.put(id, model);
     return model;
   }
-  
+
   public Set<T> find(Set<Integer> ids) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     Set<Integer> notCachedIds = new HashSet<Integer>();
-    for(Integer id : ids) {
+    for (Integer id : ids) {
       T model = cachedById.get(id);
-      if(model != null) {
+      if (model != null) {
         foundSet.add(model);
       } else {
         notCachedIds.add(id);
       }
     }
-    if(!notCachedIds.isEmpty()) {
+    if (!notCachedIds.isEmpty()) {
       StringBuilder statementString = new StringBuilder();
       statementString.append("SELECT * FROM ");
       statementString.append(tableName);
       statementString.append(" WHERE id in (");
       Iterator<Integer> iter = notCachedIds.iterator();
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         Integer obj = iter.next();
         statementString.append(obj.toString());
-        if(iter.hasNext()) {
+        if (iter.hasNext()) {
           statementString.append(",");
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement(statementString.toString());
+      PreparedStatement stmt = conn.getPreparedStatement(statementString
+          .toString());
       ResultSet rs = null;
       try {
         rs = stmt.executeQuery();
@@ -166,7 +184,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
           cachedById.put(inst.getId(), inst);
           foundSet.add(inst);
         }
-      } catch(SQLException e) {
+      } catch (SQLException e) {
         throw new IOException(e);
       } finally {
         try {
@@ -186,17 +204,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return conn.getPreparedStatement(updateStatement);
   }
 
-  protected final static Integer getIntOrNull(ResultSet rs, String column) throws SQLException {
+  protected final static Integer getIntOrNull(ResultSet rs, String column)
+      throws SQLException {
     Integer value = rs.getInt(column);
     return rs.wasNull() ? null : value;
   }
 
-  protected final static Long getLongOrNull(ResultSet rs, String column) throws SQLException {
+  protected final static Long getLongOrNull(ResultSet rs, String column)
+      throws SQLException {
     Long value = rs.getLong(column);
     return rs.wasNull() ? null : value;
   }
 
-  protected final static Date getDate(ResultSet rs, String column) throws SQLException {
+  protected final static Date getDate(ResultSet rs, String column)
+      throws SQLException {
     Timestamp timestamp = rs.getTimestamp(column);
     if (timestamp == null) {
       return null;
@@ -204,7 +225,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
     return new Date(timestamp.getTime());
   }
 
-  protected final static Long getDateAsLong(ResultSet rs, String column ) throws SQLException {
+  protected final static Long getDateAsLong(ResultSet rs, String column)
+      throws SQLException {
     Date date = getDate(rs, column);
     return date == null ? null : date.getTime();
   }
@@ -221,14 +243,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   public void clearCacheById(int id) throws IOException {
     cachedById.remove(id);
   }
-  
+
   @Override
   public void clearForeignKeyCache() {
     cachedByForeignKey.clear();
   }
 
   @Override
-  public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException {
+  public Set<T> findAllByForeignKey(String foreignKey, int id)
+      throws IOException {
     Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     Set<T> ret;
     if (foreignKeyCache != null) {
@@ -240,8 +263,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       foreignKeyCache = new HashMap<Integer, Set<T>>();
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
-    
-    PreparedStatement stmt = conn.getPreparedStatement(String.format("SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
+
+    PreparedStatement stmt = conn.getPreparedStatement(String.format(
+        "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
@@ -251,9 +275,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
         cachedById.put(inst.getId(), inst);
         ret.add(inst);
       }
-      
+
       foreignKeyCache.put(id, ret);
-      
+
       return ret;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -270,14 +294,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
   }
 
   @Override
-  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids) throws IOException {
+  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids)
+      throws IOException {
     Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     Set<T> foundSet = new HashSet<T>();
     Set<Integer> notCachedIds = new HashSet<Integer>();
     if (foreignKeyCache != null) {
-      for(Integer id : ids) {
+      for (Integer id : ids) {
         Set<T> results = foreignKeyCache.get(id);
-        if(results != null) {
+        if (results != null) {
           foundSet.addAll(results);
         } else {
           notCachedIds.add(id);
@@ -289,21 +314,22 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       notCachedIds = ids;
     }
 
-    if(!notCachedIds.isEmpty()) {
+    if (!notCachedIds.isEmpty()) {
       StringBuilder statementString = new StringBuilder();
       statementString.append("SELECT * FROM ");
       statementString.append(tableName);
       statementString.append(" WHERE " + foreignKey + " in (");
       Iterator<Integer> iter = notCachedIds.iterator();
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         Integer obj = iter.next();
         statementString.append(obj.toString());
-        if(iter.hasNext()) {
+        if (iter.hasNext()) {
           statementString.append(",");
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement(statementString.toString());
+      PreparedStatement stmt = conn.getPreparedStatement(statementString
+          .toString());
       ResultSet rs = null;
       try {
         rs = stmt.executeQuery();
@@ -312,24 +338,26 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
           cachedById.put(inst.getId(), inst);
           foundSet.add(inst);
         }
-      } catch(SQLException e) {
+      } catch (SQLException e) {
         throw new IOException(e);
-      } 
+      }
     }
     return foundSet;
   }
-  
-  protected abstract void setAttrs(T model, PreparedStatement stmt) throws SQLException;
+
+  protected abstract void setAttrs(T model, PreparedStatement stmt)
+      throws SQLException;
 
   @Override
   public boolean save(T model) throws IOException {
     PreparedStatement saveStmt = getSaveStmt();
     try {
       setAttrs(model, saveStmt);
+      System.out.println(saveStmt);
       saveStmt.execute();
       boolean success = saveStmt.getUpdateCount() == 1;
       saveStmt.close();
-      if(success) {
+      if (success) {
         cachedById.put(model.getId(), model);
       }
       clearForeignKeyCache();
@@ -356,11 +384,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public boolean delete(int id) throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(String.format("DELETE FROM %s WHERE id=%d", tableName, id));
+    PreparedStatement stmt = conn.getPreparedStatement(String.format(
+        "DELETE FROM %s WHERE id=%d", tableName, id));
     try {
       boolean success = stmt.executeUpdate() == 1;
       stmt.close();
-      if(success) {
+      if (success) {
         cachedById.remove(id);
       }
       clearForeignKeyCache();
@@ -377,7 +406,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public boolean deleteAll() throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(String.format("TRUNCATE TABLE %s", tableName));
+    PreparedStatement stmt = conn.getPreparedStatement(String.format(
+        "TRUNCATE TABLE %s", tableName));
     try {
       boolean success = stmt.executeUpdate() >= 0;
       stmt.close();
@@ -396,7 +426,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
 
   @Override
   public Set<T> findAll(String conditions) throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM " + getTableName() + " WHERE " + conditions + ";");
+    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
+        + getTableName() + " WHERE " + conditions + ";");
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
@@ -421,9 +452,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       }
     }
   }
-  
+
   @Override
-  public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException {
+  public Set<T> findAll(String conditions, RecordSelector<T> selector)
+      throws IOException {
     return findAll(conditions);
   }
 }

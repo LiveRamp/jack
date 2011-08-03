@@ -378,4 +378,20 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     posts.delete(id);
     assertNull(posts.find(id));
   }
+  
+  public void testSave() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = posts.create(null, 10L, 1);
+    int id = post.getId();
+    post.setPostedAtMillis(20L);
+    dbs.getDatabase1().posts().save(post);
+    assertEquals(Long.valueOf(20), posts.find(id).getPostedAtMillis());
+  }
+  
+  public void testInsertOnSave() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = new Post(50, "Post", 20L, 100, dbs);
+    posts.save(post);
+    assertEquals(post, posts.find(50));
+  }
 }
