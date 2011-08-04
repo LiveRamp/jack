@@ -353,7 +353,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     PreparedStatement saveStmt = getSaveStmt();
     try {
       setAttrs(model, saveStmt);
-      System.out.println(saveStmt);
       saveStmt.execute();
       boolean success = saveStmt.getUpdateCount() == 1;
       saveStmt.close();
