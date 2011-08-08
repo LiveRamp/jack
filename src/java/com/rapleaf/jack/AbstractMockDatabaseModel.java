@@ -39,7 +39,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
         for (String field : referencedFields) {
           Object fieldValue = record.getField(field);
           query.append("var ");
-          query.append(field);
+          query.append(field.toLowerCase());
           query.append("=");
           if (fieldValue instanceof String) {
             query.append('"');

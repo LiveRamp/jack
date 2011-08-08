@@ -81,4 +81,5 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public Set<T> findAll(String conditions) throws IOException;
   
   public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
+  
 }

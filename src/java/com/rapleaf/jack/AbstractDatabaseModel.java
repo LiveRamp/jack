@@ -457,4 +457,5 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       throws IOException {
     return findAll(conditions);
   }
+  
 }
