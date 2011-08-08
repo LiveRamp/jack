@@ -114,7 +114,7 @@ public class MysqlToJavaScriptTranslator {
       }
         break;
       case 66: // Identifier
-        referencedFields.add(token.text);
+        referencedFields.add(token.text.toLowerCase());
         Token next = yylex.yylex();
         if(next == null) {
           break;
@@ -172,7 +172,7 @@ public class MysqlToJavaScriptTranslator {
           }
           sb.append(")");
         } else {
-          sb.append(token.text);
+          sb.append(token.text.toLowerCase());
           yylex.yypushback(next.text.length());
         } 
         break;
