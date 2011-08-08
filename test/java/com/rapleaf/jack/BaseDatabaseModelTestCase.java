@@ -286,6 +286,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(u2), users.findAll("handle LIKE \"%o%m%as%\""));
     assertEquals(Collections.singleton(u2), users.findAll("handle NOT LIKE \"bryan_\" AND handle != 'as%df'"));
     assertEquals(Collections.singleton(u1), users.findAll("handle NOT LIKE \"%omas%\" AND handle != 'as%df'"));
+    assertEquals(Collections.EMPTY_SET, users.findAll("handle LIKE \"%/tmp/directory/1%\""));
     
   }
   

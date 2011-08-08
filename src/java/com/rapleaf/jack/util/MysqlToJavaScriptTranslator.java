@@ -50,6 +50,7 @@ public class MysqlToJavaScriptTranslator {
           }
           regex = regex.replaceAll("%", ".*");
           regex = regex.replaceAll("_", ".");
+          regex = regex.replaceAll("/", "\\\\/");
           regex = '^' + regex + '$';
           sb.append(".match(/");
           sb.append(regex);
@@ -104,6 +105,7 @@ public class MysqlToJavaScriptTranslator {
           }
           regex = regex.replaceAll("%", ".*");
           regex = regex.replaceAll("_", ".");
+          regex = regex.replaceAll("/", "\\/");
           regex = '^' + regex + '$';
           sb.append(".match(/");
           sb.append(regex);
