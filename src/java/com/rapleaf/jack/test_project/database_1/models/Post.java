@@ -72,6 +72,9 @@ public class Post extends ModelWithId {
 
   @Override
   public Object getField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return getId();
+    }
     if (fieldName.equals("title")) {
       return getTitle();
     }
