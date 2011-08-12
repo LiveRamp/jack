@@ -6,6 +6,8 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.io.IOException;
+
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -42,5 +44,18 @@ public class Database1Impl implements IDatabase1 {
 
   public IUserPersistence users(){
     return users;
+  }
+
+  public boolean deleteAll() throws IOException {
+    boolean success = true;
+    try {
+    success &= comments.deleteAll();
+    success &= images.deleteAll();
+    success &= posts.deleteAll();
+    success &= users.deleteAll();
+    } catch (IOException e) {
+      throw e;
+    }
+    return success;
   }
 }

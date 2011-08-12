@@ -28,9 +28,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    dbs.getDatabase1().users().deleteAll();
-    dbs.getDatabase1().posts().deleteAll();
-    dbs.getDatabase1().comments().deleteAll();
+    dbs.getDatabase1().deleteAll();
   }
 
   public void testCreate() throws Exception {
