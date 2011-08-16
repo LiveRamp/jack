@@ -49,7 +49,7 @@ public class Mock<%=db_name%>Impl implements I<%=db_name%> {
     boolean success = true;
     try {
   <% model_defns.each do |model_defn| %>
-    success &= <%= model_defn.table_name %>.deleteAll();
+      success &= <%= model_defn.table_name %>.deleteAll();
   <% end %>
     } catch (IOException e) {
       throw e;
