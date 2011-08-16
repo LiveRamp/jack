@@ -14,8 +14,17 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public interface IDb extends Serializable {
-
+  
+  /**
+   * Delete all records in every persistence within this database.
+   * 
+   * @return true if and only if each persistence successfully
+   *         deletes all its records.
+   * @throws IOException
+   */
+  public boolean deleteAll() throws IOException;
 }
