@@ -41,6 +41,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected final Map<Integer, T> cachedById = new HashMap<Integer, T>();
   protected final Map<String, Map<Integer, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Integer, Set<T>>>();
+  
+  private boolean useCache = true;
 
   protected AbstractDatabaseModel(BaseDatabaseConnection conn,
       String tableName, List<String> fieldNames) {
@@ -123,7 +125,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   public T find(int id) throws IOException {
     T model = cachedById.get(id);
-    if (model != null) {
+    if (model != null && useCache) {
       return model;
     }
     PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
@@ -144,21 +146,26 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         throw new IOException(e);
       }
     }
-
-    cachedById.put(id, model);
+    if (useCache) {
+      cachedById.put(id, model);
+    }
     return model;
   }
 
   public Set<T> find(Set<Integer> ids) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     Set<Integer> notCachedIds = new HashSet<Integer>();
-    for (Integer id : ids) {
-      T model = cachedById.get(id);
-      if (model != null) {
-        foundSet.add(model);
-      } else {
-        notCachedIds.add(id);
+    if (useCache) {
+      for (Integer id : ids) {
+        T model = cachedById.get(id);
+        if (model != null) {
+          foundSet.add(model);
+        } else {
+          notCachedIds.add(id);
+        }
       }
+    } else {
+      notCachedIds = ids;
     }
     if (!notCachedIds.isEmpty()) {
       StringBuilder statementString = new StringBuilder();
@@ -181,8 +188,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         rs = stmt.executeQuery();
         while (rs.next()) {
           T inst = instanceFromResultSet(rs);
-          cachedById.put(inst.getId(), inst);
           foundSet.add(inst);
+          if (useCache) {
+            cachedById.put(inst.getId(), inst);
+          }
         }
       } catch (SQLException e) {
         throw new IOException(e);
@@ -254,12 +263,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       throws IOException {
     Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     Set<T> ret;
-    if (foreignKeyCache != null) {
+    if (foreignKeyCache != null && useCache) {
       ret = foreignKeyCache.get(id);
       if (ret != null) {
         return ret;
       }
-    } else {
+    } else if (useCache) {
       foreignKeyCache = new HashMap<Integer, Set<T>>();
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
@@ -272,12 +281,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       ret = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        cachedById.put(inst.getId(), inst);
         ret.add(inst);
+        if (useCache) {
+          cachedById.put(inst.getId(), inst);
+        }
       }
-
-      foreignKeyCache.put(id, ret);
-
+      if (useCache) {
+        foreignKeyCache.put(id, ret);
+      }
       return ret;
     } catch (SQLException e) {
       throw new IOException(e);
@@ -299,7 +310,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     Map<Integer, Set<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     Set<T> foundSet = new HashSet<T>();
     Set<Integer> notCachedIds = new HashSet<Integer>();
-    if (foreignKeyCache != null) {
+    if (foreignKeyCache != null && useCache) {
       for (Integer id : ids) {
         Set<T> results = foreignKeyCache.get(id);
         if (results != null) {
@@ -309,9 +320,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
     } else {
-      foreignKeyCache = new HashMap<Integer, Set<T>>();
-      cachedByForeignKey.put(foreignKey, foreignKeyCache);
       notCachedIds = ids;
+      if (useCache) {
+        foreignKeyCache = new HashMap<Integer, Set<T>>();
+        cachedByForeignKey.put(foreignKey, foreignKeyCache);
+      }
     }
 
     if (!notCachedIds.isEmpty()) {
@@ -335,8 +348,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         rs = stmt.executeQuery();
         while (rs.next()) {
           T inst = instanceFromResultSet(rs);
-          cachedById.put(inst.getId(), inst);
           foundSet.add(inst);
+          if (useCache) {
+            cachedById.put(inst.getId(), inst);
+          }
         }
       } catch (SQLException e) {
         throw new IOException(e);
@@ -356,7 +371,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       saveStmt.execute();
       boolean success = saveStmt.getUpdateCount() == 1;
       saveStmt.close();
-      if (success) {
+      if (success && useCache) {
         cachedById.put(model.getId(), model);
       }
       clearForeignKeyCache();
@@ -434,8 +449,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       Set<T> results = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        cachedById.put(inst.getId(), inst);
         results.add(inst);
+        if (useCache) {
+          cachedById.put(inst.getId(), inst);
+        }
       }
       return results;
     } catch (SQLException e) {
@@ -458,4 +475,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return findAll(conditions);
   }
   
+  public boolean isCaching() {
+    return useCache;
+  }
+  
+  public void enableCaching() {
+    useCache = true;
+  }
+  
+  public void disableCaching() {
+    useCache = false;
+  }
 }
