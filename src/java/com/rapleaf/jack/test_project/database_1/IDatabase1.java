@@ -6,8 +6,6 @@
  */
 package com.rapleaf.jack.test_project.database_1;
 
-import java.io.IOException;
-
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
@@ -19,5 +17,4 @@ public interface IDatabase1 extends IDb {
   public IImagePersistence images();
   public IPostPersistence posts();
   public IUserPersistence users();
-  public boolean deleteAll() throws IOException;
 }

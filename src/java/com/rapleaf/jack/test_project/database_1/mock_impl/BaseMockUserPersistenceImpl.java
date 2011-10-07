@@ -9,6 +9,8 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
+import java.util.Set;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,4 +55,8 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
   }
 
 
+  @Override
+  public Set<User> find(Map<User._Fields, Object> fieldsMap) throws IOException {
+    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+  }
 }

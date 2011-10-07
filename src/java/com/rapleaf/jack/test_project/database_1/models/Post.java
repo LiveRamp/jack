@@ -26,8 +26,14 @@ public class Post extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private final BelongsToAssociation<User> __assoc_user;
-  private final HasManyAssociation<Comment> __assoc_comments;
+  private transient BelongsToAssociation<User> __assoc_user;
+  private transient HasManyAssociation<Comment> __assoc_comments;
+
+  public enum _Fields {
+    title,
+    posted_at_millis,
+    user_id,
+  }
 
   public Post(int id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
     super(id);
@@ -36,6 +42,13 @@ public class Post extends ModelWithId {
     this.__user_id = user_id;
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", id);
+  }
+
+  public Post(int id, final String title, final Long posted_at_millis, final Integer user_id) {
+    super(id);
+    this.__title = title;
+    this.__posted_at_millis = posted_at_millis;
+    this.__user_id = user_id;
   }
 
   public String getTitle(){
@@ -85,6 +98,18 @@ public class Post extends ModelWithId {
       return getUserId();
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
+  public Object getField(_Fields field) {
+    switch (field) {
+      case title:
+        return getTitle();
+      case posted_at_millis:
+        return getPostedAtMillis();
+      case user_id:
+        return getUserId();
+    }
+    throw new IllegalStateException("Invalid field name: " + field);
   }
 
   public String toString() {

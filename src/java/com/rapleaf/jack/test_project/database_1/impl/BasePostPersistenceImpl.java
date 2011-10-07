@@ -8,6 +8,8 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,6 +60,11 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return newInst;
   }
 
+
+  @Override
+  public Set<Post> find(Map<Post._Fields, Object> fieldsMap) throws IOException {
+    return super.realFind(fieldsMap);
+  }
 
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {

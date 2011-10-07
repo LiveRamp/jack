@@ -9,9 +9,12 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ICommentPersistence extends IModelPersistence<Comment> {
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException;
+  public Set<Comment> find(Map<Comment._Fields, Object> fieldsMap) throws IOException;
 }

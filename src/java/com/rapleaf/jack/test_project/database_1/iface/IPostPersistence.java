@@ -9,9 +9,12 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import com.rapleaf.jack.IModelPersistence;
 
 public interface IPostPersistence extends IModelPersistence<Post> {
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException;
+  public Set<Post> find(Map<Post._Fields, Object> fieldsMap) throws IOException;
 }

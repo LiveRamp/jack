@@ -32,9 +32,21 @@ public class User extends ModelWithId {
   private Boolean __some_boolean;
 
   // Associations
-  private final HasManyAssociation<Post> __assoc_posts;
-  private final HasManyAssociation<Comment> __assoc_comments;
-  private final HasOneAssociation<Image> __assoc_image;
+  private transient HasManyAssociation<Post> __assoc_posts;
+  private transient HasManyAssociation<Comment> __assoc_comments;
+  private transient HasOneAssociation<Image> __assoc_image;
+
+  public enum _Fields {
+    handle,
+    created_at_millis,
+    num_posts,
+    some_date,
+    some_datetime,
+    bio,
+    some_binary,
+    some_float,
+    some_boolean,
+  }
 
   public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
     super(id);
@@ -50,6 +62,19 @@ public class User extends ModelWithId {
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "image_id", id);
+  }
+
+  public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
+    super(id);
+    this.__handle = handle;
+    this.__created_at_millis = created_at_millis;
+    this.__num_posts = num_posts;
+    this.__some_date = some_date;
+    this.__some_datetime = some_datetime;
+    this.__bio = bio;
+    this.__some_binary = some_binary;
+    this.__some_float = some_float;
+    this.__some_boolean = some_boolean;
   }
 
   public String getHandle(){
@@ -169,6 +194,30 @@ public class User extends ModelWithId {
       return isSomeBoolean();
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
+  public Object getField(_Fields field) {
+    switch (field) {
+      case handle:
+        return getHandle();
+      case created_at_millis:
+        return getCreatedAtMillis();
+      case num_posts:
+        return getNumPosts();
+      case some_date:
+        return getSomeDate();
+      case some_datetime:
+        return getSomeDatetime();
+      case bio:
+        return getBio();
+      case some_binary:
+        return getSomeBinary();
+      case some_float:
+        return getSomeFloat();
+      case some_boolean:
+        return isSomeBoolean();
+    }
+    throw new IllegalStateException("Invalid field name: " + field);
   }
 
   public String toString() {

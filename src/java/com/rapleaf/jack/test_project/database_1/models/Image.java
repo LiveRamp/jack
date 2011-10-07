@@ -24,12 +24,21 @@ public class Image extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private final BelongsToAssociation<User> __assoc_user;
+  private transient BelongsToAssociation<User> __assoc_user;
+
+  public enum _Fields {
+    user_id,
+  }
 
   public Image(int id, final Integer user_id, IDatabases databases) {
     super(id);
     this.__user_id = user_id;
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
+  }
+
+  public Image(int id, final Integer user_id) {
+    super(id);
+    this.__user_id = user_id;
   }
 
   public Integer getUserId(){
@@ -53,6 +62,14 @@ public class Image extends ModelWithId {
       return getUserId();
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
+  public Object getField(_Fields field) {
+    switch (field) {
+      case user_id:
+        return getUserId();
+    }
+    throw new IllegalStateException("Invalid field name: " + field);
   }
 
   public String toString() {

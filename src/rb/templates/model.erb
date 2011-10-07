@@ -43,8 +43,14 @@ public class <%=model_defn.model_name%> extends ModelWithId {
 
   // Associations
   <% model_defn.associations.each do |assoc| %>
-  private final <%= assoc.java_type %> <%= assoc.field_name %>;
+  private transient <%= assoc.java_type %> <%= assoc.field_name %>;
   <% end %>
+
+  public enum _Fields {
+  <% model_defn.fields.each do |field_defn| %>
+    <%= field_defn.name %>,
+  <% end %>
+  }
 
   public <%= model_defn.model_name %>(int id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
     super(id);
@@ -54,6 +60,13 @@ public class <%=model_defn.model_name%> extends ModelWithId {
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+  <% end %>
+  }
+
+  public <%= model_defn.model_name %>(int id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
+    super(id);
+  <% model_defn.fields.each do |field_defn| %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
   <% end %>
   }
 
@@ -86,6 +99,16 @@ public class <%=model_defn.model_name%> extends ModelWithId {
     }
   <% end %>
     throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
+  public Object getField(_Fields field) {
+    switch (field) {
+  <% model_defn.fields.each do |field_defn| %>
+      case <%= field_defn.name %>:
+        return <%= field_defn.getter %>;
+  <% end %>
+    }
+    throw new IllegalStateException("Invalid field name: " + field);
   }
 
   public String toString() {

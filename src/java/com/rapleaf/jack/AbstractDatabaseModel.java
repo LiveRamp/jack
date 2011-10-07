@@ -174,30 +174,60 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement(statementString
-          .toString());
-      ResultSet rs = null;
-      try {
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-          T inst = instanceFromResultSet(rs);
-          cachedById.put(inst.getId(), inst);
-          foundSet.add(inst);
-        }
-      } catch (SQLException e) {
-        throw new IOException(e);
-      } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          stmt.close();
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
-      }
+      executeQuery(foundSet, statementString);
     }
     return foundSet;
+  }
+
+  protected Set<T> realFind(Map fieldsMap) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+    if (fieldsMap == null || fieldsMap.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM ");
+    statementString.append(tableName);
+    statementString.append(" WHERE (");
+
+
+    Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry<Enum, Object> entry = iter.next();
+      statementString.append(entry.getKey() + " = \"" + entry.getValue().toString() + "\"");
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    statementString.append(")");
+    executeQuery(foundSet, statementString);
+
+    return foundSet;
+  }
+
+  private void executeQuery(Set<T> foundSet, StringBuilder statementString) throws IOException {
+    PreparedStatement stmt = conn.getPreparedStatement(statementString
+        .toString());
+    ResultSet rs = null;
+    try {
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        T inst = instanceFromResultSet(rs);
+        cachedById.put(inst.getId(), inst);
+        foundSet.add(inst);
+      }
+    } catch (SQLException e) {
+      throw new IOException(e);
+    } finally {
+      try {
+        if (rs != null) {
+          rs.close();
+        }
+        stmt.close();
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   protected PreparedStatement getSaveStmt() {

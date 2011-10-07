@@ -19,6 +19,8 @@ package <%= root_package %>.iface;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import <%= JACK_NAMESPACE %>.IModelPersistence;
 
@@ -27,4 +29,5 @@ public interface <%= model_defn.iface_name %> extends IModelPersistence<<%= mode
   <% unless create_signature_small.nil? %>
   public <%= model_defn.model_name %> create(<%= create_signature_small %>) throws IOException;
   <% end %>
+  public Set<<%= model_defn.model_name %>> find(Map<<%= model_defn.model_name %>._Fields, Object> fieldsMap) throws IOException;
 }

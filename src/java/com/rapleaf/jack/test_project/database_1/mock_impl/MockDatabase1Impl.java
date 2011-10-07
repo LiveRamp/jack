@@ -48,10 +48,10 @@ public class MockDatabase1Impl implements IDatabase1 {
   public boolean deleteAll() throws IOException {
     boolean success = true;
     try {
-    success &= comments.deleteAll();
-    success &= images.deleteAll();
-    success &= posts.deleteAll();
-    success &= users.deleteAll();
+      success &= comments.deleteAll();
+      success &= images.deleteAll();
+      success &= posts.deleteAll();
+      success &= users.deleteAll();
     } catch (IOException e) {
       throw e;
     }

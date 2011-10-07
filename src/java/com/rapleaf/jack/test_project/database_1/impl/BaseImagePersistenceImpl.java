@@ -8,6 +8,8 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,6 +50,11 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return newInst;
   }
 
+
+  @Override
+  public Set<Image> find(Map<Image._Fields, Object> fieldsMap) throws IOException {
+    return super.realFind(fieldsMap);
+  }
 
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {

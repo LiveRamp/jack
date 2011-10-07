@@ -19,6 +19,8 @@ package <%= root_package %>.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
+import java.util.Set;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,4 +50,8 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     <%= render_mock_create_method(model_defn, create_signature_small, true) %>
   <% end %>
 
+  @Override
+  public Set<<%= model_defn.model_name %>> find(Map<<%= model_defn.model_name %>._Fields, Object> fieldsMap) throws IOException {
+    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+  }
 }
