@@ -82,4 +82,16 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   
   public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
   
+  /**
+   * Caching is on by default, and is toggled with enableCaching() and disableCaching().
+   * 
+   * While caching is disabled, the cache is neither read from nor written to.  However, 
+   * disableCaching() does not clear the cache, so the cache contents are preserved for when
+   * caching is enabled again.
+   */
+  public boolean isCaching();  
+
+  public void enableCaching();
+
+  public void disableCaching();
 }

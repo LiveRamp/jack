@@ -17,7 +17,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
     implements IModelPersistence<T> {
 
   protected final Map<Integer, T> records = new HashMap<Integer, T>();
-
+  
   private static class JavaScriptRecordSelector<T extends ModelWithId>
       implements RecordSelector<T> {
 
@@ -187,5 +187,19 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   protected RecordSelector<T> getRecordSelector(String conditions)
       throws IOException {
     return new JavaScriptRecordSelector(conditions);
+  }
+  
+  private boolean useCache = true;
+  
+  public boolean isCaching() {
+    return useCache;
+  }
+  
+  public void enableCaching() {
+    useCache = true;
+  }
+  
+  public void disableCaching() {
+    useCache = false;
   }
 }
