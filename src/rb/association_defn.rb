@@ -48,7 +48,7 @@ class AssociationDefn
           when "belongs_to"
             @foreign_key = "#{@name}_id"
           when "has_one"
-            @foreign_key = "#{@name}_id"
+            @foreign_key = "#{model_defn.model_name.foreign_key}"
           when "has_many"
             @foreign_key = "#{model_defn.model_name.foreign_key}"
         end
