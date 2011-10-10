@@ -98,8 +98,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
 
-  @Override
-  public Set<User> find(Map<User._Fields, Object> fieldsMap) throws IOException {
+  public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
 

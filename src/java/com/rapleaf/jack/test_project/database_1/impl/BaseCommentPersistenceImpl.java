@@ -61,8 +61,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
 
-  @Override
-  public Set<Comment> find(Map<Comment._Fields, Object> fieldsMap) throws IOException {
+  public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
 

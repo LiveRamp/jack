@@ -45,8 +45,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
 
 
-  @Override
-  public Set<Image> find(Map<Image._Fields, Object> fieldsMap) throws IOException {
+  public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     throw new RuntimeException("Not yet implemented"); // Not yet implemented
   }
 }

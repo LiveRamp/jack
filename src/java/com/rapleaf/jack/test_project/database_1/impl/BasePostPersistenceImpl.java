@@ -61,8 +61,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
 
-  @Override
-  public Set<Post> find(Map<Post._Fields, Object> fieldsMap) throws IOException {
+  public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
 

@@ -26,8 +26,8 @@ public class Post extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
-  private transient HasManyAssociation<Comment> __assoc_comments;
+  private BelongsToAssociation<User> __assoc_user;
+  private HasManyAssociation<Comment> __assoc_comments;
 
   public enum _Fields {
     title,

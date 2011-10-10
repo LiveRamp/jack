@@ -32,9 +32,9 @@ public class User extends ModelWithId {
   private Boolean __some_boolean;
 
   // Associations
-  private transient HasManyAssociation<Post> __assoc_posts;
-  private transient HasManyAssociation<Comment> __assoc_comments;
-  private transient HasOneAssociation<Image> __assoc_image;
+  private HasManyAssociation<Post> __assoc_posts;
+  private HasManyAssociation<Comment> __assoc_comments;
+  private HasOneAssociation<Image> __assoc_image;
 
   public enum _Fields {
     handle,

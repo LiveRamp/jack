@@ -26,8 +26,8 @@ public class Comment extends ModelWithId {
   private Integer __commented_on_id;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
-  private transient BelongsToAssociation<Post> __assoc_post;
+  private BelongsToAssociation<User> __assoc_user;
+  private BelongsToAssociation<Post> __assoc_post;
 
   public enum _Fields {
     content,

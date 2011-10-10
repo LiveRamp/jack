@@ -51,8 +51,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
 
-  @Override
-  public Set<Image> find(Map<Image._Fields, Object> fieldsMap) throws IOException {
+  public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
 

@@ -16,5 +16,4 @@ import com.rapleaf.jack.IModelPersistence;
 
 public interface IPostPersistence extends IModelPersistence<Post> {
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException;
-  public Set<Post> find(Map<Post._Fields, Object> fieldsMap) throws IOException;
 }

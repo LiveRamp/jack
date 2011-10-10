@@ -24,7 +24,7 @@ public class Image extends ModelWithId {
   private Integer __user_id;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
+  private BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
     user_id,

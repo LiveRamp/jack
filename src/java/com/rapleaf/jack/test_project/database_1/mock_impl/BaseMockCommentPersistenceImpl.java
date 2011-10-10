@@ -45,8 +45,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
 
 
-  @Override
-  public Set<Comment> find(Map<Comment._Fields, Object> fieldsMap) throws IOException {
+  public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     throw new RuntimeException("Not yet implemented"); // Not yet implemented
   }
 }
