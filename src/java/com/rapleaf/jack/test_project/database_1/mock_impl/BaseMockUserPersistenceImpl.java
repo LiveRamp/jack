@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
+import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -33,6 +34,11 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
   public BaseMockUserPersistenceImpl(IDatabases databases) {
     super();
     this.databases = databases;
+  }
+
+   @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    throw new RuntimeException("Not yet implemented"); // Not yet implemented
   }
 
 

@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,6 +112,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       }
     }
   }
+
+  public abstract ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
 
   private String escapedFieldNames(List<String> fieldNames) {
     StringBuilder sb = new StringBuilder();

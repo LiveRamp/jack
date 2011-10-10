@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
@@ -31,6 +32,12 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   public BaseImagePersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "images", Arrays.asList("user_id"));
     this.databases = databases;
+  }
+
+  @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
+    return create(user_id);
   }
 
 

@@ -70,6 +70,13 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% end %>
   }
 
+  public <%= model_defn.model_name %> (<%= model_defn.model_name %> other) {
+    super(other.getId());
+  <% model_defn.fields.each do |field_defn| %>
+    this.__<%= field_defn.name %> = other.<%= field_defn.getter %>;
+  <% end %>
+  }
+
 <% model_defn.fields.each do |field_defn| %>
 
   public <%= field_defn.java_type %> <%= field_defn.getter %>{

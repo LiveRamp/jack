@@ -27,6 +27,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public interface RecordSelector<T extends ModelWithId> {
     public boolean selectRecord(T record);
   }
+
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
   
   /**
    * Update an existing T instance in the persistence.

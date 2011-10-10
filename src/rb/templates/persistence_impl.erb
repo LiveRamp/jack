@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
+import <%= JACK_NAMESPACE %>.ModelWithId;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
@@ -41,6 +42,14 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   public <%= model_defn.impl_name %>(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "<%= model_defn.table_name %>", Arrays.asList(<%= model_defn.fields.map{|x| "\"#{x.name}\""}.join(", ") %>));
     this.databases = databases;
+  }
+
+  @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    <% model_defn.fields.each do |field_defn| %>
+    <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <% end %>
+    return create(<%= model_defn.fields.map{|field| field.name }.join(', ') %>);
   }
 
   <%= render_create_method(model_defn, create_signature_full) %>

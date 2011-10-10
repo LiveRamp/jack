@@ -41,6 +41,11 @@ public class Image extends ModelWithId {
     this.__user_id = user_id;
   }
 
+  public Image (Image other) {
+    super(other.getId());
+    this.__user_id = other.getUserId();
+  }
+
   public Integer getUserId(){
     return __user_id;
   }

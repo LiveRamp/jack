@@ -37,11 +37,11 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     User u1 = users.create("a_handle", 2);
     User u2 = users.create("another_handle", 2);
 
-    Set<User> found = users.find(new HashMap<User._Fields, Object>(){{put(User._Fields.handle, "a_handle");}});
+    Set<User> found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.handle, "a_handle");}});
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
 
-    found = users.find(new HashMap<User._Fields, Object>(){{put(User._Fields.num_posts, 2);}});
+    found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
     assertEquals(2, found.size());
     assertTrue(found.contains(u1));
     assertTrue(found.contains(u2));

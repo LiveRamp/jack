@@ -64,7 +64,7 @@ class FieldDefn
     }
   }
   
-  def java_type
+  def java_type(is_nullable = nullable?)
     mappings = {
       :integer=>'Integer', 
       :string=>'String', 
@@ -84,7 +84,7 @@ class FieldDefn
     else
       x = data_type
     end
-    JAVA_TYPE_MAPPINGS[nullable?][x]
+    JAVA_TYPE_MAPPINGS[is_nullable][x]
   end
 
   def sql_type

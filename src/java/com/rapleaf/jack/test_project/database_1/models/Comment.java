@@ -51,6 +51,13 @@ public class Comment extends ModelWithId {
     this.__commented_on_id = commented_on_id;
   }
 
+  public Comment (Comment other) {
+    super(other.getId());
+    this.__content = other.getContent();
+    this.__commenter_id = other.getCommenterId();
+    this.__commented_on_id = other.getCommentedOnId();
+  }
+
   public String getContent(){
     return __content;
   }

@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -31,6 +32,14 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   public BasePostPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "posts", Arrays.asList("title", "posted_at_millis", "user_id"));
     this.databases = databases;
+  }
+
+  @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    String title = (String) fieldsMap.get(Post._Fields.title);
+    Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
+    Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
+    return create(title, posted_at_millis, user_id);
   }
 
 

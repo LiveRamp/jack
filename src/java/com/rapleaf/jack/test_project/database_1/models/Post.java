@@ -51,6 +51,13 @@ public class Post extends ModelWithId {
     this.__user_id = user_id;
   }
 
+  public Post (Post other) {
+    super(other.getId());
+    this.__title = other.getTitle();
+    this.__posted_at_millis = other.getPostedAtMillis();
+    this.__user_id = other.getUserId();
+  }
+
   public String getTitle(){
     return __title;
   }

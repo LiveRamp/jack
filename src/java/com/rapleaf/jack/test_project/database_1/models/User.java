@@ -61,7 +61,7 @@ public class User extends ModelWithId {
     this.__some_boolean = some_boolean;
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
-    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "image_id", id);
+    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", id);
   }
 
   public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
@@ -75,6 +75,19 @@ public class User extends ModelWithId {
     this.__some_binary = some_binary;
     this.__some_float = some_float;
     this.__some_boolean = some_boolean;
+  }
+
+  public User (User other) {
+    super(other.getId());
+    this.__handle = other.getHandle();
+    this.__created_at_millis = other.getCreatedAtMillis();
+    this.__num_posts = other.getNumPosts();
+    this.__some_date = other.getSomeDate();
+    this.__some_datetime = other.getSomeDatetime();
+    this.__bio = other.getBio();
+    this.__some_binary = other.getSomeBinary();
+    this.__some_float = other.getSomeFloat();
+    this.__some_boolean = other.isSomeBoolean();
   }
 
   public String getHandle(){

@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -31,6 +32,14 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   public BaseCommentPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
     super(conn, "comments", Arrays.asList("content", "commenter_id", "commented_on_id"));
     this.databases = databases;
+  }
+
+  @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    String content = (String) fieldsMap.get(Comment._Fields.content);
+    Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
+    Integer commented_on_id = (Integer) fieldsMap.get(Comment._Fields.commented_on_id);
+    return create(content, commenter_id, commented_on_id);
   }
 
 

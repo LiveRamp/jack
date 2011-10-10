@@ -29,6 +29,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractMockDatabaseModel;
+import <%= JACK_NAMESPACE %>.ModelWithId;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
@@ -43,6 +44,11 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   public <%= model_defn.mock_impl_name %>(IDatabases databases) {
     super();
     this.databases = databases;
+  }
+
+   @Override
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+    throw new RuntimeException("Not yet implemented"); // Not yet implemented
   }
 
   <%= render_mock_create_method(model_defn, create_signature_full) %>
