@@ -162,6 +162,39 @@ public class User extends ModelWithId {
     this.__some_boolean = newval;
   }
 
+  public void setField(_Fields field, Object value) {
+    switch (field) {
+      case handle:
+        setHandle((String) value);
+        break;
+      case created_at_millis:
+        setCreatedAtMillis((Long) value);
+        break;
+      case num_posts:
+        setNumPosts((Integer) value);
+        break;
+      case some_date:
+        setSomeDate((Long) value);
+        break;
+      case some_datetime:
+        setSomeDatetime((Long) value);
+        break;
+      case bio:
+        setBio((String) value);
+        break;
+      case some_binary:
+        setSomeBinary((byte[]) value);
+        break;
+      case some_float:
+        setSomeFloat((Double) value);
+        break;
+      case some_boolean:
+        setSomeBoolean((Boolean) value);
+        break;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public Set<Post> getPosts() throws IOException {
     return __assoc_posts.get();
   }
@@ -230,7 +263,7 @@ public class User extends ModelWithId {
       case some_boolean:
         return isSomeBoolean();
     }
-    throw new IllegalStateException("Invalid field name: " + field);
+    throw new IllegalStateException("Invalid field: " + field);
   }
 
   public String toString() {

@@ -82,6 +82,21 @@ public class Post extends ModelWithId {
     this.__user_id = newval;
   }
 
+  public void setField(_Fields field, Object value) {
+    switch (field) {
+      case title:
+        setTitle((String) value);
+        break;
+      case posted_at_millis:
+        setPostedAtMillis((Long) value);
+        break;
+      case user_id:
+        setUserId((Integer) value);
+        break;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
@@ -116,7 +131,7 @@ public class Post extends ModelWithId {
       case user_id:
         return getUserId();
     }
-    throw new IllegalStateException("Invalid field name: " + field);
+    throw new IllegalStateException("Invalid field: " + field);
   }
 
   public String toString() {

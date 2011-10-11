@@ -54,6 +54,15 @@ public class Image extends ModelWithId {
     this.__user_id = newval;
   }
 
+  public void setField(_Fields field, Object value) {
+    switch (field) {
+      case user_id:
+        setUserId((Integer) value);
+        break;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
@@ -74,7 +83,7 @@ public class Image extends ModelWithId {
       case user_id:
         return getUserId();
     }
-    throw new IllegalStateException("Invalid field name: " + field);
+    throw new IllegalStateException("Invalid field: " + field);
   }
 
   public String toString() {

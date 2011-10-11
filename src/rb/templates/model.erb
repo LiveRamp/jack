@@ -88,6 +88,17 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   }
 <% end %>
 
+  public void setField(_Fields field, Object value) {
+    switch (field) {
+  <% model_defn.fields.each do |field_defn| %>
+      case <%= field_defn.name %>:
+        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>) value);
+        break;
+  <% end %>
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
 <% model_defn.associations.each do |a| %>
 
   public <%= a.assoc_getter_type %> <%= a.assoc_getter %>() throws IOException {
@@ -115,7 +126,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
         return <%= field_defn.getter %>;
   <% end %>
     }
-    throw new IllegalStateException("Invalid field name: " + field);
+    throw new IllegalStateException("Invalid field: " + field);
   }
 
   public String toString() {

@@ -82,6 +82,21 @@ public class Comment extends ModelWithId {
     this.__commented_on_id = newval;
   }
 
+  public void setField(_Fields field, Object value) {
+    switch (field) {
+      case content:
+        setContent((String) value);
+        break;
+      case commenter_id:
+        setCommenterId((Integer) value);
+        break;
+      case commented_on_id:
+        setCommentedOnId((Integer) value);
+        break;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
@@ -116,7 +131,7 @@ public class Comment extends ModelWithId {
       case commented_on_id:
         return getCommentedOnId();
     }
-    throw new IllegalStateException("Invalid field name: " + field);
+    throw new IllegalStateException("Invalid field: " + field);
   }
 
   public String toString() {
