@@ -24,6 +24,7 @@ public class Comment extends ModelWithId {
   private String __content;
   private Integer __commenter_id;
   private Integer __commented_on_id;
+  private long __created_at;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
@@ -33,22 +34,25 @@ public class Comment extends ModelWithId {
     content,
     commenter_id,
     commented_on_id,
+    created_at,
   }
 
-  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, IDatabases databases) {
+  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at, IDatabases databases) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
+    this.__created_at = created_at;
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), commenter_id);
     this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id);
   }
 
-  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id) {
+  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
+    this.__created_at = created_at;
   }
 
   public Comment (Comment other) {
@@ -56,6 +60,7 @@ public class Comment extends ModelWithId {
     this.__content = other.getContent();
     this.__commenter_id = other.getCommenterId();
     this.__commented_on_id = other.getCommentedOnId();
+    this.__created_at = other.getCreatedAt();
   }
 
   public String getContent(){
@@ -82,6 +87,14 @@ public class Comment extends ModelWithId {
     this.__commented_on_id = newval;
   }
 
+  public long getCreatedAt(){
+    return __created_at;
+  }
+
+  public void setCreatedAt(long newval){
+    this.__created_at = newval;
+  }
+
   public void setField(_Fields field, Object value) {
     switch (field) {
       case content:
@@ -92,6 +105,9 @@ public class Comment extends ModelWithId {
         break;
       case commented_on_id:
         setCommentedOnId((Integer) value);
+        break;
+      case created_at:
+        setCreatedAt((Long) value);
         break;
     }
     throw new IllegalStateException("Invalid field: " + field);
@@ -119,6 +135,9 @@ public class Comment extends ModelWithId {
     if (fieldName.equals("commented_on_id")) {
       return getCommentedOnId();
     }
+    if (fieldName.equals("created_at")) {
+      return getCreatedAt();
+    }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
 
@@ -130,6 +149,8 @@ public class Comment extends ModelWithId {
         return getCommenterId();
       case commented_on_id:
         return getCommentedOnId();
+      case created_at:
+        return getCreatedAt();
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
@@ -142,6 +163,8 @@ public class Comment extends ModelWithId {
         return null;
       case commented_on_id:
         return null;
+      case created_at:
+        return 28800000;
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
@@ -151,6 +174,7 @@ public class Comment extends ModelWithId {
       + " content: " + __content
       + " commenter_id: " + __commenter_id
       + " commented_on_id: " + __commented_on_id
+      + " created_at: " + __created_at
       + ">";
   }
 }

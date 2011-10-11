@@ -50,7 +50,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     <% if field_defn.default_value.nil? %>
     <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
     <% else %>
-    <%= field_defn.java_type %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
     <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
     <% end %>
     <% end %>

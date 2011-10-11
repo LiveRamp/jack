@@ -185,9 +185,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testFindAllByForeignKey() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
-    Comment c1 = comments.create("comment1", userId, 1);
-    Comment c2 = comments.create("comment2", userId, 1);
-    Comment c3 = comments.create("comment3", userId, 1);
+    Comment c1 = comments.create("comment1", userId, 1, 1);
+    Comment c2 = comments.create("comment2", userId, 1, 1);
+    Comment c3 = comments.create("comment3", userId, 1, 1);
 
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
@@ -223,11 +223,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
     int otherUserId = 2;
-    Comment c1 = comments.create("comment1", userId, 1);
-    Comment c2 = comments.create("comment2", userId, 1);
-    Comment c3 = comments.create("comment3", userId, 1);
-    Comment c4 = comments.create("comment4", otherUserId, 1);
-    Comment c5 = comments.create("comment5", 3, 1);
+    Comment c1 = comments.create("comment1", userId, 1, 1);
+    Comment c2 = comments.create("comment2", userId, 1, 1);
+    Comment c3 = comments.create("comment3", userId, 1, 1);
+    Comment c4 = comments.create("comment4", otherUserId, 1, 1);
+    Comment c5 = comments.create("comment5", 3, 1, 1);
 
     Set<Integer> commenterIds = new HashSet<Integer>();
     commenterIds.add(userId);

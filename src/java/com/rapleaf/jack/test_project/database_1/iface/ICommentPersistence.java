@@ -15,5 +15,6 @@ import java.util.Set;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ICommentPersistence extends IModelPersistence<Comment> {
-  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException;
+  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException;
+  public Comment create(final long created_at) throws IOException;
 }

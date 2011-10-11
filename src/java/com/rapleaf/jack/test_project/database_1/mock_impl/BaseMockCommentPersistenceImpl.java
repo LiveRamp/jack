@@ -42,9 +42,19 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
 
 
-  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException {
+  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException {
     int __id = curId.getAndIncrement();
-    Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, databases);
+    Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
+    records.put(__id, newInst);
+    clearForeignKeyCache();
+    return newInst;
+  }
+
+
+
+  public Comment create(final long created_at) throws IOException {
+    int __id = curId.getAndIncrement();
+    Comment newInst = new Comment(__id, null, null, null, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;

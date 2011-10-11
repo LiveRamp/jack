@@ -30,7 +30,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   private final IDatabases databases;
 
   public BaseCommentPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "comments", Arrays.asList("content", "commenter_id", "commented_on_id"));
+    super(conn, "comments", Arrays.asList("content", "commenter_id", "commented_on_id", "created_at"));
     this.databases = databases;
   }
 
@@ -39,11 +39,13 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     String content = (String) fieldsMap.get(Comment._Fields.content);
     Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     Integer commented_on_id = (Integer) fieldsMap.get(Comment._Fields.commented_on_id);
-    return create(content, commenter_id, commented_on_id);
+    Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
+    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
+    return create(content, commenter_id, commented_on_id, created_at);
   }
 
 
-  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id) throws IOException {
+  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException {
     int __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (content == null) {
@@ -61,9 +63,24 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         } else {
           stmt.setInt(3, commented_on_id);
         }
+          stmt.setTimestamp(4, new Timestamp(created_at));
       }
-    }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id")));
-    Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, databases);
+    }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id", "created_at")));
+    Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
+    cachedById.put(__id, newInst);
+    clearForeignKeyCache();
+    return newInst;
+  }
+
+
+
+  public Comment create(final long created_at) throws IOException {
+    int __id = realCreate(new AttrSetter() {
+      public void set(PreparedStatement stmt) throws SQLException {
+          stmt.setTimestamp(1, new Timestamp(created_at));
+      }
+    }, getInsertStatement(Arrays.asList("created_at")));
+    Comment newInst = new Comment(__id, null, null, null, created_at, databases);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
@@ -91,7 +108,10 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     } else {
       stmt.setInt(3, model.getCommentedOnId());
     }
-    stmt.setLong(4, model.getId());
+    {
+      stmt.setTimestamp(4, new Timestamp(model.getCreatedAt()));
+    }
+    stmt.setLong(5, model.getId());
   }
 
   @Override
@@ -100,6 +120,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       rs.getString("content"),
       getIntOrNull(rs, "commenter_id"),
       getIntOrNull(rs, "commented_on_id"),
+      getDateAsLong(rs, "created_at"),
       databases
     );
   }
