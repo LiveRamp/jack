@@ -86,6 +86,14 @@ public class Image extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
+  public Object getDefaultValue(_Fields field) {
+    switch (field) {
+      case user_id:
+        return null;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public String toString() {
     return "<Image"
       + " user_id: " + __user_id

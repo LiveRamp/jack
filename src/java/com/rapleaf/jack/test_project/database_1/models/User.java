@@ -266,6 +266,30 @@ public class User extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
+  public Object getDefaultValue(_Fields field) {
+    switch (field) {
+      case handle:
+        return null;
+      case created_at_millis:
+        return null;
+      case num_posts:
+        return null;
+      case some_date:
+        return null;
+      case some_datetime:
+        return null;
+      case bio:
+        return null;
+      case some_binary:
+        return null;
+      case some_float:
+        return null;
+      case some_boolean:
+        return null;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public String toString() {
     return "<User"
       + " handle: " + __handle

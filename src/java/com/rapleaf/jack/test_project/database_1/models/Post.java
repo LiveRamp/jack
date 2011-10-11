@@ -134,6 +134,18 @@ public class Post extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
+  public Object getDefaultValue(_Fields field) {
+    switch (field) {
+      case title:
+        return null;
+      case posted_at_millis:
+        return null;
+      case user_id:
+        return null;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public String toString() {
     return "<Post"
       + " title: " + __title

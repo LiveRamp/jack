@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 class FieldDefn
-  attr_accessor :name, :data_type, :args, :ordinal
+  attr_accessor :name, :data_type, :args, :ordinal, :default_value
   def initialize(name, data_type, ordinal, args = {})
     @name = name
     @data_type = data_type
@@ -23,6 +23,9 @@ class FieldDefn
     if args[":null"] && args[":null"] == "false"
       @nullable = false
     end
+
+    @default_value = args[":default"]
+
   end
 
   def nullable?

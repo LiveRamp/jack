@@ -134,6 +134,18 @@ public class Comment extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
+  public Object getDefaultValue(_Fields field) {
+    switch (field) {
+      case content:
+        return null;
+      case commenter_id:
+        return null;
+      case commented_on_id:
+        return null;
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public String toString() {
     return "<Comment"
       + " content: " + __content

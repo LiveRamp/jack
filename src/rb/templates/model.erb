@@ -129,6 +129,16 @@ public class <%=model_defn.model_name%> extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
+  public Object getDefaultValue(_Fields field) {
+    switch (field) {
+  <% model_defn.fields.each do |field_defn| %>
+      case <%= field_defn.name %>:
+        return <%= field_defn.default_value.nil? ? "null" : field_defn.default_value %>;
+  <% end %>
+    }
+    throw new IllegalStateException("Invalid field: " + field);
+  }
+
   public String toString() {
     return "<<%= model_defn.model_name %>"
       <% model_defn.fields.each do |field_defn| %>
