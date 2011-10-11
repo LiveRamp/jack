@@ -38,7 +38,8 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
    @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
+    return create(user_id);
   }
 
 

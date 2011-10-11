@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -40,6 +42,32 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t2 = t0 + 20;
     byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
+    verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
+  }
+
+  public void testCreateFromMap() throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    long t0 = System.currentTimeMillis();
+    long t1 = t0 + 10;
+    long t2 = t0 + 20;
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
+
+    Map<Enum, Object> fieldsMap = new HashMap<Enum, Object>();
+    fieldsMap.put(User._Fields.handle, "bryand");
+    fieldsMap.put(User._Fields.created_at_millis, t0);
+    fieldsMap.put(User._Fields.num_posts, 5);
+    fieldsMap.put(User._Fields.some_date, t1);
+    fieldsMap.put(User._Fields.some_datetime, t2);
+    fieldsMap.put(User._Fields.bio, "this is a relatively long string");
+    fieldsMap.put(User._Fields.some_binary, someBinary);
+    fieldsMap.put(User._Fields.some_float, 1.2d);
+    fieldsMap.put(User._Fields.some_boolean, true);
+
+    User bryand = (User) users.create(fieldsMap);
+    verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
+  }
+
+  private void verifyCreatedUser(IUserPersistence users, long t0, long t1, long t2, byte[] someBinary, User bryand) throws IOException {
     assertEquals("bryand", bryand.getHandle());
     assertEquals(Long.valueOf(t0), bryand.getCreatedAtMillis());
     assertEquals(5, bryand.getNumPosts());
@@ -49,7 +77,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand.getSomeBinary()));
     assertEquals(1.2, bryand.getSomeFloat());
     assertTrue(bryand.isSomeBoolean());
-    
+
     assertTrue(bryand == users.find(bryand.getId()));
   }
 

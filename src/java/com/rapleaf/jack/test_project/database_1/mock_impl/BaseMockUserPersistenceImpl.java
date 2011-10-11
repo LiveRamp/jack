@@ -38,7 +38,16 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
 
    @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    String handle = (String) fieldsMap.get(User._Fields.handle);
+    Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
+    int num_posts = (Integer) fieldsMap.get(User._Fields.num_posts);
+    Long some_date = (Long) fieldsMap.get(User._Fields.some_date);
+    Long some_datetime = (Long) fieldsMap.get(User._Fields.some_datetime);
+    String bio = (String) fieldsMap.get(User._Fields.bio);
+    byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
+    Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
+    Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
+    return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
   }
 
 

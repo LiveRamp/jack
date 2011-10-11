@@ -38,7 +38,10 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
 
    @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    String title = (String) fieldsMap.get(Post._Fields.title);
+    Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
+    Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
+    return create(title, posted_at_millis, user_id);
   }
 
 

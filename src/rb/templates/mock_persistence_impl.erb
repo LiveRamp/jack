@@ -48,7 +48,15 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
 
    @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    <% model_defn.fields.each do |field_defn| %>
+    <% if field_defn.default_value.nil? %>
+    <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <% else %>
+    <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
+    <% end %>
+    <% end %>
+    return create(<%= model_defn.fields.map{|field| field.name }.join(', ') %>);
   }
 
   <%= render_mock_create_method(model_defn, create_signature_full) %>

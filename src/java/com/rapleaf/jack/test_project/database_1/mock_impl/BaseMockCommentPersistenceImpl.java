@@ -38,7 +38,12 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
    @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    String content = (String) fieldsMap.get(Comment._Fields.content);
+    Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
+    Integer commented_on_id = (Integer) fieldsMap.get(Comment._Fields.commented_on_id);
+    Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
+    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
+    return create(content, commenter_id, commented_on_id, created_at);
   }
 
 
