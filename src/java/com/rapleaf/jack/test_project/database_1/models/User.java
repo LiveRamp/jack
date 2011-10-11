@@ -49,7 +49,7 @@ public class User extends ModelWithId {
     this.__some_boolean = some_boolean;
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
-    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "image_id", id);
+    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", id);
   }
 
   public String getHandle(){
