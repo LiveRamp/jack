@@ -196,6 +196,36 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(userComments.contains(c3));
   }
 
+  public void testFindAllFromCache() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
+
+    // fills cache
+    User u1_1 = users.find(u1.getId());
+    User u2_1 = users.find(u2.getId());
+    User u3_1 = users.find(u3.getId());
+    
+    Set<User> allUsers = users.findAll();
+    assertTrue(allUsers.contains(u1));
+    assertTrue(allUsers.contains(u2));
+    assertTrue(allUsers.contains(u3));
+    
+    // make sure findAll returned cached objects
+    int numFound = 0;
+    for (User user : allUsers) {
+      if (user == u1_1) {
+        numFound++;
+      } else if (user == u2_1) {
+        numFound++;
+      } else if (user == u3_1) {
+        numFound++;
+      }
+    }
+    assertEquals("findAll did not return cached objects for all 3 users!", 3, numFound);
+  }
+
   public void testFindAllAndCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);

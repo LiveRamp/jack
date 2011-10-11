@@ -19,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -314,10 +313,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       ret = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        ret.add(inst);
         if (useCache) {
-          cachedById.put(inst.getId(), inst);
+          T cachedInst = cachedById.get(inst.getId());
+          if (cachedInst == null) {
+            cachedById.put(inst.getId(), inst);
+          } else {
+            inst = cachedInst;
+          }
         }
+        ret.add(inst);
       }
       if (useCache) {
         foreignKeyCache.put(id, ret);
@@ -482,10 +486,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       Set<T> results = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        results.add(inst);
         if (useCache) {
-          cachedById.put(inst.getId(), inst);
+          T cachedInst = cachedById.get(inst.getId());
+          if (cachedInst == null) {
+            cachedById.put(inst.getId(), inst);
+          } else {
+            inst = cachedInst;
+          }
         }
+        results.add(inst);
       }
       return results;
     } catch (SQLException e) {
