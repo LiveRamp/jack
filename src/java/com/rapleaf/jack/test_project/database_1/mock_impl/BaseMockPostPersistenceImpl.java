@@ -52,6 +52,6 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
 
 
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    return super.realFind(fieldsMap);
   }
 }

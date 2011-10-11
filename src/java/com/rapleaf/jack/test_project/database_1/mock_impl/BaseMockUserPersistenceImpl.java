@@ -62,6 +62,6 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
 
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    return super.realFind(fieldsMap);
   }
 }

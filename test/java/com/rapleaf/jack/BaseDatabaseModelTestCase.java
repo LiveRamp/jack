@@ -1,8 +1,10 @@
 package com.rapleaf.jack;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -392,5 +394,21 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Post post = new Post(50, "Post", 20L, 100, dbs);
     posts.save(post);
     assertEquals(post, posts.find(50));
+  }
+
+  public void testFindWithFieldsMap() throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+
+    User u1 = users.create("a_handle", 2);
+    User u2 = users.create("another_handle", 2);
+
+    Set<User> found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.handle, "a_handle");}});
+    assertEquals(1, found.size());
+    assertTrue(found.contains(u1));
+
+    found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
+    assertEquals(2, found.size());
+    assertTrue(found.contains(u1));
+    assertTrue(found.contains(u2));
   }
 }

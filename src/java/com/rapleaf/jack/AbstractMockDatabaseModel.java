@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,6 +70,23 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       }
     }
 
+  }
+
+  protected Set<T> realFind(Map fieldsMap) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+    if (fieldsMap == null || fieldsMap.isEmpty()) {
+      return foundSet;
+    }
+
+    for (T t : records.values()) {
+      for (Map.Entry<Enum, Object> e : ((Map<Enum, Object>)fieldsMap).entrySet()) {
+        if (t.getField(e.getKey().name()).equals(e.getValue())){
+          foundSet.add(t);
+        }
+      }
+    }
+
+    return foundSet;
   }
 
   @Override

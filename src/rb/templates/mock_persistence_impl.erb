@@ -57,6 +57,6 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   <% end %>
 
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
-    throw new RuntimeException("Not yet implemented"); // Not yet implemented
+    return super.realFind(fieldsMap);
   }
 }

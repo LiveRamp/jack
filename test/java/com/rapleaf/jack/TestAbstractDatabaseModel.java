@@ -1,16 +1,16 @@
 package com.rapleaf.jack;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
-import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
-import com.rapleaf.jack.test_project.database_1.models.User;
 
+/**
+ * This test runs all test cases from the superclass on the real (not mock) models. Do no put any
+ * test cases here unless you have a really good reason to do so.
+ */
 public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
   
@@ -30,21 +30,4 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
     assertTrue(c1 == c2);
   }
-
-  public void testFindWithFieldsMap() throws IOException {
-    IUserPersistence users = dbs.getDatabase1().users();
-
-    User u1 = users.create("a_handle", 2);
-    User u2 = users.create("another_handle", 2);
-
-    Set<User> found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.handle, "a_handle");}});
-    assertEquals(1, found.size());
-    assertTrue(found.contains(u1));
-
-    found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
-    assertEquals(2, found.size());
-    assertTrue(found.contains(u1));
-    assertTrue(found.contains(u2));
-  }
-
 }
