@@ -62,8 +62,6 @@ public class User extends ModelWithId {
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", id);
-<<<<<<< HEAD
-=======
   }
 
   public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
@@ -90,7 +88,6 @@ public class User extends ModelWithId {
     this.__some_binary = other.getSomeBinary();
     this.__some_float = other.getSomeFloat();
     this.__some_boolean = other.isSomeBoolean();
->>>>>>> bryan/master
   }
 
   public String getHandle(){

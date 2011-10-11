@@ -16,12 +16,14 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Set;
 
 public class HasOneAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
   private final String foreignKey;
   private final int id;
-  private T cached;
+  private boolean cached;
+  private T inst;
 
   public HasOneAssociation(IModelPersistence<T> persistence,
       String foreignKey, int id) {
@@ -31,14 +33,19 @@ public class HasOneAssociation<T extends ModelWithId> implements Serializable {
   }
 
   public T get() throws IOException {
-    if (cached == null) {
-      cached = (T) persistence.findAllByForeignKey(foreignKey, id).toArray()[0];
+    if (!cached) {
+      Set<T> all = persistence.findAllByForeignKey(foreignKey, id);
+      if (all != null && !all.isEmpty()) {
+        inst = (T) all.toArray()[0];
+      }
+      cached = true;
     }
-    return cached;
+    return inst;
   }
 
   public void clearCache() throws IOException {
     persistence.clearCacheByForeignKey(foreignKey, id);
-    cached = null;
+    cached = false;
+    inst = null;
   }
 }
