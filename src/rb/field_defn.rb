@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 class FieldDefn
-  attr_accessor :name, :data_type, :args, :ordinal
+  attr_accessor :name, :data_type, :args, :ordinal, :default_value
   def initialize(name, data_type, ordinal, args = {})
     @name = name
     @data_type = data_type
@@ -20,9 +20,12 @@ class FieldDefn
     @ordinal = ordinal
     
     @nullable = true
-    if args[":not_null"] && args[":not_null"] == "true"
+    if args[":null"] && args[":null"] == "false"
       @nullable = false
     end
+
+    @default_value = args[":default"]
+
   end
 
   def nullable?
@@ -32,8 +35,39 @@ class FieldDefn
   def is_long?
     !args[":limit"].nil? && args[":limit"].to_i > 4
   end
+
+  JAVA_TYPE_MAPPINGS = {
+    true => {
+      :integer=>'Integer', 
+      :string=>'String', 
+      :datetime=>'Long', 
+      :varbinary=>'byte[]', 
+      :date=>'Long', 
+      :text=>'String', 
+      :binary=>'byte[]', 
+      :float=>'Double', 
+      :boolean=>'Boolean',
+      :bigint=>'Long',
+      :bytes=>'byte[]',
+      :long => "Long"
+    },
+    false => {
+      :integer=>'int', 
+      :string=>'String', 
+      :datetime=>'long', 
+      :varbinary=>'byte[]', 
+      :date=>'long', 
+      :text=>'String', 
+      :binary=>'byte[]', 
+      :float=>'double', 
+      :boolean=>'boolean',
+      :bigint=>'long',
+      :bytes=>'byte[]',
+      :long => "long"
+    }
+  }
   
-  def java_type
+  def java_type(is_nullable = nullable?)
     mappings = {
       :integer=>'Integer', 
       :string=>'String', 
@@ -47,14 +81,13 @@ class FieldDefn
       :bigint=>'Long',
       :bytes=>'byte[]'
     }
-    if data_type == :integer      
-      return "Long" if is_long?
-    end
-    if ret = mappings[data_type]
+    x = nil
+    if data_type == :integer && is_long?
+      x = :long
     else
-      raise "unknown db_type #{data_type}"
+      x = data_type
     end
-    ret
+    JAVA_TYPE_MAPPINGS[is_nullable][x]
   end
 
   def sql_type
@@ -117,9 +150,9 @@ class FieldDefn
 
   def getter
     if data_type == :boolean
-      "is#{camelize(name)}()"
+      "is#{name.camelcase}()"
     else
-      "get#{camelize(name)}()"
+      "get#{name.camelcase}()"
     end
   end
   

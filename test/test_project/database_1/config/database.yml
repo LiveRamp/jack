@@ -1,8 +1,9 @@
 development:
   adapter: mysql2
   database: jack_1
-  user: root
-  socket: /tmp/mysql.sock
+  username: root
+  password: 
+  host: 127.0.0.1
   pool: 5
   timeout: 5000
 

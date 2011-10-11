@@ -1,2 +1,2 @@
 database1: jack_database1
-
+use_mock_db: true

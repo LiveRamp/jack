@@ -1,6 +1,10 @@
 <project name="jack" default="dist" basedir=".">
   <property name="version" value="0.1.0" />
 
+  <!-- pull the database creds from the sys properties -->
+  <property name="db.user" value="root"/>
+  <property name="db.pass" value=""/>
+
   <property environment="env" />
 
   <property name="src" location="src" />
@@ -47,11 +51,11 @@
     <mkdir dir="${build.classes}"/>
   </target>
 
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,generate-mysql-flex">
     <javac srcdir="${src.java}" destdir="${build.classes}" debug="true" classpathref="compile.classpath" />
   </target>
   
-  <target name="init-test">
+  <target name="init-test" depends="init">
     <mkdir dir="${build.test}" />
   </target>
 
@@ -59,9 +63,15 @@
     <javac debug="true" srcdir="${test.src.dir}" destdir="${build.test}" classpathref="test.classpath" />
   </target>
 
-  <target name="setup-db">
+  <target name="configure-ruby-database-yml">
     <exec executable="/bin/sh" failonerror="true">
-      <arg line="-c test/create_databases.sh" />
+      <arg line="-c 'test/update_database_yml.sh test/test_project/database_1/config/database.yml ${db.user} ${db.pass}'" />
+    </exec>
+  </target>
+
+  <target name="setup-db" depends="init-test,configure-ruby-database-yml">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/create_databases.sh ${db.user} ${db.pass}'" />
     </exec>
     <exec executable="/bin/sh" failonerror="true">
       <arg line="test/migrate_project.sh test/test_project/database_1" />
@@ -70,11 +80,33 @@
 
   <target name="generate">
     <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c bundle install" />
+    </exec>
+    <exec executable="/bin/sh" failonerror="true">
       <arg line="-c test/regen_code.sh" />
     </exec>
   </target>
 
-  <target name="test" depends="compile-test,setup-db,generate" description="Run the unit test suite">
+  <target name="generate-mysql-flex">
+    <delete file="src/java/com/rapleaf/jack/util/MysqlFlex.java"/>
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'java -cp jflex/JFlex.jar JFlex.Main -d src/java/com/rapleaf/jack/util src/jflex/mysql.flex'" />
+    </exec>
+  </target>
+
+  <target name="rspec">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c bundle exec rspec test/rb" />
+    </exec>
+  </target>
+
+  <target name="configure-java-database-yml">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/update_database_yml.sh config/database.yml ${db.user} ${db.pass}'" />
+    </exec>
+  </target>
+
+  <target name="junit-test" depends="compile-test,configure-java-database-yml" description="Run the unit test suite">
     <mkdir dir="${test.log.dir}"/>
     <junit
       printsummary="yes" showoutput="${test.output}" 
@@ -120,8 +152,9 @@
     </junit>
     <fail if="tests.failed">Tests failed!</fail>
   </target>
-  
-  
+
+  <target name="test" depends="setup-db,generate,rspec,junit-test" description="Run the entire test suite" />
+
   <!-- TODO: need to build several jars here -->
   <target name="dist" depends="compile" description="Build a distributable jar">
     <jar jarfile="${jar.file}">

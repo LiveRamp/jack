@@ -1,8 +1,12 @@
 require 'rubygems'
+require "bundler/setup"
+
 require 'erb'
 require "fileutils"
-require "rails"
+require 'yaml'
 
+gem 'activesupport', ">=3.0.0"
+require "active_support/all"
 
 require File.expand_path(File.dirname(__FILE__) + "/association_defn")
 require File.expand_path(File.dirname(__FILE__) + "/field_defn")

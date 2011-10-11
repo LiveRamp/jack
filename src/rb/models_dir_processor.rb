@@ -27,7 +27,7 @@ class ModelsDirProcessor
       end
     end
   end
-  
+
   def self.process_model(model_content_lines, database_defn, model_defns_by_table_name)
     class_name = get_class_name(model_content_lines)
     table_name = class_name.underscore.pluralize
@@ -37,7 +37,7 @@ class ModelsDirProcessor
         parse_associations(model_content_lines, "has_many", md, ":through") +
         parse_associations(model_content_lines, "has_one", md)
     else
-      raise "didn't find a match for #{table_name}"
+      puts "Warning: Couldn't find any table '#{table_name}' that corresponded to model '#{class_name}'. No code will be generated for this model."
     end
   end
 

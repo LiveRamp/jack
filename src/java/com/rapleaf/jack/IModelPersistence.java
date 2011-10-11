@@ -16,10 +16,20 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
+
+import com.rapleaf.jack.test_project.database_1.models.User;
 
 
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
+
+  public interface RecordSelector<T extends ModelWithId> {
+    public boolean selectRecord(T record);
+  }
+
+  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
+  
   /**
    * Update an existing T instance in the persistence.
    * @param model
@@ -35,12 +45,20 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @throws IOException
    */
   public T find(int id) throws IOException;
+  
+  public Set<T> find(Set<Integer> ids) throws IOException;
+
+  public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
   public void clearCacheById(int id) throws IOException;
 
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException;
+  
+  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids) throws IOException;
 
   public void clearCacheByForeignKey(String foreignKey, int id);
+  
+  public void clearForeignKeyCache();
 
   /**
    * Effectively the same as delete(model.getId()).
@@ -68,4 +86,19 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public Set<T> findAll() throws IOException;
 
   public Set<T> findAll(String conditions) throws IOException;
+  
+  public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
+  
+  /**
+   * Caching is on by default, and is toggled with enableCaching() and disableCaching().
+   * 
+   * While caching is disabled, the cache is neither read from nor written to.  However, 
+   * disableCaching() does not clear the cache, so the cache contents are preserved for when
+   * caching is enabled again.
+   */
+  public boolean isCaching();  
+
+  public void enableCaching();
+
+  public void disableCaching();
 }
