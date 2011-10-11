@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
-
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IModelPersistence<T> {
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
@@ -174,8 +172,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       ret = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        cachedById.put(inst.getId(), inst);
-        ret.add(inst);
+        T cachedInst = cachedById.get(inst.getId());
+        if (cachedInst == null) {
+          cachedById.put(inst.getId(), inst);
+          ret.add(inst);
+        } else {
+          ret.add(cachedInst);
+        }
       }
       
       foreignKeyCache.put(id, ret);
@@ -262,8 +265,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements IM
       Set<T> results = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
-        cachedById.put(inst.getId(), inst);
-        results.add(inst);
+        T cachedInst = cachedById.get(inst.getId());
+        if (cachedInst == null) {
+          cachedById.put(inst.getId(), inst);
+          results.add(inst);
+        } else {
+          results.add(cachedInst);
+        }
       }
       return results;
     } catch (SQLException e) {
