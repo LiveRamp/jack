@@ -109,8 +109,9 @@ public class Comment extends ModelWithId {
       case created_at:
         setCreatedAt((Long) value);
         break;
-    }
-    throw new IllegalStateException("Invalid field: " + field);
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
   }
 
   public User getUser() throws IOException {

@@ -93,8 +93,9 @@ public class Post extends ModelWithId {
       case user_id:
         setUserId((Integer) value);
         break;
-    }
-    throw new IllegalStateException("Invalid field: " + field);
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
   }
 
   public User getUser() throws IOException {

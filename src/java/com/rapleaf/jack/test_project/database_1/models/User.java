@@ -191,8 +191,9 @@ public class User extends ModelWithId {
       case some_boolean:
         setSomeBoolean((Boolean) value);
         break;
-    }
-    throw new IllegalStateException("Invalid field: " + field);
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
   }
 
   public Set<Post> getPosts() throws IOException {

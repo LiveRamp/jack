@@ -27,7 +27,7 @@ class FieldDefn
     @default_value = args[":default"]
     
     if !@default_value.nil?
-      if data_type == :datetime
+      if data_type == :datetime || data_type == :date
         @default_value = Time.parse(@default_value).to_i * 1000
       end
     end

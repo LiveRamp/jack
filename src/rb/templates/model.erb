@@ -95,8 +95,9 @@ public class <%=model_defn.model_name%> extends ModelWithId {
         set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>) value);
         break;
   <% end %>
-    }
-    throw new IllegalStateException("Invalid field: " + field);
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
   }
 
 <% model_defn.associations.each do |a| %>
