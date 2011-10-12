@@ -7,7 +7,7 @@ if [ $EXIT_CODE -ne 0 ]
 then
   exit $EXIT_CODE
 fi
-rake db:migrate
+bundle exec rake db:migrate
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]
 then
