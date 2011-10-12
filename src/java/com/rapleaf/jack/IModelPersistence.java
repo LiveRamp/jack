@@ -19,9 +19,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.test_project.database_1.models.User;
-
-
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public interface RecordSelector<T extends ModelWithId> {
