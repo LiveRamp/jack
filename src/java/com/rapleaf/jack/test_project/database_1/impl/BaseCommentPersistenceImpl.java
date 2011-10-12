@@ -8,6 +8,9 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -88,7 +91,37 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
 
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
-    return super.realFind(fieldsMap);
+    Set<Comment> foundSet = new HashSet<Comment>();
+    EnumSet<Comment._Fields> dateTimeFields = EnumSet.of(Comment._Fields.created_at);
+
+    if (fieldsMap == null || fieldsMap.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM ");
+    statementString.append("comments");
+    statementString.append(" WHERE (");
+
+
+    Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry<Enum, Object> entry = iter.next();
+      Enum field = entry.getKey();
+      
+      String queryValue = entry.getValue().toString();
+      if (dateTimeFields.contains(field)) {
+        queryValue = new Timestamp((Long) entry.getValue()).toString();
+      }
+      statementString.append(field + " = \"" + queryValue + "\"");
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    statementString.append(")");
+    executeQuery(foundSet, statementString);
+
+    return foundSet;
   }
 
   @Override

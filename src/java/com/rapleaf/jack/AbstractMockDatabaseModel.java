@@ -80,7 +80,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
 
     for (T t : records.values()) {
       for (Map.Entry<Enum, Object> e : ((Map<Enum, Object>)fieldsMap).entrySet()) {
-        if (t.getField(e.getKey().name()).equals(e.getValue())){
+        if (e.getValue().equals(t.getField(e.getKey().name()))){
           foundSet.add(t);
         }
       }

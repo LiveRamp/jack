@@ -8,6 +8,9 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -114,7 +117,41 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
-    return super.realFind(fieldsMap);
+    Set<User> foundSet = new HashSet<User>();
+    EnumSet<User._Fields> dateFields = EnumSet.of(User._Fields.some_date);
+    EnumSet<User._Fields> dateTimeFields = EnumSet.of(User._Fields.some_datetime);
+
+    if (fieldsMap == null || fieldsMap.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM ");
+    statementString.append("users");
+    statementString.append(" WHERE (");
+
+
+    Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry<Enum, Object> entry = iter.next();
+      Enum field = entry.getKey();
+      
+      String queryValue = entry.getValue().toString();
+      if (dateFields.contains(field)) {
+        queryValue = new Date((Long) entry.getValue()).toString();
+      }
+      if (dateTimeFields.contains(field)) {
+        queryValue = new Timestamp((Long) entry.getValue()).toString();
+      }
+      statementString.append(field + " = \"" + queryValue + "\"");
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    statementString.append(")");
+    executeQuery(foundSet, statementString);
+
+    return foundSet;
   }
 
   @Override

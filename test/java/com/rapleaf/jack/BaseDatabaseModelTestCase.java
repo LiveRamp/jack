@@ -458,9 +458,17 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);
+    u1.setSomeDate(100000L);
+    u1.setSomeDatetime(200000L);
+    users.save(u1);
+
     User u2 = users.create("another_handle", 2);
 
-    Set<User> found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.handle, "a_handle");}});
+    Set<User> found = users.find(new HashMap<Enum, Object>(){{
+      put(User._Fields.handle, "a_handle");
+      put(User._Fields.some_date, 100000L);
+      put(User._Fields.some_datetime, 200000L);
+    }});
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
 
