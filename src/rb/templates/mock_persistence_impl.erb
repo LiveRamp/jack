@@ -46,7 +46,7 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     this.databases = databases;
   }
 
-   @Override
+  @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.default_value.nil? %>

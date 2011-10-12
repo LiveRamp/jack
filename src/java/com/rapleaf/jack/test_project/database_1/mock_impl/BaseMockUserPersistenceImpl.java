@@ -36,7 +36,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
     this.databases = databases;
   }
 
-   @Override
+  @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     String handle = (String) fieldsMap.get(User._Fields.handle);
     Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);

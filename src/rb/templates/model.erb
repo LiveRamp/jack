@@ -73,7 +73,9 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   public <%= model_defn.model_name %> (<%= model_defn.model_name %> other) {
     super(other.getId());
   <% model_defn.fields.each do |field_defn| %>
-    this.__<%= field_defn.name %> = other.<%= field_defn.getter %>;
+    <% copy =  "other.#{field_defn.getter}" %>
+    <% copy = field_defn.java_type == 'byte[]' ? "copyBinary(#{copy})" : copy %>
+    this.__<%= field_defn.name %> = <%= copy %>;
   <% end %>
   }
 

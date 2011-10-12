@@ -36,7 +36,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
     this.databases = databases;
   }
 
-   @Override
+  @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);

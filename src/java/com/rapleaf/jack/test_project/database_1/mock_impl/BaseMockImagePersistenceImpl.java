@@ -36,7 +36,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     this.databases = databases;
   }
 
-   @Override
+  @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     return create(user_id);

@@ -50,4 +50,14 @@ public abstract class ModelWithId implements Serializable {
   }
   
   public abstract Object getField(String fieldName);
+
+  protected static byte[] copyBinary(final byte[] orig) {
+    if (orig == null) {
+      return null;
+    }
+
+    byte[] copy = new byte[orig.length];
+    System.arraycopy(orig, 0, copy, 0, orig.length);
+    return copy;
+  }
 }

@@ -36,7 +36,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     this.databases = databases;
   }
 
-   @Override
+  @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     String content = (String) fieldsMap.get(Comment._Fields.content);
     Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);

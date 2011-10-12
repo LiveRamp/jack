@@ -85,7 +85,7 @@ public class User extends ModelWithId {
     this.__some_date = other.getSomeDate();
     this.__some_datetime = other.getSomeDatetime();
     this.__bio = other.getBio();
-    this.__some_binary = other.getSomeBinary();
+    this.__some_binary = copyBinary(other.getSomeBinary());
     this.__some_float = other.getSomeFloat();
     this.__some_boolean = other.isSomeBoolean();
   }

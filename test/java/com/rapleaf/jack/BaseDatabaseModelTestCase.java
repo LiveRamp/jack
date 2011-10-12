@@ -439,4 +439,21 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u1));
     assertTrue(found.contains(u2));
   }
+
+  public void testCopyConstructor() {
+    User orig = new User(1, "some_handle", 1L, 1, 1L, 1L, "bio", "bio".getBytes(), 1D, true);
+    User copy = new User(orig);
+
+    orig.setHandle("another_handle");
+    orig.setNumPosts(2);
+    orig.setCreatedAtMillis(2L);
+    orig.getSomeBinary()[0] = "z".getBytes()[0];
+    orig.setSomeBoolean(false);
+
+    assertEquals("some_handle", copy.getHandle());
+    assertEquals(1, copy.getNumPosts());
+    assertEquals((Object) 1L, copy.getCreatedAtMillis());
+    assertTrue(Arrays.equals("bio".getBytes(), copy.getSomeBinary()));
+    assertEquals((Object) true, copy.isSomeBoolean());
+  }
 }
