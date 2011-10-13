@@ -8,6 +8,7 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -66,6 +67,28 @@ public class User extends ModelWithId {
 
   public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
     super(id);
+    this.__handle = handle;
+    this.__created_at_millis = created_at_millis;
+    this.__num_posts = num_posts;
+    this.__some_date = some_date;
+    this.__some_datetime = some_datetime;
+    this.__bio = bio;
+    this.__some_binary = some_binary;
+    this.__some_float = some_float;
+    this.__some_boolean = some_boolean;
+  }
+
+  public User(int id, Map<Enum, Object> fieldsMap) {
+    super(id);
+    String handle = (String) fieldsMap.get(User._Fields.handle);
+    Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
+    int num_posts = (Integer) fieldsMap.get(User._Fields.num_posts);
+    Long some_date = (Long) fieldsMap.get(User._Fields.some_date);
+    Long some_datetime = (Long) fieldsMap.get(User._Fields.some_datetime);
+    String bio = (String) fieldsMap.get(User._Fields.bio);
+    byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
+    Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
+    Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
     this.__num_posts = num_posts;

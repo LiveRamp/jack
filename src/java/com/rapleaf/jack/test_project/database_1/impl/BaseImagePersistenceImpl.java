@@ -78,14 +78,22 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     while (iter.hasNext()) {
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
+      Object value = entry.getValue();
       
-      String queryValue = entry.getValue().toString();
-      statementString.append(field + " = \"" + queryValue + "\"");
+      String queryValue;
+      if (value != null) {
+        queryValue = entry.getValue().toString();
+      } else {
+        queryValue = " IS NULL";
+      }
+
+      statementString.append(field + queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
     statementString.append(")");
+    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

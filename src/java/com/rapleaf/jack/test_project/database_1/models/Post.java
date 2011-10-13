@@ -8,6 +8,7 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -46,6 +47,16 @@ public class Post extends ModelWithId {
 
   public Post(int id, final String title, final Long posted_at_millis, final Integer user_id) {
     super(id);
+    this.__title = title;
+    this.__posted_at_millis = posted_at_millis;
+    this.__user_id = user_id;
+  }
+
+  public Post(int id, Map<Enum, Object> fieldsMap) {
+    super(id);
+    String title = (String) fieldsMap.get(Post._Fields.title);
+    Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
+    Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;

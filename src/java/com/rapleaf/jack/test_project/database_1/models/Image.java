@@ -8,6 +8,7 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -38,6 +39,12 @@ public class Image extends ModelWithId {
 
   public Image(int id, final Integer user_id) {
     super(id);
+    this.__user_id = user_id;
+  }
+
+  public Image(int id, Map<Enum, Object> fieldsMap) {
+    super(id);
+    Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     this.__user_id = user_id;
   }
 

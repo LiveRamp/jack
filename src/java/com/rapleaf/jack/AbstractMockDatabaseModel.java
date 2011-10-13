@@ -78,11 +78,17 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       return foundSet;
     }
 
-    for (T t : records.values()) {
+    for (T record : records.values()) {
+      boolean allMatch = true;
       for (Map.Entry<Enum, Object> e : ((Map<Enum, Object>)fieldsMap).entrySet()) {
-        if (e.getValue().equals(t.getField(e.getKey().name()))){
-          foundSet.add(t);
+        Object searchedForValue = e.getValue();
+        Object existingValue = record.getField(e.getKey().name());
+        if (existingValue == null){
+          if (searchedForValue != null) allMatch = false;
+        } else if (!existingValue.equals(searchedForValue)){
+          allMatch = false;
         }
+        if (allMatch) foundSet.add(record);
       }
     }
 

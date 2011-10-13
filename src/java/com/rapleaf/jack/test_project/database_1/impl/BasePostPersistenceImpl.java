@@ -76,6 +76,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
     EnumSet<Post._Fields> dateFields = EnumSet.of(Post._Fields.posted_at_millis);
+    EnumSet<Post._Fields> valueRequiresQuotesFields = EnumSet.of(Post._Fields.title);
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -91,17 +92,26 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     while (iter.hasNext()) {
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
+      Object value = entry.getValue();
       
-      String queryValue = entry.getValue().toString();
-      if (dateFields.contains(field)) {
-        queryValue = new Date((Long) entry.getValue()).toString();
+      String queryValue;
+      if (value != null) {
+        queryValue = entry.getValue().toString();
+        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
+        if (dateFields.contains(field)) {
+          queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
+        }
+      } else {
+        queryValue = " IS NULL";
       }
-      statementString.append(field + " = \"" + queryValue + "\"");
+
+      statementString.append(field + queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
     statementString.append(")");
+    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

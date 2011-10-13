@@ -18,6 +18,7 @@
 package <%= root_package %>.models;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import <%= root_package %>.I<%= db_name %>;
@@ -68,6 +69,23 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;
   <% end %>
+  }
+
+  public <%= model_defn.model_name %>(int id, Map<Enum, Object> fieldsMap) {
+    super(id);
+    <% model_defn.fields.each do |field_defn| %>
+    <% if field_defn.default_value.nil? %>
+    <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <% else %>
+    <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+    <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
+    <% end %>
+    <% end %>
+    
+    
+    <% model_defn.fields.each do |field_defn| %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
   }
 
   public <%= model_defn.model_name %> (<%= model_defn.model_name %> other) {

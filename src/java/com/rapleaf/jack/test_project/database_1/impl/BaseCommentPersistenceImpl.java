@@ -93,6 +93,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<Comment> foundSet = new HashSet<Comment>();
     EnumSet<Comment._Fields> dateTimeFields = EnumSet.of(Comment._Fields.created_at);
+    EnumSet<Comment._Fields> valueRequiresQuotesFields = EnumSet.of(Comment._Fields.content);
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -108,17 +109,27 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     while (iter.hasNext()) {
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
+      Object value = entry.getValue();
       
-      String queryValue = entry.getValue().toString();
-      if (dateTimeFields.contains(field)) {
-        queryValue = new Timestamp((Long) entry.getValue()).toString();
+      String queryValue;
+      if (value != null) {
+        queryValue = entry.getValue().toString();
+        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
+        if (dateTimeFields.contains(field)) {
+          queryValue = "\"" + new Timestamp((Long) entry.getValue()).toString() + "\"";
+        }
+        queryValue = " = " + queryValue;
+      } else {
+        queryValue = " IS NULL";
       }
-      statementString.append(field + " = \"" + queryValue + "\"");
+
+      statementString.append(field + queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
     statementString.append(")");
+    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

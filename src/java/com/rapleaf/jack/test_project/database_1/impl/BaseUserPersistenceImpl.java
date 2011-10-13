@@ -120,6 +120,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     Set<User> foundSet = new HashSet<User>();
     EnumSet<User._Fields> dateFields = EnumSet.of(User._Fields.some_date);
     EnumSet<User._Fields> dateTimeFields = EnumSet.of(User._Fields.some_datetime);
+    EnumSet<User._Fields> valueRequiresQuotesFields = EnumSet.of(User._Fields.handle, User._Fields.bio);
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -135,20 +136,30 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     while (iter.hasNext()) {
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
+      Object value = entry.getValue();
       
-      String queryValue = entry.getValue().toString();
-      if (dateFields.contains(field)) {
-        queryValue = new Date((Long) entry.getValue()).toString();
+      String queryValue;
+      if (value != null) {
+        queryValue = entry.getValue().toString();
+        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
+        if (dateFields.contains(field)) {
+          queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
+        }
+        if (dateTimeFields.contains(field)) {
+          queryValue = "\"" + new Timestamp((Long) entry.getValue()).toString() + "\"";
+        }
+        queryValue = " = " + queryValue;
+      } else {
+        queryValue = " IS NULL";
       }
-      if (dateTimeFields.contains(field)) {
-        queryValue = new Timestamp((Long) entry.getValue()).toString();
-      }
-      statementString.append(field + " = \"" + queryValue + "\"");
+
+      statementString.append(field + queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
     statementString.append(")");
+    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

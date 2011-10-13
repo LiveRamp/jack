@@ -468,6 +468,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
       put(User._Fields.handle, "a_handle");
       put(User._Fields.some_date, 100000L);
       put(User._Fields.some_datetime, 200000L);
+      put(User._Fields.some_float, null);
     }});
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));

@@ -8,6 +8,7 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -49,6 +50,19 @@ public class Comment extends ModelWithId {
 
   public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) {
     super(id);
+    this.__content = content;
+    this.__commenter_id = commenter_id;
+    this.__commented_on_id = commented_on_id;
+    this.__created_at = created_at;
+  }
+
+  public Comment(int id, Map<Enum, Object> fieldsMap) {
+    super(id);
+    String content = (String) fieldsMap.get(Comment._Fields.content);
+    Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
+    Integer commented_on_id = (Integer) fieldsMap.get(Comment._Fields.commented_on_id);
+    Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
+    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
