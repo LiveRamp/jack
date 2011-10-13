@@ -58,4 +58,11 @@ public class Database1Impl implements IDatabase1 {
     }
     return success;
   }
+
+  public void disableCaching() {
+    comments.disableCaching();
+    images.disableCaching();
+    posts.disableCaching();
+    users.disableCaching();
+  }
 }

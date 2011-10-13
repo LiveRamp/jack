@@ -57,4 +57,10 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     }
     return success;
   }
+
+  public void disableCaching() {
+  <% model_defns.each do |model_defn| %>
+    <%= model_defn.table_name %>.disableCaching();
+  <% end %>
+  }
 }

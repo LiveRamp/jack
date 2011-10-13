@@ -27,4 +27,6 @@ public interface IDb extends Serializable {
    * @throws IOException
    */
   public boolean deleteAll() throws IOException;
+
+  public void disableCaching();
 }
