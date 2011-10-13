@@ -159,7 +159,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       }
     }
     statementString.append(")");
-    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;
