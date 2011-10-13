@@ -114,6 +114,37 @@ public class Comment extends ModelWithId {
     }    
   }
 
+  public static Class getFieldType(_Fields field) {
+    switch (field) {
+      case content:
+        return String.class;
+      case commenter_id:
+        return Integer.class;
+      case commented_on_id:
+        return Integer.class;
+      case created_at:
+        return long.class;
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
+  }
+
+  public static Class getFieldType(String fieldName) {    
+    if (fieldName.equals("content")) {
+      return String.class;
+    }
+    if (fieldName.equals("commenter_id")) {
+      return Integer.class;
+    }
+    if (fieldName.equals("commented_on_id")) {
+      return Integer.class;
+    }
+    if (fieldName.equals("created_at")) {
+      return long.class;
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
@@ -156,7 +187,7 @@ public class Comment extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
-  public Object getDefaultValue(_Fields field) {
+  public static Object getDefaultValue(_Fields field) {
     switch (field) {
       case content:
         return null;

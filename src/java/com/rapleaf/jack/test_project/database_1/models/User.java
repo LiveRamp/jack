@@ -196,6 +196,62 @@ public class User extends ModelWithId {
     }    
   }
 
+  public static Class getFieldType(_Fields field) {
+    switch (field) {
+      case handle:
+        return String.class;
+      case created_at_millis:
+        return Long.class;
+      case num_posts:
+        return int.class;
+      case some_date:
+        return Long.class;
+      case some_datetime:
+        return Long.class;
+      case bio:
+        return String.class;
+      case some_binary:
+        return byte[].class;
+      case some_float:
+        return Double.class;
+      case some_boolean:
+        return Boolean.class;
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
+  }
+
+  public static Class getFieldType(String fieldName) {    
+    if (fieldName.equals("handle")) {
+      return String.class;
+    }
+    if (fieldName.equals("created_at_millis")) {
+      return Long.class;
+    }
+    if (fieldName.equals("num_posts")) {
+      return int.class;
+    }
+    if (fieldName.equals("some_date")) {
+      return Long.class;
+    }
+    if (fieldName.equals("some_datetime")) {
+      return Long.class;
+    }
+    if (fieldName.equals("bio")) {
+      return String.class;
+    }
+    if (fieldName.equals("some_binary")) {
+      return byte[].class;
+    }
+    if (fieldName.equals("some_float")) {
+      return Double.class;
+    }
+    if (fieldName.equals("some_boolean")) {
+      return Boolean.class;
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public Set<Post> getPosts() throws IOException {
     return __assoc_posts.get();
   }
@@ -267,7 +323,7 @@ public class User extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
-  public Object getDefaultValue(_Fields field) {
+  public static Object getDefaultValue(_Fields field) {
     switch (field) {
       case handle:
         return null;

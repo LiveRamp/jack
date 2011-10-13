@@ -98,6 +98,32 @@ public class Post extends ModelWithId {
     }    
   }
 
+  public static Class getFieldType(_Fields field) {
+    switch (field) {
+      case title:
+        return String.class;
+      case posted_at_millis:
+        return Long.class;
+      case user_id:
+        return Integer.class;
+      default:
+        throw new IllegalStateException("Invalid field: " + field);
+    }    
+  }
+
+  public static Class getFieldType(String fieldName) {    
+    if (fieldName.equals("title")) {
+      return String.class;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return Long.class;
+    }
+    if (fieldName.equals("user_id")) {
+      return Integer.class;
+    }
+    throw new IllegalStateException("Invalid field name: " + fieldName);
+  }
+
   public User getUser() throws IOException {
     return __assoc_user.get();
   }
@@ -135,7 +161,7 @@ public class Post extends ModelWithId {
     throw new IllegalStateException("Invalid field: " + field);
   }
 
-  public Object getDefaultValue(_Fields field) {
+  public static Object getDefaultValue(_Fields field) {
     switch (field) {
       case title:
         return null;
