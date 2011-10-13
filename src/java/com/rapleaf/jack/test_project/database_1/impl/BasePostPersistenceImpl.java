@@ -101,6 +101,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         if (dateFields.contains(field)) {
           queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
         }
+        queryValue = " = " + queryValue;
       } else {
         queryValue = " IS NULL";
       }
@@ -111,7 +112,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       }
     }
     statementString.append(")");
-    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

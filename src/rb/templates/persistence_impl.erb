@@ -112,8 +112,8 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
         if (dateTimeFields.contains(field)) {
           queryValue = "\"" + new Timestamp((Long) entry.getValue()).toString() + "\"";
         }
-        queryValue = " = " + queryValue;
       <% end %>
+        queryValue = " = " + queryValue;
       } else {
         queryValue = " IS NULL";
       }

@@ -83,6 +83,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       String queryValue;
       if (value != null) {
         queryValue = entry.getValue().toString();
+        queryValue = " = " + queryValue;
       } else {
         queryValue = " IS NULL";
       }
@@ -93,7 +94,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       }
     }
     statementString.append(")");
-    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;

@@ -129,7 +129,6 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       }
     }
     statementString.append(")");
-    System.out.println(statementString);
     executeQuery(foundSet, statementString);
 
     return foundSet;
