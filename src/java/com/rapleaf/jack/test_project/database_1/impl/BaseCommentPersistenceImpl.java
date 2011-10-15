@@ -93,6 +93,10 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
 
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
+    return find(null, fieldsMap);
+  }
+
+  public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Comment> foundSet = new HashSet<Comment>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -121,6 +125,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         statementString.append(" AND ");
       }
     }
+    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

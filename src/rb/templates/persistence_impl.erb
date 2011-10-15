@@ -68,6 +68,10 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   <% end %>
 
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
+    return find(null, fieldsMap);
+  }
+
+  public Set<<%= model_defn.model_name %>> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -96,6 +100,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
         statementString.append(" AND ");
       }
     }
+    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

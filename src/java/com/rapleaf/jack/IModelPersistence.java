@@ -47,6 +47,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
+  public Set<T> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException;
+
   public void clearCacheById(int id) throws IOException;
 
   public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException;

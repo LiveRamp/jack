@@ -64,6 +64,10 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
 
   public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
+    return find(null, fieldsMap);
+  }
+
+  public Set<Image> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -92,6 +96,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         statementString.append(" AND ");
       }
     }
+    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

@@ -73,6 +73,10 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   protected Set<T> realFind(Map fieldsMap) throws IOException {
+    return realFind(null, fieldsMap);
+  }
+
+  protected Set<T> realFind(Set<Integer> ids, Map fieldsMap) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -83,6 +87,9 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       for (Map.Entry<Enum, Object> e : ((Map<Enum, Object>)fieldsMap).entrySet()) {
         Object searchedForValue = e.getValue();
         Object existingValue = record.getField(e.getKey().name());
+        if (ids != null && !ids.contains(record.getId())) {
+          allMatch = false;
+        }
         if (existingValue == null){
           if (searchedForValue != null) allMatch = false;
         } else if (!existingValue.equals(searchedForValue)){

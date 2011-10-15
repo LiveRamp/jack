@@ -57,4 +57,8 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
+
+  public Set<Post> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    return super.realFind(ids, fieldsMap);
+  }
 }

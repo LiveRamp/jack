@@ -173,19 +173,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       StringBuilder statementString = new StringBuilder();
       statementString.append("SELECT * FROM ");
       statementString.append(tableName);
-      statementString.append(" WHERE id in (");
-      Iterator<Integer> iter = notCachedIds.iterator();
-      while (iter.hasNext()) {
-        Integer obj = iter.next();
-        statementString.append(obj.toString());
-        if (iter.hasNext()) {
-          statementString.append(",");
-        }
-      }
-      statementString.append(")");
+      statementString.append(" WHERE ");
+      statementString.append(getIdSetCondition(notCachedIds));
       executeQuery(foundSet, statementString.toString());
     }
     return foundSet;
+  }
+
+  protected String getIdSetCondition(Set<Integer> ids) {
+    StringBuilder sb = new StringBuilder("id in (");
+    Iterator<Integer> iter = ids.iterator();
+      while (iter.hasNext()) {
+        Integer obj = iter.next();
+        sb.append(obj.toString());
+        if (iter.hasNext()) {
+          sb.append(",");
+        }
+      }
+      sb.append(")");
+    return sb.toString();
   }
 
   protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {

@@ -69,4 +69,8 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
+
+  public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    return super.realFind(ids, fieldsMap);
+  }
 }

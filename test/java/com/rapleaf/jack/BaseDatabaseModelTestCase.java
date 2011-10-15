@@ -477,6 +477,10 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(2, found.size());
     assertTrue(found.contains(u1));
     assertTrue(found.contains(u2));
+
+    found = users.find(new HashSet<Integer>(Arrays.asList(u1.getId())), new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
+    assertEquals(1, found.size());
+    assertTrue(found.contains(u1));
   }
 
   public void testCopyConstructor() {

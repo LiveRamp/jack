@@ -119,6 +119,10 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
+    return find(null, fieldsMap);
+  }
+
+  public Set<User> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<User> foundSet = new HashSet<User>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -147,6 +151,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
         statementString.append(" AND ");
       }
     }
+    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

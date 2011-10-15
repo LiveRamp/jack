@@ -73,4 +73,8 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
+
+  public Set<User> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    return super.realFind(ids, fieldsMap);
+  }
 }

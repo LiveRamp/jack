@@ -67,4 +67,8 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
+
+  public Set<<%= model_defn.model_name %>> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    return super.realFind(ids, fieldsMap);
+  }
 }
