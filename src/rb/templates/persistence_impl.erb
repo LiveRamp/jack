@@ -17,10 +17,12 @@
 /* generated from migration version <%= model_defn.migration_number %> */
 package <%= root_package %>.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -67,29 +69,15 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
-    <% date_field_names = model_defn.fields.select{|f| f.data_type == :date}.map{|f| f.name} %>
-    <% datetime_field_names = model_defn.fields.select{|f| f.data_type == :datetime}.map{|f| f.name} %>
-    <% value_requires_quotes_field_names = model_defn.fields.select{|f| f.java_type == "String"}.map{|f| f.name} %>
-
-    <% if ! date_field_names.empty? %>
-    EnumSet<<%= model_defn.model_name %>._Fields> dateFields = EnumSet.of(<%= date_field_names.map{|f| "#{model_defn.model_name}._Fields.#{f}"}.join(', ') %>);
-    <% end %>
-    <% if ! datetime_field_names.empty? %>
-    EnumSet<<%= model_defn.model_name %>._Fields> dateTimeFields = EnumSet.of(<%= datetime_field_names.map{|f| "#{model_defn.model_name}._Fields.#{f}"}.join(', ') %>);
-    <% end %>
-    <% if !value_requires_quotes_field_names.empty? %>
-    EnumSet<<%= model_defn.model_name %>._Fields> valueRequiresQuotesFields = EnumSet.of(<%= value_requires_quotes_field_names.map{|f| "#{model_defn.model_name}._Fields.#{f}"}.join(', ') %>);
-    <% end %>
-
+    
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM ");
-    statementString.append("<%= model_defn.table_name %>");
-    statementString.append(" WHERE (");
-
+    statementString.append("SELECT * FROM <%= model_defn.table_name %> WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+    List<<%= model_defn.model_name %>._Fields> nonNullValueFields = new ArrayList<<%= model_defn.model_name %>._Fields>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {
@@ -97,25 +85,10 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
       Enum field = entry.getKey();
       Object value = entry.getValue();
       
-      String queryValue;
+      String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
-        queryValue = entry.getValue().toString();
-      <% if !value_requires_quotes_field_names.empty? %>
-        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
-      <% end %>
-      <% if ! date_field_names.empty? %>
-        if (dateFields.contains(field)) {
-          queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
-        }
-      <% end %>
-      <% if ! datetime_field_names.empty? %>
-        if (dateTimeFields.contains(field)) {
-          queryValue = "\"" + new Timestamp((Long) entry.getValue()).toString() + "\"";
-        }
-      <% end %>
-        queryValue = " = " + queryValue;
-      } else {
-        queryValue = " IS NULL";
+        nonNullValueFields.add((<%= model_defn.model_name %>._Fields) field);
+        nonNullValues.add(value);
       }
 
       statementString.append(field + queryValue);
@@ -124,7 +97,24 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
       }
     }
     statementString.append(")");
-    executeQuery(foundSet, statementString);
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (int i = 0; i < nonNullValues.size(); i++) {
+      <%= model_defn.model_name %>._Fields field = nonNullValueFields.get(i);
+      try {
+        switch (field) {
+    <% model_defn.fields.each do |field_defn| %>
+          case <%= field_defn.name %>:
+            preparedStatement.set<%=field_defn.prep_stmt_type%>(i+1, <%=field_defn.prep_stmt_modifier("(#{field_defn.java_type(true)}) nonNullValues.get(i)")%>);
+            break;
+    <% end %>
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
 
     return foundSet;
   }

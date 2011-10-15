@@ -7,10 +7,12 @@
 /* generated from migration version 20110324000133 */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -118,19 +120,15 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<User> foundSet = new HashSet<User>();
-    EnumSet<User._Fields> dateFields = EnumSet.of(User._Fields.some_date);
-    EnumSet<User._Fields> dateTimeFields = EnumSet.of(User._Fields.some_datetime);
-    EnumSet<User._Fields> valueRequiresQuotesFields = EnumSet.of(User._Fields.handle, User._Fields.bio);
-
+    
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM ");
-    statementString.append("users");
-    statementString.append(" WHERE (");
-
+    statementString.append("SELECT * FROM users WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+    List<User._Fields> nonNullValueFields = new ArrayList<User._Fields>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {
@@ -138,19 +136,10 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       Enum field = entry.getKey();
       Object value = entry.getValue();
       
-      String queryValue;
+      String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
-        queryValue = entry.getValue().toString();
-        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
-        if (dateFields.contains(field)) {
-          queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
-        }
-        if (dateTimeFields.contains(field)) {
-          queryValue = "\"" + new Timestamp((Long) entry.getValue()).toString() + "\"";
-        }
-        queryValue = " = " + queryValue;
-      } else {
-        queryValue = " IS NULL";
+        nonNullValueFields.add((User._Fields) field);
+        nonNullValues.add(value);
       }
 
       statementString.append(field + queryValue);
@@ -159,7 +148,46 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       }
     }
     statementString.append(")");
-    executeQuery(foundSet, statementString);
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (int i = 0; i < nonNullValues.size(); i++) {
+      User._Fields field = nonNullValueFields.get(i);
+      try {
+        switch (field) {
+          case handle:
+            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+            break;
+          case created_at_millis:
+            preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
+            break;
+          case num_posts:
+            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+            break;
+          case some_date:
+            preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
+            break;
+          case some_datetime:
+            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+            break;
+          case bio:
+            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+            break;
+          case some_binary:
+            preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
+            break;
+          case some_float:
+            preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
+            break;
+          case some_boolean:
+            preparedStatement.setBoolean(i+1, (Boolean) nonNullValues.get(i));
+            break;
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
 
     return foundSet;
   }

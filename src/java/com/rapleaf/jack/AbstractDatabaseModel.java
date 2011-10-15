@@ -183,14 +183,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
       statementString.append(")");
-      executeQuery(foundSet, statementString);
+      executeQuery(foundSet, statementString.toString());
     }
     return foundSet;
   }
 
-  protected void executeQuery(Set<T> foundSet, StringBuilder statementString) throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(statementString
-        .toString());
+  protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
     ResultSet rs = null;
     try {
       rs = stmt.executeQuery();
@@ -213,6 +211,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         throw new IOException(e);
       }
     }
+  }
+
+  protected void executeQuery(Set<T> foundSet, String statemenString) throws IOException {
+    executeQuery(foundSet, conn.getPreparedStatement(statemenString));
+  }
+
+  protected PreparedStatement getPreparedStatement(String statemenString) {
+    return conn.getPreparedStatement(statemenString);
   }
 
   protected PreparedStatement getSaveStmt() {

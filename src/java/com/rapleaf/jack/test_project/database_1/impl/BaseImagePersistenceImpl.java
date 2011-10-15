@@ -7,10 +7,12 @@
 /* generated from migration version 20110324000133 */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -63,16 +65,15 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
-
+    
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM ");
-    statementString.append("images");
-    statementString.append(" WHERE (");
-
+    statementString.append("SELECT * FROM images WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+    List<Image._Fields> nonNullValueFields = new ArrayList<Image._Fields>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {
@@ -80,12 +81,10 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       Enum field = entry.getKey();
       Object value = entry.getValue();
       
-      String queryValue;
+      String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
-        queryValue = entry.getValue().toString();
-        queryValue = " = " + queryValue;
-      } else {
-        queryValue = " IS NULL";
+        nonNullValueFields.add((Image._Fields) field);
+        nonNullValues.add(value);
       }
 
       statementString.append(field + queryValue);
@@ -94,7 +93,22 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       }
     }
     statementString.append(")");
-    executeQuery(foundSet, statementString);
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (int i = 0; i < nonNullValues.size(); i++) {
+      Image._Fields field = nonNullValueFields.get(i);
+      try {
+        switch (field) {
+          case user_id:
+            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+            break;
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
 
     return foundSet;
   }

@@ -7,10 +7,12 @@
 /* generated from migration version 20110324000133 */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -75,18 +77,15 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
-    EnumSet<Post._Fields> dateFields = EnumSet.of(Post._Fields.posted_at_millis);
-    EnumSet<Post._Fields> valueRequiresQuotesFields = EnumSet.of(Post._Fields.title);
-
+    
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM ");
-    statementString.append("posts");
-    statementString.append(" WHERE (");
-
+    statementString.append("SELECT * FROM posts WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+    List<Post._Fields> nonNullValueFields = new ArrayList<Post._Fields>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {
@@ -94,16 +93,10 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       Enum field = entry.getKey();
       Object value = entry.getValue();
       
-      String queryValue;
+      String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
-        queryValue = entry.getValue().toString();
-        if (valueRequiresQuotesFields.contains(field)) queryValue = "\"" + queryValue + "\"";
-        if (dateFields.contains(field)) {
-          queryValue = "\"" + new Date((Long) entry.getValue()).toString() + "\"";
-        }
-        queryValue = " = " + queryValue;
-      } else {
-        queryValue = " IS NULL";
+        nonNullValueFields.add((Post._Fields) field);
+        nonNullValues.add(value);
       }
 
       statementString.append(field + queryValue);
@@ -112,7 +105,28 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       }
     }
     statementString.append(")");
-    executeQuery(foundSet, statementString);
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (int i = 0; i < nonNullValues.size(); i++) {
+      Post._Fields field = nonNullValueFields.get(i);
+      try {
+        switch (field) {
+          case title:
+            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+            break;
+          case posted_at_millis:
+            preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
+            break;
+          case user_id:
+            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+            break;
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
 
     return foundSet;
   }
