@@ -242,6 +242,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     Long value = rs.getLong(column);
     return rs.wasNull() ? null : value;
   }
+  
+  protected final static Double getDoubleOrNull(ResultSet rs, String column) 
+      throws SQLException {
+    Double value = rs.getDouble(column);
+    return rs.wasNull() ? null : value;
+  }
 
   protected final static Date getDate(ResultSet rs, String column)
       throws SQLException {

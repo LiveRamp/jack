@@ -253,7 +253,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       getDateAsLong(rs, "some_datetime"),
       rs.getString("bio"),
       rs.getBytes("some_binary"),
-      rs.getDouble("some_float"),
+      getDoubleOrNull(rs, "some_float"),
       rs.getBoolean("some_boolean"),
       databases
     );
