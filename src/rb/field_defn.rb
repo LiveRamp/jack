@@ -178,6 +178,8 @@ class FieldDefn
         "getDateAsLong(rs, \"#{name}\")"
       when :date 
         "getDateAsLong(rs, \"#{name}\")"
+      when :float
+        "getDoubleOrNull(rs, \"#{name}\")"
       else
         "rs.get#{prep_stmt_type}(\"#{name}\")"
     end
