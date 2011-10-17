@@ -10,6 +10,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -188,5 +189,21 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       getDateAsLong(rs, "created_at"),
       databases
     );
+  }
+
+  public Set<Comment> findByContent(final String value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
+  }
+
+  public Set<Comment> findByCommenterId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
+  }
+
+  public Set<Comment> findByCommentedOnId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
+  }
+
+  public Set<Comment> findByCreatedAt(final long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 }

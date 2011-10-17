@@ -10,6 +10,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -164,5 +165,17 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       getIntOrNull(rs, "user_id"),
       databases
     );
+  }
+
+  public Set<Post> findByTitle(final String value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
+  }
+
+  public Set<Post> findByPostedAtMillis(final Long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.posted_at_millis, value);}});
+  }
+
+  public Set<Post> findByUserId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
   }
 }

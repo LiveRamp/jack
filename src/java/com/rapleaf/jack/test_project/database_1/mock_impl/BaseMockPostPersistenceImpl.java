@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -60,5 +61,17 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
 
   public Set<Post> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
+  }
+
+  public Set<Post> findByTitle(final String value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
+  }
+
+  public Set<Post> findByPostedAtMillis(final Long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.posted_at_millis, value);}});
+  }
+
+  public Set<Post> findByUserId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
   }
 }

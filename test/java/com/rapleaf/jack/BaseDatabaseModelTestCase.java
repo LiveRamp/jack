@@ -483,6 +483,29 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u1));
   }
 
+  public void testFindByField() throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+
+    User u1 = users.create("a_handle", 2);
+    u1.setSomeDate(100000L);
+    u1.setSomeDatetime(200000L);
+    users.save(u1);
+
+    User u2 = users.create("another_handle", 2);
+
+    Set<User> found = users.findByHandle("a_handle");
+    assertEquals(1, found.size());
+    assertTrue(found.contains(u1));
+
+    found = users.findByHandle("no_a_handle");
+    assertTrue(found.isEmpty());
+
+    found = users.findByNumPosts(2);
+    assertEquals(2, found.size());
+    assertTrue(found.contains(u1));
+    assertTrue(found.contains(u2));
+  }
+
   public void testCopyConstructor() {
     User orig = new User(1, "some_handle", 1L, 1, 1L, 1L, "bio", "bio".getBytes(), 1D, true);
     User copy = new User(orig);

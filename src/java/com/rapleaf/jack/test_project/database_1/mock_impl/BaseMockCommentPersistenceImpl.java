@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -72,5 +73,21 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
   public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
+  }
+
+  public Set<Comment> findByContent(final String value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
+  }
+
+  public Set<Comment> findByCommenterId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
+  }
+
+  public Set<Comment> findByCommentedOnId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
+  }
+
+  public Set<Comment> findByCreatedAt(final long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 }

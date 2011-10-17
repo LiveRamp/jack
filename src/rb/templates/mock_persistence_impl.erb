@@ -19,6 +19,7 @@ package <%= root_package %>.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -71,4 +72,11 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   public Set<<%= model_defn.model_name %>> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
   }
+
+  <% model_defn.fields.each do |field_defn| %>
+
+  public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);}});
+  }
+  <% end %>
 }

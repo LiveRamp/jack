@@ -16,4 +16,5 @@ import com.rapleaf.jack.IModelPersistence;
 
 public interface IImagePersistence extends IModelPersistence<Image> {
   public Image create(final Integer user_id) throws IOException;
+  public Set<Image> findByUserId(Integer value)  throws IOException;
 }
