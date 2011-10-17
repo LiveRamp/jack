@@ -126,13 +126,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   public T find(int id) throws IOException {
-    T model = cachedById.get(id);
-    if (model != null && useCache) {
-      return model;
+    if (cachedById.containsKey(id) && useCache) {
+      return cachedById.get(id);
     }
     PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
         + tableName + " WHERE id=" + id);
     ResultSet rs = null;
+    T model = null;
     try {
       rs = stmt.executeQuery();
       model = rs.next() ? instanceFromResultSet(rs) : null;
@@ -159,8 +159,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     Set<Integer> notCachedIds = new HashSet<Integer>();
     if (useCache) {
       for (Integer id : ids) {
-        T model = cachedById.get(id);
-        if (model != null) {
+        if (cachedById.containsKey(id)) {
+          T model = cachedById.get(id);
           foundSet.add(model);
         } else {
           notCachedIds.add(id);
@@ -306,11 +306,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
         if (useCache) {
-          T cachedInst = cachedById.get(inst.getId());
-          if (cachedInst == null) {
-            cachedById.put(inst.getId(), inst);
+          if (cachedById.containsKey(inst.getId())) {
+            inst = cachedById.get(inst.getId());
           } else {
-            inst = cachedInst;
+            cachedById.put(inst.getId(), inst);
           }
         }
         ret.add(inst);
@@ -479,11 +478,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
         if (useCache) {
-          T cachedInst = cachedById.get(inst.getId());
-          if (cachedInst == null) {
-            cachedById.put(inst.getId(), inst);
+          if (cachedById.containsKey(inst.getId())) {
+            inst = cachedById.get(inst.getId());
           } else {
-            inst = cachedInst;
+            cachedById.put(inst.getId(), inst);
           }
         }
         results.add(inst);
