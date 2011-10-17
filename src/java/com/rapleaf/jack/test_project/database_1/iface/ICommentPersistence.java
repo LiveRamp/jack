@@ -17,4 +17,8 @@ import com.rapleaf.jack.IModelPersistence;
 public interface ICommentPersistence extends IModelPersistence<Comment> {
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException;
   public Comment create(final long created_at) throws IOException;
+  public Set<Comment> findByContent(String value)  throws IOException;
+  public Set<Comment> findByCommenterId(Integer value)  throws IOException;
+  public Set<Comment> findByCommentedOnId(Integer value)  throws IOException;
+  public Set<Comment> findByCreatedAt(long value)  throws IOException;
 }

@@ -95,8 +95,8 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
         } else if (!existingValue.equals(searchedForValue)){
           allMatch = false;
         }
-        if (allMatch) foundSet.add(record);
       }
+      if (allMatch) foundSet.add(record);
     }
 
     return foundSet;

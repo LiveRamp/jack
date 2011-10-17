@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -58,5 +59,9 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
   public Set<Image> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
+  }
+
+  public Set<Image> findByUserId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }
 }

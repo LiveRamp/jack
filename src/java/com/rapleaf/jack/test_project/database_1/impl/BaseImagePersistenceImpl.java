@@ -10,6 +10,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -134,5 +135,9 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       getIntOrNull(rs, "user_id"),
       databases
     );
+  }
+
+  public Set<Image> findByUserId(final Integer value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }
 }
