@@ -83,14 +83,14 @@ class AssociationDefn
   def constructor_call
     case @type
       when "belongs_to"
-        "new #{assoc_impl}<#{assoc_model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{@foreign_key})"
+        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{@foreign_key})"
       else
-        "new #{assoc_impl}<#{assoc_model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, \"#{@foreign_key}\", id)"
+        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, \"#{@foreign_key}\", id)"
     end
   end
 
   def java_type
-    "#{assoc_impl}<#{@assoc_model_name}>"
+    "#{assoc_impl}<#{assoc_model.model_name}>"
   end
 
   def find_model(model_defns_by_namespace_table_names)
