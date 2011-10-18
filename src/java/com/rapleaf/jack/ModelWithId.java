@@ -52,7 +52,7 @@ public abstract class ModelWithId implements Serializable {
   
   public abstract Object getField(String fieldName);
 
-  public abstract Set<Enum> getFields();
+  public abstract Set<Enum> getFieldSet();
 
   protected static byte[] copyBinary(final byte[] orig) {
     if (orig == null) {

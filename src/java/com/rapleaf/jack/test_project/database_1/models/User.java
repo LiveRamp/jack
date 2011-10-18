@@ -372,7 +372,7 @@ public class User extends ModelWithId {
   }
 
   @Override
-  public Set<Enum> getFields() {
+  public Set<Enum> getFieldSet() {
     Set set = EnumSet.allOf(_Fields.class);
     return set;
   }
