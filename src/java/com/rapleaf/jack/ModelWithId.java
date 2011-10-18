@@ -15,6 +15,7 @@
 package com.rapleaf.jack;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public abstract class ModelWithId implements Serializable {
   private final int id;
@@ -50,6 +51,8 @@ public abstract class ModelWithId implements Serializable {
   }
   
   public abstract Object getField(String fieldName);
+
+  public abstract Set<Enum> getFields();
 
   protected static byte[] copyBinary(final byte[] orig) {
     if (orig == null) {

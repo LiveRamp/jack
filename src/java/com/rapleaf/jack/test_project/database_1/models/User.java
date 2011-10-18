@@ -8,6 +8,7 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -368,6 +369,12 @@ public class User extends ModelWithId {
         return null;
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+
+  @Override
+  public Set<Enum> getFields() {
+    Set set = EnumSet.allOf(_Fields.class);
+    return set;
   }
 
   public String toString() {
