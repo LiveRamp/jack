@@ -187,6 +187,11 @@ public class <%=model_defn.model_name%> extends ModelWithId {
     return set;
   }
 
+  @Override
+  public ModelWithId getCopy() {
+    return new <%= model_defn.model_name %>(this);
+  }
+
   public String toString() {
     return "<<%= model_defn.model_name %>"
       <% model_defn.fields.each do |field_defn| %>

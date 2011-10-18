@@ -222,6 +222,11 @@ public class Comment extends ModelWithId {
     return set;
   }
 
+  @Override
+  public ModelWithId getCopy() {
+    return new Comment(this);
+  }
+
   public String toString() {
     return "<Comment"
       + " content: " + __content

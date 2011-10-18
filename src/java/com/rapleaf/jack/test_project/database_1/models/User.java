@@ -377,6 +377,11 @@ public class User extends ModelWithId {
     return set;
   }
 
+  @Override
+  public ModelWithId getCopy() {
+    return new User(this);
+  }
+
   public String toString() {
     return "<User"
       + " handle: " + __handle

@@ -191,6 +191,11 @@ public class Post extends ModelWithId {
     return set;
   }
 
+  @Override
+  public ModelWithId getCopy() {
+    return new Post(this);
+  }
+
   public String toString() {
     return "<Post"
       + " title: " + __title

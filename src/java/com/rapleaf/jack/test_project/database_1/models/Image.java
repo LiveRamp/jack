@@ -125,6 +125,11 @@ public class Image extends ModelWithId {
     return set;
   }
 
+  @Override
+  public ModelWithId getCopy() {
+    return new Image(this);
+  }
+
   public String toString() {
     return "<Image"
       + " user_id: " + __user_id
