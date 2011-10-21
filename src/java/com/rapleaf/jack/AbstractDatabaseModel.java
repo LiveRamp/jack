@@ -249,6 +249,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return rs.wasNull() ? null : value;
   }
 
+  protected final static Boolean getBooleanOrNull(ResultSet rs, String column) 
+      throws SQLException {
+    Boolean value = rs.getBoolean(column);
+    return rs.wasNull() ? null : value;
+  }
+
   protected final static Date getDate(ResultSet rs, String column)
       throws SQLException {
     Timestamp timestamp = rs.getTimestamp(column);

@@ -43,6 +43,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
+    User bryand2 = users.create("bryand2", t0, 5, 1L, t2, "this is a relatively long string", someBinary, 1.2d, true);
+    verifyCreatedUser(users, t0, 1L, t2, someBinary, bryand2);
   }
 
   public void testCreateFromMap() throws IOException {
@@ -503,6 +505,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u2 = users.create("another_handle", 2);
 
     Set<User> found = users.findByHandle("a_handle");
+    System.out.println(found);
+    System.out.println(u1);
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
 

@@ -255,7 +255,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       rs.getString("bio"),
       rs.getBytes("some_binary"),
       getDoubleOrNull(rs, "some_float"),
-      rs.getBoolean("some_boolean"),
+      getBooleanOrNull(rs, "some_boolean"),
       databases
     );
   }
