@@ -281,6 +281,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllByForeignKeyFromSet() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
+    comments.deleteAll();
     int userId = 1;
     int otherUserId = 2;
     Comment c1 = comments.create("comment1", userId, 1, 1);
@@ -294,6 +295,12 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     commenterIds.add(otherUserId);
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
     assertEquals(4, userComments.size());
+    for(Comment comment : userComments) {
+      System.out.println(comment);
+      System.out.println(comment.hashCode());
+    }
+    System.out.println(c1);
+    System.out.println(c1.hashCode());
     assertTrue(userComments.contains(c1));
     assertTrue(userComments.contains(c2));
     assertTrue(userComments.contains(c3));
@@ -471,6 +478,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
       put(User._Fields.some_float, null);
     }});
     assertEquals(1, found.size());
+    System.out.println(found);
+    System.out.println(u1);
     assertTrue(found.contains(u1));
 
     found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});

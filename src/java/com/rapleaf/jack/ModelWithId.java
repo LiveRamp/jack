@@ -17,6 +17,8 @@ package com.rapleaf.jack;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 public abstract class ModelWithId implements Serializable {
   private final int id;
 
@@ -28,12 +30,27 @@ public abstract class ModelWithId implements Serializable {
     return id;
   }
 
+//  @Override
+//  public int hashCode() {
+//    final int prime = 31;
+//    long result = 1;
+//    result = prime * result + id;
+//    return (int) result;
+//  }
+
   @Override
   public int hashCode() {
-    final int prime = 31;
-    long result = 1;
-    result = prime * result + id;
-    return (int) result;
+    HashCodeBuilder hcb = new HashCodeBuilder();
+    hcb.append(this.getClass().getName());
+    hcb.append(getId());
+    for (Enum field : getFieldSet()) {
+      hcb.append(field.name());
+      Object value = getField(field.name());
+      if (value != null) {
+        hcb.append(value);
+      }
+    }
+    return hcb.toHashCode();
   }
 
   @Override
