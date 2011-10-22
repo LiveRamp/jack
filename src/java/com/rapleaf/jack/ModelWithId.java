@@ -62,8 +62,31 @@ public abstract class ModelWithId implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     ModelWithId other = (ModelWithId) obj;
-    if (id != other.id)
+    return equals(other);
+  }
+  
+  public boolean equals(ModelWithId obj) {
+    if(obj == null) return false;
+    if(!this.getClass().getName().equals(obj.getClass().getName())) {
       return false;
+    }
+    if(getId() != obj.getId()) {
+      return false;
+    }
+    
+    for (Enum field : getFieldSet()) {
+      Object value1 = getField(field.name());
+      Object value2 = obj.getField(field.name());
+      if (value1 != null) {
+        if(!value1.equals(value2)) {
+          return false;
+        }
+      } else {
+        if(value2 != null) {
+          return false;
+        }
+      }
+    }
     return true;
   }
 

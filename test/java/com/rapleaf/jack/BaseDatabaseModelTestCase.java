@@ -43,8 +43,6 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, true);
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
-    User bryand2 = users.create("bryand2", t0, 5, 1L, t2, "this is a relatively long string", someBinary, 1.2d, true);
-    verifyCreatedUser(users, t0, 1L, t2, someBinary, bryand2);
   }
 
   public void testCreateFromMap() throws IOException {
@@ -286,23 +284,17 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     comments.deleteAll();
     int userId = 1;
     int otherUserId = 2;
-    Comment c1 = comments.create("comment1", userId, 1, 1);
-    Comment c2 = comments.create("comment2", userId, 1, 1);
-    Comment c3 = comments.create("comment3", userId, 1, 1);
-    Comment c4 = comments.create("comment4", otherUserId, 1, 1);
-    Comment c5 = comments.create("comment5", 3, 1, 1);
+    Comment c1 = comments.create("comment1", userId, 1, 0);
+    Comment c2 = comments.create("comment2", userId, 1, 0);
+    Comment c3 = comments.create("comment3", userId, 1, 0);
+    Comment c4 = comments.create("comment4", otherUserId, 1, 0);
+    Comment c5 = comments.create("comment5", 3, 1, 0);
 
     Set<Integer> commenterIds = new HashSet<Integer>();
     commenterIds.add(userId);
     commenterIds.add(otherUserId);
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
     assertEquals(4, userComments.size());
-    for(Comment comment : userComments) {
-      System.out.println(comment);
-      System.out.println(comment.hashCode());
-    }
-    System.out.println(c1);
-    System.out.println(c1.hashCode());
     assertTrue(userComments.contains(c1));
     assertTrue(userComments.contains(c2));
     assertTrue(userComments.contains(c3));
@@ -467,21 +459,15 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);
-    u1.setSomeDate(100000L);
-    u1.setSomeDatetime(200000L);
     users.save(u1);
 
     User u2 = users.create("another_handle", 2);
 
     Set<User> found = users.find(new HashMap<Enum, Object>(){{
       put(User._Fields.handle, "a_handle");
-      put(User._Fields.some_date, 100000L);
-      put(User._Fields.some_datetime, 200000L);
       put(User._Fields.some_float, null);
     }});
     assertEquals(1, found.size());
-    System.out.println(found);
-    System.out.println(u1);
     assertTrue(found.contains(u1));
 
     found = users.find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
@@ -498,15 +484,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);
-    u1.setSomeDate(100000L);
-    u1.setSomeDatetime(200000L);
     users.save(u1);
 
     User u2 = users.create("another_handle", 2);
 
     Set<User> found = users.findByHandle("a_handle");
-    System.out.println(found);
-    System.out.println(u1);
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
 
