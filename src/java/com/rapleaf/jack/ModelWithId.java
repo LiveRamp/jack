@@ -30,14 +30,6 @@ public abstract class ModelWithId implements Serializable {
     return id;
   }
 
-//  @Override
-//  public int hashCode() {
-//    final int prime = 31;
-//    long result = 1;
-//    result = prime * result + id;
-//    return (int) result;
-//  }
-
   @Override
   public int hashCode() {
     HashCodeBuilder hcb = new HashCodeBuilder();
