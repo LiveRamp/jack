@@ -18,6 +18,7 @@
 package <%= root_package %>.models;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -178,6 +179,17 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% end %>
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+
+  @Override
+  public Set<Enum> getFieldSet() {
+    Set set = EnumSet.allOf(_Fields.class);
+    return set;
+  }
+
+  @Override
+  public ModelWithId getCopy() {
+    return new <%= model_defn.model_name %>(this);
   }
 
   public String toString() {

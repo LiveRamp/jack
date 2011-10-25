@@ -281,13 +281,14 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllByForeignKeyFromSet() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
+    comments.deleteAll();
     Long userId = 1L;
     Long otherUserId = 2L;
-    Comment c1 = comments.create("comment1", userId.intValue(), 1, 1);
-    Comment c2 = comments.create("comment2", userId.intValue(), 1, 1);
-    Comment c3 = comments.create("comment3", userId.intValue(), 1, 1);
-    Comment c4 = comments.create("comment4", otherUserId.intValue(), 1, 1);
-    Comment c5 = comments.create("comment5", 3, 1, 1);
+    Comment c1 = comments.create("comment1", userId.intValue(), 1, 0);
+    Comment c2 = comments.create("comment2", userId.intValue(), 1, 0);
+    Comment c3 = comments.create("comment3", userId.intValue(), 1, 0);
+    Comment c4 = comments.create("comment4", otherUserId.intValue(), 1, 0);
+    Comment c5 = comments.create("comment5", 3, 1, 0);
 
     Set<Long> commenterIds = new HashSet<Long>();
     commenterIds.add(userId);
@@ -458,16 +459,12 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);
-    u1.setSomeDate(100000L);
-    u1.setSomeDatetime(200000L);
     users.save(u1);
 
     User u2 = users.create("another_handle", 2);
 
     Set<User> found = users.find(new HashMap<Enum, Object>(){{
       put(User._Fields.handle, "a_handle");
-      put(User._Fields.some_date, 100000L);
-      put(User._Fields.some_datetime, 200000L);
       put(User._Fields.some_float, null);
     }});
     assertEquals(1, found.size());
@@ -487,8 +484,6 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);
-    u1.setSomeDate(100000L);
-    u1.setSomeDatetime(200000L);
     users.save(u1);
 
     User u2 = users.create("another_handle", 2);

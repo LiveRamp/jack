@@ -15,6 +15,9 @@
 package com.rapleaf.jack;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId implements Serializable {
   private final long id;
@@ -29,10 +32,17 @@ public abstract class ModelWithId implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    long result = 1;
-    result = prime * result + id;
-    return (int) result;
+    HashCodeBuilder hcb = new HashCodeBuilder();
+    hcb.append(this.getClass().getName());
+    hcb.append(getId());
+    for (Enum field : getFieldSet()) {
+      hcb.append(field.name());
+      Object value = getField(field.name());
+      if (value != null) {
+        hcb.append(value);
+      }
+    }
+    return hcb.toHashCode();
   }
 
   @Override
@@ -44,12 +54,39 @@ public abstract class ModelWithId implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     ModelWithId other = (ModelWithId) obj;
-    if (id != other.id)
-      return false;
-    return true;
+    return equals(other);
   }
   
+  public boolean equals(ModelWithId obj) {
+    if(obj == null) return false;
+    if(!this.getClass().getName().equals(obj.getClass().getName())) {
+      return false;
+    }
+    if(getId() != obj.getId()) {
+      return false;
+    }
+    
+    for (Enum field : getFieldSet()) {
+      Object value1 = getField(field.name());
+      Object value2 = obj.getField(field.name());
+      if (value1 != null) {
+        if(!value1.equals(value2)) {
+          return false;
+        }
+      } else {
+        if(value2 != null) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public abstract ModelWithId getCopy();
+  
   public abstract Object getField(String fieldName);
+
+  public abstract Set<Enum> getFieldSet();
 
   protected static byte[] copyBinary(final byte[] orig) {
     if (orig == null) {
