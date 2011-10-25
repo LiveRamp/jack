@@ -18,21 +18,21 @@ class InitialSchema < ActiveRecord::Migration
     create_table :images do |t|
       t.integer :user_id
     end
-
+    
+    # bigint primary key!
     # try a belongs_to style association
     create_table :posts do |t|
       t.string :title
       t.date :posted_at_millis
       t.integer :user_id
     end
+    execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
     
-    # bigint primary key!
-    # also, renamed associations so we can test the craziness in the models
-    # create_table :comments, :id => :bigint do |t|
+    # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
       t.text :content
       t.integer :commenter_id
-      t.integer :commented_on_id
+      t.integer :commented_on_id, :limit => 8
       t.datetime :created_at, :default => '1970-01-01 00:00:00', :null => false
     end
 

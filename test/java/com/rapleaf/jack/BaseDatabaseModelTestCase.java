@@ -45,6 +45,22 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
   }
 
+  public void testCreateWithBigintPrimaryKey() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    long postId = Integer.MAX_VALUE * 2l;
+    posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1));
+
+    posts.clearCacheById(postId);
+    Post foundPost = posts.find(postId);
+    assertNotNull("Post should be found in cache by bigint id", foundPost);
+
+    foundPost = posts.find(postId);
+    assertNotNull("Post should be found from db by bigint id", foundPost);
+    
+    Comment c = new Comment(1, "comment content", null, postId, System.currentTimeMillis(), getDBS());
+    assertNotNull("Post should be findable by foreign key", c.getPost());
+  }
+
   public void testCreateFromMap() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -215,9 +231,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testFindAllByForeignKey() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
-    Comment c1 = comments.create("comment1", userId, 1, 1);
-    Comment c2 = comments.create("comment2", userId, 1, 1);
-    Comment c3 = comments.create("comment3", userId, 1, 1);
+    Comment c1 = comments.create("comment1", userId, 1L, 1);
+    Comment c2 = comments.create("comment2", userId, 1L, 1);
+    Comment c3 = comments.create("comment3", userId, 1L, 1);
 
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
@@ -284,11 +300,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     comments.deleteAll();
     Long userId = 1L;
     Long otherUserId = 2L;
-    Comment c1 = comments.create("comment1", userId.intValue(), 1, 0);
-    Comment c2 = comments.create("comment2", userId.intValue(), 1, 0);
-    Comment c3 = comments.create("comment3", userId.intValue(), 1, 0);
-    Comment c4 = comments.create("comment4", otherUserId.intValue(), 1, 0);
-    Comment c5 = comments.create("comment5", 3, 1, 0);
+    Comment c1 = comments.create("comment1", userId.intValue(), 1L, 0);
+    Comment c2 = comments.create("comment2", userId.intValue(), 1L, 0);
+    Comment c3 = comments.create("comment3", userId.intValue(), 1L, 0);
+    Comment c4 = comments.create("comment4", otherUserId.intValue(), 1L, 0);
+    Comment c5 = comments.create("comment5", 3, 1L, 0);
 
     Set<Long> commenterIds = new HashSet<Long>();
     commenterIds.add(userId);
