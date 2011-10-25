@@ -21,11 +21,11 @@ import java.util.Set;
 public class HasManyAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
   private final String foreignKey;
-  private final int id;
+  private final long id;
   private Set<T> cachedList;
 
   public HasManyAssociation(IModelPersistence<T> persistence,
-      String foreignKey, int id) {
+      String foreignKey, long id) {
     this.persistence = persistence;
     this.foreignKey = foreignKey;
     this.id = id;

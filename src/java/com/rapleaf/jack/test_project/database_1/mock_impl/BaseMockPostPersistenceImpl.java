@@ -47,7 +47,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
 
 
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     Post newInst = new Post(__id, title, posted_at_millis, user_id, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -59,7 +59,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
     return super.realFind(fieldsMap);
   }
 
-  public Set<Post> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
   }
 

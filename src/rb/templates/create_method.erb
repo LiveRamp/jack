@@ -17,7 +17,7 @@
 field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| "\"#{x.name}\""}.join(", ") + ")"
 %>
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
 <% x = 1 %>
 <% model_defn.fields.each do |field_defn| %>

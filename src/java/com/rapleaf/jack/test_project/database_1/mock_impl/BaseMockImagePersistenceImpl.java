@@ -45,7 +45,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
 
   public Image create(final Integer user_id) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     Image newInst = new Image(__id, user_id, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -57,7 +57,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return super.realFind(fieldsMap);
   }
 
-  public Set<Image> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
   }
 

@@ -44,15 +44,15 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     String content = (String) fieldsMap.get(Comment._Fields.content);
     Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
-    Integer commented_on_id = (Integer) fieldsMap.get(Comment._Fields.commented_on_id);
+    Long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
     long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
 
-  public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+  public Comment create(final String content, final Integer commenter_id, final Long commented_on_id, final long created_at) throws IOException {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (content == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -67,7 +67,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         if (commented_on_id == null) {
           stmt.setNull(3, java.sql.Types.INTEGER);
         } else {
-          stmt.setInt(3, commented_on_id);
+          stmt.setLong(3, commented_on_id);
         }
           stmt.setTimestamp(4, new Timestamp(created_at));
       }
@@ -81,7 +81,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
 
   public Comment create(final long created_at) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setTimestamp(1, new Timestamp(created_at));
       }
@@ -97,7 +97,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return find(null, fieldsMap);
   }
 
-  public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Comment> foundSet = new HashSet<Comment>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -142,7 +142,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
             preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
             break;
           case commented_on_id:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+            preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
             break;
           case created_at:
             preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
@@ -172,7 +172,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     if (model.getCommentedOnId() == null) {
       stmt.setNull(3, java.sql.Types.INTEGER);
     } else {
-      stmt.setInt(3, model.getCommentedOnId());
+      stmt.setLong(3, model.getCommentedOnId());
     }
     {
       stmt.setTimestamp(4, new Timestamp(model.getCreatedAt()));
@@ -182,10 +182,10 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   @Override
   protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Comment(rs.getInt("id"),
+    return new Comment(rs.getLong("id"),
       rs.getString("content"),
       getIntOrNull(rs, "commenter_id"),
-      getIntOrNull(rs, "commented_on_id"),
+      getLongOrNull(rs, "commented_on_id"),
       getDateAsLong(rs, "created_at"),
       databases
     );
@@ -199,7 +199,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
   }
 
-  public Set<Comment> findByCommentedOnId(final Integer value) throws IOException {
+  public Set<Comment> findByCommentedOnId(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
   }
 

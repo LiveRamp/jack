@@ -41,21 +41,21 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public T find(int id) throws IOException;
+  public T find(long id) throws IOException;
   
-  public Set<T> find(Set<Integer> ids) throws IOException;
+  public Set<T> find(Set<Long> ids) throws IOException;
 
   public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
-  public Set<T> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException;
+  public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
-  public void clearCacheById(int id) throws IOException;
+  public void clearCacheById(long id) throws IOException;
 
-  public Set<T> findAllByForeignKey(String foreignKey, int id) throws IOException;
+  public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
   
-  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids) throws IOException;
+  public Set<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
 
-  public void clearCacheByForeignKey(String foreignKey, int id);
+  public void clearCacheByForeignKey(String foreignKey, long id);
   
   public void clearForeignKeyCache();
 
@@ -73,7 +73,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public boolean delete(int id) throws IOException;
+  public boolean delete(long id) throws IOException;
 
   /**
    * Delete all records in this persistence.
