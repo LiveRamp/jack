@@ -52,7 +52,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
 
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (content == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -81,7 +81,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
 
   public Comment create(final long created_at) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setTimestamp(1, new Timestamp(created_at));
       }
@@ -97,7 +97,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return find(null, fieldsMap);
   }
 
-  public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Comment> foundSet = new HashSet<Comment>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -182,7 +182,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   @Override
   protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Comment(rs.getInt("id"),
+    return new Comment(rs.getLong("id"),
       rs.getString("content"),
       getIntOrNull(rs, "commenter_id"),
       getIntOrNull(rs, "commented_on_id"),

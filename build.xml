@@ -78,7 +78,7 @@
     </exec>
   </target>
 
-  <target name="generate">
+  <target name="generate" description="generate test project java code">
     <exec executable="/bin/sh" failonerror="true">
       <arg line="-c bundle install" />
     </exec>

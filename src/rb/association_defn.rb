@@ -83,7 +83,7 @@ class AssociationDefn
   def constructor_call
     case @type
       when "belongs_to"
-        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{@foreign_key})"
+        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{@foreign_key} == null ? null : #{@foreign_key}.longValue())"
       else
         "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, \"#{@foreign_key}\", id)"
     end

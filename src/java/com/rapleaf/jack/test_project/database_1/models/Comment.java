@@ -38,17 +38,17 @@ public class Comment extends ModelWithId {
     created_at,
   }
 
-  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at, IDatabases databases) {
+  public Comment(long id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at, IDatabases databases) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), commenter_id);
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), commenter_id == null ? null : commenter_id.longValue());
+    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id == null ? null : commented_on_id.longValue());
   }
 
-  public Comment(int id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) {
+  public Comment(long id, final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
@@ -56,7 +56,7 @@ public class Comment extends ModelWithId {
     this.__created_at = created_at;
   }
 
-  public Comment(int id, Map<Enum, Object> fieldsMap) {
+  public Comment(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     String content = (String) fieldsMap.get(Comment._Fields.content);
     Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);

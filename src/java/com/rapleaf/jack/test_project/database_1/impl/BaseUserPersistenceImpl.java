@@ -56,7 +56,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
 
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setString(1, handle);
         if (created_at_millis == null) {
@@ -106,7 +106,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
 
   public User create(final String handle, final int num_posts) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setString(1, handle);
           stmt.setInt(2, num_posts);
@@ -123,7 +123,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return find(null, fieldsMap);
   }
 
-  public Set<User> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<User> foundSet = new HashSet<User>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -246,7 +246,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   @Override
   protected User instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new User(rs.getInt("id"),
+    return new User(rs.getLong("id"),
       rs.getString("handle"),
       getLongOrNull(rs, "created_at_millis"),
       getIntOrNull(rs, "num_posts"),

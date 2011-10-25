@@ -36,23 +36,23 @@ public class Post extends ModelWithId {
     user_id,
   }
 
-  public Post(int id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
     super(id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id == null ? null : user_id.longValue());
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", id);
   }
 
-  public Post(int id, final String title, final Long posted_at_millis, final Integer user_id) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id) {
     super(id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
   }
 
-  public Post(int id, Map<Enum, Object> fieldsMap) {
+  public Post(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);

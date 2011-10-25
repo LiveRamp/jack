@@ -31,18 +31,18 @@ public class Image extends ModelWithId {
     user_id,
   }
 
-  public Image(int id, final Integer user_id, IDatabases databases) {
+  public Image(long id, final Integer user_id, IDatabases databases) {
     super(id);
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id == null ? null : user_id.longValue());
   }
 
-  public Image(int id, final Integer user_id) {
+  public Image(long id, final Integer user_id) {
     super(id);
     this.__user_id = user_id;
   }
 
-  public Image(int id, Map<Enum, Object> fieldsMap) {
+  public Image(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     this.__user_id = user_id;

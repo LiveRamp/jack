@@ -49,7 +49,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
 
   public Comment create(final String content, final Integer commenter_id, final Integer commented_on_id, final long created_at) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -59,7 +59,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
 
   public Comment create(final long created_at) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     Comment newInst = new Comment(__id, null, null, null, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -71,7 +71,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(fieldsMap);
   }
 
-  public Set<Comment> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
   }
 

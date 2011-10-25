@@ -17,7 +17,7 @@ import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
     implements IModelPersistence<T> {
 
-  protected final Map<Integer, T> records = new HashMap<Integer, T>();
+  protected final Map<Long, T> records = new HashMap<Long, T>();
   
   private static class JavaScriptRecordSelector<T extends ModelWithId>
       implements RecordSelector<T> {
@@ -76,7 +76,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
     return realFind(null, fieldsMap);
   }
 
-  protected Set<T> realFind(Set<Integer> ids, Map fieldsMap) throws IOException {
+  protected Set<T> realFind(Set<Long> ids, Map fieldsMap) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -110,14 +110,14 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   @Override
-  public T find(int id) throws IOException {
+  public T find(long id) throws IOException {
     return records.get(id);
   }
 
   @Override
-  public Set<T> find(Set<Integer> ids) throws IOException {
+  public Set<T> find(Set<Long> ids) throws IOException {
     Set<T> results = new HashSet<T>();
-    for (Integer id : ids) {
+    for (Long id : ids) {
       T result = records.get(id);
       if (results != null) {
         results.add(result);
@@ -127,22 +127,26 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   @Override
-  public void clearCacheById(int id) throws IOException {
+  public void clearCacheById(long id) throws IOException {
     // No-op
   }
 
   @Override
-  public Set<T> findAllByForeignKey(String foreignKey, int id)
+  public Set<T> findAllByForeignKey(String foreignKey, long id)
       throws IOException {
     Set<T> ret = new HashSet<T>();
     for (T record : records.values()) {
       Object foreignKeyValue = record.getField(foreignKey);
-      if (foreignKeyValue instanceof Integer) {
+      if (foreignKeyValue instanceof Long) {
         if (foreignKeyValue.equals(id)) {
           ret.add(record);
         }
+      } else if (foreignKeyValue instanceof Integer) {
+        if (((Integer) foreignKeyValue).longValue() == id) {
+          ret.add(record);
+        }
       } else {
-        throw new IllegalArgumentException("Foreign key is not an integer: "
+        throw new IllegalArgumentException("Foreign key is not a long or int: "
             + foreignKey);
       }
     }
@@ -150,17 +154,21 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   @Override
-  public Set<T> findAllByForeignKey(String foreignKey, Set<Integer> ids)
+  public Set<T> findAllByForeignKey(String foreignKey, Set<Long> ids)
       throws IOException {
     Set<T> foundSet = new HashSet<T>();
     for (T record : records.values()) {
       Object foreignKeyValue = record.getField(foreignKey);
-      if (foreignKeyValue instanceof Integer) {
+      if (foreignKeyValue instanceof Long) {
         if (ids.contains(foreignKeyValue)) {
           foundSet.add(record);
         }
+      } else if (foreignKeyValue instanceof Integer) {
+        if (ids.contains(((Integer) foreignKeyValue).longValue())) {
+          foundSet.add(record);
+        }
       } else {
-        throw new IllegalArgumentException("Foreign key is not an integer: "
+        throw new IllegalArgumentException("Foreign key is not a long or int: "
             + foreignKey);
       }
     }
@@ -168,7 +176,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   @Override
-  public void clearCacheByForeignKey(String foreignKey, int id) {
+  public void clearCacheByForeignKey(String foreignKey, long id) {
     // no-op
   }
 
@@ -183,7 +191,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
   }
 
   @Override
-  public boolean delete(int id) throws IOException {
+  public boolean delete(long id) throws IOException {
     records.remove(id);
     return true;
   }

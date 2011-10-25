@@ -20,10 +20,10 @@ import java.io.Serializable;
 
 public class BelongsToAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
-  private final Integer id;
+  private final Long id;
   private T cache;
 
-  public BelongsToAssociation(IModelPersistence<T> persistence, Integer id) {
+  public BelongsToAssociation(IModelPersistence<T> persistence, Long id) {
     this.persistence = persistence;
     this.id = id;
   }
