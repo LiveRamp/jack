@@ -31,8 +31,8 @@ class InitialSchema < ActiveRecord::Migration
     # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
       t.text :content
-      t.integer :commenter_id
-      t.integer :commented_on_id, :limit => 8
+      t.integer :commenter_id, :null => false
+      t.integer :commented_on_id, :limit => 8, :null => false
       t.datetime :created_at, :default => '1970-01-01 00:00:00', :null => false
     end
 
