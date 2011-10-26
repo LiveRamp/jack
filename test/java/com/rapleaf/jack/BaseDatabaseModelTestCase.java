@@ -45,6 +45,22 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
   }
 
+  public void testCreateWithBigintPrimaryKey() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    long postId = Integer.MAX_VALUE * 2l;
+    posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1));
+
+    posts.clearCacheById(postId);
+    Post foundPost = posts.find(postId);
+    assertNotNull("Post should be found from db by bigint id", foundPost);
+
+    foundPost = posts.find(postId);
+    assertNotNull("Post should be found in cache by bigint id", foundPost);
+    
+    Comment c = new Comment(1, "comment content", null, postId, System.currentTimeMillis(), getDBS());
+    assertNotNull("Post should be findable by foreign key", c.getPost());
+  }
+
   public void testCreateFromMap() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -106,7 +122,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   
   public void testFindEmptySet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    Set<User> foundValues = users.find(new HashSet<Integer>());
+    Set<User> foundValues = users.find(new HashSet<Long>());
     assertEquals(0, foundValues.size());
   }
   
@@ -122,7 +138,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     users.clearCacheById(bryand.getId());
     users.clearCacheById(notBryand.getId());
-    Set<Integer> keysToSearch = new HashSet<Integer>();
+    Set<Long> keysToSearch = new HashSet<Long>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     Set<User> foundValues = users.find(keysToSearch);
@@ -182,7 +198,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, true);
     users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, true);
 
-    Set<Integer> keysToSearch = new HashSet<Integer>();
+    Set<Long> keysToSearch = new HashSet<Long>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     Set<User> foundValues = users.find(keysToSearch);
@@ -215,9 +231,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testFindAllByForeignKey() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
-    Comment c1 = comments.create("comment1", userId, 1, 1);
-    Comment c2 = comments.create("comment2", userId, 1, 1);
-    Comment c3 = comments.create("comment3", userId, 1, 1);
+    Comment c1 = comments.create("comment1", userId, 1L, 1);
+    Comment c2 = comments.create("comment2", userId, 1L, 1);
+    Comment c3 = comments.create("comment3", userId, 1L, 1);
 
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
@@ -282,15 +298,15 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testFindAllByForeignKeyFromSet() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     comments.deleteAll();
-    int userId = 1;
-    int otherUserId = 2;
-    Comment c1 = comments.create("comment1", userId, 1, 0);
-    Comment c2 = comments.create("comment2", userId, 1, 0);
-    Comment c3 = comments.create("comment3", userId, 1, 0);
-    Comment c4 = comments.create("comment4", otherUserId, 1, 0);
-    Comment c5 = comments.create("comment5", 3, 1, 0);
+    Long userId = 1L;
+    Long otherUserId = 2L;
+    Comment c1 = comments.create("comment1", userId.intValue(), 1L, 0);
+    Comment c2 = comments.create("comment2", userId.intValue(), 1L, 0);
+    Comment c3 = comments.create("comment3", userId.intValue(), 1L, 0);
+    Comment c4 = comments.create("comment4", otherUserId.intValue(), 1L, 0);
+    Comment c5 = comments.create("comment5", 3, 1L, 0);
 
-    Set<Integer> commenterIds = new HashSet<Integer>();
+    Set<Long> commenterIds = new HashSet<Long>();
     commenterIds.add(userId);
     commenterIds.add(otherUserId);
     Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
@@ -387,7 +403,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title", System.currentTimeMillis(), u1.getId());
+    Post p1 = posts.create("title", System.currentTimeMillis(), (int) u1.getId());
     assertEquals(u1, p1.getUser());
   }
 
@@ -396,7 +412,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IImagePersistence images = dbs.getDatabase1().images();
-    Image image = images.create(u1.getId());
+    Image image = images.create((int) u1.getId());
     assertEquals(u1, image.getUser());
   }
 
@@ -405,9 +421,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title1", System.currentTimeMillis(), u1.getId());
-    Post p2 = posts.create("title2", System.currentTimeMillis(), u1.getId());
-    Post p3 = posts.create("title3", System.currentTimeMillis(), u1.getId());
+    Post p1 = posts.create("title1", System.currentTimeMillis(), (int) u1.getId());
+    Post p2 = posts.create("title2", System.currentTimeMillis(), (int) u1.getId());
+    Post p3 = posts.create("title3", System.currentTimeMillis(), (int) u1.getId());
 
     assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
@@ -434,7 +450,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testDelete() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1);
-    int id = post.getId();
+    long id = post.getId();
     posts.delete(id);
     assertNull(posts.find(id));
   }
@@ -442,7 +458,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testSave() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1);
-    int id = post.getId();
+    long id = post.getId();
     post.setPostedAtMillis(20L);
     dbs.getDatabase1().posts().save(post);
     assertEquals(Long.valueOf(20), posts.find(id).getPostedAtMillis());
@@ -475,7 +491,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u1));
     assertTrue(found.contains(u2));
 
-    found = users.find(new HashSet<Integer>(Arrays.asList(u1.getId())), new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
+    found = users.find(new HashSet<Long>(Arrays.asList(u1.getId())), new HashMap<Enum, Object>(){{put(User._Fields.num_posts, 2);}});
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
   }

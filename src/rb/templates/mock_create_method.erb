@@ -18,7 +18,7 @@ field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] ==
 %>
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
 <% names_only = model_defn.fields.map{|field_defn| field_defn.args[":null"] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ") %>
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();

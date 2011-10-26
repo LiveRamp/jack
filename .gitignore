@@ -1,2 +1,3 @@
+.bundle
 build
 src/java/com/rapleaf/jack/util/MysqlFlex.java

@@ -50,7 +50,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
 
   public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (title == null) {
           stmt.setNull(1, java.sql.Types.CHAR);
@@ -80,7 +80,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return find(null, fieldsMap);
   }
 
-  public Set<Post> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -159,7 +159,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   @Override
   protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Post(rs.getInt("id"),
+    return new Post(rs.getLong("id"),
       rs.getString("title"),
       getDateAsLong(rs, "posted_at_millis"),
       getIntOrNull(rs, "user_id"),

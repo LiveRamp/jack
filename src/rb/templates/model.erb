@@ -54,7 +54,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% end %>
   }
 
-  public <%= model_defn.model_name %>(int id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
+  public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
     super(id);
   <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;
@@ -65,14 +65,14 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% end %>
   }
 
-  public <%= model_defn.model_name %>(int id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
+  public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
     super(id);
   <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;
   <% end %>
   }
 
-  public <%= model_defn.model_name %>(int id, Map<Enum, Object> fieldsMap) {
+  public <%= model_defn.model_name %>(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.default_value.nil? %>

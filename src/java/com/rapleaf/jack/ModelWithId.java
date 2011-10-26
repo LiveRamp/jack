@@ -20,13 +20,13 @@ import java.util.Set;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId implements Serializable {
-  private final int id;
+  private final long id;
 
-  protected ModelWithId(int id) {
+  protected ModelWithId(long id) {
     this.id = id;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 

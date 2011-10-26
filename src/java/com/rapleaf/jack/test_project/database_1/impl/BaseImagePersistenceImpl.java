@@ -48,7 +48,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
 
   public Image create(final Integer user_id) throws IOException {
-    int __id = realCreate(new AttrSetter() {
+    long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (user_id == null) {
           stmt.setNull(1, java.sql.Types.INTEGER);
@@ -68,7 +68,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return find(null, fieldsMap);
   }
 
-  public Set<Image> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -131,7 +131,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   @Override
   protected Image instanceFromResultSet(ResultSet rs) throws SQLException {
-    return new Image(rs.getInt("id"),
+    return new Image(rs.getLong("id"),
       getIntOrNull(rs, "user_id"),
       databases
     );

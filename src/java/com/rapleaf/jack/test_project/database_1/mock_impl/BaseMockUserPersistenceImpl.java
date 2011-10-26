@@ -53,7 +53,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
 
 
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -63,7 +63,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
 
 
   public User create(final String handle, final int num_posts) throws IOException {
-    int __id = curId.getAndIncrement();
+    long __id = curId.getAndIncrement();
     User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
@@ -75,7 +75,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
     return super.realFind(fieldsMap);
   }
 
-  public Set<User> find(Set<Integer> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public Set<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
   }
 

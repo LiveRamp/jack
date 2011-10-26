@@ -50,7 +50,7 @@ public class User extends ModelWithId {
     some_boolean,
   }
 
-  public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
     super(id);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -66,7 +66,7 @@ public class User extends ModelWithId {
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", id);
   }
 
-  public User(int id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
     super(id);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -79,7 +79,7 @@ public class User extends ModelWithId {
     this.__some_boolean = some_boolean;
   }
 
-  public User(int id, Map<Enum, Object> fieldsMap) {
+  public User(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     String handle = (String) fieldsMap.get(User._Fields.handle);
     Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
