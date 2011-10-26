@@ -22,9 +22,9 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
   public void testFindAllByForeignKeyCache() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
-    comments.create("comment1", userId, 1L, 1);
-    comments.create("comment2", userId, 1L, 1);
-    comments.create("comment3", userId, 1L, 1);
+    comments.create("comment1", userId, 1, 1);
+    comments.create("comment2", userId, 1, 1);
+    comments.create("comment3", userId, 1, 1);
 
     Set<Comment> c1 = comments.findAllByForeignKey("commenter_id", userId);
     Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);

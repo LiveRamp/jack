@@ -40,15 +40,15 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   @Override
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
     String content = (String) fieldsMap.get(Comment._Fields.content);
-    Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
-    Long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
+    int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
+    long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
     long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
 
-  public Comment create(final String content, final Integer commenter_id, final Long commented_on_id, final long created_at) throws IOException {
+  public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
     long __id = curId.getAndIncrement();
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
     records.put(__id, newInst);
@@ -58,9 +58,9 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
 
 
-  public Comment create(final long created_at) throws IOException {
+  public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
     long __id = curId.getAndIncrement();
-    Comment newInst = new Comment(__id, null, null, null, created_at, databases);
+    Comment newInst = new Comment(__id, null, commenter_id, commented_on_id, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
@@ -79,11 +79,11 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }
 
-  public Set<Comment> findByCommenterId(final Integer value) throws IOException {
+  public Set<Comment> findByCommenterId(final int value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
   }
 
-  public Set<Comment> findByCommentedOnId(final Long value) throws IOException {
+  public Set<Comment> findByCommentedOnId(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
   }
 
