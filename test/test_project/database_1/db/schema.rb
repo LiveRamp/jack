@@ -14,8 +14,8 @@ ActiveRecord::Schema.define(:version => 20110324000133) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
-    t.integer  "commenter_id"
-    t.integer  "commented_on_id", :limit => 8
+    t.integer  "commenter_id",                                                    :null => false
+    t.integer  "commented_on_id", :limit => 8,                                    :null => false
     t.datetime "created_at",                   :default => '1970-01-01 00:00:00', :null => false
   end
 

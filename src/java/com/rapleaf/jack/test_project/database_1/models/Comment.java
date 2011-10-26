@@ -24,8 +24,8 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Comment extends ModelWithId {
   // Fields
   private String __content;
-  private Integer __commenter_id;
-  private Long __commented_on_id;
+  private int __commenter_id;
+  private long __commented_on_id;
   private long __created_at;
 
   // Associations
@@ -39,17 +39,17 @@ public class Comment extends ModelWithId {
     created_at,
   }
 
-  public Comment(long id, final String content, final Integer commenter_id, final Long commented_on_id, final long created_at, IDatabases databases) {
+  public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), commenter_id == null ? null : commenter_id.longValue());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id == null ? null : commented_on_id.longValue());
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) commenter_id);
+    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id);
   }
 
-  public Comment(long id, final String content, final Integer commenter_id, final Long commented_on_id, final long created_at) {
+  public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at) {
     super(id);
     this.__content = content;
     this.__commenter_id = commenter_id;
@@ -60,8 +60,8 @@ public class Comment extends ModelWithId {
   public Comment(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     String content = (String) fieldsMap.get(Comment._Fields.content);
-    Integer commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
-    Long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
+    int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
+    long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
     long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     this.__content = content;
@@ -86,19 +86,19 @@ public class Comment extends ModelWithId {
     this.__content = newval;
   }
 
-  public Integer getCommenterId(){
+  public int getCommenterId(){
     return __commenter_id;
   }
 
-  public void setCommenterId(Integer newval){
+  public void setCommenterId(int newval){
     this.__commenter_id = newval;
   }
 
-  public Long getCommentedOnId(){
+  public long getCommentedOnId(){
     return __commented_on_id;
   }
 
-  public void setCommentedOnId(Long newval){
+  public void setCommentedOnId(long newval){
     this.__commented_on_id = newval;
   }
 
@@ -134,9 +134,9 @@ public class Comment extends ModelWithId {
       case content:
         return String.class;
       case commenter_id:
-        return Integer.class;
+        return int.class;
       case commented_on_id:
-        return Long.class;
+        return long.class;
       case created_at:
         return long.class;
       default:
@@ -149,10 +149,10 @@ public class Comment extends ModelWithId {
       return String.class;
     }
     if (fieldName.equals("commenter_id")) {
-      return Integer.class;
+      return int.class;
     }
     if (fieldName.equals("commented_on_id")) {
-      return Long.class;
+      return long.class;
     }
     if (fieldName.equals("created_at")) {
       return long.class;

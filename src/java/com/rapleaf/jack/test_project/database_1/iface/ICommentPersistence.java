@@ -15,10 +15,10 @@ import java.util.Set;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ICommentPersistence extends IModelPersistence<Comment> {
-  public Comment create(final String content, final Integer commenter_id, final Long commented_on_id, final long created_at) throws IOException;
-  public Comment create(final long created_at) throws IOException;
+  public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
+  public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
   public Set<Comment> findByContent(String value)  throws IOException;
-  public Set<Comment> findByCommenterId(Integer value)  throws IOException;
-  public Set<Comment> findByCommentedOnId(Long value)  throws IOException;
+  public Set<Comment> findByCommenterId(int value)  throws IOException;
+  public Set<Comment> findByCommentedOnId(long value)  throws IOException;
   public Set<Comment> findByCreatedAt(long value)  throws IOException;
 }

@@ -57,7 +57,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     foundPost = posts.find(postId);
     assertNotNull("Post should be found in cache by bigint id", foundPost);
     
-    Comment c = new Comment(1, "comment content", null, postId, System.currentTimeMillis(), getDBS());
+    Comment c = new Comment(1, "comment content", 1, postId, System.currentTimeMillis(), getDBS());
     assertNotNull("Post should be findable by foreign key", c.getPost());
   }
 
