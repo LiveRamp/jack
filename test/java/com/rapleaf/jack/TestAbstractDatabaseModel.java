@@ -1,5 +1,6 @@
 package com.rapleaf.jack;
 
+import java.io.IOException;
 import java.util.Set;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
@@ -30,4 +31,33 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
     assertTrue(c1 == c2);
   }
+  
+  public void testSetAutoCommit() {
+    assertTrue("auto-commit should default to true", dbs.getDatabase1().getAutoCommit());
+    dbs.getDatabase1().setAutoCommit(false);
+    
+    try {
+      assertFalse("auto-commit should be false after being set so", dbs.getDatabase1().getAutoCommit());
+    } finally {
+      dbs.getDatabase1().setAutoCommit(true);
+    }
+  }
+  
+  public void testTransactionRollback() throws IOException {
+    dbs.getDatabase1().setAutoCommit(false);
+
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    try {
+      comments.create("comment1", 1, 1, 1);
+      assertEquals("There should be 1 record during transaction", 1, comments.findAll().size());
+
+      dbs.getDatabase1().rollback();
+      
+      assertEquals("There should be 0 records after rollback", 0, comments.findAll().size());
+    } finally {
+      dbs.getDatabase1().rollback();
+      dbs.getDatabase1().setAutoCommit(true);
+    }
+  }
+  
 }

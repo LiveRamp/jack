@@ -29,4 +29,12 @@ public interface IDb extends Serializable {
   public boolean deleteAll() throws IOException;
 
   public void disableCaching();
+  
+  public void setAutoCommit(boolean autoCommit);
+  
+  public boolean getAutoCommit();
+  
+  public void commit();
+  
+  public void rollback();
 }
