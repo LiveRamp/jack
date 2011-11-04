@@ -18,12 +18,15 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Database1Impl implements IDatabase1 {
+  
+  private final BaseDatabaseConnection conn;
   private final ICommentPersistence comments;
   private final IImagePersistence images;
   private final IPostPersistence posts;
   private final IUserPersistence users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
+    this.conn = conn;
     this.comments = new BaseCommentPersistenceImpl(conn, databases);
     this.images = new BaseImagePersistenceImpl(conn, databases);
     this.posts = new BasePostPersistenceImpl(conn, databases);
@@ -65,4 +68,21 @@ public class Database1Impl implements IDatabase1 {
     posts.disableCaching();
     users.disableCaching();
   }
+
+  public void setAutoCommit(boolean autoCommit) {
+    conn.setAutoCommit(autoCommit);
+  }
+
+  public boolean getAutoCommit() {
+    return conn.getAutoCommit();
+  }
+
+  public void commit() {
+    conn.commit();
+  }
+
+  public void rollback() {
+    conn.rollback();
+  }
+
 }

@@ -62,4 +62,21 @@ public class Mock<%=db_name%>Impl implements I<%=db_name%> {
     <%= model_defn.table_name %>.disableCaching();
   <% end %>
   }
+
+  public void setAutoCommit(boolean autoCommit) {
+    // Do nothing
+  }
+
+  public boolean getAutoCommit() {
+    return true;
+  }
+
+  public void commit() {
+    // Do nothing
+  }
+
+  public void rollback() {
+    // Do nothing
+  }
+  
 }

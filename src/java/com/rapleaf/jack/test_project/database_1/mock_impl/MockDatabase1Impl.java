@@ -64,4 +64,21 @@ public class MockDatabase1Impl implements IDatabase1 {
     posts.disableCaching();
     users.disableCaching();
   }
+
+  public void setAutoCommit(boolean autoCommit) {
+    // Do nothing
+  }
+
+  public boolean getAutoCommit() {
+    return true;
+  }
+
+  public void commit() {
+    // Do nothing
+  }
+
+  public void rollback() {
+    // Do nothing
+  }
+  
 }
