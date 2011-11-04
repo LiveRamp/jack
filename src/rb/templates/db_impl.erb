@@ -28,12 +28,15 @@ import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= project_defn.databases_namespace %>.IDatabases;
 
 public class <%=db_name%>Impl implements I<%=db_name%> {
-
+  
+  private final BaseDatabaseConnection conn;
+  
 <% model_defns.each do |model_defn| %>
   private final <%= model_defn.iface_name %> <%= model_defn.table_name %>;
 <% end %>
 
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
+    this.conn = conn;
   <% model_defns.each do |model_defn| %>
     this.<%= model_defn.table_name %> = new <%= model_defn.impl_name %>(conn, databases);
   <% end %>
@@ -63,4 +66,21 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     <%= model_defn.table_name %>.disableCaching();
   <% end %>
   }
+
+  public void setAutoCommit(boolean autoCommit) {
+    conn.setAutoCommit(autoCommit);
+  }
+
+  public boolean getAutoCommit() {
+    return conn.getAutoCommit();
+  }
+
+  public void commit() {
+    conn.commit();
+  }
+
+  public void rollback() {
+    conn.rollback();
+  }
+
 }

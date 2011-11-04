@@ -18,5 +18,6 @@ public class MockDatabasesImpl implements IDatabases {
   public IDatabase1 getDatabase1() {
     return database1;
   }
+  
 }
 

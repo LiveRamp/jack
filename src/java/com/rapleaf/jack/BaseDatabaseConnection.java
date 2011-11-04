@@ -23,6 +23,9 @@ public abstract class BaseDatabaseConnection implements Serializable {
   public Connection resetConnection() {
     if (conn != null) {
       try {
+        if (getAutoCommit()) {
+          conn.commit();
+        }
         conn.close();
       } catch (Exception e) {
         // do nothing
@@ -66,6 +69,60 @@ public abstract class BaseDatabaseConnection implements Serializable {
     try {
       return getConnection().prepareStatement(statement);
     } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Sets this connection's auto-commit mode to the given state. If a connection
+   * is in auto-commit mode, then all its SQL statements will be executed and
+   * committed as individual transactions. Otherwise, its SQL statements are
+   * grouped into transactions that are terminated by a call to either the
+   * method commit or the method rollback. By default, new connections are in
+   * auto-commit mode. 
+   * @param autoCommit
+   */
+  public void setAutoCommit(boolean autoCommit) {
+    try {
+      getConnection().setAutoCommit(autoCommit);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Retrieves the current auto-commit mode
+   */
+  public boolean getAutoCommit() {
+    try {
+      return getConnection().getAutoCommit();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Makes all changes made since the previous commit/rollback permanent and
+   * releases any database locks currently held by this Connection object.
+   * This method should be used only when auto-commit mode has been disabled. 
+   */
+  public void commit() {
+    try {
+      getConnection().commit();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Undoes all changes made in the current transaction and releases any
+   * database locks currently held by this Connection object. This method should
+   * be used only when auto-commit mode has been disabled. 
+   */
+  public void rollback() {
+    try {
+      getConnection().rollback();
+    } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
