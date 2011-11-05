@@ -23,7 +23,7 @@ public abstract class BaseDatabaseConnection implements Serializable {
   public Connection resetConnection() {
     if (conn != null) {
       try {
-        if (!getAutoCommit()) {
+        if (!conn.getAutoCommit()) {
           conn.commit();
         }
         conn.close();
