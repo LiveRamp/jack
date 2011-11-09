@@ -106,6 +106,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
 
   public void set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
     this.__<%= field_defn.name %> = newval;
+    cachedHashCode = 0;
   }
 <% end %>
 

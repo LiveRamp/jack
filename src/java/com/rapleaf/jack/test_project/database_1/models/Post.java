@@ -76,6 +76,7 @@ public class Post extends ModelWithId {
 
   public void setTitle(String newval){
     this.__title = newval;
+    cachedHashCode = 0;
   }
 
   public Long getPostedAtMillis(){
@@ -84,6 +85,7 @@ public class Post extends ModelWithId {
 
   public void setPostedAtMillis(Long newval){
     this.__posted_at_millis = newval;
+    cachedHashCode = 0;
   }
 
   public Integer getUserId(){
@@ -92,6 +94,7 @@ public class Post extends ModelWithId {
 
   public void setUserId(Integer newval){
     this.__user_id = newval;
+    cachedHashCode = 0;
   }
 
   public void setField(_Fields field, Object value) {
