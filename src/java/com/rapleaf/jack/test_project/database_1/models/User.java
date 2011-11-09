@@ -120,6 +120,7 @@ public class User extends ModelWithId {
 
   public void setHandle(String newval){
     this.__handle = newval;
+    cachedHashCode = 0;
   }
 
   public Long getCreatedAtMillis(){
@@ -128,6 +129,7 @@ public class User extends ModelWithId {
 
   public void setCreatedAtMillis(Long newval){
     this.__created_at_millis = newval;
+    cachedHashCode = 0;
   }
 
   public int getNumPosts(){
@@ -136,6 +138,7 @@ public class User extends ModelWithId {
 
   public void setNumPosts(int newval){
     this.__num_posts = newval;
+    cachedHashCode = 0;
   }
 
   public Long getSomeDate(){
@@ -144,6 +147,7 @@ public class User extends ModelWithId {
 
   public void setSomeDate(Long newval){
     this.__some_date = newval;
+    cachedHashCode = 0;
   }
 
   public Long getSomeDatetime(){
@@ -152,6 +156,7 @@ public class User extends ModelWithId {
 
   public void setSomeDatetime(Long newval){
     this.__some_datetime = newval;
+    cachedHashCode = 0;
   }
 
   public String getBio(){
@@ -160,6 +165,7 @@ public class User extends ModelWithId {
 
   public void setBio(String newval){
     this.__bio = newval;
+    cachedHashCode = 0;
   }
 
   public byte[] getSomeBinary(){
@@ -168,6 +174,7 @@ public class User extends ModelWithId {
 
   public void setSomeBinary(byte[] newval){
     this.__some_binary = newval;
+    cachedHashCode = 0;
   }
 
   public Double getSomeFloat(){
@@ -176,6 +183,7 @@ public class User extends ModelWithId {
 
   public void setSomeFloat(Double newval){
     this.__some_float = newval;
+    cachedHashCode = 0;
   }
 
   public Boolean isSomeBoolean(){
@@ -184,6 +192,7 @@ public class User extends ModelWithId {
 
   public void setSomeBoolean(Boolean newval){
     this.__some_boolean = newval;
+    cachedHashCode = 0;
   }
 
   public void setField(_Fields field, Object value) {
