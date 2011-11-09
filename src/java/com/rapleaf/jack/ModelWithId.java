@@ -21,6 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId implements Serializable {
   private final long id;
+  protected int cachedHashCode = 0;
 
   protected ModelWithId(long id) {
     this.id = id;
@@ -32,17 +33,20 @@ public abstract class ModelWithId implements Serializable {
 
   @Override
   public int hashCode() {
-    HashCodeBuilder hcb = new HashCodeBuilder();
-    hcb.append(this.getClass().getName());
-    hcb.append(getId());
-    for (Enum field : getFieldSet()) {
-      hcb.append(field.name());
-      Object value = getField(field.name());
-      if (value != null) {
-        hcb.append(value);
+    if (cachedHashCode == 0) {
+      HashCodeBuilder hcb = new HashCodeBuilder();
+      hcb.append(this.getClass().getName());
+      hcb.append(getId());
+      for (Enum field : getFieldSet()) {
+        hcb.append(field.name());
+        Object value = getField(field.name());
+        if (value != null) {
+          hcb.append(value);
+        }
       }
+      cachedHashCode = hcb.toHashCode();
     }
-    return hcb.toHashCode();
+    return cachedHashCode;
   }
 
   @Override

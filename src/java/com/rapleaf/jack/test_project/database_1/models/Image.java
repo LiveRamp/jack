@@ -60,6 +60,7 @@ public class Image extends ModelWithId {
 
   public void setUserId(Integer newval){
     this.__user_id = newval;
+    cachedHashCode = 0;
   }
 
   public void setField(_Fields field, Object value) {

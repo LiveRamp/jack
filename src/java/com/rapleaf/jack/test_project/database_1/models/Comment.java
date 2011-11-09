@@ -84,6 +84,7 @@ public class Comment extends ModelWithId {
 
   public void setContent(String newval){
     this.__content = newval;
+    cachedHashCode = 0;
   }
 
   public int getCommenterId(){
@@ -92,6 +93,7 @@ public class Comment extends ModelWithId {
 
   public void setCommenterId(int newval){
     this.__commenter_id = newval;
+    cachedHashCode = 0;
   }
 
   public long getCommentedOnId(){
@@ -100,6 +102,7 @@ public class Comment extends ModelWithId {
 
   public void setCommentedOnId(long newval){
     this.__commented_on_id = newval;
+    cachedHashCode = 0;
   }
 
   public long getCreatedAt(){
@@ -108,6 +111,7 @@ public class Comment extends ModelWithId {
 
   public void setCreatedAt(long newval){
     this.__created_at = newval;
+    cachedHashCode = 0;
   }
 
   public void setField(_Fields field, Object value) {
