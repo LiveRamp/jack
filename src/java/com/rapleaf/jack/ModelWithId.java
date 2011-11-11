@@ -21,7 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId implements Serializable {
   private final long id;
-  protected int cachedHashCode = 0;
+  transient protected int cachedHashCode = 0;
 
   protected ModelWithId(long id) {
     this.id = id;
