@@ -55,6 +55,14 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
   }
 
 
+  public Post find(long id) throws IOException {
+    Post temp = records.get(id);
+    if (temp == null) {
+      return null;
+    }
+    return temp.getCopy(databases);
+  }
+
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }

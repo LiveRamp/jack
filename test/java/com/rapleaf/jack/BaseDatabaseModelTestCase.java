@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -94,7 +93,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(1.2, bryand.getSomeFloat());
     assertTrue(bryand.isSomeBoolean());
 
-    assertTrue(bryand == users.find(bryand.getId()));
+    // no longer a valid assertion, since we are deep copying objects out of the cache
+//    assertTrue(bryand == users.find(bryand.getId()));
   }
 
   public void testFind() throws Exception {
@@ -202,7 +202,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     Set<User> foundValues = users.find(keysToSearch);
-    
+
     assertEquals(2, foundValues.size());
     Iterator<User> iter = foundValues.iterator();
     User bryand_again = users.find(bryand.getId());
@@ -210,9 +210,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     while(iter.hasNext()) {
       User curUser = iter.next();
       if(curUser.getId() == bryand.getId()) {
-        assertTrue(bryand_again == curUser);
+        assertEquals(bryand_again, curUser);
       } else if(curUser.getId() == notBryand.getId()) {
-        assertTrue(notBryand_again == curUser);
+        assertEquals(notBryand_again, curUser);
       } else {
         fail("Unexpected user id: " + curUser.getId());
       }
@@ -225,7 +225,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     User u1 = users.find(user.getId());
     User u2 = users.find(user.getId());
-    assertTrue(u1 == u2);
+    assertEquals(u1, u2);
   }
 
   public void testFindAllByForeignKey() throws Exception {
@@ -261,11 +261,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     // make sure findAll returned cached objects
     int numFound = 0;
     for (User user : allUsers) {
-      if (user == u1_1) {
+      if (user.getId() == u1_1.getId()) {
         numFound++;
-      } else if (user == u2_1) {
+      } else if (user.getId() == u2_1.getId()) {
         numFound++;
-      } else if (user == u3_1) {
+      } else if (user.getId() == u3_1.getId()) {
         numFound++;
       }
     }
@@ -287,7 +287,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     // make sure caching worked as expected
     boolean found = false;
     for (User user : allUsers) {
-      if (user == u1_1) {
+      if (user.getId() == u1_1.getId()) {
         found = true;
         break;
       }

@@ -397,11 +397,11 @@ public class User extends ModelWithId {
   }
 
   @Override
-  public ModelWithId getCopy() {
+  public User getCopy() {
     return new User(this);
   }
 
-  public ModelWithId getCopy(IDatabases databases) {
+  public User getCopy(IDatabases databases) {
     return new User(this, databases);
   }
 

@@ -15,13 +15,14 @@
 package com.rapleaf.jack;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public abstract class ModelWithId implements Serializable {
+public abstract class ModelWithId<T> implements Serializable {
   private final long id;
   transient protected int cachedHashCode = 0;
 
@@ -76,6 +77,10 @@ public abstract class ModelWithId implements Serializable {
       Object value1 = getField(field.name());
       Object value2 = obj.getField(field.name());
       if (value1 != null) {
+        if (value1 instanceof byte[]) {
+          value1 = ByteBuffer.wrap((byte[]) value1);
+          value2 = ByteBuffer.wrap((byte[]) value2);
+        }
         if(!value1.equals(value2)) {
           return false;
         }
@@ -88,9 +93,9 @@ public abstract class ModelWithId implements Serializable {
     return true;
   }
 
-  public abstract ModelWithId getCopy();
+  public abstract T getCopy();
 
-  public abstract ModelWithId getCopy(IDatabases databases);
+  public abstract T getCopy(IDatabases databases);
 
   public abstract Object getField(String fieldName);
 

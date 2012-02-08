@@ -204,11 +204,11 @@ public class Post extends ModelWithId {
   }
 
   @Override
-  public ModelWithId getCopy() {
+  public Post getCopy() {
     return new Post(this);
   }
 
-  public ModelWithId getCopy(IDatabases databases) {
+  public Post getCopy(IDatabases databases) {
     return new Post(this, databases);
   }
 

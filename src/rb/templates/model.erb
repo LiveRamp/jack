@@ -198,11 +198,11 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   }
 
   @Override
-  public ModelWithId getCopy() {
+  public <%= model_defn.model_name %> getCopy() {
     return new <%= model_defn.model_name %>(this);
   }
 
-  public ModelWithId getCopy(IDatabases databases) {
+  public <%= model_defn.model_name %> getCopy(IDatabases databases) {
     return new <%= model_defn.model_name %>(this, databases);
   }
 

@@ -236,11 +236,11 @@ public class Comment extends ModelWithId {
   }
 
   @Override
-  public ModelWithId getCopy() {
+  public Comment getCopy() {
     return new Comment(this);
   }
 
-  public ModelWithId getCopy(IDatabases databases) {
+  public Comment getCopy(IDatabases databases) {
     return new Comment(this, databases);
   }
 

@@ -71,6 +71,14 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
   }
 
 
+  public User find(long id) throws IOException {
+    User temp = records.get(id);
+    if (temp == null) {
+      return null;
+    }
+    return temp.getCopy(databases);
+  }
+
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }

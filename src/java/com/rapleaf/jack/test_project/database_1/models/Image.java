@@ -135,11 +135,11 @@ public class Image extends ModelWithId {
   }
 
   @Override
-  public ModelWithId getCopy() {
+  public Image getCopy() {
     return new Image(this);
   }
 
-  public ModelWithId getCopy(IDatabases databases) {
+  public Image getCopy(IDatabases databases) {
     return new Image(this, databases);
   }
 

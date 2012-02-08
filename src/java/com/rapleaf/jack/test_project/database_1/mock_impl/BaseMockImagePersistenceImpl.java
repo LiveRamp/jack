@@ -53,6 +53,14 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
 
 
+  public Image find(long id) throws IOException {
+    Image temp = records.get(id);
+    if (temp == null) {
+      return null;
+    }
+    return temp.getCopy(databases);
+  }
+
   public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
   }
