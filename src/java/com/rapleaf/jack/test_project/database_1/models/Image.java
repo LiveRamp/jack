@@ -21,7 +21,7 @@ import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Image extends ModelWithId<Image> {
+public class Image extends ModelWithId<Image, IDatabases> {
   // Fields
   private Integer __user_id;
 

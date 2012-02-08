@@ -27,7 +27,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User> implements IUserPersistence {
+public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User, IDatabases> implements IUserPersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

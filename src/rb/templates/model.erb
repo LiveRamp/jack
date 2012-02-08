@@ -37,7 +37,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 <% end %>
 <% end %>
 
-public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>> {
+public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> {
   // Fields
   <% model_defn.fields.each do |field_defn| %>
   private <%= field_defn.java_type %> __<%= field_defn.name %>;

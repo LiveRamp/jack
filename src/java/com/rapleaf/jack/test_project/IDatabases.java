@@ -7,8 +7,8 @@
 package com.rapleaf.jack.test_project;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
-import java.io.Serializable;
+import com.rapleaf.jack.GenericDatabases;
 
-public interface IDatabases extends Serializable {
+public interface IDatabases extends GenericDatabases {
   public IDatabase1 getDatabase1();
 }

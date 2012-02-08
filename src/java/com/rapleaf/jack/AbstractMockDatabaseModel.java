@@ -10,13 +10,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
-public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T>>
+public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
     implements IModelPersistence<T> {
 
-  private final IDatabases databases;
+  private final D databases;
   protected final Map<Long, T> records = new HashMap<Long, T>();
   
   private static class JavaScriptRecordSelector<T extends ModelWithId>
@@ -72,7 +71,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T>>
 
   }
 
-  public AbstractMockDatabaseModel(IDatabases databases) {
+  public AbstractMockDatabaseModel(D databases) {
     this.databases = databases;
   }
 

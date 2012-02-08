@@ -27,7 +27,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post> implements IPostPersistence {
+public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post, IDatabases> implements IPostPersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

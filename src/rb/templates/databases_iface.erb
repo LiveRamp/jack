@@ -20,9 +20,9 @@ package <%= project_defn.databases_namespace %>;
 import <%= db.namespace %>.I<%= db.name %>;
 <% end %>
 
-import java.io.Serializable;
+import <%= JACK_NAMESPACE %>.GenericDatabases;
 
-public interface IDatabases extends Serializable {
+public interface IDatabases extends GenericDatabases {
   <% project_defn.databases.each do |db| %>
   public I<%= db.name %> <%= db.getter %>;
   <% end %>

@@ -21,7 +21,7 @@ import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Comment extends ModelWithId<Comment> {
+public class Comment extends ModelWithId<Comment, IDatabases> {
   // Fields
   private String __content;
   private int __commenter_id;

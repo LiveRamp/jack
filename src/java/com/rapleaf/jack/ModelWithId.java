@@ -20,9 +20,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.rapleaf.jack.test_project.IDatabases;
-
-public abstract class ModelWithId<T> implements Serializable {
+public abstract class ModelWithId<T, D extends GenericDatabases> implements Serializable {
   private final long id;
   transient protected int cachedHashCode = 0;
 
@@ -95,7 +93,7 @@ public abstract class ModelWithId<T> implements Serializable {
 
   public abstract T getCopy();
 
-  public abstract T getCopy(IDatabases databases);
+  public abstract T getCopy(D databases);
 
   public abstract Object getField(String fieldName);
 

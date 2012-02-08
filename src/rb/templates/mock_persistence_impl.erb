@@ -37,7 +37,7 @@ import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 
-public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<<%= model_defn.model_name %>> implements <%= model_defn.iface_name %> {
+public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<<%= model_defn.model_name %>, IDatabases> implements <%= model_defn.iface_name %> {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);
