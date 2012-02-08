@@ -21,7 +21,7 @@ import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class User extends ModelWithId {
+public class User extends ModelWithId<User> {
   // Fields
   private String __handle;
   private Long __created_at_millis;

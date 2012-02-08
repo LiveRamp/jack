@@ -21,7 +21,7 @@ import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Post extends ModelWithId {
+public class Post extends ModelWithId<Post> {
   // Fields
   private String __title;
   private Long __posted_at_millis;

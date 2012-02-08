@@ -43,7 +43,7 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   private static AtomicInteger curId = new AtomicInteger(1);
 
   public <%= model_defn.mock_impl_name %>(IDatabases databases) {
-    super();
+    super(databases);
     this.databases = databases;
   }
 
@@ -64,14 +64,6 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   <% unless create_signature_small.nil? %>
     <%= render_mock_create_method(model_defn, create_signature_small, true) %>
   <% end %>
-
-  public <%= model_defn.model_name %> find(long id) throws IOException {
-    <%= model_defn.model_name %> temp = records.get(id);
-    if (temp == null) {
-      return null;
-    }
-    return temp.getCopy(databases);
-  }
 
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);

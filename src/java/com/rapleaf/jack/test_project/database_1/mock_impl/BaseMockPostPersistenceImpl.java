@@ -33,7 +33,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
   private static AtomicInteger curId = new AtomicInteger(1);
 
   public BaseMockPostPersistenceImpl(IDatabases databases) {
-    super();
+    super(databases);
     this.databases = databases;
   }
 
@@ -54,14 +54,6 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post>
     return newInst;
   }
 
-
-  public Post find(long id) throws IOException {
-    Post temp = records.get(id);
-    if (temp == null) {
-      return null;
-    }
-    return temp.getCopy(databases);
-  }
 
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);

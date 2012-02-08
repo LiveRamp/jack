@@ -1,10 +1,8 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,11 +10,13 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
-public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
+public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T>>
     implements IModelPersistence<T> {
 
+  private final IDatabases databases;
   protected final Map<Long, T> records = new HashMap<Long, T>();
   
   private static class JavaScriptRecordSelector<T extends ModelWithId>
@@ -72,6 +72,10 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
 
   }
 
+  public AbstractMockDatabaseModel(IDatabases databases) {
+    this.databases = databases;
+  }
+
   protected Set<T> realFind(Map fieldsMap) throws IOException {
     return realFind(null, fieldsMap);
   }
@@ -111,7 +115,11 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
 
   @Override
   public T find(long id) throws IOException {
-    return records.get(id);
+    final T tmp = records.get(id);
+    if (tmp == null) {
+      return null;
+    }
+    return (T) tmp.getCopy(databases);
   }
 
   @Override
@@ -139,11 +147,11 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       Object foreignKeyValue = record.getField(foreignKey);
       if (foreignKeyValue instanceof Long) {
         if (foreignKeyValue.equals(id)) {
-          ret.add(record);
+          ret.add(record.getCopy(databases));
         }
       } else if (foreignKeyValue instanceof Integer) {
         if (((Integer) foreignKeyValue).longValue() == id) {
-          ret.add(record);
+          ret.add(record.getCopy(databases));
         }
       } else {
         throw new IllegalArgumentException("Foreign key is not a long or int: "
@@ -161,11 +169,11 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       Object foreignKeyValue = record.getField(foreignKey);
       if (foreignKeyValue instanceof Long) {
         if (ids.contains(foreignKeyValue)) {
-          foundSet.add(record);
+          foundSet.add(record.getCopy(databases));
         }
       } else if (foreignKeyValue instanceof Integer) {
         if (ids.contains(((Integer) foreignKeyValue).longValue())) {
-          foundSet.add(record);
+          foundSet.add(record.getCopy(databases));
         }
       } else {
         throw new IllegalArgumentException("Foreign key is not a long or int: "
@@ -204,7 +212,11 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
 
   @Override
   public Set<T> findAll() throws IOException {
-    return Collections.unmodifiableSet(new HashSet<T>(records.values()));
+    Set<T> ts = new HashSet<T>();
+    for (T t : records.values()) {
+      ts.add(t.getCopy(databases));
+    }
+    return ts;
   }
 
   @Override
@@ -217,7 +229,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
     Set<T> results = new HashSet<T>();
     for (T record : records.values()) {
       if (selector.selectRecord(record)) {
-        results.add(record);
+        results.add(record.getCopy(databases));
       }
     }
     return results;
@@ -227,17 +239,17 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId>
       throws IOException {
     return new JavaScriptRecordSelector(conditions);
   }
-  
+
   private boolean useCache = true;
-  
+
   public boolean isCaching() {
     return useCache;
   }
-  
+
   public void enableCaching() {
     useCache = true;
   }
-  
+
   public void disableCaching() {
     useCache = false;
   }

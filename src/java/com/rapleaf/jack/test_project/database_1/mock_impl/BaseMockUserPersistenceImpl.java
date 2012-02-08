@@ -33,7 +33,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
   private static AtomicInteger curId = new AtomicInteger(1);
 
   public BaseMockUserPersistenceImpl(IDatabases databases) {
-    super();
+    super(databases);
     this.databases = databases;
   }
 
@@ -70,14 +70,6 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User>
     return newInst;
   }
 
-
-  public User find(long id) throws IOException {
-    User temp = records.get(id);
-    if (temp == null) {
-      return null;
-    }
-    return temp.getCopy(databases);
-  }
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);

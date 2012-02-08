@@ -33,7 +33,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   private static AtomicInteger curId = new AtomicInteger(1);
 
   public BaseMockCommentPersistenceImpl(IDatabases databases) {
-    super();
+    super(databases);
     this.databases = databases;
   }
 
@@ -66,14 +66,6 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return newInst;
   }
 
-
-  public Comment find(long id) throws IOException {
-    Comment temp = records.get(id);
-    if (temp == null) {
-      return null;
-    }
-    return temp.getCopy(databases);
-  }
 
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
