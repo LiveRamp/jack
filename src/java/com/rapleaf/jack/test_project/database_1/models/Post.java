@@ -42,8 +42,8 @@ public class Post extends ModelWithId {
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id == null ? null : user_id.longValue());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id) {
@@ -64,10 +64,19 @@ public class Post extends ModelWithId {
   }
 
   public Post (Post other) {
+    this(other, (IDatabases)null);
+  }
+
+  public Post (Post other, IDatabases databases) {
     super(other.getId());
     this.__title = other.getTitle();
     this.__posted_at_millis = other.getPostedAtMillis();
     this.__user_id = other.getUserId();
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    }
   }
 
   public String getTitle(){
@@ -110,7 +119,7 @@ public class Post extends ModelWithId {
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
   public static Class getFieldType(_Fields field) {
@@ -197,6 +206,10 @@ public class Post extends ModelWithId {
   @Override
   public ModelWithId getCopy() {
     return new Post(this);
+  }
+
+  public ModelWithId getCopy(IDatabases databases) {
+    return new Post(this, databases);
   }
 
   public String toString() {

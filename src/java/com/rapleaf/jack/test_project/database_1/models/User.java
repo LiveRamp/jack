@@ -61,9 +61,9 @@ public class User extends ModelWithId {
     this.__some_binary = some_binary;
     this.__some_float = some_float;
     this.__some_boolean = some_boolean;
-    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", id);
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", id);
-    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", id);
+    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
+    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
@@ -102,6 +102,10 @@ public class User extends ModelWithId {
   }
 
   public User (User other) {
+    this(other, (IDatabases)null);
+  }
+
+  public User (User other, IDatabases databases) {
     super(other.getId());
     this.__handle = other.getHandle();
     this.__created_at_millis = other.getCreatedAtMillis();
@@ -112,6 +116,12 @@ public class User extends ModelWithId {
     this.__some_binary = copyBinary(other.getSomeBinary());
     this.__some_float = other.getSomeFloat();
     this.__some_boolean = other.isSomeBoolean();
+
+    if (databases != null) {
+      this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
+      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
+      this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+    }
   }
 
   public String getHandle(){
@@ -226,7 +236,7 @@ public class User extends ModelWithId {
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
   public static Class getFieldType(_Fields field) {
@@ -389,6 +399,10 @@ public class User extends ModelWithId {
   @Override
   public ModelWithId getCopy() {
     return new User(this);
+  }
+
+  public ModelWithId getCopy(IDatabases databases) {
+    return new User(this, databases);
   }
 
   public String toString() {

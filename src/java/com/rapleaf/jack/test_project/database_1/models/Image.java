@@ -35,7 +35,7 @@ public class Image extends ModelWithId {
   public Image(long id, final Integer user_id, IDatabases databases) {
     super(id);
     this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), user_id == null ? null : user_id.longValue());
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
   }
 
   public Image(long id, final Integer user_id) {
@@ -50,8 +50,16 @@ public class Image extends ModelWithId {
   }
 
   public Image (Image other) {
+    this(other, (IDatabases)null);
+  }
+
+  public Image (Image other, IDatabases databases) {
     super(other.getId());
     this.__user_id = other.getUserId();
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+    }
   }
 
   public Integer getUserId(){
@@ -70,7 +78,7 @@ public class Image extends ModelWithId {
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
   public static Class getFieldType(_Fields field) {
@@ -129,6 +137,10 @@ public class Image extends ModelWithId {
   @Override
   public ModelWithId getCopy() {
     return new Image(this);
+  }
+
+  public ModelWithId getCopy(IDatabases databases) {
+    return new Image(this, databases);
   }
 
   public String toString() {

@@ -82,20 +82,29 @@ public class <%=model_defn.model_name%> extends ModelWithId {
     <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
     <% end %>
     <% end %>
-    
-    
+
     <% model_defn.fields.each do |field_defn| %>
     this.__<%= field_defn.name %> = <%= field_defn.name %>;
     <% end %>
   }
 
   public <%= model_defn.model_name %> (<%= model_defn.model_name %> other) {
+    this(other, (IDatabases)null);
+  }
+
+  public <%= model_defn.model_name %> (<%= model_defn.model_name %> other, IDatabases databases) {
     super(other.getId());
   <% model_defn.fields.each do |field_defn| %>
     <% copy =  "other.#{field_defn.getter}" %>
     <% copy = field_defn.java_type == 'byte[]' ? "copyBinary(#{copy})" : copy %>
     this.__<%= field_defn.name %> = <%= copy %>;
   <% end %>
+
+    if (databases != null) {
+  <% model_defn.associations.each do |assoc| %>
+      this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+  <% end %>
+    }
   }
 
 <% model_defn.fields.each do |field_defn| %>
@@ -119,7 +128,7 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   <% end %>
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
   public static Class getFieldType(_Fields field) {
@@ -191,6 +200,10 @@ public class <%=model_defn.model_name%> extends ModelWithId {
   @Override
   public ModelWithId getCopy() {
     return new <%= model_defn.model_name %>(this);
+  }
+
+  public ModelWithId getCopy(IDatabases databases) {
+    return new <%= model_defn.model_name %>(this, databases);
   }
 
   public String toString() {

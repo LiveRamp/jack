@@ -19,6 +19,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.rapleaf.jack.test_project.IDatabases;
+
 public abstract class ModelWithId implements Serializable {
   private final long id;
   transient protected int cachedHashCode = 0;
@@ -87,7 +89,9 @@ public abstract class ModelWithId implements Serializable {
   }
 
   public abstract ModelWithId getCopy();
-  
+
+  public abstract ModelWithId getCopy(IDatabases databases);
+
   public abstract Object getField(String fieldName);
 
   public abstract Set<Enum> getFieldSet();

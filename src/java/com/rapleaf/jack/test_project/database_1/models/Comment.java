@@ -45,8 +45,8 @@ public class Comment extends ModelWithId {
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) commenter_id);
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), commented_on_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) __commenter_id);
+    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), __commented_on_id);
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at) {
@@ -71,11 +71,20 @@ public class Comment extends ModelWithId {
   }
 
   public Comment (Comment other) {
+    this(other, (IDatabases)null);
+  }
+
+  public Comment (Comment other, IDatabases databases) {
     super(other.getId());
     this.__content = other.getContent();
     this.__commenter_id = other.getCommenterId();
     this.__commented_on_id = other.getCommentedOnId();
     this.__created_at = other.getCreatedAt();
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) __commenter_id);
+      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), __commented_on_id);
+    }
   }
 
   public String getContent(){
@@ -130,7 +139,7 @@ public class Comment extends ModelWithId {
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
   public static Class getFieldType(_Fields field) {
@@ -229,6 +238,10 @@ public class Comment extends ModelWithId {
   @Override
   public ModelWithId getCopy() {
     return new Comment(this);
+  }
+
+  public ModelWithId getCopy(IDatabases databases) {
+    return new Comment(this, databases);
   }
 
   public String toString() {
