@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public abstract class ModelWithId<T, D extends GenericDatabases> implements Serializable {
+public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   private final long id;
   transient protected int cachedHashCode = 0;
 
