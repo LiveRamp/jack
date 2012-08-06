@@ -238,6 +238,37 @@ public class User extends ModelWithId<User, IDatabases> {
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
+  
+  public void setField(String fieldName, Object value) {
+    if (fieldName.equals("handle")) {
+      setHandle((String)  value);
+    }
+    if (fieldName.equals("created_at_millis")) {
+      setCreatedAtMillis((Long)  value);
+    }
+    if (fieldName.equals("num_posts")) {
+      setNumPosts((Integer)  value);
+    }
+    if (fieldName.equals("some_date")) {
+      setSomeDate((Long)  value);
+    }
+    if (fieldName.equals("some_datetime")) {
+      setSomeDatetime((Long)  value);
+    }
+    if (fieldName.equals("bio")) {
+      setBio((String)  value);
+    }
+    if (fieldName.equals("some_binary")) {
+      setSomeBinary((byte[])  value);
+    }
+    if (fieldName.equals("some_float")) {
+      setSomeFloat((Double)  value);
+    }
+    if (fieldName.equals("some_boolean")) {
+      setSomeBoolean((Boolean)  value);
+    }
+    throw new IllegalStateException("Invalid field: " + fieldName);
+  }
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
@@ -364,6 +395,40 @@ public class User extends ModelWithId<User, IDatabases> {
         return isSomeBoolean();
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+    if (fieldName.equals("handle")) {
+      return true;
+    }
+    if (fieldName.equals("created_at_millis")) {
+      return true;
+    }
+    if (fieldName.equals("num_posts")) {
+      return true;
+    }
+    if (fieldName.equals("some_date")) {
+      return true;
+    }
+    if (fieldName.equals("some_datetime")) {
+      return true;
+    }
+    if (fieldName.equals("bio")) {
+      return true;
+    }
+    if (fieldName.equals("some_binary")) {
+      return true;
+    }
+    if (fieldName.equals("some_float")) {
+      return true;
+    }
+    if (fieldName.equals("some_boolean")) {
+      return true;
+    }
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {

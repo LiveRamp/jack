@@ -141,6 +141,22 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
+  
+  public void setField(String fieldName, Object value) {
+    if (fieldName.equals("content")) {
+      setContent((String)  value);
+    }
+    if (fieldName.equals("commenter_id")) {
+      setCommenterId((Integer)  value);
+    }
+    if (fieldName.equals("commented_on_id")) {
+      setCommentedOnId((Long)  value);
+    }
+    if (fieldName.equals("created_at")) {
+      setCreatedAt((Long)  value);
+    }
+    throw new IllegalStateException("Invalid field: " + fieldName);
+  }
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
@@ -213,6 +229,25 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
         return getCreatedAt();
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+    if (fieldName.equals("content")) {
+      return true;
+    }
+    if (fieldName.equals("commenter_id")) {
+      return true;
+    }
+    if (fieldName.equals("commented_on_id")) {
+      return true;
+    }
+    if (fieldName.equals("created_at")) {
+      return true;
+    }
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {

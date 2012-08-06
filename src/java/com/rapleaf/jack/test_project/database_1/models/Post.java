@@ -121,6 +121,19 @@ public class Post extends ModelWithId<Post, IDatabases> {
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
+  
+  public void setField(String fieldName, Object value) {
+    if (fieldName.equals("title")) {
+      setTitle((String)  value);
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      setPostedAtMillis((Long)  value);
+    }
+    if (fieldName.equals("user_id")) {
+      setUserId((Integer)  value);
+    }
+    throw new IllegalStateException("Invalid field: " + fieldName);
+  }
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
@@ -183,6 +196,22 @@ public class Post extends ModelWithId<Post, IDatabases> {
         return getUserId();
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+    if (fieldName.equals("title")) {
+      return true;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return true;
+    }
+    if (fieldName.equals("user_id")) {
+      return true;
+    }
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {
