@@ -25,7 +25,7 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   protected final IDatabases dbs = getDBS();
-  
+
   public abstract IDatabases getDBS();
 
   @Override
@@ -47,7 +47,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testCreateWithBigintPrimaryKey() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     long postId = Integer.MAX_VALUE * 2l;
-    posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1));
+    posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1, 0l));
 
     posts.clearCacheById(postId);
     Post foundPost = posts.find(postId);
@@ -55,7 +55,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     foundPost = posts.find(postId);
     assertNotNull("Post should be found in cache by bigint id", foundPost);
-    
+
     Comment c = new Comment(1, "comment content", 1, postId, System.currentTimeMillis(), getDBS());
     assertNotNull("Post should be findable by foreign key", c.getPost());
   }
@@ -119,13 +119,13 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(1.2, bryand_again.getSomeFloat());
     assertTrue(bryand_again.isSomeBoolean());
   }
-  
+
   public void testFindEmptySet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     Set<User> foundValues = users.find(new HashSet<Long>());
     assertEquals(0, foundValues.size());
   }
-  
+
   public void testFindSet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -142,7 +142,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     Set<User> foundValues = users.find(keysToSearch);
-    
+
     assertEquals(2, foundValues.size());
     Iterator<User> iter = foundValues.iterator();
     User bryand_again = null;
@@ -172,7 +172,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
     assertEquals(1.2, bryand_again.getSomeFloat());
     assertTrue(bryand_again.isSomeBoolean());
-    
+
     assertEquals(notBryand.getId(), notBryand_again.getId());
     assertEquals("notBryand", notBryand_again.getHandle());
     assertEquals(Long.valueOf(t0), notBryand_again.getCreatedAtMillis());
@@ -252,12 +252,12 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1_1 = users.find(u1.getId());
     User u2_1 = users.find(u2.getId());
     User u3_1 = users.find(u3.getId());
-    
+
     Set<User> allUsers = users.findAll();
     assertTrue(allUsers.contains(u1));
     assertTrue(allUsers.contains(u2));
     assertTrue(allUsers.contains(u3));
-    
+
     // make sure findAll returned cached objects
     int numFound = 0;
     for (User user : allUsers) {
@@ -339,7 +339,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(u2), users.findAll("handle != 'bryand' AND handle != 'emilyl' AND created_at_millis<=" + System.currentTimeMillis()));
     assertEquals(Collections.singleton(u2), users.findAll("handle != 'bryand' AND handle != 'emilyl' AND 0.5 < 1.0e1"));
   }
-  
+
   public void testFindAllWithNullValues() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
@@ -350,7 +350,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(u1), users.findAll("(created_at_millis IS NULL) IS NOT TRUE"));
     assertEquals(Collections.singleton(u2), users.findAll("(created_at_millis IS NULL) IS TRUE"));
   }
-  
+
   public void testFindAllWithLikeConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
@@ -362,9 +362,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(u2), users.findAll("handle NOT LIKE \"bryan_\" AND handle != 'as%df'"));
     assertEquals(Collections.singleton(u1), users.findAll("handle NOT LIKE \"%omas%\" AND handle != 'as%df'"));
     assertEquals(Collections.EMPTY_SET, users.findAll("handle LIKE \"%/tmp/directory/1%\""));
-    
+
   }
-  
+
   public void testFindAllWithNumericInConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
@@ -386,7 +386,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(u2), users.findAll("handle not in ('asd' , 'bryand') OR 5 < 4"));
     assertEquals(Collections.singleton(u1), users.findAll("handle not in (\"thomask\" , 'wers') AND 5 > 4"));
   }
-  
+
   public void testFindAllWithEscapedQuotesInStrings() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
@@ -403,7 +403,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title", System.currentTimeMillis(), (int) u1.getId());
+    Post p1 = posts.create("title", System.currentTimeMillis(), (int) u1.getId(), 0l);
     assertEquals(u1, p1.getUser());
   }
 
@@ -421,16 +421,16 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title1", System.currentTimeMillis(), (int) u1.getId());
-    Post p2 = posts.create("title2", System.currentTimeMillis(), (int) u1.getId());
-    Post p3 = posts.create("title3", System.currentTimeMillis(), (int) u1.getId());
+    Post p1 = posts.create("title1", System.currentTimeMillis(), (int) u1.getId(), 0l);
+    Post p2 = posts.create("title2", System.currentTimeMillis(), (int) u1.getId(), 0l);
+    Post p3 = posts.create("title3", System.currentTimeMillis(), (int) u1.getId(), 0l);
 
     assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
   public void testFindByForeignKey() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post post = posts.create("title", 0L, 1);
+    Post post = posts.create("title", 0L, 1, 0l);
 
     assertTrue(posts.findAllByForeignKey("user_id", -1).isEmpty());
     assertEquals(Collections.singleton(post), posts.findAllByForeignKey("user_id", 1));
@@ -438,7 +438,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testNullTreatment() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post post = posts.create(null, 10L, 1);
+    Post post = posts.create(null, 10L, 1, 0l);
     assertNotNull(post);
     post.setUserId(null);
     posts.save(post);
@@ -449,24 +449,24 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testDelete() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post post = posts.create(null, 10L, 1);
+    Post post = posts.create(null, 10L, 1, 0l);
     long id = post.getId();
     posts.delete(id);
     assertNull(posts.find(id));
   }
-  
+
   public void testSave() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post post = posts.create(null, 10L, 1);
+    Post post = posts.create(null, 10L, 1, 0l);
     long id = post.getId();
     post.setPostedAtMillis(20L);
     dbs.getDatabase1().posts().save(post);
     assertEquals(Long.valueOf(20), posts.find(id).getPostedAtMillis());
   }
-  
+
   public void testInsertOnSave() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post post = new Post(50, "Post", 20L, 100, dbs);
+    Post post = new Post(50, "Post", 20L, 100, 0l, dbs);
     posts.save(post);
     assertEquals(post, posts.find(50));
   }
