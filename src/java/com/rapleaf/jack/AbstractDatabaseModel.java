@@ -400,7 +400,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public boolean save(T model) throws IOException {
-	long oldUpdatedAt = handleRailsUpdatedAt(model);
+    long oldUpdatedAt = handleRailsUpdatedAt(model);
     PreparedStatement saveStmt = getSaveStmt();
     try {
       setAttrs(model, saveStmt);
@@ -528,19 +528,19 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     useCache = false;
   }
   
-  private long handleRailsUpdatedAt(T model){
-	if(model.hasField("updated_at")){
-	  long oldUpdatedAt = (Long) model.getField("updated_at");
-	  model.setField("updated_at", System.currentTimeMillis());
-	  //return old value in case save fails and we need to reset
-	  return oldUpdatedAt;
-	}
-	return 0;
+  private long handleRailsUpdatedAt(T model) {
+    if (model.hasField("updated_at")) {
+      long oldUpdatedAt = (Long) model.getField("updated_at");
+      model.setField("updated_at", System.currentTimeMillis());
+      // return old value in case save fails and we need to reset
+      return oldUpdatedAt;
+    }
+    return 0;
   }
-  
+
   private void revertRailsUpdatedAt(T model, long oldUpdatedAt) {
-	if(model.hasField("updated_at")){
-	  model.setField("updated_at", oldUpdatedAt);
-	}
+    if (model.hasField("updated_at")) {
+      model.setField("updated_at", oldUpdatedAt);
+    }
   }
 }
