@@ -55,6 +55,9 @@ public class TestModelWithID extends TestCase {
     } catch (ClassCastException e) {
     }
 
+  }
+
+  public void testUpdatedAt() {
     model.setField("updated_at", 0l);
     try {
       dbs.getDatabase1().posts().save(model);
@@ -65,8 +68,6 @@ public class TestModelWithID extends TestCase {
       e.printStackTrace();
       fail("IO Exception");
     }
-
-
   }
 
 }
