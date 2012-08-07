@@ -135,6 +135,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% model_defn.fields.each do |field_defn| %>
     if (fieldName.equals("<%= field_defn.name %>")) {
       set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)  value);
+      return;
     }
   <% end %>
     throw new IllegalStateException("Invalid field: " + fieldName);
