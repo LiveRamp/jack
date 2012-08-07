@@ -36,7 +36,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   private final IDatabases databases;
 
   public BasePostPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "posts", Arrays.asList("title", "posted_at_millis", "user_id"));
+    super(conn, "posts", Arrays.asList("title", "posted_at_millis", "user_id", "updated_at"));
     this.databases = databases;
   }
 
@@ -45,11 +45,12 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
     Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
-    return create(title, posted_at_millis, user_id);
+    Long updated_at = (Long) fieldsMap.get(Post._Fields.updated_at);
+    return create(title, posted_at_millis, user_id, updated_at);
   }
 
 
-  public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
+  public Post create(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (title == null) {
@@ -67,9 +68,14 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         } else {
           stmt.setInt(3, user_id);
         }
+        if (updated_at == null) {
+          stmt.setNull(4, java.sql.Types.DATE);
+        } else {
+          stmt.setTimestamp(4, new Timestamp(updated_at));
+        }
       }
-    }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id")));
-    Post newInst = new Post(__id, title, posted_at_millis, user_id, databases);
+    }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id", "updated_at")));
+    Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
@@ -127,6 +133,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
           case user_id:
             preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
             break;
+          case updated_at:
+            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+            break;
         }
       } catch (SQLException e) {
         throw new IOException(e);
@@ -154,7 +163,12 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     } else {
       stmt.setInt(3, model.getUserId());
     }
-    stmt.setLong(4, model.getId());
+    if (model.getUpdatedAt() == null) {
+      stmt.setNull(4, java.sql.Types.DATE);
+    } else {
+      stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));
+    }
+    stmt.setLong(5, model.getId());
   }
 
   @Override
@@ -163,6 +177,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       rs.getString("title"),
       getDateAsLong(rs, "posted_at_millis"),
       getIntOrNull(rs, "user_id"),
+      getDateAsLong(rs, "updated_at"),
       databases
     );
   }
@@ -177,5 +192,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public Set<Post> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
+  }
+
+  public Set<Post> findByUpdatedAt(final Long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
   }
 }

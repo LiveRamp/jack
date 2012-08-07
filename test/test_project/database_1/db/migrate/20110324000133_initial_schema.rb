@@ -25,6 +25,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :title
       t.date :posted_at_millis
       t.integer :user_id
+      t.timestamp :updated_at
     end
     execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
     

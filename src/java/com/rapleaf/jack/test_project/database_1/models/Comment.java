@@ -145,15 +145,19 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("content")) {
       setContent((String)  value);
+      return;
     }
     if (fieldName.equals("commenter_id")) {
       setCommenterId((Integer)  value);
+      return;
     }
     if (fieldName.equals("commented_on_id")) {
       setCommentedOnId((Long)  value);
+      return;
     }
     if (fieldName.equals("created_at")) {
       setCreatedAt((Long)  value);
+      return;
     }
     throw new IllegalStateException("Invalid field: " + fieldName);
   }

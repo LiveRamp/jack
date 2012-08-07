@@ -84,6 +84,7 @@ public class Image extends ModelWithId<Image, IDatabases> {
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("user_id")) {
       setUserId((Integer)  value);
+      return;
     }
     throw new IllegalStateException("Invalid field: " + fieldName);
   }

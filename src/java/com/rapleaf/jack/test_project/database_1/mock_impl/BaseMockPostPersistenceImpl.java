@@ -42,13 +42,14 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
     Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
-    return create(title, posted_at_millis, user_id);
+    Long updated_at = (Long) fieldsMap.get(Post._Fields.updated_at);
+    return create(title, posted_at_millis, user_id, updated_at);
   }
 
 
-  public Post create(final String title, final Long posted_at_millis, final Integer user_id) throws IOException {
+  public Post create(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
     long __id = curId.getAndIncrement();
-    Post newInst = new Post(__id, title, posted_at_millis, user_id, databases);
+    Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
@@ -73,5 +74,9 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
 
   public Set<Post> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
+  }
+
+  public Set<Post> findByUpdatedAt(final Long value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
   }
 }

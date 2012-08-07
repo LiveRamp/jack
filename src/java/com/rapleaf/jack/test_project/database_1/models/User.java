@@ -242,30 +242,39 @@ public class User extends ModelWithId<User, IDatabases> {
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("handle")) {
       setHandle((String)  value);
+      return;
     }
     if (fieldName.equals("created_at_millis")) {
       setCreatedAtMillis((Long)  value);
+      return;
     }
     if (fieldName.equals("num_posts")) {
       setNumPosts((Integer)  value);
+      return;
     }
     if (fieldName.equals("some_date")) {
       setSomeDate((Long)  value);
+      return;
     }
     if (fieldName.equals("some_datetime")) {
       setSomeDatetime((Long)  value);
+      return;
     }
     if (fieldName.equals("bio")) {
       setBio((String)  value);
+      return;
     }
     if (fieldName.equals("some_binary")) {
       setSomeBinary((byte[])  value);
+      return;
     }
     if (fieldName.equals("some_float")) {
       setSomeFloat((Double)  value);
+      return;
     }
     if (fieldName.equals("some_boolean")) {
       setSomeBoolean((Boolean)  value);
+      return;
     }
     throw new IllegalStateException("Invalid field: " + fieldName);
   }

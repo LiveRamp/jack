@@ -24,9 +24,10 @@ ActiveRecord::Schema.define(:version => 20110324000133) do
   end
 
   create_table "posts", :force => true do |t|
-    t.string  "title"
-    t.date    "posted_at_millis"
-    t.integer "user_id"
+    t.string   "title"
+    t.date     "posted_at_millis"
+    t.integer  "user_id"
+    t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|
