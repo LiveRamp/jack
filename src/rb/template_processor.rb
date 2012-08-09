@@ -52,10 +52,12 @@ EOF
 
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
   MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
+  
+  MIGRATION_TEMPLATE = load_template("templates/migration.erb");
 
   public
 
-  def self.process(project_defn, output_dir, model_defns_by_namespace_table_names)
+  def self.process(project_defn, output_dir, model_defns_by_namespace_table_names, migration_number)
     project_defn.databases.each do |database_defn|
       by_table_name = model_defns_by_namespace_table_names[database_defn.namespace]
 
@@ -73,6 +75,10 @@ EOF
 
     file = File.new("#{output_dir}/MockDatabasesImpl.java", "w")
     file.puts(MOCK_DATABASES_IMPL_TEMPLATE.result(binding))
+    file.close
+    
+    file = File.new("#{output_dir}/migration-version.txt", "w")
+    file.puts(MIGRATION_TEMPLATE.result(binding))
     file.close
   end
   
