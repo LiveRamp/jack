@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler'
+Bundler.require
+require 'jack'
+
+if ARGV.size == 2
+  Jack.run(ARGV)
+else
+  puts <<-END
+Wrong number of arguments.
+Usage: 
+ruby src/rb/jack.rb <path to project.yml> <path where output should be generated>
+  END
+end
