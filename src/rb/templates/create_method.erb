@@ -38,6 +38,7 @@ field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] ==
     }, getInsertStatement(<%= field_names %>));
 <% names_only = model_defn.fields.map{|field_defn| field_defn.args[":null"] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ") %>
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
+    newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;

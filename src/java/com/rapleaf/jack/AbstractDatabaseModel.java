@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,13 +50,17 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
-    updateStatement = String.format(
-        "INSERT INTO %s SET %s , id=? ON DUPLICATE KEY UPDATE %s;", tableName,
-        getSetFieldsPrepStatementSection(), getUpdateOnInsertPrepStatementSection());
+    updateStatement =
+        String.format("UPDATE %s SET %s WHERE id=?;", tableName, getSetFieldsPrepStatementSection());
   }
 
   protected String getInsertStatement(List<String> fieldNames) {
     return String.format("INSERT INTO %s (%s) VALUES(%s);", tableName,
+        escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
+  }
+
+  protected String getInsertWithIdStatement(List<String> fieldNames) {
+    return String.format("INSERT INTO %s (%s , id) VALUES(%s, ?);", tableName,
         escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
   }
 
@@ -65,7 +70,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("`").append(fieldNames.get(i)).append("` = ?");
+      sb.append("\"").append(fieldNames.get(i)).append("\" = ?");
     }
     return sb.toString();
   }
@@ -76,7 +81,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(",");
       }
-      sb.append("`").append(fieldNames.get(i)).append("` = VALUES(`").append(fieldNames.get(i)).append("`)");
+      sb.append("\"").append(fieldNames.get(i)).append("\" = VALUES(\"").append(fieldNames.get(i)).append("\")");
     }
     return sb.toString();
   }
@@ -89,7 +94,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected int realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(insertStatement);
+    PreparedStatement stmt = conn.getPreparedStatement(insertStatement,
+        Statement.RETURN_GENERATED_KEYS);
     ResultSet generatedKeys = null;
     try {
       attrSetter.set(stmt);
@@ -120,7 +126,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("`").append(fieldNames.get(i)).append("`");
+      sb.append("\"").append(fieldNames.get(i)).append("\"");
     }
     return sb.toString();
   }
@@ -400,19 +406,37 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public boolean save(T model) throws IOException {
-    PreparedStatement saveStmt = getSaveStmt();
-    try {
-      setAttrs(model, saveStmt);
-      saveStmt.execute();
-      boolean success = saveStmt.getUpdateCount() == 1;
-      saveStmt.close();
-      if (success && useCache) {
-        cachedById.put(model.getId(), model);
+    if (model.isCreated()) {
+      PreparedStatement saveStmt = getSaveStmt();
+      try {
+        setAttrs(model, saveStmt);
+        saveStmt.execute();
+        boolean success = saveStmt.getUpdateCount() == 1;
+        saveStmt.close();
+        if (success && useCache) {
+          cachedById.put(model.getId(), model);
+        }
+        clearForeignKeyCache();
+        return success;
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
-      clearForeignKeyCache();
-      return success;
-    } catch (SQLException e) {
-      throw new IOException(e);
+    } else {
+      PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
+      try {
+        setAttrs(model, insertStmt);
+        insertStmt.setLong(fieldNames.size() + 1, model.getId());
+        insertStmt.execute();
+        boolean success = insertStmt.getUpdateCount() == 1;
+        insertStmt.close();
+        if (success && useCache) {
+          cachedById.put(model.getId(), model);
+        }
+        clearForeignKeyCache();
+        return success;
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
     }
   }
 
