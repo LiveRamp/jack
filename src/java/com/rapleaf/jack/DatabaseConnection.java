@@ -69,7 +69,13 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       driverClass = null;
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
     }
-    connectionString = String.format("jdbc:%s://%s:%d/%s", driver, db_info.get("host"), db_info.get("database"));
+    StringBuilder connectionStringBuilder = new StringBuilder("jdbc:");
+    connectionStringBuilder.append(driver).append("://").append(db_info.get("host"));
+    if (db_info.containsKey("port")) {
+      connectionStringBuilder.append(":").append(Integer.parseInt(db_info.get("port")));
+    }
+    connectionStringBuilder.append("/").append(db_info.get("database"));
+    connectionString = connectionStringBuilder.toString();
     username = db_info.get("username");
     password = db_info.get("password");
 
