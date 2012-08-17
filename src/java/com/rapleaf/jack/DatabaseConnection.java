@@ -16,12 +16,8 @@ package com.rapleaf.jack;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 
 import org.jvyaml.YAML;
@@ -35,11 +31,12 @@ import org.jvyaml.YAML;
  * (rather than IO or SQL exceptions).
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
-  private String mysqlUrl;
+  private String connectionString;
   private String username;
   private String password;
   private long expiresAt;
   private long expiration;
+  private String driverClass;
 
   private static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
 
@@ -55,10 +52,20 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       Map db_info_container = (Map)YAML.load(new FileReader("config/database.yml"));
       Map<String, String> db_info = (Map<String, String>)db_info_container.get(db_info_name);
 
-      // get mySQL credentials from database info
-      String serverUrl = "jdbc:mysql://"+db_info.get("host");
-      String database = db_info.get("database");
-      mysqlUrl = serverUrl + "/" + database;
+      // get server credentials from database info
+      String adapter = db_info.get("adapter");
+      String driver = null;
+      if (adapter.equals("mysql")) {
+        driver = "mysql";
+        driverClass = "com.mysql.jdbc.Driver";
+      } else if (adapter.equals("postgresql")) {
+        driver = "postgresql";
+        driverClass = "org.postgresql.Driver";
+      } else {
+        driverClass = null;
+        throw new IllegalArgumentException("Don't know the driver for adapter'" + adapter + "'!");
+      }
+      connectionString = String.format("jdbc:%s://%s:%d/%s", driver, db_info.get("host"), db_info.get("database"));
       username = db_info.get("username");
       password = db_info.get("password");
     } catch (IOException e) {
@@ -78,7 +85,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     try {
       if(conn == null) {
         Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection(mysqlUrl, username, password);
+        conn = DriverManager.getConnection(connectionString, username, password);
       } else if (isExpired()) {
         resetConnection();
       }
