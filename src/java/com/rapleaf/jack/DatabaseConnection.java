@@ -67,7 +67,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       driverClass = "org.postgresql.Driver";
     } else {
       driverClass = null;
-      throw new IllegalArgumentException("Don't know the driver for adapter'" + adapter + "'!");
+      throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
     }
     connectionString = String.format("jdbc:%s://%s:%d/%s", driver, db_info.get("host"), db_info.get("database"));
     username = db_info.get("username");
