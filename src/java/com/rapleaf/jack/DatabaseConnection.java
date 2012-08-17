@@ -31,12 +31,12 @@ import org.jvyaml.YAML;
  * (rather than IO or SQL exceptions).
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
-  private String connectionString;
-  private String username;
-  private String password;
+  private final String connectionString;
+  private final String username;
+  private final String password;
+  private final String driverClass;
   private long expiresAt;
   private long expiration;
-  private String driverClass;
 
   private static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
 
@@ -45,32 +45,34 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   }
   
   public DatabaseConnection(String dbname_key, long expiration) {
+    Map<String, String> db_info = null;
     try {
       // load database info from config folder
       Map env_info = (Map)YAML.load(new FileReader("config/environment.yml"));
       String db_info_name = (String)env_info.get(dbname_key);
       Map db_info_container = (Map)YAML.load(new FileReader("config/database.yml"));
-      Map<String, String> db_info = (Map<String, String>)db_info_container.get(db_info_name);
-
-      // get server credentials from database info
-      String adapter = db_info.get("adapter");
-      String driver = null;
-      if (adapter.equals("mysql")) {
-        driver = "mysql";
-        driverClass = "com.mysql.jdbc.Driver";
-      } else if (adapter.equals("postgresql")) {
-        driver = "postgresql";
-        driverClass = "org.postgresql.Driver";
-      } else {
-        driverClass = null;
-        throw new IllegalArgumentException("Don't know the driver for adapter'" + adapter + "'!");
-      }
-      connectionString = String.format("jdbc:%s://%s:%d/%s", driver, db_info.get("host"), db_info.get("database"));
-      username = db_info.get("username");
-      password = db_info.get("password");
+      db_info = (Map<String, String>)db_info_container.get(db_info_name);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
+    // get server credentials from database info
+    String adapter = db_info.get("adapter");
+    String driver = null;
+    if (adapter.equals("mysql")) {
+      driver = "mysql";
+      driverClass = "com.mysql.jdbc.Driver";
+    } else if (adapter.equals("postgresql")) {
+      driver = "postgresql";
+      driverClass = "org.postgresql.Driver";
+    } else {
+      driverClass = null;
+      throw new IllegalArgumentException("Don't know the driver for adapter'" + adapter + "'!");
+    }
+    connectionString = String.format("jdbc:%s://%s:%d/%s", driver, db_info.get("host"), db_info.get("database"));
+    username = db_info.get("username");
+    password = db_info.get("password");
+
     this.expiration = expiration;
     updateExpiration();
   }
