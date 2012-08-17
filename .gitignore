@@ -5,3 +5,4 @@ src/java/com/rapleaf/jack/util/MysqlFlex.java
 jack.ipr
 jack.iws
 *.gem
+out
