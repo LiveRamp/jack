@@ -1,23 +1,8 @@
 development:
-  adapter: mysql2
+  adapter: postgresql
   database: jack_1
-  username: root
+  username: jack
   password: 
   host: 127.0.0.1
   pool: 5
   timeout: 5000
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-# test:
-#   adapter: mysql
-#   database: db/test.sqlite3
-#   pool: 5
-#   timeout: 5000
-# 
-# production:
-#   adapter: mysql
-#   database: db/production.sqlite3
-#   pool: 5
-#   timeout: 5000

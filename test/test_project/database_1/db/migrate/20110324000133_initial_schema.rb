@@ -26,7 +26,8 @@ class InitialSchema < ActiveRecord::Migration
       t.date :posted_at_millis
       t.integer :user_id
     end
-    execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+    change_column :posts, :id, :integer, :limit => 8
+    # execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
     
     # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
