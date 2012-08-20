@@ -11,7 +11,7 @@ public abstract class BaseDatabaseConnection implements Serializable {
   protected transient Connection conn = null;
   
   /**
-   * Get a Connection to a MySQL database.
+   * Get a Connection to a database.
    * If there is no connection, create a new one.
    */
   public abstract Connection getConnection();

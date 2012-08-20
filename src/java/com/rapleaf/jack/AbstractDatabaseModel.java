@@ -30,6 +30,9 @@ import java.util.Set;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
+
+  private final String idQuoteString;
+
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -50,6 +53,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
+    try {
+      idQuoteString = conn.getConnection().getMetaData().getIdentifierQuoteString();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     updateStatement =
         String.format("UPDATE %s SET %s WHERE id=?;", tableName, getSetFieldsPrepStatementSection());
   }
@@ -70,7 +78,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("\"").append(fieldNames.get(i)).append("\" = ?");
+
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(" = ?");
     }
     return sb.toString();
   }
@@ -81,7 +93,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(",");
       }
-      sb.append("\"").append(fieldNames.get(i)).append("\" = VALUES(\"").append(fieldNames.get(i)).append("\")");
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(" = VALUES(")
+          .append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(")");
     }
     return sb.toString();
   }
@@ -126,7 +145,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("\"").append(fieldNames.get(i)).append("\"");
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString);
     }
     return sb.toString();
   }
