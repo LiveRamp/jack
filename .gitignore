@@ -6,3 +6,4 @@ jack.ipr
 jack.iws
 *.gem
 out
+database.yml
