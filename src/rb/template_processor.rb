@@ -53,7 +53,7 @@ EOF
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
   MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
   
-  MIGRATION_TEMPLATE = load_template("templates/migration.erb");
+  MIGRATION_TXT_TEMPLATE = load_template("templates/migration.erb");
 
   public
 
@@ -78,7 +78,7 @@ EOF
     file.close
     
     file = File.new("#{output_dir}/migration-version.txt", "w")
-    file.puts(MIGRATION_TEMPLATE.result(binding))
+    file.puts(MIGRATION_TXT_TEMPLATE.result(binding))
     file.close
   end
   
