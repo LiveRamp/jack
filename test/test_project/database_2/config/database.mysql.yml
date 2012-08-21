@@ -4,7 +4,7 @@ development:
   adapter: mysql2
   host: 127.0.0.1
   database: jack_2
-  username: jack
+  username: root
   password: 
   pool: 5
   timeout: 5000
