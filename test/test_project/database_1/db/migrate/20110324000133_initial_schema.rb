@@ -1,4 +1,12 @@
 class InitialSchema < ActiveRecord::Migration
+  def mysql?
+    ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2'
+  end
+
+  def psql?
+    ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'postgresql'
+  end
+
   def self.up
     # get a table that has an example of every type
     create_table :users do |t|
@@ -26,8 +34,12 @@ class InitialSchema < ActiveRecord::Migration
       t.date :posted_at_millis
       t.integer :user_id
     end
-    change_column :posts, :id, :integer, :limit => 8
-    # execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+    if mysql?
+      execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+    elsif psql?
+      execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+    end
+    
     
     # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
