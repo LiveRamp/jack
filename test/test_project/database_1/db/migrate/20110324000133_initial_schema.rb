@@ -37,7 +37,7 @@ class InitialSchema < ActiveRecord::Migration
     if mysql?
       execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
     elsif psql?
-      execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+      execute("ALTER TABLE posts ALTER COLUMN id TYPE bigint")
     end
     
     
