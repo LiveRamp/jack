@@ -58,6 +58,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       }
     }, getInsertStatement(Arrays.asList("user_id")));
     Image newInst = new Image(__id, user_id, databases);
+    newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;

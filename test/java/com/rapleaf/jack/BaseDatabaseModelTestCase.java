@@ -47,7 +47,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
   public void testCreateWithBigintPrimaryKey() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     long postId = Integer.MAX_VALUE * 2l;
-    posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1));
+    assertTrue(posts.save(new Post(postId, "post title", System.currentTimeMillis(), 1)));
 
     posts.clearCacheById(postId);
     Post foundPost = posts.find(postId);
@@ -357,11 +357,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u2 = users.create("thomask", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
     User u3 = users.create("as%df", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
-    assertEquals(Collections.singleton(u1), users.findAll("handle LIKE \"bryan_\""));
-    assertEquals(Collections.singleton(u2), users.findAll("handle LIKE \"%o%m%as%\""));
-    assertEquals(Collections.singleton(u2), users.findAll("handle NOT LIKE \"bryan_\" AND handle != 'as%df'"));
-    assertEquals(Collections.singleton(u1), users.findAll("handle NOT LIKE \"%omas%\" AND handle != 'as%df'"));
-    assertEquals(Collections.EMPTY_SET, users.findAll("handle LIKE \"%/tmp/directory/1%\""));
+    assertEquals(Collections.singleton(u1), users.findAll("handle LIKE 'bryan_'"));
+    assertEquals(Collections.singleton(u2), users.findAll("handle LIKE '%o%m%as%'"));
+    assertEquals(Collections.singleton(u2), users.findAll("handle NOT LIKE 'bryan_' AND handle != 'as%df'"));
+    assertEquals(Collections.singleton(u1), users.findAll("handle NOT LIKE '%omas%' AND handle != 'as%df'"));
+    assertEquals(Collections.EMPTY_SET, users.findAll("handle LIKE '%/tmp/directory/1%'"));
     
   }
   
@@ -381,10 +381,10 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
     User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
-    assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND handle in (\"bryand\" , 'asdf')"));
+    assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND handle in ('bryand' , 'asdf')"));
     assertEquals(Collections.singleton(u2), users.findAll("5 < 4 OR handle in ('thomask' , 'aswer')"));
     assertEquals(Collections.singleton(u2), users.findAll("handle not in ('asd' , 'bryand') OR 5 < 4"));
-    assertEquals(Collections.singleton(u1), users.findAll("handle not in (\"thomask\" , 'wers') AND 5 > 4"));
+    assertEquals(Collections.singleton(u1), users.findAll("handle not in ('thomask' , 'wers') AND 5 > 4"));
   }
   
   public void testFindAllWithEscapedQuotesInStrings() throws Exception {
@@ -392,10 +392,10 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
     User u2 = users.create("thoma\"sk", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, true);
 
-    assertEquals(Collections.singleton(u1), users.findAll("handle = 'brya\\\'nd'"));
+    assertEquals(Collections.singleton(u1), users.findAll("handle = 'brya''nd'"));
     assertEquals(Collections.singleton(u2), users.findAll("handle = 'thoma\"sk'"));
-    assertEquals(Collections.singleton(u1), users.findAll("handle = \"brya\'nd\""));
-    assertEquals(Collections.singleton(u2), users.findAll("handle = \"thoma\\\"sk\""));
+    assertEquals(Collections.singleton(u1), users.findAll("handle = 'brya''nd'"));
+    assertEquals(Collections.singleton(u2), users.findAll("handle = 'thoma\"sk'"));
   }
 
   public void testBelongsTo() throws Exception {

@@ -65,6 +65,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       }
     }, getInsertStatement(Arrays.asList("content", "commenter_id", "commented_on_id", "created_at")));
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
+    newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
@@ -81,6 +82,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       }
     }, getInsertStatement(Arrays.asList("commenter_id", "commented_on_id", "created_at")));
     Comment newInst = new Comment(__id, null, commenter_id, commented_on_id, created_at, databases);
+    newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
