@@ -41,17 +41,46 @@
     <pathelement location="${build.test}" />
   </path>
 
+  <target name="select-mysql">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/select-dbms.sh mysql'" />
+    </exec>
+  </target>
+
+  <target name="select-postgres">
+    <exec executable="/bin/sh" failonerror="true">
+      <arg line="-c 'test/select-dbms.sh postgres'" />
+    </exec>
+  </target>
+
+  <target name="ensure-dbms-selected" >
+    <available file="config/database.yml" property="database.yml.root"/>
+    <available file="test/test_project/database_1/config/database.yml" property="database.yml.db1"/>
+    <available file="test/test_project/database_2/config/database.yml" property="database.yml.db2"/>
+    <fail message="No database.yml files were found. Please run ant select-postgres or ant select-mysql first.">
+      <condition>
+        <not>
+          <and>
+            <isset property="database.yml.root"/>
+            <isset property="database.yml.db1"/>
+            <isset property="database.yml.db2"/>
+          </and>
+        </not>
+      </condition>
+    </fail>
+  </target>
+
   <target name="clean" description="Trash all build outputs">
     <delete dir="${build}" />
     <delete dir="${build.test}" />
   </target>
-  
+
   <target name="init">
     <mkdir dir="${build}"/>
     <mkdir dir="${build.classes}"/>
   </target>
 
-  <target name="compile" depends="init,generate-mysql-flex">
+  <target name="compile" depends="init">
     <javac srcdir="${src.java}" destdir="${build.classes}" debug="true" classpathref="compile.classpath" />
   </target>
   
@@ -153,7 +182,7 @@
     <fail if="tests.failed">Tests failed!</fail>
   </target>
 
-  <target name="test" depends="setup-db,generate,rspec,junit-test" description="Run the entire test suite" />
+  <target name="test" depends="ensure-dbms-selected,setup-db,generate,rspec,junit-test" description="Run the entire test suite" />
 
   <!-- TODO: need to build several jars here -->
   <target name="dist" depends="compile" description="Build a distributable jar">

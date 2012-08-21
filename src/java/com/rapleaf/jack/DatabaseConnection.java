@@ -16,12 +16,8 @@ package com.rapleaf.jack;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 
 import org.jvyaml.YAML;
@@ -35,9 +31,10 @@ import org.jvyaml.YAML;
  * (rather than IO or SQL exceptions).
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
-  private String mysqlUrl;
-  private String username;
-  private String password;
+  private final String connectionString;
+  private final String username;
+  private final String password;
+  private final String driverClass;
   private long expiresAt;
   private long expiration;
 
@@ -48,37 +45,54 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   }
   
   public DatabaseConnection(String dbname_key, long expiration) {
+    Map<String, String> db_info = null;
     try {
       // load database info from config folder
       Map env_info = (Map)YAML.load(new FileReader("config/environment.yml"));
       String db_info_name = (String)env_info.get(dbname_key);
       Map db_info_container = (Map)YAML.load(new FileReader("config/database.yml"));
-      Map<String, String> db_info = (Map<String, String>)db_info_container.get(db_info_name);
-
-      // get mySQL credentials from database info
-      String serverUrl = "jdbc:mysql://"+db_info.get("host");
-      String database = db_info.get("database");
-      mysqlUrl = serverUrl + "/" + database;
-      username = db_info.get("username");
-      password = db_info.get("password");
+      db_info = (Map<String, String>)db_info_container.get(db_info_name);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
+    // get server credentials from database info
+    String adapter = db_info.get("adapter");
+    String driver = null;
+    if (adapter.equals("mysql")) {
+      driver = "mysql";
+      driverClass = "com.mysql.jdbc.Driver";
+    } else if (adapter.equals("postgresql")) {
+      driver = "postgresql";
+      driverClass = "org.postgresql.Driver";
+    } else {
+      driverClass = null;
+      throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
+    }
+    StringBuilder connectionStringBuilder = new StringBuilder("jdbc:");
+    connectionStringBuilder.append(driver).append("://").append(db_info.get("host"));
+    if (db_info.containsKey("port")) {
+      connectionStringBuilder.append(":").append(Integer.parseInt(db_info.get("port")));
+    }
+    connectionStringBuilder.append("/").append(db_info.get("database"));
+    connectionString = connectionStringBuilder.toString();
+    username = db_info.get("username");
+    password = db_info.get("password");
+
     this.expiration = expiration;
     updateExpiration();
   }
 
   /**
-   * Get a Connection to a MySQL database.
-   * If there is no connection, create a new one.
+   * Get a Connection to a database. If there is no connection, create a new one.
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
    */
   public Connection getConnection() {
     try {
       if(conn == null) {
-        Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection(mysqlUrl, username, password);
+        Class.forName(driverClass);
+        conn = DriverManager.getConnection(connectionString, username, password);
       } else if (isExpired()) {
         resetConnection();
       }

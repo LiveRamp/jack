@@ -1,0 +1,8 @@
+development:
+  adapter: postgresql
+  database: jack_1
+  username: jack
+  password: 
+  host: 127.0.0.1
+  pool: 5
+  timeout: 5000
