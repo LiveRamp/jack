@@ -1,7 +1,7 @@
 jack_database1:
   adapter: mysql
   database: jack_1
-  username: jack
+  username: root
   password: 
   host: 127.0.0.1
   pool: 5
