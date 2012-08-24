@@ -26,6 +26,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
   private String __title;
   private Long __posted_at_millis;
   private Integer __user_id;
+  private Long __updated_at;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
@@ -35,22 +36,25 @@ public class Post extends ModelWithId<Post, IDatabases> {
     title,
     posted_at_millis,
     user_id,
+    updated_at,
   }
 
-  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, IDatabases databases) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
     super(id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
+    this.__updated_at = updated_at;
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
-  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
     super(id);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
+    this.__updated_at = updated_at;
   }
 
   public Post(long id, Map<Enum, Object> fieldsMap) {
@@ -58,9 +62,11 @@ public class Post extends ModelWithId<Post, IDatabases> {
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
     Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
+    Long updated_at = (Long) fieldsMap.get(Post._Fields.updated_at);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
+    this.__updated_at = updated_at;
   }
 
   public Post (Post other) {
@@ -72,6 +78,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
     this.__title = other.getTitle();
     this.__posted_at_millis = other.getPostedAtMillis();
     this.__user_id = other.getUserId();
+    this.__updated_at = other.getUpdatedAt();
 
     if (databases != null) {
       this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
@@ -106,6 +113,15 @@ public class Post extends ModelWithId<Post, IDatabases> {
     cachedHashCode = 0;
   }
 
+  public Long getUpdatedAt(){
+    return __updated_at;
+  }
+
+  public void setUpdatedAt(Long newval){
+    this.__updated_at = newval;
+    cachedHashCode = 0;
+  }
+
   public void setField(_Fields field, Object value) {
     switch (field) {
       case title:
@@ -117,9 +133,32 @@ public class Post extends ModelWithId<Post, IDatabases> {
       case user_id:
         setUserId((Integer) value);
         break;
+      case updated_at:
+        setUpdatedAt((Long) value);
+        break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
     }
+  }
+  
+  public void setField(String fieldName, Object value) {
+    if (fieldName.equals("title")) {
+      setTitle((String)  value);
+      return;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      setPostedAtMillis((Long)  value);
+      return;
+    }
+    if (fieldName.equals("user_id")) {
+      setUserId((Integer)  value);
+      return;
+    }
+    if (fieldName.equals("updated_at")) {
+      setUpdatedAt((Long)  value);
+      return;
+    }
+    throw new IllegalStateException("Invalid field: " + fieldName);
   }
 
   public static Class getFieldType(_Fields field) {
@@ -130,6 +169,8 @@ public class Post extends ModelWithId<Post, IDatabases> {
         return Long.class;
       case user_id:
         return Integer.class;
+      case updated_at:
+        return Long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
     }    
@@ -144,6 +185,9 @@ public class Post extends ModelWithId<Post, IDatabases> {
     }
     if (fieldName.equals("user_id")) {
       return Integer.class;
+    }
+    if (fieldName.equals("updated_at")) {
+      return Long.class;
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
@@ -170,6 +214,9 @@ public class Post extends ModelWithId<Post, IDatabases> {
     if (fieldName.equals("user_id")) {
       return getUserId();
     }
+    if (fieldName.equals("updated_at")) {
+      return getUpdatedAt();
+    }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
 
@@ -181,8 +228,29 @@ public class Post extends ModelWithId<Post, IDatabases> {
         return getPostedAtMillis();
       case user_id:
         return getUserId();
+      case updated_at:
+        return getUpdatedAt();
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+    if (fieldName.equals("title")) {
+      return true;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return true;
+    }
+    if (fieldName.equals("user_id")) {
+      return true;
+    }
+    if (fieldName.equals("updated_at")) {
+      return true;
+    }
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {
@@ -192,6 +260,8 @@ public class Post extends ModelWithId<Post, IDatabases> {
       case posted_at_millis:
         return null;
       case user_id:
+        return null;
+      case updated_at:
         return null;
     }
     throw new IllegalStateException("Invalid field: " + field);
@@ -217,6 +287,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
       + " title: " + __title
       + " posted_at_millis: " + __posted_at_millis
       + " user_id: " + __user_id
+      + " updated_at: " + __updated_at
       + ">";
   }
 }

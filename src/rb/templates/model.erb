@@ -130,6 +130,16 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
+  
+  public void setField(String fieldName, Object value) {
+  <% model_defn.fields.each do |field_defn| %>
+    if (fieldName.equals("<%= field_defn.name %>")) {
+      set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)  value);
+      return;
+    }
+  <% end %>
+    throw new IllegalStateException("Invalid field: " + fieldName);
+  }
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
@@ -179,6 +189,18 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+  <% model_defn.fields.each do |field_defn| %>
+    if (fieldName.equals("<%= field_defn.name %>")) {
+      return true;
+    }
+  <% end %>
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {

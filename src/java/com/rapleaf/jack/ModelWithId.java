@@ -97,6 +97,10 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
   public abstract T getCopy(D databases);
 
   public abstract Object getField(String fieldName);
+  
+  public abstract boolean hasField(String fieldName);
+  
+  public abstract void setField(String fieldName, Object value);
 
   public abstract Set<Enum> getFieldSet();
 
