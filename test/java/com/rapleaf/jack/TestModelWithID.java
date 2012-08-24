@@ -25,9 +25,9 @@ public class TestModelWithID extends TestCase {
     }
   }
 
-  public void testFields(){
+  public void testFields() {
 
-    try{
+    try {
       model.getField("fake_field");
       fail("Non-existent field should have thrown exception on get");
     } catch (IllegalStateException e) {}
@@ -35,13 +35,12 @@ public class TestModelWithID extends TestCase {
     try {
       model.setField("fake_field", null);
       fail("Non-existent field should have thrown exception on set");
-    } catch (IllegalStateException e) {
-    }
+    } catch (IllegalStateException e) {}
 
     assertFalse(model.hasField("fake_field"));
     assertTrue(model.hasField("title"));
 
-    try{
+    try {
       model.setField("title", "New Title");
       assertEquals(model.getField("title"), "New Title");
     } catch (IllegalStateException e) {
@@ -52,8 +51,7 @@ public class TestModelWithID extends TestCase {
     try {
       model.setField("title", 3);
       fail("Should have had class cast exception assigning int to string field");
-    } catch (ClassCastException e) {
-    }
+    } catch (ClassCastException e) {}
 
   }
 
@@ -61,7 +59,8 @@ public class TestModelWithID extends TestCase {
     model.setField("updated_at", 0l);
     try {
       dbs.getDatabase1().posts().save(model);
-      assertTrue("Check updated_at was updated",
+
+      assertTrue("Check updated_at was updated " + model.getField("updated_at"),
           Math.abs((Long) model.getField("updated_at") - System.currentTimeMillis()) < 1500);
       // give 1.5 second window in case things are slow
     } catch (IOException e) {
