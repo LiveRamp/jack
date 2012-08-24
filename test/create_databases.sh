@@ -1,7 +1,4 @@
 #!/bin/sh
 
-if [ $# -gt 1 ]
-then
-  PASSWORD_CLAUSE=-p$2
-fi
-cat test/databases.sql | mysql -u $1 $PASSWORD_CLAUSE
+pushd test/test_project/database_1 && bundle install && bundle exec rake db:drop db:create db:migrate; popd
+pushd test/test_project/database_2 && bundle install && bundle exec rake db:drop db:create db:migrate; popd

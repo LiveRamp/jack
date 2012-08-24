@@ -76,6 +76,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       }
     }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id", "updated_at")));
     Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
+    newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;

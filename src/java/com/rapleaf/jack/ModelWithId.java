@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   private final long id;
   transient protected int cachedHashCode = 0;
+  private boolean created = false;
 
   protected ModelWithId(long id) {
     this.id = id;
@@ -111,5 +112,13 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
     byte[] copy = new byte[orig.length];
     System.arraycopy(orig, 0, copy, 0, orig.length);
     return copy;
+  }
+
+  public boolean isCreated() {
+    return created;
+  }
+
+  public void setCreated(boolean created) {
+    this.created = created;
   }
 }

@@ -1,0 +1,10 @@
+# SQLite version 3.x
+#   gem install sqlite3
+development:
+  adapter: postgresql
+  host: 127.0.0.1
+  database: jack_2
+  username: jack
+  password: 
+  pool: 5
+  timeout: 5000

@@ -5,7 +5,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//    http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,9 @@ import java.util.Set;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
+
+  private final String idQuoteString;
+
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
   }
@@ -41,7 +45,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected final Map<Long, T> cachedById = new HashMap<Long, T>();
   protected final Map<String, Map<Long, Set<T>>> cachedByForeignKey = new HashMap<String, Map<Long, Set<T>>>();
-  
+
   private boolean useCache = true;
 
   protected AbstractDatabaseModel(BaseDatabaseConnection conn,
@@ -49,9 +53,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
-    updateStatement = String.format(
-        "INSERT INTO %s SET %s , id=? ON DUPLICATE KEY UPDATE %s;", tableName,
-        getSetFieldsPrepStatementSection(), getUpdateOnInsertPrepStatementSection());
+    try {
+      idQuoteString = conn.getConnection().getMetaData().getIdentifierQuoteString();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    updateStatement =
+        String.format("UPDATE %s SET %s WHERE id=?;", tableName, getSetFieldsPrepStatementSection());
   }
 
   protected String getInsertStatement(List<String> fieldNames) {
@@ -59,24 +67,40 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
   }
 
+  protected String getInsertWithIdStatement(List<String> fieldNames) {
+    return String.format("INSERT INTO %s (%s , id) VALUES(%s, ?);", tableName,
+        escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
+  }
+
   private String getSetFieldsPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++) {
+    for (int i = 0; i < fieldNames.size(); i++ ) {
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("`").append(fieldNames.get(i)).append("` = ?");
+
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(" = ?");
     }
     return sb.toString();
   }
 
   private String getUpdateOnInsertPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++) {
+    for (int i = 0; i < fieldNames.size(); i++ ) {
       if (i != 0) {
         sb.append(",");
       }
-      sb.append("`").append(fieldNames.get(i)).append("` = VALUES(`").append(fieldNames.get(i)).append("`)");
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(" = VALUES(")
+          .append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString)
+          .append(")");
     }
     return sb.toString();
   }
@@ -89,7 +113,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected int realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(insertStatement);
+    PreparedStatement stmt = conn.getPreparedStatement(insertStatement,
+        Statement.RETURN_GENERATED_KEYS);
     ResultSet generatedKeys = null;
     try {
       attrSetter.set(stmt);
@@ -112,24 +137,28 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
+  @Override
   public abstract ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
 
   private String escapedFieldNames(List<String> fieldNames) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++) {
+    for (int i = 0; i < fieldNames.size(); i++ ) {
       if (i != 0) {
         sb.append(", ");
       }
-      sb.append("`").append(fieldNames.get(i)).append("`");
+      sb.append(idQuoteString)
+          .append(fieldNames.get(i))
+          .append(idQuoteString);
     }
     return sb.toString();
   }
 
+  @Override
   public T find(long id) throws IOException {
     if (cachedById.containsKey(id) && useCache) {
       return cachedById.get(id);
     }
-    
+
     PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
         + tableName + " WHERE id=" + id);
     ResultSet rs = null;
@@ -155,6 +184,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return model;
   }
 
+  @Override
   public Set<T> find(Set<Long> ids) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     Set<Long> notCachedIds = new HashSet<Long>();
@@ -184,14 +214,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   protected String getIdSetCondition(Set<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
-      while (iter.hasNext()) {
-        Long obj = iter.next();
-        sb.append(obj.toString());
-        if (iter.hasNext()) {
-          sb.append(",");
-        }
+    while (iter.hasNext()) {
+      Long obj = iter.next();
+      sb.append(obj.toString());
+      if (iter.hasNext()) {
+        sb.append(",");
       }
-      sb.append(")");
+    }
+    sb.append(")");
     return sb.toString();
   }
 
@@ -243,14 +273,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     Long value = rs.getLong(column);
     return rs.wasNull() ? null : value;
   }
-  
-  protected final static Double getDoubleOrNull(ResultSet rs, String column) 
+
+  protected final static Double getDoubleOrNull(ResultSet rs, String column)
       throws SQLException {
     Double value = rs.getDouble(column);
     return rs.wasNull() ? null : value;
   }
 
-  protected final static Boolean getBooleanOrNull(ResultSet rs, String column) 
+  protected final static Boolean getBooleanOrNull(ResultSet rs, String column)
       throws SQLException {
     Boolean value = rs.getBoolean(column);
     return rs.wasNull() ? null : value;
@@ -303,7 +333,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       foreignKeyCache = new HashMap<Long, Set<T>>();
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
-    
+
     PreparedStatement stmt = conn.getPreparedStatement(String.format(
         "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
     ResultSet rs = null;
@@ -400,27 +430,45 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public boolean save(T model) throws IOException {
-    long oldUpdatedAt = handleRailsUpdatedAt(model);
-    PreparedStatement saveStmt = getSaveStmt();
-    try {
-      setAttrs(model, saveStmt);
-      saveStmt.execute();
-      boolean success = saveStmt.getUpdateCount() == 1;
-      saveStmt.close();
-      if (success && useCache) {
-        cachedById.put(model.getId(), model);
+    if (model.isCreated()) {
+      Long oldUpdatedAt = handleRailsUpdatedAt(model);
+      PreparedStatement saveStmt = getSaveStmt();
+      try {
+        setAttrs(model, saveStmt);
+        saveStmt.execute();
+        boolean success = saveStmt.getUpdateCount() == 1;
+        saveStmt.close();
+        if (success && useCache) {
+          cachedById.put(model.getId(), model);
+        }
+        clearForeignKeyCache();
+        return success;
+      } catch (SQLException e) {
+        revertRailsUpdatedAt(model, oldUpdatedAt);
+        throw new IOException(e);
       }
-      clearForeignKeyCache();
-      return success;
-    } catch (SQLException e) {
-      revertRailsUpdatedAt(model, oldUpdatedAt);
-      throw new IOException(e);
+    } else {
+      PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
+      try {
+        setAttrs(model, insertStmt);
+        insertStmt.setLong(fieldNames.size() + 1, model.getId());
+        insertStmt.execute();
+        boolean success = insertStmt.getUpdateCount() == 1;
+        insertStmt.close();
+        if (success && useCache) {
+          cachedById.put(model.getId(), model);
+        }
+        clearForeignKeyCache();
+        return success;
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
     }
   }
 
   private static String qmarks(int size) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++ ) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -515,19 +563,22 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       throws IOException {
     return findAll(conditions);
   }
-  
+
+  @Override
   public boolean isCaching() {
     return useCache;
   }
-  
+
+  @Override
   public void enableCaching() {
     useCache = true;
   }
-  
+
+  @Override
   public void disableCaching() {
     useCache = false;
   }
-  
+
   private long handleRailsUpdatedAt(T model) {
     if (model.hasField("updated_at")) {
       long oldUpdatedAt = (Long) model.getField("updated_at");
