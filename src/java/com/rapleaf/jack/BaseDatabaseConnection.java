@@ -11,7 +11,7 @@ public abstract class BaseDatabaseConnection implements Serializable {
   protected transient Connection conn = null;
   
   /**
-   * Get a Connection to a MySQL database.
+   * Get a Connection to a database.
    * If there is no connection, create a new one.
    */
   public abstract Connection getConnection();
@@ -68,6 +68,14 @@ public abstract class BaseDatabaseConnection implements Serializable {
   public PreparedStatement getPreparedStatement(String statement) {
     try {
       return getConnection().prepareStatement(statement);
+    } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public PreparedStatement getPreparedStatement(String statement, int options) {
+    try {
+      return getConnection().prepareStatement(statement, options);
     } catch(SQLException e) {
       throw new RuntimeException(e);
     }
