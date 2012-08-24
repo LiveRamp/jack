@@ -41,7 +41,7 @@ class SchemaRbParser
         models << model_defn
       end
     end
-    models
+    return models, migration_number
   end
 end
 

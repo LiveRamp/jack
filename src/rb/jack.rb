@@ -23,12 +23,13 @@ class Jack
     project_defn = ProjectDefn.new(YAML.load(File.open(project_yml)))
 
     model_defns_by_namespace_table_names = {}
+    migration_number = 0
 
     # initial pass to establish all the tables
     project_defn.databases.each do |database_defn|
       model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
 
-      model_defns = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
+      model_defns, migration_number = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
       model_defns.each do |model_defn|
         model_defn.database_defn = database_defn
         model_defn.namespace = database_defn.namespace
@@ -52,7 +53,7 @@ class Jack
     end
 
     # third pass to generate the files
-    TemplateProcessor.process(project_defn, output_dir, model_defns_by_namespace_table_names)
+    TemplateProcessor.process(project_defn, output_dir, model_defns_by_namespace_table_names, migration_number)
   end
 end
 
