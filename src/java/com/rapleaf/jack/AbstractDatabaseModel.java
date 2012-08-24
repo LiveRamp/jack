@@ -454,6 +454,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           cachedById.put(model.getId(), model);
         }
         clearForeignKeyCache();
+        model.setCreated(true);
         return success;
       } catch (SQLException e) {
         throw new IOException(e);
