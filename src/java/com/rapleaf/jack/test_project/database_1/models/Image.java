@@ -80,6 +80,14 @@ public class Image extends ModelWithId<Image, IDatabases> {
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
+  
+  public void setField(String fieldName, Object value) {
+    if (fieldName.equals("user_id")) {
+      setUserId((Integer)  value);
+      return;
+    }
+    throw new IllegalStateException("Invalid field: " + fieldName);
+  }
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
@@ -118,6 +126,16 @@ public class Image extends ModelWithId<Image, IDatabases> {
         return getUserId();
     }
     throw new IllegalStateException("Invalid field: " + field);
+  }
+  
+   public boolean hasField(String fieldName) {
+    if (fieldName.equals("id")) {
+      return true;
+    }
+    if (fieldName.equals("user_id")) {
+      return true;
+    }
+    return false;
   }
 
   public static Object getDefaultValue(_Fields field) {
