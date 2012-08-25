@@ -166,6 +166,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     try {
       rs = stmt.executeQuery();
       model = rs.next() ? instanceFromResultSet(rs) : null;
+      if (model != null) {
+        model.setCreated(true);
+      }
     } catch (SQLException e) {
       throw new IOException(e);
     } finally {
@@ -343,6 +346,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       ret = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
+        inst.setCreated(true);
         if (useCache) {
           if (cachedById.containsKey(inst.getId())) {
             inst = cachedById.get(inst.getId());
@@ -414,6 +418,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         rs = stmt.executeQuery();
         while (rs.next()) {
           T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
           foundSet.add(inst);
           if (useCache) {
             cachedById.put(inst.getId(), inst);
@@ -537,6 +542,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       Set<T> results = new HashSet<T>();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
+        inst.setCreated(true);
         if (useCache) {
           if (cachedById.containsKey(inst.getId())) {
             inst = cachedById.get(inst.getId());
