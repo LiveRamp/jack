@@ -231,6 +231,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       rs = stmt.executeQuery();
       while (rs.next()) {
         T inst = instanceFromResultSet(rs);
+        inst.setCreated(true);
         foundSet.add(inst);
         if (useCache) {
           cachedById.put(inst.getId(), inst);
