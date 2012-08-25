@@ -58,8 +58,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
 
     // get server credentials from database info
     String adapter = db_info.get("adapter");
-    String driver = null;
-    if (adapter.equals("mysql")) {
+    String driver;
+    if (adapter.equals("mysql") || adapter.equals("mysql_replication")) {
       driver = "mysql";
       driverClass = "com.mysql.jdbc.Driver";
     } else if (adapter.equals("postgresql")) {
