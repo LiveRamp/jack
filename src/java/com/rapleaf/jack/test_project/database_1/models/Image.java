@@ -67,6 +67,9 @@ public class Image extends ModelWithId<Image, IDatabases> {
 
   public void setUserId(Integer newval){
     this.__user_id = newval;
+    if(__assoc_user != null){
+      this.__assoc_user.setOwnerId(newval);
+    }
     cachedHashCode = 0;
   }
 

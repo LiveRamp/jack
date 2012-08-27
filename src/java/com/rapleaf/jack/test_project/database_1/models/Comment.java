@@ -101,6 +101,9 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
 
   public void setCommenterId(int newval){
     this.__commenter_id = newval;
+    if(__assoc_user != null){
+      this.__assoc_user.setOwnerId(newval);
+    }
     cachedHashCode = 0;
   }
 
@@ -110,6 +113,9 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
 
   public void setCommentedOnId(long newval){
     this.__commented_on_id = newval;
+    if(__assoc_post != null){
+      this.__assoc_post.setOwnerId(newval);
+    }
     cachedHashCode = 0;
   }
 
