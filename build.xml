@@ -57,6 +57,8 @@
     <available file="config/database.yml" property="database.yml.root"/>
     <available file="test/test_project/database_1/config/database.yml" property="database.yml.db1"/>
     <available file="test/test_project/database_2/config/database.yml" property="database.yml.db2"/>
+    <available file="test/test_project/database_1/Gemfile" property="gemfile.db1"/>
+    <available file="test/test_project/database_2/Gemfile" property="gemfile.db2"/>
     <fail message="No database.yml files were found. Please run ant select-postgres or ant select-mysql first.">
       <condition>
         <not>
@@ -64,6 +66,8 @@
             <isset property="database.yml.root"/>
             <isset property="database.yml.db1"/>
             <isset property="database.yml.db2"/>
+            <isset property="gemfile.db1"/>
+            <isset property="gemfile.db2"/>
           </and>
         </not>
       </condition>
