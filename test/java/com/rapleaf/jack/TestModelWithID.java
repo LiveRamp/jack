@@ -6,19 +6,26 @@ import junit.framework.TestCase;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.models.User;
 
 public class TestModelWithID extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
-  private Post model;
+  private Post postModel;
   private IDatabases dbs;
+  private Image imageModel;
+  private User userModel;
 
   @Override
   public void setUp() {
-    model = new Post(0, "Test Post", 100l, 1, 0l);
     dbs = new DatabasesImpl(DATABASE_CONNECTION1);
+    postModel = new Post(0, "Test Post", 100l, 1, 0l);
+    imageModel = new Image(0, null, dbs);
+    userModel = new User(0l, "handle", 0l, 0, 0l, 0l, "bio", null, 0.0, true);
     try {
       dbs.getDatabase1().deleteAll();
+      dbs.getDatabase1().users().save(userModel);
     } catch (IOException e) {
       e.printStackTrace();
       fail("IO Exception");
@@ -28,40 +35,48 @@ public class TestModelWithID extends TestCase {
   public void testFields() {
 
     try {
-      model.getField("fake_field");
+      postModel.getField("fake_field");
       fail("Non-existent field should have thrown exception on get");
     } catch (IllegalStateException e) {}
 
     try {
-      model.setField("fake_field", null);
+      postModel.setField("fake_field", null);
       fail("Non-existent field should have thrown exception on set");
     } catch (IllegalStateException e) {}
 
-    assertFalse(model.hasField("fake_field"));
-    assertTrue(model.hasField("title"));
+    assertFalse(postModel.hasField("fake_field"));
+    assertTrue(postModel.hasField("title"));
 
     try {
-      model.setField("title", "New Title");
-      assertEquals(model.getField("title"), "New Title");
+      postModel.setField("title", "New Title");
+      assertEquals(postModel.getField("title"), "New Title");
     } catch (IllegalStateException e) {
       e.printStackTrace();
       fail("Field not found when it should have been");
     }
 
     try {
-      model.setField("title", 3);
+      postModel.setField("title", 3);
       fail("Should have had class cast exception assigning int to string field");
     } catch (ClassCastException e) {}
 
   }
 
-  public void testUpdatedAt() {
-    model.setField("updated_at", 0l);
-    try {
-      dbs.getDatabase1().posts().save(model);
+  public void testBelongsToAssociations() throws IOException {
 
-      assertTrue("Check updated_at was updated " + model.getField("updated_at"),
-          Math.abs((Long) model.getField("updated_at") - System.currentTimeMillis()) < 1500);
+    assertNull(imageModel.getUser());
+    imageModel.setUserId(0);
+    assertNotNull(imageModel.getUser());
+    assertEquals(imageModel.getUser(), userModel);
+  }
+
+  public void testUpdatedAt() {
+    postModel.setField("updated_at", 0l);
+    try {
+      dbs.getDatabase1().posts().save(postModel);
+
+      assertTrue("Check updated_at was updated " + postModel.getField("updated_at"),
+          Math.abs((Long) postModel.getField("updated_at") - System.currentTimeMillis()) < 1500);
       // give 1.5 second window in case things are slow
     } catch (IOException e) {
       e.printStackTrace();

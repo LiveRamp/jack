@@ -46,6 +46,11 @@ class Jack
       by_table_name.values.each do |model_defn|
         model_defn.associations.each do |assoc_defn|
           assoc_defn.find_model(model_defns_by_namespace_table_names)
+          model_defn.fields.each do |field_defn|
+            if assoc_defn.foreign_key == field_defn.name
+              field_defn.association = assoc_defn
+            end
+          end
         end
         model_defn.associations.reject!{|assoc_defn| assoc_defn.defunct}
         model_defn.validate
