@@ -7,3 +7,5 @@ jack.iws
 *.gem
 out
 database.yml
+Gemfile
+Gemfile.lock
