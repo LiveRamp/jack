@@ -109,6 +109,9 @@ public class Post extends ModelWithId<Post, IDatabases> {
 
   public void setUserId(Integer newval){
     this.__user_id = newval;
+    if(__assoc_user != null){
+      this.__assoc_user.setOwnerId(newval);
+    }
     cachedHashCode = 0;
   }
 
