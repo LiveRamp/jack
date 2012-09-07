@@ -62,4 +62,9 @@ class ModelDefn
     raise unless model_name && model_name != ""
     raise unless database_defn
   end
+  
+  def schema_hash
+    schema = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args}"}.join
+    Digest::MD5.hexdigest(schema)
+  end
 end

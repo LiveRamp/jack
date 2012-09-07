@@ -21,6 +21,9 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> {
+  
+  public static final String SCHEMA_HASH = "f824429d4a1544442f413feecd98a56e";
+  
   // Fields
   private String __handle;
   private Long __created_at_millis;
@@ -33,9 +36,9 @@ public class User extends ModelWithId<User, IDatabases> {
   private Boolean __some_boolean;
 
   // Associations
-  private HasManyAssociation<Post> __assoc_posts;
-  private HasManyAssociation<Comment> __assoc_comments;
-  private HasOneAssociation<Image> __assoc_image;
+  private transient HasManyAssociation<Post> __assoc_posts;
+  private transient HasManyAssociation<Comment> __assoc_comments;
+  private transient HasOneAssociation<Image> __assoc_image;
 
   public enum _Fields {
     handle,

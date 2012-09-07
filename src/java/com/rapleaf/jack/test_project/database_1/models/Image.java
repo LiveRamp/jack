@@ -21,11 +21,14 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> {
+  
+  public static final String SCHEMA_HASH = "849e04e5ff00ba4a009adbb1fad643fe";
+  
   // Fields
   private Integer __user_id;
 
   // Associations
-  private BelongsToAssociation<User> __assoc_user;
+  private transient BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
     user_id,
