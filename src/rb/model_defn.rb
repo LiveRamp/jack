@@ -62,4 +62,9 @@ class ModelDefn
     raise unless model_name && model_name != ""
     raise unless database_defn
   end
+  
+  def serial_version_uid
+    schema_info = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args}"}.join
+    Digest::MD5.digest(schema_info).unpack('q')[0]
+  end
 end
