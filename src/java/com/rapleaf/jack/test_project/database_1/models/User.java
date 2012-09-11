@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> {
   
-  public static final String SCHEMA_HASH = "f824429d4a1544442f413feecd98a56e";
+  public static final long serialVersionUID = 4919080103205545208L;
   
   // Fields
   private String __handle;

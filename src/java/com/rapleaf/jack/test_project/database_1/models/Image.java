@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> {
   
-  public static final String SCHEMA_HASH = "849e04e5ff00ba4a009adbb1fad643fe";
+  public static final long serialVersionUID = 5384617403533794948L;
   
   // Fields
   private Integer __user_id;
