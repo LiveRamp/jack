@@ -63,8 +63,8 @@ class ModelDefn
     raise unless database_defn
   end
   
-  def schema_hash
-    schema = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args}"}.join
-    Digest::MD5.hexdigest(schema)
+  def serial_version_uid
+    schema_info = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args}"}.join
+    Digest::MD5.digest(schema_info).unpack('q')[0]
   end
 end
