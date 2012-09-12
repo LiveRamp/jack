@@ -21,6 +21,9 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Post extends ModelWithId<Post, IDatabases> {
+  
+  public static final long serialVersionUID = -452436965662476312L;
+  
   // Fields
   private String __title;
   private Long __posted_at_millis;
@@ -28,8 +31,8 @@ public class Post extends ModelWithId<Post, IDatabases> {
   private Long __updated_at;
 
   // Associations
-  private BelongsToAssociation<User> __assoc_user;
-  private HasManyAssociation<Comment> __assoc_comments;
+  private transient BelongsToAssociation<User> __assoc_user;
+  private transient HasManyAssociation<Comment> __assoc_comments;
 
   public enum _Fields {
     title,

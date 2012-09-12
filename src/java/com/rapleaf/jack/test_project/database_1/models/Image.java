@@ -21,11 +21,14 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> {
+  
+  public static final long serialVersionUID = 5384617403533794948L;
+  
   // Fields
   private Integer __user_id;
 
   // Associations
-  private BelongsToAssociation<User> __assoc_user;
+  private transient BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
     user_id,
