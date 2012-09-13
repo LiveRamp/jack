@@ -47,7 +47,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   // Associations
   <% model_defn.associations.each do |assoc| %>
-  private transient <%= assoc.java_type %> <%= assoc.field_name %>;
+  private <%= assoc.java_type %> <%= assoc.field_name %>;
   <% end %>
 
   public enum _Fields {
