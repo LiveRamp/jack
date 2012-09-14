@@ -537,11 +537,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   @Override
-  public Set<T> findAll(String conditions, int limit) throws IOException {
-    return findAll(conditions, null, limit);
-  }
-
-  @Override
   public Set<T> findAll(String conditions, String orderBy, Integer limit) throws IOException {
     StringBuilder sql = new StringBuilder("SELECT * FROM ");
     sql.append(getTableName()).append(" WHERE ").append(conditions);
