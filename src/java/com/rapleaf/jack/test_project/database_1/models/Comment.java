@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> {
   
-  public static final long serialVersionUID = -5844369581478005382L;
+  public static final long serialVersionUID = 6213989608937906012L;
   
   // Fields
   private String __content;
@@ -31,8 +31,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   private long __created_at;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
-  private transient BelongsToAssociation<Post> __assoc_post;
+  private BelongsToAssociation<User> __assoc_user;
+  private BelongsToAssociation<Post> __assoc_post;
 
   public enum _Fields {
     content,
@@ -93,42 +93,46 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
     return __content;
   }
 
-  public void setContent(String newval){
+  public Comment setContent(String newval){
     this.__content = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public int getCommenterId(){
     return __commenter_id;
   }
 
-  public void setCommenterId(int newval){
+  public Comment setCommenterId(int newval){
     this.__commenter_id = newval;
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
     }
     cachedHashCode = 0;
+    return this;
   }
 
   public long getCommentedOnId(){
     return __commented_on_id;
   }
 
-  public void setCommentedOnId(long newval){
+  public Comment setCommentedOnId(long newval){
     this.__commented_on_id = newval;
     if(__assoc_post != null){
       this.__assoc_post.setOwnerId(newval);
     }
     cachedHashCode = 0;
+    return this;
   }
 
   public long getCreatedAt(){
     return __created_at;
   }
 
-  public void setCreatedAt(long newval){
+  public Comment setCreatedAt(long newval){
     this.__created_at = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public void setField(_Fields field, Object value) {

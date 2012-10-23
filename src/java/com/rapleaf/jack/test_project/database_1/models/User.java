@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> {
   
-  public static final long serialVersionUID = 4919080103205545208L;
+  public static final long serialVersionUID = 3336917395531236967L;
   
   // Fields
   private String __handle;
@@ -36,9 +36,9 @@ public class User extends ModelWithId<User, IDatabases> {
   private Boolean __some_boolean;
 
   // Associations
-  private transient HasManyAssociation<Post> __assoc_posts;
-  private transient HasManyAssociation<Comment> __assoc_comments;
-  private transient HasOneAssociation<Image> __assoc_image;
+  private HasManyAssociation<Post> __assoc_posts;
+  private HasManyAssociation<Comment> __assoc_comments;
+  private HasOneAssociation<Image> __assoc_image;
 
   public enum _Fields {
     handle,
@@ -130,81 +130,90 @@ public class User extends ModelWithId<User, IDatabases> {
     return __handle;
   }
 
-  public void setHandle(String newval){
+  public User setHandle(String newval){
     this.__handle = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Long getCreatedAtMillis(){
     return __created_at_millis;
   }
 
-  public void setCreatedAtMillis(Long newval){
+  public User setCreatedAtMillis(Long newval){
     this.__created_at_millis = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public int getNumPosts(){
     return __num_posts;
   }
 
-  public void setNumPosts(int newval){
+  public User setNumPosts(int newval){
     this.__num_posts = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Long getSomeDate(){
     return __some_date;
   }
 
-  public void setSomeDate(Long newval){
+  public User setSomeDate(Long newval){
     this.__some_date = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Long getSomeDatetime(){
     return __some_datetime;
   }
 
-  public void setSomeDatetime(Long newval){
+  public User setSomeDatetime(Long newval){
     this.__some_datetime = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public String getBio(){
     return __bio;
   }
 
-  public void setBio(String newval){
+  public User setBio(String newval){
     this.__bio = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public byte[] getSomeBinary(){
     return __some_binary;
   }
 
-  public void setSomeBinary(byte[] newval){
+  public User setSomeBinary(byte[] newval){
     this.__some_binary = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Double getSomeFloat(){
     return __some_float;
   }
 
-  public void setSomeFloat(Double newval){
+  public User setSomeFloat(Double newval){
     this.__some_float = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Boolean isSomeBoolean(){
     return __some_boolean;
   }
 
-  public void setSomeBoolean(Boolean newval){
+  public User setSomeBoolean(Boolean newval){
     this.__some_boolean = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public void setField(_Fields field, Object value) {
