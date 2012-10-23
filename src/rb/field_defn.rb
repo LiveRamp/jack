@@ -75,19 +75,6 @@ class FieldDefn
   }
   
   def java_type(is_nullable = nullable?)
-    mappings = {
-      :integer=>'Integer', 
-      :string=>'String', 
-      :datetime=>'Long', 
-      :varbinary=>'byte[]', 
-      :date=>'Long', 
-      :text=>'String', 
-      :binary=>'byte[]', 
-      :float=>'Double', 
-      :boolean=>'Boolean',
-      :bigint=>'Long',
-      :bytes=>'byte[]'
-    }
     x = nil
     if data_type == :integer && is_long?
       x = :long
