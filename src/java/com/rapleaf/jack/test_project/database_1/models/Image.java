@@ -22,13 +22,13 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> {
   
-  public static final long serialVersionUID = 5384617403533794948L;
+  public static final long serialVersionUID = -3351451520429699622L;
   
   // Fields
   private Integer __user_id;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
+  private BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
     user_id,
@@ -68,12 +68,13 @@ public class Image extends ModelWithId<Image, IDatabases> {
     return __user_id;
   }
 
-  public void setUserId(Integer newval){
+  public Image setUserId(Integer newval){
     this.__user_id = newval;
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
     }
     cachedHashCode = 0;
+    return this;
   }
 
   public void setField(_Fields field, Object value) {

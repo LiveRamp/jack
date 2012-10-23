@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class Post extends ModelWithId<Post, IDatabases> {
   
-  public static final long serialVersionUID = -452436965662476312L;
+  public static final long serialVersionUID = -399049548729901546L;
   
   // Fields
   private String __title;
@@ -31,8 +31,8 @@ public class Post extends ModelWithId<Post, IDatabases> {
   private Long __updated_at;
 
   // Associations
-  private transient BelongsToAssociation<User> __assoc_user;
-  private transient HasManyAssociation<Comment> __assoc_comments;
+  private BelongsToAssociation<User> __assoc_user;
+  private HasManyAssociation<Comment> __assoc_comments;
 
   public enum _Fields {
     title,
@@ -92,39 +92,43 @@ public class Post extends ModelWithId<Post, IDatabases> {
     return __title;
   }
 
-  public void setTitle(String newval){
+  public Post setTitle(String newval){
     this.__title = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Long getPostedAtMillis(){
     return __posted_at_millis;
   }
 
-  public void setPostedAtMillis(Long newval){
+  public Post setPostedAtMillis(Long newval){
     this.__posted_at_millis = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public Integer getUserId(){
     return __user_id;
   }
 
-  public void setUserId(Integer newval){
+  public Post setUserId(Integer newval){
     this.__user_id = newval;
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
     }
     cachedHashCode = 0;
+    return this;
   }
 
   public Long getUpdatedAt(){
     return __updated_at;
   }
 
-  public void setUpdatedAt(Long newval){
+  public Post setUpdatedAt(Long newval){
     this.__updated_at = newval;
     cachedHashCode = 0;
+    return this;
   }
 
   public void setField(_Fields field, Object value) {

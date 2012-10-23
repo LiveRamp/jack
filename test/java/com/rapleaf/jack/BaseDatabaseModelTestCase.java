@@ -435,6 +435,16 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singleton(post), posts.findAllByForeignKey("user_id", 1));
   }
 
+  public void testSetReturnsModifiedModel() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    Post post = posts.create(null, 10L, 1, 0l);
+    assertNotNull(post);
+    Post postCopy = post.setUserId(null).setPostedAtMillis(20L);
+    assertNull(postCopy.getUserId());
+    assertEquals(Long.valueOf(20), post.getPostedAtMillis());
+    assertEquals(post, postCopy);
+  }
+
   public void testNullTreatment() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
