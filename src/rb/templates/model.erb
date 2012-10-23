@@ -115,7 +115,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     return __<%= field_defn.name %>;
   }
 
-  public void set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
+  public <%= model_defn.model_name %> set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
     this.__<%= field_defn.name %> = newval;
     <% if field_defn.association != nil and field_defn.association.type == "belongs_to" %>
     if(<%= field_defn.association.field_name %> != null){
@@ -123,6 +123,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     }
     <% end %>
     cachedHashCode = 0;
+    return this;
   }
 <% end %>
 
