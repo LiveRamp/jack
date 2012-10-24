@@ -74,6 +74,38 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
+  <% if !create_signature_small.nil? %>
+  public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>, IDatabases databases) {
+    super(id);
+  <% model_defn.fields.each do |field_defn| %>
+    <% if !field_defn.nullable? %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
+  <% end %>
+
+  <% model_defn.associations.each do |assoc| %>
+    this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+  <% end %>
+  }
+
+  public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>) {
+    super(id);
+  <% model_defn.fields.each do |field_defn| %>
+    <% if !field_defn.nullable? %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
+  <% end %>
+  }
+  <% end %>
+
+  public static <%= model_defn.model_name %> newDefaultInstance(long id) {
+    <% if create_argument_defaults.empty? %>
+    return new <%= model_defn.model_name %>(id);
+    <% else %>
+    return new <%= model_defn.model_name %>(id, <%= create_argument_defaults %>);
+    <% end %>
+  }
+
   public <%= model_defn.model_name %>(long id, Map<Enum, Object> fieldsMap) {
     super(id);
     <% model_defn.fields.each do |field_defn| %>

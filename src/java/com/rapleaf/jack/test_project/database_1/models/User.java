@@ -80,6 +80,24 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__some_float = some_float;
     this.__some_boolean = some_boolean;
   }
+  public User(long id, final String handle, final int num_posts, IDatabases databases) {
+    super(id);
+    this.__handle = handle;
+    this.__num_posts = num_posts;
+    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
+    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+  }
+
+  public User(long id, final String handle, final int num_posts) {
+    super(id);
+    this.__handle = handle;
+    this.__num_posts = num_posts;
+  }
+
+  public static User newDefaultInstance(long id) {
+    return new User(id, "", 0);
+  }
 
   public User(long id, Map<Enum, Object> fieldsMap) {
     super(id);

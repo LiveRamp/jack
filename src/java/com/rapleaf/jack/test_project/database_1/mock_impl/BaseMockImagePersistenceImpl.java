@@ -37,7 +37,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public Image create(Map<Enum, Object> fieldsMap) throws IOException {
     Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     return create(user_id);
   }
@@ -51,6 +51,20 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return newInst;
   }
 
+
+
+  public Image create() throws IOException {
+    long __id = curId.getAndIncrement();
+    Image newInst = new Image(__id, null, databases);
+    records.put(__id, newInst);
+    clearForeignKeyCache();
+    return newInst;
+  }
+
+
+  public Image createDefaultInstance() throws IOException {
+    return create();
+  }
 
   public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);

@@ -14,7 +14,7 @@
 # limitations under the License.
 %>
 <%
-field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| "\"#{x.name}\""}.join(", ") + ")"
+field_names = model_defn.fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| "\"#{x.name}\""}.join(", ")
 %>
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
     long __id = realCreate(new AttrSetter() {
@@ -35,7 +35,7 @@ field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] ==
   <% end %>
 <% end %>
       }
-    }, getInsertStatement(<%= field_names %>));
+    }, getInsertStatement(<%= field_names.empty? ? "Collections.<String>emptyList()" : "Arrays.asList(" + field_names + ")"  %>));
 <% names_only = model_defn.fields.map{|field_defn| field_defn.args[":null"] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ") %>
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
     newInst.setCreated(true);

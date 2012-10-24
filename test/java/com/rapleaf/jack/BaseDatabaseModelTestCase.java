@@ -82,6 +82,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
   }
 
+  public void testCreateWithDefaultValues() throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User user = users.createDefaultInstance();
+  }
+
   private void verifyCreatedUser(IUserPersistence users, long t0, long t1, long t2, byte[] someBinary, User bryand) throws IOException {
     assertEquals("bryand", bryand.getHandle());
     assertEquals(Long.valueOf(t0), bryand.getCreatedAtMillis());
