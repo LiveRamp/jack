@@ -58,6 +58,19 @@ public class Post extends ModelWithId<Post, IDatabases> {
     this.__user_id = user_id;
     this.__updated_at = updated_at;
   }
+  public Post(long id, IDatabases databases) {
+    super(id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+  }
+
+  public Post(long id) {
+    super(id);
+  }
+
+  public static Post newDefaultInstance(long id) {
+    return new Post(id);
+  }
 
   public Post(long id, Map<Enum, Object> fieldsMap) {
     super(id);

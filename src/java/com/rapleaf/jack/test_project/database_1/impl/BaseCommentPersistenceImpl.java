@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public Comment create(Map<Enum, Object> fieldsMap) throws IOException {
     String content = (String) fieldsMap.get(Comment._Fields.content);
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
@@ -87,6 +88,10 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return newInst;
   }
 
+
+  public Comment createDefaultInstance() throws IOException {
+    return create(0, 0L, 0L);
+  }
 
   public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);

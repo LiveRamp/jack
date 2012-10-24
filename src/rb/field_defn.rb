@@ -43,6 +43,31 @@ class FieldDefn
     !args[":limit"].nil? && args[":limit"].to_i > 4
   end
 
+  JAVA_DEFAULT_VALUES = {
+      :integer=>'0', 
+      :string=>'""', 
+      :datetime=>'0L', 
+      :varbinary=>'new byte[0]', 
+      :date=>'0L', 
+      :text=>'""', 
+      :binary=>'new byte[0]', 
+      :float=>'0.0', 
+      :boolean=>'true',
+      :bigint=>'0L',
+      :bytes=>'new byte[0]',
+      :long => "0L"
+  }
+
+  def java_default_value
+    x = nil
+    if data_type == :integer && is_long?
+      x = :long
+    else
+      x = data_type
+    end
+    JAVA_DEFAULT_VALUES[x]
+  end
+
   JAVA_TYPE_MAPPINGS = {
     true => {
       :integer=>'Integer', 
@@ -75,19 +100,6 @@ class FieldDefn
   }
   
   def java_type(is_nullable = nullable?)
-    mappings = {
-      :integer=>'Integer', 
-      :string=>'String', 
-      :datetime=>'Long', 
-      :varbinary=>'byte[]', 
-      :date=>'Long', 
-      :text=>'String', 
-      :binary=>'byte[]', 
-      :float=>'Double', 
-      :boolean=>'Boolean',
-      :bigint=>'Long',
-      :bytes=>'byte[]'
-    }
     x = nil
     if data_type == :integer && is_long?
       x = :long
