@@ -138,7 +138,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   @Override
-  public abstract ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
+  public abstract T create(Map<Enum, Object> fieldsMap) throws IOException;
 
   private String escapedFieldNames(List<String> fieldNames) {
     StringBuilder sb = new StringBuilder();

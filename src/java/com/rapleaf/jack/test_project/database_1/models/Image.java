@@ -44,6 +44,18 @@ public class Image extends ModelWithId<Image, IDatabases> {
     super(id);
     this.__user_id = user_id;
   }
+  public Image(long id, IDatabases databases) {
+    super(id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+  }
+
+  public Image(long id) {
+    super(id);
+  }
+
+  public static Image newDefaultInstance(long id) {
+    return new Image(id);
+  }
 
   public Image(long id, Map<Enum, Object> fieldsMap) {
     super(id);

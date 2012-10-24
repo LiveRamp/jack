@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public Image create(Map<Enum, Object> fieldsMap) throws IOException {
     Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     return create(user_id);
   }
@@ -63,6 +64,24 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return newInst;
   }
 
+
+
+  public Image create() throws IOException {
+    long __id = realCreate(new AttrSetter() {
+      public void set(PreparedStatement stmt) throws SQLException {
+      }
+    }, getInsertStatement(Collections.<String>emptyList()));
+    Image newInst = new Image(__id, null, databases);
+    newInst.setCreated(true);
+    cachedById.put(__id, newInst);
+    clearForeignKeyCache();
+    return newInst;
+  }
+
+
+  public Image createDefaultInstance() throws IOException {
+    return create();
+  }
 
   public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);

@@ -37,7 +37,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public User create(Map<Enum, Object> fieldsMap) throws IOException {
     String handle = (String) fieldsMap.get(User._Fields.handle);
     Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
     int num_posts = (Integer) fieldsMap.get(User._Fields.num_posts);
@@ -69,6 +69,10 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return newInst;
   }
 
+
+  public User createDefaultInstance() throws IOException {
+    return create("", 0);
+  }
 
   public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);

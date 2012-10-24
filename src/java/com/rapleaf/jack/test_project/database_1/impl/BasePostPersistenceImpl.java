@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public Post create(Map<Enum, Object> fieldsMap) throws IOException {
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
     Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
@@ -81,6 +82,24 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return newInst;
   }
 
+
+
+  public Post create() throws IOException {
+    long __id = realCreate(new AttrSetter() {
+      public void set(PreparedStatement stmt) throws SQLException {
+      }
+    }, getInsertStatement(Collections.<String>emptyList()));
+    Post newInst = new Post(__id, null, null, null, null, databases);
+    newInst.setCreated(true);
+    cachedById.put(__id, newInst);
+    clearForeignKeyCache();
+    return newInst;
+  }
+
+
+  public Post createDefaultInstance() throws IOException {
+    return create();
+  }
 
   public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);

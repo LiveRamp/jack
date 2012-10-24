@@ -97,7 +97,8 @@ EOF
     model_defns.each do |model_defn|
       create_signature_full = model_defn.fields.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
       create_signature_small = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-      create_signature_small = create_signature_full == create_signature_small || create_signature_small.empty? ? nil : create_signature_small
+      create_signature_small = create_signature_full == create_signature_small ? nil : create_signature_small
+      create_argument_defaults = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| field_defn.java_default_value }.join(", ")
 
       file = File.new("#{output_dir}/models/#{model_defn.model_name}.java", "w")
       file.puts(MODEL_TEMPLATE.result(binding))

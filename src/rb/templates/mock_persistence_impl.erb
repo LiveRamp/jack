@@ -47,7 +47,7 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   }
 
   @Override
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException {
+  public <%= model_defn.model_name %> create(Map<Enum, Object> fieldsMap) throws IOException {
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.default_value.nil? %>
     <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
@@ -63,6 +63,10 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   <% unless create_signature_small.nil? %>
     <%= render_mock_create_method(model_defn, create_signature_small, true) %>
   <% end %>
+
+  public <%= model_defn.model_name %> createDefaultInstance() throws IOException {
+    return create(<%= create_argument_defaults %>);
+  }
 
   public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(fieldsMap);
