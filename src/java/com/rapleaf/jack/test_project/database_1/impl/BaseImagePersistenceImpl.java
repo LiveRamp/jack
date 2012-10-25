@@ -56,7 +56,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
           stmt.setInt(1, user_id);
         }
       }
-    }, getInsertStatement(Arrays.asList("user_id")));
+    }, getInsertStatement(Arrays.<String>asList("user_id")));
     Image newInst = new Image(__id, user_id, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -70,7 +70,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
       }
-    }, getInsertStatement(Collections.<String>emptyList()));
+    }, getInsertStatement(Arrays.<String>asList()));
     Image newInst = new Image(__id, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);

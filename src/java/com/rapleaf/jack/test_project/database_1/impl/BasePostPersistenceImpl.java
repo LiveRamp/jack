@@ -74,7 +74,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
           stmt.setTimestamp(4, new Timestamp(updated_at));
         }
       }
-    }, getInsertStatement(Arrays.asList("title", "posted_at_millis", "user_id", "updated_at")));
+    }, getInsertStatement(Arrays.<String>asList("title", "posted_at_millis", "user_id", "updated_at")));
     Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -88,7 +88,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
       }
-    }, getInsertStatement(Collections.<String>emptyList()));
+    }, getInsertStatement(Arrays.<String>asList()));
     Post newInst = new Post(__id, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);

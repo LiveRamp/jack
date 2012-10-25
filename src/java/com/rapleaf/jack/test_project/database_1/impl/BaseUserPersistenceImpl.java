@@ -96,7 +96,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           stmt.setBoolean(9, some_boolean);
         }
       }
-    }, getInsertStatement(Arrays.asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_boolean")));
+    }, getInsertStatement(Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_boolean")));
     User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -112,7 +112,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           stmt.setString(1, handle);
           stmt.setInt(2, num_posts);
       }
-    }, getInsertStatement(Arrays.asList("handle", "num_posts")));
+    }, getInsertStatement(Arrays.<String>asList("handle", "num_posts")));
     User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
