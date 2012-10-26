@@ -49,7 +49,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return create(title, posted_at_millis, user_id, updated_at);
   }
 
-
   public Post create(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -81,7 +80,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     clearForeignKeyCache();
     return newInst;
   }
-
 
 
   public Post create() throws IOException {

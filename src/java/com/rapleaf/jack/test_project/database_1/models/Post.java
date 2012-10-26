@@ -23,7 +23,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Post extends ModelWithId<Post, IDatabases> {
   
   public static final long serialVersionUID = -399049548729901546L;
-  
+
   // Fields
   private String __title;
   private Long __posted_at_millis;
@@ -42,7 +42,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
@@ -52,20 +52,20 @@ public class Post extends ModelWithId<Post, IDatabases> {
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
-    super(id);
+    super(id, null);
     this.__title = title;
     this.__posted_at_millis = posted_at_millis;
     this.__user_id = user_id;
     this.__updated_at = updated_at;
   }
   public Post(long id, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id) {
-    super(id);
+    super(id, null);
   }
 
   public static Post newDefaultInstance(long id) {
@@ -73,7 +73,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
   }
 
   public Post(long id, Map<Enum, Object> fieldsMap) {
-    super(id);
+    super(id, null);
     String title = (String) fieldsMap.get(Post._Fields.title);
     Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
     Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
@@ -89,7 +89,7 @@ public class Post extends ModelWithId<Post, IDatabases> {
   }
 
   public Post (Post other, IDatabases databases) {
-    super(other.getId());
+    super(other.getId(), databases);
     this.__title = other.getTitle();
     this.__posted_at_millis = other.getPostedAtMillis();
     this.__user_id = other.getUserId();
@@ -297,11 +297,56 @@ public class Post extends ModelWithId<Post, IDatabases> {
 
   @Override
   public Post getCopy() {
-    return new Post(this);
+    return getCopy(databases);
   }
 
+  @Override
   public Post getCopy(IDatabases databases) {
     return new Post(this, databases);
+  }
+
+  @Override
+  public boolean save() throws IOException {
+    return databases.getDatabase1().posts().save(this);
+  }
+
+  public User createUser(final String handle, final int num_posts) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, num_posts);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User createUser() throws IOException {
+    User user = databases.getDatabase1().users().create("", 0);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User buildUser(final String handle, final int num_posts) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, num_posts);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
+  }
+
+  public User buildUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
+  }
+
+  public User buildUser() throws IOException {
+    User user = databases.getDatabase1().users().create("", 0);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
   }
 
   public String toString() {

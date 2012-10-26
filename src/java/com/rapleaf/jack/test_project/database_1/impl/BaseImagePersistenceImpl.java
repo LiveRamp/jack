@@ -46,7 +46,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return create(user_id);
   }
 
-
   public Image create(final Integer user_id) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -63,7 +62,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     clearForeignKeyCache();
     return newInst;
   }
-
 
 
   public Image create() throws IOException {

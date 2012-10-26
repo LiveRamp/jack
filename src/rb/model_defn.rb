@@ -34,6 +34,27 @@ class ModelDefn
       raise "Table #{@table_name} appears to have a renamed primary key, which is currently unsupported."
     end
   end
+
+  def create_signature(only_not_null = false, excluded_field_name = nil)
+    only_not_null ? create_signature_small(excluded_field_name) : create_signature_full(excluded_field_name)
+  end
+
+  def create_signature_full(excluded_field_name = nil)
+    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ") 
+  end
+
+  def create_signature_small(excluded_field_name = nil)
+    temp = @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ") 
+    create_signature_full(excluded_field_name) == temp ? nil : temp
+  end
+
+  def create_argument_defaults(excluded_field_name = nil)
+    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| field_defn.java_default_value }.join(", ") 
+  end
+
+  def field_names_list(only_not_null = false, quoted = true)
+    @fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| quoted ? "\"#{x.name}\"" : "#{x.name}" }.join(", ")
+  end
   
   def iface_name
     "I#{model_name}Persistence"

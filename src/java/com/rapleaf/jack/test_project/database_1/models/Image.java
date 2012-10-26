@@ -23,7 +23,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Image extends ModelWithId<Image, IDatabases> {
   
   public static final long serialVersionUID = -3351451520429699622L;
-  
+
   // Fields
   private Integer __user_id;
 
@@ -35,22 +35,22 @@ public class Image extends ModelWithId<Image, IDatabases> {
   }
 
   public Image(long id, final Integer user_id, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__user_id = user_id;
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
   }
 
   public Image(long id, final Integer user_id) {
-    super(id);
+    super(id, null);
     this.__user_id = user_id;
   }
   public Image(long id, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
   }
 
   public Image(long id) {
-    super(id);
+    super(id, null);
   }
 
   public static Image newDefaultInstance(long id) {
@@ -58,7 +58,7 @@ public class Image extends ModelWithId<Image, IDatabases> {
   }
 
   public Image(long id, Map<Enum, Object> fieldsMap) {
-    super(id);
+    super(id, null);
     Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
     this.__user_id = user_id;
   }
@@ -68,7 +68,7 @@ public class Image extends ModelWithId<Image, IDatabases> {
   }
 
   public Image (Image other, IDatabases databases) {
-    super(other.getId());
+    super(other.getId(), databases);
     this.__user_id = other.getUserId();
 
     if (databases != null) {
@@ -172,11 +172,56 @@ public class Image extends ModelWithId<Image, IDatabases> {
 
   @Override
   public Image getCopy() {
-    return new Image(this);
+    return getCopy(databases);
   }
 
+  @Override
   public Image getCopy(IDatabases databases) {
     return new Image(this, databases);
+  }
+
+  @Override
+  public boolean save() throws IOException {
+    return databases.getDatabase1().images().save(this);
+  }
+
+  public User createUser(final String handle, final int num_posts) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, num_posts);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User createUser() throws IOException {
+    User user = databases.getDatabase1().users().create("", 0);
+    setUserId(safeLongToInt(user.getId()));
+    save();
+    return user;
+  }
+
+  public User buildUser(final String handle, final int num_posts) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, num_posts);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
+  }
+
+  public User buildUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
+  }
+
+  public User buildUser() throws IOException {
+    User user = databases.getDatabase1().users().create("", 0);
+    setUserId(safeLongToInt(user.getId()));
+    return user;
   }
 
   public String toString() {

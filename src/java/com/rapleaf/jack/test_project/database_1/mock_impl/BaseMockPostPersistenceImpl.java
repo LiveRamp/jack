@@ -51,7 +51,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 
@@ -61,7 +61,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     Post newInst = new Post(__id, null, null, null, null, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 
