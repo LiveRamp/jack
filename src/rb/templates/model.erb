@@ -280,29 +280,27 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.assoc_model_name %>
     <% other_model_field = model_defn.fields.reject{|field_defn| field_defn.name != (association.foreign_key) }.first %>
     <% if association.type != "has_many" %>
-      <% [true, false].each do |save_model| %>
-        <% signatures = [ association.assoc_model.create_signature(true, association.foreign_key), association.assoc_model.create_signature(false, association.foreign_key) ] %>
-        <% arguments = [ association.assoc_model.field_names_list(true, false), association.assoc_model.field_names_list(false, false) ] %>
-        <% if !signatures.include?("") %>
-          <% signatures << "" %>
-          <% arguments << association.assoc_model.create_argument_defaults %>
-        <% end %>
-        <% signatures.zip(arguments).each do |signature, argument_list| %>
-          <% if !signature.nil? %>
+      <% signatures = [ association.assoc_model.create_signature(true, association.foreign_key), association.assoc_model.create_signature(false, association.foreign_key) ] %>
+      <% arguments = [ association.assoc_model.field_names_list(true, false), association.assoc_model.field_names_list(false, false) ] %>
+      <% if !signatures.include?("") %>
+        <% signatures << "" %>
+        <% arguments << association.assoc_model.create_argument_defaults %>
+      <% end %>
+      <% signatures.zip(arguments).each do |signature, argument_list| %>
+        <% if !signature.nil? %>
 
-  public <%= association.assoc_model_name %> <%= save_model ? "create" : "build" %><%= other_model_name %>(<%= signature %>) throws IOException {
-            <% if !assoc_field_type.nil? %>
+  public <%= association.assoc_model_name %> <%= "create" %><%= other_model_name %>(<%= signature %>) throws IOException {
+          <% if !assoc_field_type.nil? %>
     <%= assoc_field_type %> <%= association.foreign_key %> = <%= ["Integer", "int"].include?(assoc_field_type) ? "safeLongToInt(getId())" : "getId()" %>;
-            <% end %>
+          <% end %>
     <%= association.assoc_model_name %> <%= association.assoc_model_name.underscore %> = databases.<%= association.assoc_model.database_defn.getter %>.<%= association.assoc_model.persistence_getter %>.create(<%= argument_list %>);
-            <% if !other_model_field.nil? %>
+          <% if !other_model_field.nil? %>
     <% safe_cast_other_model_id = ["Integer", "int"].include?(other_model_field.java_type) %>
     set<%= other_model_field.name.camelcase %>(<%= (safe_cast_other_model_id ? "safeLongToInt(" : "") + association.assoc_model_name.underscore + ".getId()" + (safe_cast_other_model_id ? ")" : "") %>);
-            <% end %>
-    <%= save_model ? "    save();\n" : "" %>
+          <% end %>
+    save();
     return <%= association.assoc_model_name.underscore %>;
   }
-          <% end %>
         <% end %>
       <% end %>
     <% end %>

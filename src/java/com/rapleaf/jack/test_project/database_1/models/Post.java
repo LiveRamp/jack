@@ -331,24 +331,6 @@ public class Post extends ModelWithId<Post, IDatabases> {
     return user;
   }
 
-  public User buildUser(final String handle, final int num_posts) throws IOException {
-    User user = databases.getDatabase1().users().create(handle, num_posts);
-    setUserId(safeLongToInt(user.getId()));
-    return user;
-  }
-
-  public User buildUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
-    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
-    setUserId(safeLongToInt(user.getId()));
-    return user;
-  }
-
-  public User buildUser() throws IOException {
-    User user = databases.getDatabase1().users().create("", 0);
-    setUserId(safeLongToInt(user.getId()));
-    return user;
-  }
-
   public String toString() {
     return "<Post"
       + " title: " + __title

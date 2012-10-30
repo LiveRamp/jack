@@ -521,12 +521,6 @@ public class User extends ModelWithId<User, IDatabases> {
     return image;
   }
 
-  public Image buildImage() throws IOException {
-    Integer user_id = safeLongToInt(getId());
-    Image image = databases.getDatabase1().images().create(user_id);
-    return image;
-  }
-
   public String toString() {
     return "<User"
       + " handle: " + __handle

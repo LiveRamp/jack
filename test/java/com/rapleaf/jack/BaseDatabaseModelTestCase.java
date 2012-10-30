@@ -558,23 +558,6 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals((Object) true, copy.isSomeBoolean());
   }
 
-  public void testBuildAssociation() throws Exception {
-    IImagePersistence images = dbs.getDatabase1().images();
-
-    Image i1 = images.createDefaultInstance();
-    i1.save();
-    
-    User u1 = i1.buildUser();
-    assertEquals(Long.valueOf(u1.getId()), Long.valueOf(i1.getUserId()));
-    IUserPersistence users = dbs.getDatabase1().users();
-    User userInDb = users.find(i1.getUserId());
-    assertEquals(u1, userInDb);
-    Image imageInDb = images.find(i1.getId());
-    assertNotNull(i1.getUserId());
-    // This test case doesn't work because caching and saving doesn't work in the mock impl
-    // assertNull(imageInDb.getUserId());
-  }
-
   public void testCreateAssociation() throws Exception {
     IImagePersistence images = dbs.getDatabase1().images();
 
