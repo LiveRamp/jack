@@ -275,8 +275,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   <% model_defn.associations.each do |association| %>
-    <% assoc_field_name = association.type == "belongs_to" ? "id" : association.foreign_key %>
-    <% assoc_field = association.assoc_model.fields.reject{|field_defn| field_defn.name != assoc_field_name }.first %>
+    <% assoc_field = association.assoc_model.fields.reject{|field_defn| field_defn.name != association.foreign_key }.first %>
     <% assoc_field_type = assoc_field.java_type rescue nil %>
     <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.assoc_model_name %>
     <% other_model_field = model_defn.fields.reject{|field_defn| field_defn.name != (association.foreign_key) }.first %>
