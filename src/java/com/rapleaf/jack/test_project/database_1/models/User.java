@@ -515,9 +515,16 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public Image createImage() throws IOException {
+    Image previous = getImage(); 
+    if (previous != null) {
+      previous.setUserId(null);  
+      previous.save();
+    }
+           
     Integer user_id = safeLongToInt(getId());
     Image image = databases.getDatabase1().images().create(user_id);
     save();
+    __assoc_image.clearCache();
     return image;
   }
 

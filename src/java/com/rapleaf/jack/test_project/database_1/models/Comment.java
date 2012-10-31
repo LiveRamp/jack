@@ -321,37 +321,47 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public User createCommenter(final String handle, final int num_posts) throws IOException {
+ 
     User user = databases.getDatabase1().users().create(handle, num_posts);
     setCommenterId(safeLongToInt(user.getId()));
     save();
+    __assoc_user.clearCache();
     return user;
   }
 
   public User createCommenter(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+ 
     User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
     setCommenterId(safeLongToInt(user.getId()));
     save();
+    __assoc_user.clearCache();
     return user;
   }
 
   public User createCommenter() throws IOException {
+ 
     User user = databases.getDatabase1().users().create("", 0);
     setCommenterId(safeLongToInt(user.getId()));
     save();
+    __assoc_user.clearCache();
     return user;
   }
 
   public Post createCommentedOn() throws IOException {
+ 
     Post post = databases.getDatabase1().posts().create();
     setCommentedOnId(post.getId());
     save();
+    __assoc_post.clearCache();
     return post;
   }
 
   public Post createCommentedOn(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
+ 
     Post post = databases.getDatabase1().posts().create(title, posted_at_millis, user_id, updated_at);
     setCommentedOnId(post.getId());
     save();
+    __assoc_post.clearCache();
     return post;
   }
 

@@ -275,7 +275,8 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   <% model_defn.associations.each do |association| %>
-    <% assoc_field = association.assoc_model.fields.reject{|field_defn| field_defn.name != association.foreign_key }.first %>
+    <% assoc_field_name = association.type == "belongs_to" ? "id" : association.foreign_key %>
+    <% assoc_field = association.assoc_model.fields.reject{|field_defn| field_defn.name != assoc_field_name }.first %>
     <% assoc_field_type = assoc_field.java_type rescue nil %>
     <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.assoc_model_name %>
     <% other_model_field = model_defn.fields.reject{|field_defn| field_defn.name != (association.foreign_key) }.first %>
@@ -290,6 +291,17 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
         <% if !signature.nil? %>
 
   public <%= association.assoc_model_name %> <%= "create" %><%= other_model_name %>(<%= signature %>) throws IOException {
+          <% if !assoc_field.nil? %>
+    <%= association.assoc_getter_type %> previous = <%= association.assoc_getter %>(); 
+    if (previous != null) {
+            <% if assoc_field.nullable? %>
+      previous.set<%= assoc_field.name.camelcase %>(null);  
+      previous.save();
+            <% else %>
+      throw new RuntimeException("Cannot unset the foreign key on the associated object");
+            <% end %>
+    }
+          <% end %> 
           <% if !assoc_field_type.nil? %>
     <%= assoc_field_type %> <%= association.foreign_key %> = <%= ["Integer", "int"].include?(assoc_field_type) ? "safeLongToInt(getId())" : "getId()" %>;
           <% end %>
@@ -299,6 +311,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     set<%= other_model_field.name.camelcase %>(<%= (safe_cast_other_model_id ? "safeLongToInt(" : "") + association.assoc_model_name.underscore + ".getId()" + (safe_cast_other_model_id ? ")" : "") %>);
           <% end %>
     save();
+    <%= association.field_name %>.clearCache();
     return <%= association.assoc_model_name.underscore %>;
   }
         <% end %>
