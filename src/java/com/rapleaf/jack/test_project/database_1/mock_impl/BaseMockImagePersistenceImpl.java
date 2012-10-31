@@ -48,7 +48,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     Image newInst = new Image(__id, user_id, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 
@@ -58,7 +58,7 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     Image newInst = new Image(__id, null, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 

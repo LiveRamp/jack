@@ -22,6 +22,6 @@ field_names = "Arrays.asList(" + model_defn.fields.select{|x| x.args[":null"] ==
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 

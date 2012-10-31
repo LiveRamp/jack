@@ -14,6 +14,7 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Set;
@@ -22,15 +23,24 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   private final long id;
+  protected final D databases;
   transient protected int cachedHashCode = 0;
   private boolean created = false;
 
-  protected ModelWithId(long id) {
+  protected ModelWithId(long id, D databases) {
     this.id = id;
+    this.databases = databases;
   }
 
   public long getId() {
     return id;
+  }
+
+  public static int safeLongToInt(long l) {
+    if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException(l + " cannot be cast to int without changing its value.");
+    }
+    return (int) l;
   }
 
   @Override
@@ -95,6 +105,8 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
   public abstract T getCopy();
 
   public abstract T getCopy(D databases);
+
+  public abstract boolean save() throws IOException;
 
   public abstract Object getField(String fieldName);
   

@@ -23,7 +23,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Comment extends ModelWithId<Comment, IDatabases> {
   
   public static final long serialVersionUID = 6213989608937906012L;
-  
+
   // Fields
   private String __content;
   private int __commenter_id;
@@ -42,7 +42,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
@@ -52,14 +52,14 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at) {
-    super(id);
+    super(id, null);
     this.__content = content;
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
   }
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
@@ -68,7 +68,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at) {
-    super(id);
+    super(id, null);
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
@@ -79,7 +79,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public Comment(long id, Map<Enum, Object> fieldsMap) {
-    super(id);
+    super(id, null);
     String content = (String) fieldsMap.get(Comment._Fields.content);
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
@@ -96,7 +96,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
   }
 
   public Comment (Comment other, IDatabases databases) {
-    super(other.getId());
+    super(other.getId(), databases);
     this.__content = other.getContent();
     this.__commenter_id = other.getCommenterId();
     this.__commented_on_id = other.getCommentedOnId();
@@ -307,11 +307,62 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
 
   @Override
   public Comment getCopy() {
-    return new Comment(this);
+    return getCopy(databases);
   }
 
+  @Override
   public Comment getCopy(IDatabases databases) {
     return new Comment(this, databases);
+  }
+
+  @Override
+  public boolean save() throws IOException {
+    return databases.getDatabase1().comments().save(this);
+  }
+
+  public User createCommenter(final String handle, final int num_posts) throws IOException {
+ 
+    User user = databases.getDatabase1().users().create(handle, num_posts);
+    setCommenterId(safeLongToInt(user.getId()));
+    save();
+    __assoc_user.clearCache();
+    return user;
+  }
+
+  public User createCommenter(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+ 
+    User user = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    setCommenterId(safeLongToInt(user.getId()));
+    save();
+    __assoc_user.clearCache();
+    return user;
+  }
+
+  public User createCommenter() throws IOException {
+ 
+    User user = databases.getDatabase1().users().create("", 0);
+    setCommenterId(safeLongToInt(user.getId()));
+    save();
+    __assoc_user.clearCache();
+    return user;
+  }
+
+  public Post createCommentedOn() throws IOException {
+ 
+    Post post = databases.getDatabase1().posts().create();
+    setCommentedOnId(post.getId());
+    save();
+    __assoc_post.clearCache();
+    return post;
+  }
+
+  public Post createCommentedOn(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
+ 
+    Post post = databases.getDatabase1().posts().create(title, posted_at_millis, user_id, updated_at);
+    setCommentedOnId(post.getId());
+    save();
+    __assoc_post.clearCache();
+    return post;
   }
 
   public String toString() {

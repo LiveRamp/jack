@@ -56,7 +56,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 
@@ -66,7 +66,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 

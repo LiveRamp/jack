@@ -557,4 +557,32 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(Arrays.equals("bio".getBytes(), copy.getSomeBinary()));
     assertEquals((Object) true, copy.isSomeBoolean());
   }
+
+  public void testCreateAssociation() throws Exception {
+    IImagePersistence images = dbs.getDatabase1().images();
+
+    Image i1 = images.createDefaultInstance();
+    i1.save();
+
+    User u1 = i1.createUser();
+    assertEquals(Long.valueOf(u1.getId()), Long.valueOf(i1.getUserId()));
+    IUserPersistence users = dbs.getDatabase1().users();
+    User userInDb = users.find(i1.getUserId());
+    assertEquals(u1, userInDb);
+    Image imageInDb = images.find(i1.getId());
+    assertEquals(i1, imageInDb);
+  }
+
+  public void testCreateAssociationUnsetsForeignKeyInPreviousValue() throws Exception {
+    IUserPersistence users = dbs.getDatabase1().users();
+    User u1 = users.createDefaultInstance();
+
+    Image i1 = u1.createImage();
+    u1.createImage();
+    IImagePersistence images = dbs.getDatabase1().images();
+    Image i1InDb = images.find(i1.getId());
+    System.out.println(i1.getId() + i1.toString());
+    System.out.println(i1InDb.getId() + i1InDb.toString());
+    assertNull(i1InDb.getUserId());
+  }
 }

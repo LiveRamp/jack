@@ -95,10 +95,9 @@ EOF
     root_package = database_defn.namespace
 
     model_defns.each do |model_defn|
-      create_signature_full = model_defn.fields.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-      create_signature_small = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-      create_signature_small = create_signature_full == create_signature_small ? nil : create_signature_small
-      create_argument_defaults = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| field_defn.java_default_value }.join(", ")
+      create_signature_full = model_defn.create_signature_full
+      create_signature_small = model_defn.create_signature_small
+      create_argument_defaults = model_defn.create_argument_defaults
 
       file = File.new("#{output_dir}/models/#{model_defn.model_name}.java", "w")
       file.puts(MODEL_TEMPLATE.result(binding))

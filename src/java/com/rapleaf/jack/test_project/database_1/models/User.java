@@ -23,7 +23,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class User extends ModelWithId<User, IDatabases> {
   
   public static final long serialVersionUID = 3336917395531236967L;
-  
+
   // Fields
   private String __handle;
   private Long __created_at_millis;
@@ -53,7 +53,7 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
     this.__num_posts = num_posts;
@@ -69,7 +69,7 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
-    super(id);
+    super(id, null);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
     this.__num_posts = num_posts;
@@ -81,7 +81,7 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__some_boolean = some_boolean;
   }
   public User(long id, final String handle, final int num_posts, IDatabases databases) {
-    super(id);
+    super(id, databases);
     this.__handle = handle;
     this.__num_posts = num_posts;
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
@@ -90,7 +90,7 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public User(long id, final String handle, final int num_posts) {
-    super(id);
+    super(id, null);
     this.__handle = handle;
     this.__num_posts = num_posts;
   }
@@ -100,7 +100,7 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public User(long id, Map<Enum, Object> fieldsMap) {
-    super(id);
+    super(id, null);
     String handle = (String) fieldsMap.get(User._Fields.handle);
     Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
     int num_posts = (Integer) fieldsMap.get(User._Fields.num_posts);
@@ -126,7 +126,7 @@ public class User extends ModelWithId<User, IDatabases> {
   }
 
   public User (User other, IDatabases databases) {
-    super(other.getId());
+    super(other.getId(), databases);
     this.__handle = other.getHandle();
     this.__created_at_millis = other.getCreatedAtMillis();
     this.__num_posts = other.getNumPosts();
@@ -501,11 +501,31 @@ public class User extends ModelWithId<User, IDatabases> {
 
   @Override
   public User getCopy() {
-    return new User(this);
+    return getCopy(databases);
   }
 
+  @Override
   public User getCopy(IDatabases databases) {
     return new User(this, databases);
+  }
+
+  @Override
+  public boolean save() throws IOException {
+    return databases.getDatabase1().users().save(this);
+  }
+
+  public Image createImage() throws IOException {
+    Image previous = getImage(); 
+    if (previous != null) {
+      previous.setUserId(null);  
+      previous.save();
+    }
+           
+    Integer user_id = safeLongToInt(getId());
+    Image image = databases.getDatabase1().images().create(user_id);
+    save();
+    __assoc_image.clearCache();
+    return image;
   }
 
   public String toString() {

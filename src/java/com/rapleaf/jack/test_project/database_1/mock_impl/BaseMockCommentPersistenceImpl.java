@@ -52,7 +52,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 
@@ -62,7 +62,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     Comment newInst = new Comment(__id, null, commenter_id, commented_on_id, created_at, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
-    return newInst;
+    return newInst.getCopy();
   }
 
 

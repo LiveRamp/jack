@@ -54,7 +54,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
   }
 
-
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -103,7 +102,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     clearForeignKeyCache();
     return newInst;
   }
-
 
 
   public User create(final String handle, final int num_posts) throws IOException {
