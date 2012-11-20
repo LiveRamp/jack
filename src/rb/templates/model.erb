@@ -279,6 +279,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     <% assoc_field_type = assoc_field.java_type rescue nil %>
     <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.assoc_model_name %>
     <% other_model_field = model_defn.fields.reject{|field_defn| field_defn.name != (association.foreign_key) }.first %>
+    <% new_model_name = "new" + association.assoc_model_name %>
     <% if association.type != "has_many" %>
       <% signatures = [ association.assoc_model.create_signature(true, association.foreign_key), association.assoc_model.create_signature(false, association.foreign_key) ] %>
       <% arguments = [ association.assoc_model.field_names_list(true, false), association.assoc_model.field_names_list(false, false) ] %>
@@ -304,14 +305,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
           <% if !assoc_field_type.nil? %>
     <%= assoc_field_type %> <%= association.foreign_key %> = <%= ["Integer", "int"].include?(assoc_field_type) ? "safeLongToInt(getId())" : "getId()" %>;
           <% end %>
-    <%= association.assoc_model_name %> <%= association.assoc_model_name.underscore %> = databases.<%= association.assoc_model.database_defn.getter %>.<%= association.assoc_model.persistence_getter %>.create(<%= argument_list %>);
+    <%= association.assoc_model_name %> <%= new_model_name %> = databases.<%= association.assoc_model.database_defn.getter %>.<%= association.assoc_model.persistence_getter %>.create(<%= argument_list %>);
           <% if !other_model_field.nil? %>
     <% safe_cast_other_model_id = ["Integer", "int"].include?(other_model_field.java_type) %>
-    set<%= other_model_field.name.camelcase %>(<%= (safe_cast_other_model_id ? "safeLongToInt(" : "") + association.assoc_model_name.underscore + ".getId()" + (safe_cast_other_model_id ? ")" : "") %>);
+    set<%= other_model_field.name.camelcase %>(<%= (safe_cast_other_model_id ? "safeLongToInt(" : "") + new_model_name + ".getId()" + (safe_cast_other_model_id ? ")" : "") %>);
           <% end %>
     save();
     <%= association.field_name %>.clearCache();
-    return <%= association.assoc_model_name.underscore %>;
+    return <%= new_model_name %>;
   }
         <% end %>
       <% end %>

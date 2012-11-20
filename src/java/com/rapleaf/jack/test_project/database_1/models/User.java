@@ -522,10 +522,10 @@ public class User extends ModelWithId<User, IDatabases> {
     }
            
     Integer user_id = safeLongToInt(getId());
-    Image image = databases.getDatabase1().images().create(user_id);
+    Image newImage = databases.getDatabase1().images().create(user_id);
     save();
     __assoc_image.clearCache();
-    return image;
+    return newImage;
   }
 
   public String toString() {
