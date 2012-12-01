@@ -17,6 +17,7 @@
 package <%= root_package %>.mock_impl;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 import <%= root_package %>.I<%=db_name%>;
 
@@ -77,6 +78,11 @@ public class Mock<%=db_name%>Impl implements I<%=db_name%> {
 
   public void rollback() {
     // Do nothing
+  }
+
+  public Connection resetConnection() {
+    // No connection to reset
+    return null;
   }
   
 }

@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -79,6 +80,11 @@ public class MockDatabase1Impl implements IDatabase1 {
 
   public void rollback() {
     // Do nothing
+  }
+
+  public Connection resetConnection() {
+    // No connection to reset
+    return null;
   }
   
 }
