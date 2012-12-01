@@ -17,4 +17,5 @@ public interface IDatabase1 extends IDb {
   public IImagePersistence images();
   public IPostPersistence posts();
   public IUserPersistence users();
+
 }

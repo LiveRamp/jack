@@ -16,6 +16,7 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
 
 public interface IDb extends Serializable {
   
@@ -37,4 +38,6 @@ public interface IDb extends Serializable {
   public void commit();
   
   public void rollback();
+
+  public Connection resetConnection();
 }
