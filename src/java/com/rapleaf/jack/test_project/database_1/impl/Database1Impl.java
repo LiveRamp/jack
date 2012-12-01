@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -83,6 +84,10 @@ public class Database1Impl implements IDatabase1 {
 
   public void rollback() {
     conn.rollback();
+  }
+
+  public Connection resetConnection() {
+    return conn.resetConnection();
   }
 
 }
