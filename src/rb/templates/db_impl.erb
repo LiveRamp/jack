@@ -84,8 +84,8 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     conn.rollback();
   }
 
-  public Connection resetConnection() {
-    return conn.resetConnection();
+  public void resetConnection() {
+    conn.resetConnection();
   }
 
 }

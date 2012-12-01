@@ -82,9 +82,8 @@ public class MockDatabase1Impl implements IDatabase1 {
     // Do nothing
   }
 
-  public Connection resetConnection() {
+  public void resetConnection() {
     // No connection to reset
-    return null;
   }
   
 }

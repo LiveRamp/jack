@@ -86,8 +86,8 @@ public class Database1Impl implements IDatabase1 {
     conn.rollback();
   }
 
-  public Connection resetConnection() {
-    return conn.resetConnection();
+  public void resetConnection() {
+    conn.resetConnection();
   }
 
 }
