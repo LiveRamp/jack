@@ -1,4 +1,4 @@
-<project name="jack" default="dist" basedir=".">
+<project name="jack" default="dist" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <property name="version" value="0.1.0" />
 
   <!-- pull the database creds from the sys properties -->
@@ -32,15 +32,34 @@
 
   <fileset id="jars" dir="${lib}" includes="*.jar" />
 
+  <path id="maven-ant-tasks.classpath" path="antlib/maven-ant-tasks-2.1.3.jar" />
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+           uri="antlib:org.apache.maven.artifact.ant"
+           classpathref="maven-ant-tasks.classpath" />
+
   <path id="compile.classpath">
-    <fileset id="jars" dir="${lib}" includes="*.jar" />
+    <fileset id="jars" dir="${lib}" includes="**/*.jar" />
   </path>
+
 
   <path id="test.classpath">
     <path refid="compile.classpath" />
     <pathelement location="${build.classes}" />
     <pathelement location="${build.test}" />
   </path>
+  
+  <target name="resolve">
+    <mkdir dir="${lib}"/>
+    <artifact:dependencies filesetId="deps.fileset">
+      <pom file="pom.xml"/>
+    </artifact:dependencies>
+    <copy todir="lib" flatten="true">
+      <fileset refid="deps.fileset" />
+        <mapper classpathref="maven-ant-tasks.classpath"
+                classname="org.apache.maven.artifact.ant.VersionMapper"
+                from="${dependency.versions}" to="flatten" />
+    </copy>
+  </target>
 
   <target name="select-mysql">
     <exec executable="/bin/sh" failonerror="true">
@@ -78,6 +97,7 @@
   <target name="clean" description="Trash all build outputs">
     <delete dir="${build}" />
     <delete dir="${build.test}" />
+    <delete dir="${lib}" />   
   </target>
 
   <target name="init">
@@ -190,8 +210,20 @@
   <target name="test" depends="ensure-dbms-selected,setup-db,generate,rspec,junit-test" description="Run the entire test suite" />
 
   <!-- TODO: need to build several jars here -->
-  <target name="dist" depends="compile" description="Build a distributable jar">
+  <target name="dist" depends="resolve, compile" description="Build a distributable jar">
+
+    <exec executable="git" outputproperty="git.revision">
+      <arg value="rev-parse" />
+      <arg value="HEAD" />
+    </exec>
+
     <jar jarfile="${jar.file}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Implementation-Title" value="jack" />
+        <attribute name="Implementation-Vendor-Id" value="com.liveramp" />
+        <attribute name="Implementation-Build" value="${git.revision}" />
+      </manifest>
       <fileset dir="${build.classes}">
         <exclude name="**/test_project/**/*.class"/>
         <include name="**/*.class" />
@@ -210,6 +242,13 @@
 
   <target name="clean-javadoc" description="Clean Javadoc">
     <delete includeemptydirs="true" dir="${doc}"/>
+  </target>
+
+  <target name="deploy" depends="dist" description="Deploy">
+    <artifact:pom id="mypom" file="pom.xml" />
+    <artifact:deploy file="build/jack.jar">
+      <pom refid="mypom"/>
+    </artifact:deploy>
   </target>
 
 </project>
