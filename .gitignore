@@ -9,3 +9,4 @@ out
 database.yml
 Gemfile
 Gemfile.lock
+lib
