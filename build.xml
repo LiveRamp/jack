@@ -211,7 +211,19 @@
 
   <!-- TODO: need to build several jars here -->
   <target name="dist" depends="resolve, compile" description="Build a distributable jar">
+
+    <exec executable="git" outputproperty="git.revision">
+      <arg value="rev-parse" />
+      <arg value="HEAD" />
+    </exec>
+
     <jar jarfile="${jar.file}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Implementation-Title" value="jack" />
+        <attribute name="Implementation-Vendor-Id" value="com.liveramp" />
+        <attribute name="Implementation-Build" value="${git.revision}" />
+      </manifest>
       <fileset dir="${build.classes}">
         <exclude name="**/test_project/**/*.class"/>
         <include name="**/*.class" />
