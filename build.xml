@@ -232,9 +232,17 @@
         <include name="**/*.java" />
         <exclude name="**/test_project/**/*.java"/>
       </fileset>
+      <fileset dir="${src}">
+        <include name="**/*.rb" />
+      </fileset>
+      <fileset dir="${src}">
+        <include name="**/*.erb" />
+      </fileset>
+      <file name="Gemfile"/>
     </jar>
   </target>
-  
+ 
+ 
   <target name="javadoc" depends="clean-javadoc" description="Generate Javadoc">
     <mkdir dir="${doc}"/>
     <javadoc sourcepath="${src.java}" destdir="${doc}"/>
