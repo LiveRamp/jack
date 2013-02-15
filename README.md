@@ -107,7 +107,7 @@ Finally, there is one overarching Databases class that serves as a collection fo
 
 Download
 ====
-You can either build jack from source as described below, or pull the latest jar from the Liveramp Maven repository:
+You can either build jack from source or pull the latest jar from the Liveramp Maven repository:
 
 ```xml
 <repository>
