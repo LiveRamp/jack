@@ -104,3 +104,25 @@ You get one Database per database entry in your project.yml. Their main purpose 
 ### All Databases ###
 
 Finally, there is one overarching Databases class that serves as a collection for all of the databases configured in your project.yml. Generally, this is what you will instantiate, though you can subsequently get the Database or Persistence instance you actually care about and use that.
+
+Download
+====
+You can either build jack from source as described below, or pull the latest jar from the Liveramp Maven repository:
+
+```xml
+<repository>
+  <id>repository.liveramp.com</id>
+  <name>liveramp-repositories</name>
+  <url>http://repository.liveramp.com/artifactory/liveramp-repositories</url>
+</repository>
+```
+
+The 1.0-SNAPSHOT build can be retrieved there:
+
+```xml
+<dependency>
+    <groupId>com.liveramp</groupId>
+    <artifactId>jack</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
