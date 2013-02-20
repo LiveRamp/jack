@@ -28,7 +28,7 @@
 
   <property name="config.dir" location="${basedir}/config"/>
 
-  <property name="jar.file" location="${build}/jack.jar" />
+  <property name="jar.file" location="${build}/jack-1.0-SNAPSHOT.jar" />
 
   <fileset id="jars" dir="${lib}" includes="*.jar" />
 
@@ -254,7 +254,7 @@
 
   <target name="deploy" depends="dist" description="Deploy">
     <artifact:pom id="mypom" file="pom.xml" />
-    <artifact:deploy file="build/jack.jar">
+    <artifact:deploy file="build/jack-1.0-SNAPSHOT.jar">
       <pom refid="mypom"/>
     </artifact:deploy>
   </target>
