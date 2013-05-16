@@ -44,8 +44,8 @@ class ModelDefn
   end
 
   def fields_with_default_created_at(excluded_field_name = nil)
-      @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| field_defn.name == "created_at" ? "System.currentTimeMillis()" : field_defn.name }.join(", ")
-    end
+    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| field_defn.name == "created_at" ? "System.currentTimeMillis()" : field_defn.name }.join(", ")
+  end
 
   def create_signature_small(excluded_field_name = nil)
     temp = @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ") 
