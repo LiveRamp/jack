@@ -50,6 +50,9 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
+  public Comment create(final String content, final int commenter_id, final long commented_on_id) throws IOException {
+    return this.create(content, commenter_id, commented_on_id, System.currentTimeMillis());
+  }
   public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
