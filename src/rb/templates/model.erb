@@ -74,6 +74,29 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
+<% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") %>
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
+    super(id, databases);
+  <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+  <% end %>
+    this.__created_at = System.currentTimeMillis();
+
+  <% model_defn.associations.each do |assoc| %>
+    this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+  <% end %>
+  }
+
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>) {
+    super(id, null);
+  <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+  <% end %>
+    this.__created_at = System.currentTimeMillis();
+  }
+
+<% end %>
+
   <% if !create_signature_small.nil? %>
   public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>, IDatabases databases) {
     super(id, databases);
@@ -96,6 +119,32 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     <% end %>
   <% end %>
   }
+
+  <% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") %>
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>, IDatabases databases) {
+    super(id, databases);
+    <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+     <% if !field_defn.nullable? %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+      <% end %>
+    <% end %>
+    this.__created_at = System.currentTimeMillis();
+
+    <% model_defn.associations.each do |assoc| %>
+    this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+    <% end %>
+  }
+
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>) {
+    super(id, null);
+    <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+      <% if !field_defn.nullable? %>
+    this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
+    <% end %>
+    this.__created_at = System.currentTimeMillis();
+  }
+  <% end %>
   <% end %>
 
   public static <%= model_defn.model_name %> newDefaultInstance(long id) {
