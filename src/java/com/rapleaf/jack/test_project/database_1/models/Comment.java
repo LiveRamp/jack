@@ -95,8 +95,9 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = System.currentTimeMillis();
-
-      }
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) __commenter_id);
+    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), __commented_on_id);
+  }
 
   public Comment(long id, final int commenter_id, final long commented_on_id) {
     super(id, null);
