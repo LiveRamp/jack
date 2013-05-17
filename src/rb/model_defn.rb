@@ -47,8 +47,12 @@ class ModelDefn
     @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| field_defn.name == "created_at" ? "System.currentTimeMillis()" : field_defn.name }.join(", ")
   end
 
+  def created_at_field
+    @fields.find{|field_defn| field_defn.name == "created_at"}
+  end
+
   def should_make_created_at_methods
-      @fields.map{|field_defn| field_defn.name}.include?("created_at") && !@fields.find{|field_defn| field_defn.name == "created_at"}.nullable?
+      @fields.map{|field_defn| field_defn.name}.include?("created_at") && !created_at_field.nullable? && created_at_field.java_type == "long"
   end
 
   def create_signature_small(excluded_field_name = nil)

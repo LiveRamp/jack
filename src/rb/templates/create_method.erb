@@ -14,7 +14,7 @@
 # limitations under the License.
 %>
 
-<% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") && only_not_null == false %>
+<% if model_defn.should_make_created_at_methods && only_not_null == false %>
   public <%= model_defn.model_name %> create(<%= model_defn.create_signature_full("created_at")%>) throws IOException {
     return this.create(<%= model_defn.fields_with_default_created_at %>);
   }
