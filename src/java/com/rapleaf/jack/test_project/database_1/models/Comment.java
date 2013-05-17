@@ -58,23 +58,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
   }
-  public Comment(long id, final String content, final int commenter_id, final long commented_on_id, IDatabases databases) {
-    super(id, databases);
-    this.__content = content;
-    this.__commenter_id = commenter_id;
-    this.__commented_on_id = commented_on_id;
-    this.__created_at = System.currentTimeMillis();
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) __commenter_id);
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), __commented_on_id);
-  }
-
-  public Comment(long id, final String content, final int commenter_id, final long commented_on_id) {
-    super(id, null);
-    this.__content = content;
-    this.__commenter_id = commenter_id;
-    this.__commented_on_id = commented_on_id;
-    this.__created_at = System.currentTimeMillis();
-  }
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(id, databases);
     this.__commenter_id = commenter_id;
@@ -89,21 +72,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
     this.__commenter_id = commenter_id;
     this.__commented_on_id = commented_on_id;
     this.__created_at = created_at;
-  }
-  public Comment(long id, final int commenter_id, final long commented_on_id, IDatabases databases) {
-    super(id, databases);
-    this.__commenter_id = commenter_id;
-    this.__commented_on_id = commented_on_id;
-    this.__created_at = System.currentTimeMillis();
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) __commenter_id);
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), __commented_on_id);
-  }
-
-  public Comment(long id, final int commenter_id, final long commented_on_id) {
-    super(id, null);
-    this.__commenter_id = commenter_id;
-    this.__commented_on_id = commented_on_id;
-    this.__created_at = System.currentTimeMillis();
   }
 
   public static Comment newDefaultInstance(long id) {
