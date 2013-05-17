@@ -74,7 +74,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
-<% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") %>
+<% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") && !model_defn.fields.find{|field_defn| field_defn.name == "created_at"}.nullable?%>
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
     super(id, databases);
   <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
@@ -120,7 +120,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
-  <% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") %>
+  <% if model_defn.fields.map{|field_defn| field_defn.name}.include?("created_at") && !model_defn.fields.find{|field_defn| field_defn.name == "created_at"}.nullable?%>
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>, IDatabases databases) {
     super(id, databases);
     <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
