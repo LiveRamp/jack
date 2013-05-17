@@ -48,7 +48,7 @@ class ModelDefn
   end
 
   def should_make_created_at_methods
-      @fields.map{|field_defn| field_defn.name}.include?("created_at") && @fields.find{|field_defn| field_defn.name == "created_at"}.nullable?
+      @fields.map{|field_defn| field_defn.name}.include?("created_at") && !@fields.find{|field_defn| field_defn.name == "created_at"}.nullable?
   end
 
   def create_signature_small(excluded_field_name = nil)
