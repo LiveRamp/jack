@@ -30,6 +30,7 @@ import <%= db.namespace %>.impl.<%= db.name %>Impl;
 <% end %>
 
 public class DatabasesImpl implements IDatabases {
+  private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
   private static final IDatabases mockDatabases = new MockDatabasesImpl();
   <% project_defn.databases.each do |db| %>
   private final I<%= db.name %> <%= db.name.underscore %>;
@@ -50,13 +51,14 @@ public class DatabasesImpl implements IDatabases {
       throw new RuntimeException(e);
     }
     Boolean use_mock = (Boolean)env_info.get("use_mock_db");
+    Boolean use_parallel = (Boolean)env_info.get("enable_parallel_tests");
     if (use_mock != null && use_mock) {
     <% project_defn.databases.each do |db| %>
       this.<%= db.name.underscore %> = mockDatabases.get<%= db.name %>();
     <% end %>
     } else {
     <% project_defn.databases.each do |db| %>
-      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this);
+      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection(getDbName("<%= db.name.underscore %>", use_parallel)), this);
     <% end %>
     }
   }
@@ -67,5 +69,29 @@ public class DatabasesImpl implements IDatabases {
     return <%= db.name.underscore %>;
   }
   <% end %>
+
+  /**
+   * When using a parallel test environment, we append an integer that lives in
+   * an environment variable to the database name.
+   * 
+   * @param base_name the name of the database
+   * @param use_parallel if true, append an integer specified in an environment
+   *                     variable to the end of base_name
+   * @return the name of the database that we should connect to
+   */
+  protected String getDbName(String base_name, Boolean use_parallel) {
+    if (use_parallel == null || !use_parallel) {
+      return base_name;
+    }
+    else {
+      String partitionNumber = System.getenv(PARTITION_NUM_ENV_VARIABLE_NAME);
+      if (partitionNumber != null) {
+        return base_name + partitionNumber;
+      }
+      else {
+        throw new RuntimeException("Expected the " + PARTITION_NUM_ENV_VARIABLE_NAME + " environment variable to be set, but it wasn't. Either disable parallel tests or make sure the variable is defined.");
+      }
+    }
+  }
 }
 
