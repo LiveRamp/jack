@@ -31,6 +31,8 @@ import org.jvyaml.YAML;
  * (rather than IO or SQL exceptions).
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
+  private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
+
   private final String connectionString;
   private final String username;
   private final String password;
@@ -46,9 +48,10 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   
   public DatabaseConnection(String dbname_key, long expiration) {
     Map<String, String> db_info = null;
+    Map<String, Object> env_info = null;
     try {
       // load database info from config folder
-      Map env_info = (Map)YAML.load(new FileReader("config/environment.yml"));
+      env_info = (Map<String, Object>)YAML.load(new FileReader("config/environment.yml"));
       String db_info_name = (String)env_info.get(dbname_key);
       Map db_info_container = (Map)YAML.load(new FileReader("config/database.yml"));
       db_info = (Map<String, String>)db_info_container.get(db_info_name);
@@ -74,7 +77,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     if (db_info.containsKey("port")) {
       connectionStringBuilder.append(":").append(Integer.parseInt(db_info.get("port")));
     }
-    connectionStringBuilder.append("/").append(db_info.get("database"));
+    connectionStringBuilder.append("/").append(getDbName(db_info.get("database"), (Boolean)env_info.get("enable_parallel_tests")));
     connectionString = connectionStringBuilder.toString();
     username = db_info.get("username");
     password = db_info.get("password");
@@ -100,6 +103,30 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       return conn;
     } catch(Exception e) { //IOEx., SQLEx.
       throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * When using a parallel test environment, we append an integer that lives in
+   * an environment variable to the database name.
+   *
+   * @param base_name the name of the database
+   * @param use_parallel if true, append an integer specified in an environment
+   *                     variable to the end of base_name
+   * @return the name of the database that we should connect to
+   */
+  protected String getDbName(String base_name, Boolean use_parallel) {
+    if (use_parallel == null || !use_parallel) {
+      return base_name;
+    }
+    else {
+      String partitionNumber = System.getenv(PARTITION_NUM_ENV_VARIABLE_NAME);
+      if (partitionNumber != null) {
+        return base_name + partitionNumber;
+      }
+      else {
+        throw new RuntimeException("Expected the " + PARTITION_NUM_ENV_VARIABLE_NAME + " environment variable to be set, but it wasn't. Either disable parallel tests or make sure the variable is defined.");
+      }
     }
   }
 
