@@ -10,3 +10,4 @@ database.yml
 Gemfile
 Gemfile.lock
 lib
+target
