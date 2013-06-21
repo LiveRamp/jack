@@ -111,7 +111,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected abstract T instanceFromResultSet(ResultSet rs) throws SQLException;
 
-  protected int realCreate(AttrSetter attrSetter, String insertStatement)
+  protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(insertStatement,
         Statement.RETURN_GENERATED_KEYS);
@@ -121,7 +121,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       stmt.execute();
       generatedKeys = stmt.getGeneratedKeys();
       generatedKeys.next();
-      int newId = generatedKeys.getInt(1);
+      long newId = generatedKeys.getLong(1);
       return newId;
     } catch (SQLException e) {
       throw new IOException(e);
