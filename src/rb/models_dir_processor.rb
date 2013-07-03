@@ -54,6 +54,7 @@ class ModelsDirProcessor
     if not_matches
       matching_lines = matching_lines.reject { |l| l =~ /^\s*#{not_matches}/ }
     end
+    matching_lines.reject {|l| l =~ /:jack_ignore\s*=>\s*true/}
     matching_lines.map{|l| AssociationDefn.new(l, model_defn)}
   end
 end
