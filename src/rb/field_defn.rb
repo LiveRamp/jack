@@ -52,6 +52,7 @@ class FieldDefn
       :text=>'""', 
       :binary=>'new byte[0]', 
       :float=>'0.0', 
+      :decimal=>'0.0', 
       :boolean=>'true',
       :bigint=>'0L',
       :bytes=>'new byte[0]',
@@ -78,6 +79,7 @@ class FieldDefn
       :text=>'String', 
       :binary=>'byte[]', 
       :float=>'Double', 
+      :decimal=>'Double', 
       :boolean=>'Boolean',
       :bigint=>'Long',
       :bytes=>'byte[]',
@@ -92,6 +94,7 @@ class FieldDefn
       :text=>'String', 
       :binary=>'byte[]', 
       :float=>'double', 
+      :decimal=>'double', 
       :boolean=>'boolean',
       :bigint=>'long',
       :bytes=>'byte[]',
@@ -119,6 +122,7 @@ class FieldDefn
       :text=>'CHAR', 
       :binary=>'BINARY', 
       :float=>'DOUBLE', 
+      :decimal=>'DECIMAL', 
       :boolean=>'BOOLEAN',
       :bigint=>'BIGINT',
       :bytes=>'BINARY'
@@ -141,6 +145,7 @@ class FieldDefn
       :text=>'String', 
       :binary=>'Bytes', 
       :float=>'Double', 
+      :decimal=>'Double', 
       :boolean=>'Boolean',
       :bigint=>'Long',
       :bytes=>'Bytes'
@@ -192,6 +197,8 @@ class FieldDefn
       when :date 
         "getDateAsLong(rs, \"#{name}\")"
       when :float
+        "getDoubleOrNull(rs, \"#{name}\")"
+      when :decimal
         "getDoubleOrNull(rs, \"#{name}\")"
       when :boolean
         "getBooleanOrNull(rs, \"#{name}\")"

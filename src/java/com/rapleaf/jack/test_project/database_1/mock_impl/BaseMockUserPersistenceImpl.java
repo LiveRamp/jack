@@ -46,14 +46,15 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     String bio = (String) fieldsMap.get(User._Fields.bio);
     byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
     Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
+    Double some_decimal = (Double) fieldsMap.get(User._Fields.some_decimal);
     Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
-    return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean);
+    return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
   }
 
 
-  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) throws IOException {
+  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
     long __id = curId.getAndIncrement();
-    User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_boolean, databases);
+    User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
     return newInst.getCopy();
@@ -63,7 +64,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
 
   public User create(final String handle, final int num_posts) throws IOException {
     long __id = curId.getAndIncrement();
-    User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, databases);
+    User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, null, databases);
     records.put(__id, newInst);
     clearForeignKeyCache();
     return newInst.getCopy();
@@ -112,6 +113,10 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
 
   public Set<User> findBySomeFloat(final Double value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_float, value);}});
+  }
+
+  public Set<User> findBySomeDecimal(final Double value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_decimal, value);}});
   }
 
   public Set<User> findBySomeBoolean(final Boolean value) throws IOException {
