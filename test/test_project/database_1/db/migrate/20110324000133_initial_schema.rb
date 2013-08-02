@@ -19,6 +19,7 @@ class InitialSchema < ActiveRecord::Migration
       # t.varbinary :some_varbinary
       t.binary :some_binary
       t.float :some_float
+      t.decimal :some_decimal, :precision => 20, :scale => 10
       t.boolean :some_boolean
       # t.bytes :some_bytes
     end

@@ -22,7 +22,7 @@ public class TestModelWithID extends TestCase {
     dbs = new DatabasesImpl(DATABASE_CONNECTION1);
     postModel = new Post(0, "Test Post", 100l, 1, 0l);
     imageModel = new Image(0, null, dbs);
-    userModel = new User(0l, "handle", 0l, 0, 0l, 0l, "bio", null, 0.0, true);
+    userModel = new User(0l, "handle", 0l, 0, 0l, 0l, "bio", null, 0.0, 0.0, true);
     try {
       dbs.getDatabase1().deleteAll();
       dbs.getDatabase1().users().save(userModel);
