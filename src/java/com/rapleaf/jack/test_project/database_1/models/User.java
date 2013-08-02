@@ -22,7 +22,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> {
   
-  public static final long serialVersionUID = 3336917395531236967L;
+  public static final long serialVersionUID = -966057050205502149L;
 
   // Fields
   private String __handle;
@@ -33,6 +33,7 @@ public class User extends ModelWithId<User, IDatabases> {
   private String __bio;
   private byte[] __some_binary;
   private Double __some_float;
+  private Double __some_decimal;
   private Boolean __some_boolean;
 
   // Associations
@@ -49,10 +50,11 @@ public class User extends ModelWithId<User, IDatabases> {
     bio,
     some_binary,
     some_float,
+    some_decimal,
     some_boolean,
   }
 
-  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean, IDatabases databases) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
     super(id, databases);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -62,13 +64,14 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__bio = bio;
     this.__some_binary = some_binary;
     this.__some_float = some_float;
+    this.__some_decimal = some_decimal;
     this.__some_boolean = some_boolean;
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
   }
 
-  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Boolean some_boolean) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
     super(id, null);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -78,6 +81,7 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__bio = bio;
     this.__some_binary = some_binary;
     this.__some_float = some_float;
+    this.__some_decimal = some_decimal;
     this.__some_boolean = some_boolean;
   }
   public User(long id, final String handle, final int num_posts, IDatabases databases) {
@@ -109,6 +113,7 @@ public class User extends ModelWithId<User, IDatabases> {
     String bio = (String) fieldsMap.get(User._Fields.bio);
     byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
     Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
+    Double some_decimal = (Double) fieldsMap.get(User._Fields.some_decimal);
     Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
     this.__handle = handle;
     this.__created_at_millis = created_at_millis;
@@ -118,6 +123,7 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__bio = bio;
     this.__some_binary = some_binary;
     this.__some_float = some_float;
+    this.__some_decimal = some_decimal;
     this.__some_boolean = some_boolean;
   }
 
@@ -135,6 +141,7 @@ public class User extends ModelWithId<User, IDatabases> {
     this.__bio = other.getBio();
     this.__some_binary = copyBinary(other.getSomeBinary());
     this.__some_float = other.getSomeFloat();
+    this.__some_decimal = other.getSomeDecimal();
     this.__some_boolean = other.isSomeBoolean();
 
     if (databases != null) {
@@ -224,6 +231,16 @@ public class User extends ModelWithId<User, IDatabases> {
     return this;
   }
 
+  public Double getSomeDecimal(){
+    return __some_decimal;
+  }
+
+  public User setSomeDecimal(Double newval){
+    this.__some_decimal = newval;
+    cachedHashCode = 0;
+    return this;
+  }
+
   public Boolean isSomeBoolean(){
     return __some_boolean;
   }
@@ -259,6 +276,9 @@ public class User extends ModelWithId<User, IDatabases> {
         break;
       case some_float:
         setSomeFloat((Double) value);
+        break;
+      case some_decimal:
+        setSomeDecimal((Double) value);
         break;
       case some_boolean:
         setSomeBoolean((Boolean) value);
@@ -301,6 +321,10 @@ public class User extends ModelWithId<User, IDatabases> {
       setSomeFloat((Double)  value);
       return;
     }
+    if (fieldName.equals("some_decimal")) {
+      setSomeDecimal((Double)  value);
+      return;
+    }
     if (fieldName.equals("some_boolean")) {
       setSomeBoolean((Boolean)  value);
       return;
@@ -325,6 +349,8 @@ public class User extends ModelWithId<User, IDatabases> {
       case some_binary:
         return byte[].class;
       case some_float:
+        return Double.class;
+      case some_decimal:
         return Double.class;
       case some_boolean:
         return Boolean.class;
@@ -356,6 +382,9 @@ public class User extends ModelWithId<User, IDatabases> {
       return byte[].class;
     }
     if (fieldName.equals("some_float")) {
+      return Double.class;
+    }
+    if (fieldName.equals("some_decimal")) {
       return Double.class;
     }
     if (fieldName.equals("some_boolean")) {
@@ -405,6 +434,9 @@ public class User extends ModelWithId<User, IDatabases> {
     if (fieldName.equals("some_float")) {
       return getSomeFloat();
     }
+    if (fieldName.equals("some_decimal")) {
+      return getSomeDecimal();
+    }
     if (fieldName.equals("some_boolean")) {
       return isSomeBoolean();
     }
@@ -429,6 +461,8 @@ public class User extends ModelWithId<User, IDatabases> {
         return getSomeBinary();
       case some_float:
         return getSomeFloat();
+      case some_decimal:
+        return getSomeDecimal();
       case some_boolean:
         return isSomeBoolean();
     }
@@ -463,6 +497,9 @@ public class User extends ModelWithId<User, IDatabases> {
     if (fieldName.equals("some_float")) {
       return true;
     }
+    if (fieldName.equals("some_decimal")) {
+      return true;
+    }
     if (fieldName.equals("some_boolean")) {
       return true;
     }
@@ -486,6 +523,8 @@ public class User extends ModelWithId<User, IDatabases> {
       case some_binary:
         return null;
       case some_float:
+        return null;
+      case some_decimal:
         return null;
       case some_boolean:
         return null;
@@ -538,6 +577,7 @@ public class User extends ModelWithId<User, IDatabases> {
       + " bio: " + __bio
       + " some_binary: " + __some_binary
       + " some_float: " + __some_float
+      + " some_decimal: " + __some_decimal
       + " some_boolean: " + __some_boolean
       + ">";
   }
