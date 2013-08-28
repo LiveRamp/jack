@@ -36,7 +36,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 <% end %>
 <% end %>
 
-public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> {
+public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
@@ -380,5 +380,9 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
    <% model_defn.associations.each do |assoc| %>
         <%= assoc.field_name %> = null;
    <% end %>
+  }
+
+  public int compareTo(<%= model_defn.model_name %> that){
+    return Long.valueOf(this.getId()).compareTo(that.getId());
   }
 }

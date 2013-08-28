@@ -20,7 +20,7 @@ import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Post extends ModelWithId<Post, IDatabases> {
+public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
 
@@ -349,5 +349,9 @@ public class Post extends ModelWithId<Post, IDatabases> {
   public void unsetAssociations(){
         __assoc_user = null;
         __assoc_comments = null;
+  }
+
+  public int compareTo(Post that){
+    return Long.valueOf(this.getId()).compareTo(that.getId());
   }
 }

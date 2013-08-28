@@ -2,11 +2,13 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -589,5 +591,27 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     System.out.println(i1.getId() + i1.toString());
     System.out.println(i1InDb.getId() + i1InDb.toString());
     assertNull(i1InDb.getUserId());
+  }
+
+  public void testComparable() {
+    Post post1 = new Post(50, "Post1", 20L, 100, 0l, dbs);
+    Post post2 = new Post(70, "Post2", 20L, 100, 0l, dbs);
+    Post post3 = new Post(71, "Post2", 20L, 100, 0l, dbs);
+    Post post4 = new Post(100, "Post2", 20L, 100, 0l, dbs);
+
+    assertTrue(post1.compareTo(post2) < 0);
+
+    List<Post> posts = new ArrayList<Post>();
+    posts.add(post2);
+    posts.add(post1);
+    posts.add(post3);
+    posts.add(post4);
+
+    Collections.sort(posts);
+
+    assertEquals(post1, posts.get(0));
+    assertEquals(post2, posts.get(1));
+    assertEquals(post3, posts.get(2));
+    assertEquals(post4, posts.get(3));
   }
 }
