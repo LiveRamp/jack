@@ -217,4 +217,8 @@ public class Image extends ModelWithId<Image, IDatabases> {
       + " user_id: " + __user_id
       + ">";
   }
+
+  public void unsetAssociations(){
+        __assoc_user = null;
+  }
 }

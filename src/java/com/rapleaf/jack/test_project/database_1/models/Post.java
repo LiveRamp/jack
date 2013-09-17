@@ -345,4 +345,9 @@ public class Post extends ModelWithId<Post, IDatabases> {
       + " updated_at: " + __updated_at
       + ">";
   }
+
+  public void unsetAssociations(){
+        __assoc_user = null;
+        __assoc_comments = null;
+  }
 }
