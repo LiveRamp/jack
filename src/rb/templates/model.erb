@@ -375,4 +375,10 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       <% end %>
       + ">";
   }
+
+  public void unsetAssociations(){
+   <% model_defn.associations.each do |assoc| %>
+        <%= assoc.field_name %> = null;
+   <% end %>
+  }
 }

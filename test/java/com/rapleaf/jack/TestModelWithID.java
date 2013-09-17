@@ -1,14 +1,13 @@
 package com.rapleaf.jack;
 
-import java.io.IOException;
-
-import junit.framework.TestCase;
-
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
+import junit.framework.TestCase;
+
+import java.io.IOException;
 
 public class TestModelWithID extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
@@ -37,12 +36,14 @@ public class TestModelWithID extends TestCase {
     try {
       postModel.getField("fake_field");
       fail("Non-existent field should have thrown exception on get");
-    } catch (IllegalStateException e) {}
+    } catch (IllegalStateException e) {
+    }
 
     try {
       postModel.setField("fake_field", null);
       fail("Non-existent field should have thrown exception on set");
-    } catch (IllegalStateException e) {}
+    } catch (IllegalStateException e) {
+    }
 
     assertFalse(postModel.hasField("fake_field"));
     assertTrue(postModel.hasField("title"));
@@ -58,8 +59,8 @@ public class TestModelWithID extends TestCase {
     try {
       postModel.setField("title", 3);
       fail("Should have had class cast exception assigning int to string field");
-    } catch (ClassCastException e) {}
-
+    } catch (ClassCastException e) {
+    }
   }
 
   public void testBelongsToAssociations() throws IOException {
@@ -84,4 +85,17 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  public void testClearAssociations() throws IOException {
+
+    assertNull(imageModel.getUser());
+    imageModel.setUserId(0);
+    assertNotNull(imageModel.getUser());
+    assertEquals(imageModel.getUser(), userModel);
+    imageModel.unsetAssociations();
+    try {
+      imageModel.getUser();
+      fail("A NullPointerException should have been thrown when trying to access the cleared association");
+    } catch (NullPointerException e) {
+    }
+  }
 }

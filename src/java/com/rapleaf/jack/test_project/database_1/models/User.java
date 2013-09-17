@@ -581,4 +581,10 @@ public class User extends ModelWithId<User, IDatabases> {
       + " some_boolean: " + __some_boolean
       + ">";
   }
+
+  public void unsetAssociations(){
+        __assoc_posts = null;
+        __assoc_comments = null;
+        __assoc_image = null;
+  }
 }
