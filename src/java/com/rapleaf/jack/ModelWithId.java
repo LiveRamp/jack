@@ -116,6 +116,8 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
 
   public abstract Set<Enum> getFieldSet();
 
+  public abstract void unsetAssociations();
+
   protected static byte[] copyBinary(final byte[] orig) {
     if (orig == null) {
       return null;

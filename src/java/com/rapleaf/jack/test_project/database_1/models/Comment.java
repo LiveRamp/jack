@@ -405,4 +405,9 @@ public class Comment extends ModelWithId<Comment, IDatabases> {
       + " created_at: " + __created_at
       + ">";
   }
+
+  public void unsetAssociations(){
+        __assoc_user = null;
+        __assoc_post = null;
+  }
 }
