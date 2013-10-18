@@ -218,9 +218,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       + ">";
   }
 
-  public void unsetAssociations() {
-    unsetDatabaseReference();
-    __assoc_user = null;
+  public void unsetAssociations(){
+        __assoc_user = null;
   }
 
   public int compareTo(Image that){
