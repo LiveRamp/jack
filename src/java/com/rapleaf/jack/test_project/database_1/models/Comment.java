@@ -406,10 +406,9 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       + ">";
   }
 
-  public void unsetAssociations() {
-    unsetDatabaseReference();
-    __assoc_user = null;
-    __assoc_post = null;
+  public void unsetAssociations(){
+        __assoc_user = null;
+        __assoc_post = null;
   }
 
   public int compareTo(Comment that){

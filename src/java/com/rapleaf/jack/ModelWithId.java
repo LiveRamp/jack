@@ -23,7 +23,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   private final long id;
-  protected D databases;
+  protected final D databases;
   transient protected int cachedHashCode = 0;
   private boolean created = false;
 
@@ -134,9 +134,5 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
 
   public void setCreated(boolean created) {
     this.created = created;
-  }
-
-  protected void unsetDatabaseReference() {
-    this.databases = null;
   }
 }

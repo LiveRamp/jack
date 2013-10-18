@@ -582,11 +582,10 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       + ">";
   }
 
-  public void unsetAssociations() {
-    unsetDatabaseReference();
-    __assoc_posts = null;
-    __assoc_comments = null;
-    __assoc_image = null;
+  public void unsetAssociations(){
+        __assoc_posts = null;
+        __assoc_comments = null;
+        __assoc_image = null;
   }
 
   public int compareTo(User that){
