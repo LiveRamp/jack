@@ -376,9 +376,10 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       + ">";
   }
 
-  public void unsetAssociations(){
+  public void unsetAssociations() {
+    unsetDatabaseReference();
    <% model_defn.associations.each do |assoc| %>
-        <%= assoc.field_name %> = null;
+    <%= assoc.field_name %> = null;
    <% end %>
   }
 
