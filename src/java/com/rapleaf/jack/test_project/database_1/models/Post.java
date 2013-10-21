@@ -346,9 +346,10 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
       + ">";
   }
 
-  public void unsetAssociations(){
-        __assoc_user = null;
-        __assoc_comments = null;
+  public void unsetAssociations() {
+    unsetDatabaseReference();
+    __assoc_user = null;
+    __assoc_comments = null;
   }
 
   public int compareTo(Post that){
