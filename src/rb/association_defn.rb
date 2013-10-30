@@ -85,11 +85,11 @@ class AssociationDefn
       when "belongs_to"
         foreign_key_id = case @foreign_key_java_type
         when "Integer"
-          "__#{@foreign_key} == null ? null : __#{@foreign_key}.longValue()"
+          "get#{@foreign_key.camelcase}() == null ? null : get#{@foreign_key.camelcase}().longValue()"
         when "int"
-          "(long) __#{@foreign_key}"
+          "(long) get#{@foreign_key.camelcase}()"
         else
-          "__#{@foreign_key}"
+          "get#{@foreign_key.camelcase}()"
         end
         "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{foreign_key_id})"
       else
