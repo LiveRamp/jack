@@ -22,18 +22,16 @@ import java.util.Set;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
-  private final long id;
   protected D databases;
   transient protected int cachedHashCode = 0;
   private boolean created = false;
 
-  protected ModelWithId(long id, D databases) {
-    this.id = id;
+  protected ModelWithId(D databases) {
     this.databases = databases;
   }
 
   public long getId() {
-    return id;
+    return getAttributes().getId();
   }
 
   public static int safeLongToInt(long l) {
@@ -101,6 +99,8 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
     }
     return true;
   }
+
+  public abstract AttributesWithId getAttributes();
 
   public abstract T getCopy();
 

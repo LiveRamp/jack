@@ -14,6 +14,7 @@ import java.util.Set;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
@@ -24,8 +25,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   
   public static final long serialVersionUID = -3351451520429699622L;
 
-  // Fields
-  private Integer __user_id;
+  private final Attributes attributes;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
@@ -35,32 +35,44 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public Image(long id, final Integer user_id, IDatabases databases) {
-    super(id, databases);
-    this.__user_id = user_id;
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+    super(databases);
+    attributes = new Attributes(id, user_id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
   }
 
   public Image(long id, final Integer user_id) {
-    super(id, null);
-    this.__user_id = user_id;
+    super(null);
+    attributes = new Attributes(id, user_id);
   }
+  
   public Image(long id, IDatabases databases) {
-    super(id, databases);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+    super(databases);
+    attributes = new Attributes(id);
+    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
   }
 
   public Image(long id) {
-    super(id, null);
+    super(null);
+    attributes = new Attributes(id);
   }
 
   public static Image newDefaultInstance(long id) {
     return new Image(id);
   }
 
+  public Image(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
+
+  public Image(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
   public Image(long id, Map<Enum, Object> fieldsMap) {
-    super(id, null);
-    Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
-    this.__user_id = user_id;
+    super(null);
+    attributes = new Attributes(id, fieldsMap);
   }
 
   public Image (Image other) {
@@ -68,20 +80,24 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public Image (Image other, IDatabases databases) {
-    super(other.getId(), databases);
-    this.__user_id = other.getUserId();
+    super(databases);
+    attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), __user_id == null ? null : __user_id.longValue());
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
     }
+  }
+  
+  public Attributes getAttributes() {
+    return attributes;
   }
 
   public Integer getUserId(){
-    return __user_id;
+    return attributes.getUserId();
   }
 
   public Image setUserId(Integer newval){
-    this.__user_id = newval;
+    attributes.setUserId(newval);
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
     }
@@ -146,7 +162,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     throw new IllegalStateException("Invalid field: " + field);
   }
   
-   public boolean hasField(String fieldName) {
+  public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
     }
@@ -214,7 +230,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public String toString() {
     return "<Image"
-      + " user_id: " + __user_id
+      + " user_id: " + getUserId()
       + ">";
   }
 
@@ -226,4 +242,131 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public int compareTo(Image that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
+  
+  
+  public static class Attributes extends AttributesWithId {
+    
+    public static final long serialVersionUID = 5384617403533794948L;
+
+    // Fields
+    private Integer __user_id;
+
+    public Attributes(long id) {
+      super(id);
+    }
+
+    public Attributes(long id, final Integer user_id) {
+      super(id);
+      this.__user_id = user_id;
+    }
+
+    public static Attributes newDefaultInstance(long id) {
+      return new Attributes(id);
+    }
+
+    public Attributes(long id, Map<Enum, Object> fieldsMap) {
+      super(id);
+      Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
+      this.__user_id = user_id;
+    }
+
+    public Attributes(Attributes other) {
+      super(other.getId());
+      this.__user_id = other.getUserId();
+    }
+
+    public Integer getUserId(){
+      return __user_id;
+    }
+
+    public Attributes setUserId(Integer newval){
+      this.__user_id = newval;
+      cachedHashCode = 0;
+      return this;
+    }
+
+    public void setField(_Fields field, Object value) {
+      switch (field) {
+        case user_id:
+          setUserId((Integer) value);
+          break;
+        default:
+          throw new IllegalStateException("Invalid field: " + field);
+      }
+    }
+
+    public void setField(String fieldName, Object value) {
+      if (fieldName.equals("user_id")) {
+        setUserId((Integer)  value);
+        return;
+      }
+      throw new IllegalStateException("Invalid field: " + fieldName);
+    }
+
+    public static Class getFieldType(_Fields field) {
+      switch (field) {
+        case user_id:
+          return Integer.class;
+        default:
+          throw new IllegalStateException("Invalid field: " + field);
+      }    
+    }
+
+    public static Class getFieldType(String fieldName) {    
+      if (fieldName.equals("user_id")) {
+        return Integer.class;
+      }
+      throw new IllegalStateException("Invalid field name: " + fieldName);
+    }
+
+    @Override
+    public Object getField(String fieldName) {
+      if (fieldName.equals("id")) {
+        return getId();
+      }
+      if (fieldName.equals("user_id")) {
+        return getUserId();
+      }
+      throw new IllegalStateException("Invalid field name: " + fieldName);
+    }
+
+    public Object getField(_Fields field) {
+      switch (field) {
+        case user_id:
+          return getUserId();
+      }
+      throw new IllegalStateException("Invalid field: " + field);
+    }
+
+    public boolean hasField(String fieldName) {
+      if (fieldName.equals("id")) {
+        return true;
+      }
+      if (fieldName.equals("user_id")) {
+        return true;
+      }
+      return false;
+    }
+
+    public static Object getDefaultValue(_Fields field) {
+      switch (field) {
+        case user_id:
+          return null;
+      }
+      throw new IllegalStateException("Invalid field: " + field);
+    }
+    
+    @Override
+    public Set<Enum> getFieldSet() {
+      Set set = EnumSet.allOf(_Fields.class);
+      return set;
+    }
+    
+    public String toString() {
+      return "<Image.Attributes"
+        + " user_id: " + getUserId()
+        + ">";
+    }
+  }
+
 }

@@ -588,8 +588,6 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     u1.createImage();
     IImagePersistence images = dbs.getDatabase1().images();
     Image i1InDb = images.find(i1.getId());
-    System.out.println(i1.getId() + i1.toString());
-    System.out.println(i1InDb.getId() + i1InDb.toString());
     assertNull(i1InDb.getUserId());
   }
 
