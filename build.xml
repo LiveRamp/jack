@@ -238,7 +238,9 @@
       <fileset dir="${src}">
         <include name="**/*.erb" />
       </fileset>
-      <file name="Gemfile"/>
+      <fileset dir=".">
+        <include name="Gemfile" />
+      </fileset>
     </jar>
   </target>
  

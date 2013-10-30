@@ -75,6 +75,16 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     return new User(id, "", 0);
   }
 
+  public User(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
+
+  public User(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
   public User(long id, Map<Enum, Object> fieldsMap) {
     super(null);
     attributes = new Attributes(id, fieldsMap);

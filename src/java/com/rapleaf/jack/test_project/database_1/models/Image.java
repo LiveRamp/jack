@@ -60,6 +60,16 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return new Image(id);
   }
 
+  public Image(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
+
+  public Image(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
   public Image(long id, Map<Enum, Object> fieldsMap) {
     super(null);
     attributes = new Attributes(id, fieldsMap);

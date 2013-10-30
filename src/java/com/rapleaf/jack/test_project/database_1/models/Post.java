@@ -66,6 +66,16 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     return new Post(id);
   }
 
+  public Post(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
+
+  public Post(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
   public Post(long id, Map<Enum, Object> fieldsMap) {
     super(null);
     attributes = new Attributes(id, fieldsMap);

@@ -90,6 +90,16 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     return new Comment(id, 0, 0L, 0L);
   }
 
+  public Comment(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
+
+  public Comment(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
   public Comment(long id, Map<Enum, Object> fieldsMap) {
     super(null);
     attributes = new Attributes(id, fieldsMap);
