@@ -24,6 +24,7 @@ import java.util.Set;
 import <%= root_package %>.I<%= db_name %>;
 
 import <%= JACK_NAMESPACE %>.ModelWithId;
+import <%= JACK_NAMESPACE %>.AttributesWithId;
 import <%= JACK_NAMESPACE %>.BelongsToAssociation;
 import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
@@ -40,10 +41,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
-  // Fields
-  <% model_defn.fields.each do |field_defn| %>
-  private <%= field_defn.java_type %> __<%= field_defn.name %>;
-  <% end %>
+  private final Attributes attributes;
 
   // Associations
   <% model_defn.associations.each do |assoc| %>
@@ -57,10 +55,8 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
-    super(id, databases);
-  <% model_defn.fields.each do |field_defn| %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-  <% end %>
+    super(databases);
+    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"} %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -68,19 +64,15 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
-    super(id, null);
-  <% model_defn.fields.each do |field_defn| %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-  <% end %>
+    super(null);
+    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"} %>);
   }
 
- <% if model_defn.should_make_created_at_methods %>
+<% if model_defn.should_make_created_at_methods %>
+  
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
-    super(id, databases);
-  <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-  <% end %>
-    this.__created_at = System.currentTimeMillis();
+    super(databases);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -88,23 +80,16 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>) {
-    super(id, null);
-  <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-  <% end %>
-    this.__created_at = System.currentTimeMillis();
+    super(null);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
   }
-
 <% end %>
 
-  <% if !create_signature_small.nil? %>
+<% if !create_signature_small.nil? %>
+  
   public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>, IDatabases databases) {
-    super(id, databases);
-  <% model_defn.fields.each do |field_defn| %>
-    <% if !field_defn.nullable? %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-    <% end %>
-  <% end %>
+    super(databases);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"} %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -112,23 +97,15 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>) {
-    super(id, null);
-  <% model_defn.fields.each do |field_defn| %>
-    <% if !field_defn.nullable? %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-    <% end %>
-  <% end %>
+    super(null);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"} %>);
   }
 
-  <% if model_defn.should_make_created_at_methods %>
+ <% if model_defn.should_make_created_at_methods %>
+   
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>, IDatabases databases) {
-    super(id, databases);
-    <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
-     <% if !field_defn.nullable? %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-      <% end %>
-    <% end %>
-    this.__created_at = System.currentTimeMillis();
+    super(databases);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
 
     <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -136,16 +113,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>) {
-    super(id, null);
-    <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
-      <% if !field_defn.nullable? %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-    <% end %>
-    <% end %>
-    this.__created_at = System.currentTimeMillis();
+    super(null);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
   }
-  <% end %>
-  <% end %>
+ <% end %>
+<% end %>
 
   public static <%= model_defn.model_name %> newDefaultInstance(long id) {
     <% if create_argument_defaults.empty? %>
@@ -155,20 +127,19 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     <% end %>
   }
 
-  public <%= model_defn.model_name %>(long id, Map<Enum, Object> fieldsMap) {
-    super(id, null);
-    <% model_defn.fields.each do |field_defn| %>
-    <% if field_defn.default_value.nil? %>
-    <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
-    <% else %>
-    <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
-    <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
-    <% end %>
-    <% end %>
+  public <%= model_defn.model_name %>(Attributes attributes, IDatabases databases) {
+    super(databases);
+    this.attributes = attributes;
+  }
 
-    <% model_defn.fields.each do |field_defn| %>
-    this.__<%= field_defn.name %> = <%= field_defn.name %>;
-    <% end %>
+  public <%= model_defn.model_name %>(Attributes attributes) {
+    super(null);
+    this.attributes = attributes;
+  }
+
+  public <%= model_defn.model_name %>(long id, Map<Enum, Object> fieldsMap) {
+    super(null);
+    attributes = new Attributes(id, fieldsMap);
   }
 
   public <%= model_defn.model_name %> (<%= model_defn.model_name %> other) {
@@ -176,12 +147,8 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public <%= model_defn.model_name %> (<%= model_defn.model_name %> other, IDatabases databases) {
-    super(other.getId(), databases);
-  <% model_defn.fields.each do |field_defn| %>
-    <% copy =  "other.#{field_defn.getter}" %>
-    <% copy = field_defn.java_type == 'byte[]' ? "copyBinary(#{copy})" : copy %>
-    this.__<%= field_defn.name %> = <%= copy %>;
-  <% end %>
+    super(databases);
+    attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
   <% model_defn.associations.each do |assoc| %>
@@ -189,15 +156,19 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
     }
   }
+  
+  public Attributes getAttributes() {
+    return attributes;
+  }
 
 <% model_defn.fields.each do |field_defn| %>
 
   public <%= field_defn.java_type %> <%= field_defn.getter %>{
-    return __<%= field_defn.name %>;
+    return attributes.<%= field_defn.getter %>;
   }
 
   public <%= model_defn.model_name %> set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
-    this.__<%= field_defn.name %> = newval;
+    attributes.set<%= field_defn.name.camelcase %>(newval);
     <% if field_defn.association != nil and field_defn.association.type == "belongs_to" %>
     if(<%= field_defn.association.field_name %> != null){
       this.<%= field_defn.association.field_name %>.setOwnerId(newval);
@@ -280,7 +251,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     throw new IllegalStateException("Invalid field: " + field);
   }
   
-   public boolean hasField(String fieldName) {
+  public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
     }
@@ -371,7 +342,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public String toString() {
     return "<<%= model_defn.model_name %>"
       <% model_defn.fields.each do |field_defn| %>
-      + " <%= field_defn.name %>: " + __<%= field_defn.name %>
+      + " <%= field_defn.name %>: " + <%= field_defn.getter %>
       <% end %>
       + ">";
   }
@@ -386,4 +357,210 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public int compareTo(<%= model_defn.model_name %> that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
+  
+  
+  public static class Attributes extends AttributesWithId {
+    
+    public static final long serialVersionUID = <%= model_defn.attributes_serial_version_uid %>L;
+
+    // Fields
+    <% model_defn.fields.each do |field_defn| %>
+    private <%= field_defn.java_type %> __<%= field_defn.name %>;
+    <% end %>
+
+    public Attributes(long id) {
+      super(id);
+    }
+
+    public Attributes(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
+      super(id);
+    <% model_defn.fields.each do |field_defn| %>
+      this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
+    }
+    
+  <% if model_defn.should_make_created_at_methods %>
+    
+    public Attributes(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>) {
+      super(id);
+    <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+      this.__<%= field_defn.name %> = <%= field_defn.name %>;
+    <% end %>
+      this.__created_at = System.currentTimeMillis();
+    }
+  <% end %>
+
+  <% if !create_signature_small.nil? && !create_signature_small.empty? %>
+    
+    public Attributes(long id, <%= create_signature_small %>) {
+      super(id);
+    <% model_defn.fields.each do |field_defn| %>
+      <% if !field_defn.nullable? %>
+      this.__<%= field_defn.name %> = <%= field_defn.name %>;
+      <% end %>
+    <% end %>
+    }
+    
+    <% if model_defn.should_make_created_at_methods %>
+    
+    public Attributes(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>) {
+      super(id);
+      <% model_defn.fields.reject{|f| f.name == "created_at"}.each do |field_defn| %>
+        <% if !field_defn.nullable? %>
+      this.__<%= field_defn.name %> = <%= field_defn.name %>;
+      <% end %>
+      <% end %>
+      this.__created_at = System.currentTimeMillis();
+    }
+    <% end %>
+  <% end %>
+
+    public static Attributes newDefaultInstance(long id) {
+      <% if create_argument_defaults.empty? %>
+      return new Attributes(id);
+      <% else %>
+      return new Attributes(id, <%= create_argument_defaults %>);
+      <% end %>
+    }
+
+    public Attributes(long id, Map<Enum, Object> fieldsMap) {
+      super(id);
+      <% model_defn.fields.each do |field_defn| %>
+      <% if field_defn.default_value.nil? %>
+      <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+      <% else %>
+      <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+      <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
+      <% end %>
+      <% end %>
+
+      <% model_defn.fields.each do |field_defn| %>
+      this.__<%= field_defn.name %> = <%= field_defn.name %>;
+      <% end %>
+    }
+
+    public Attributes(Attributes other) {
+      super(other.getId());
+    <% model_defn.fields.each do |field_defn| %>
+      <% copy =  "other.#{field_defn.getter}" %>
+      <% copy = field_defn.java_type == 'byte[]' ? "copyBinary(#{copy})" : copy %>
+      this.__<%= field_defn.name %> = <%= copy %>;
+    <% end %>
+    }
+
+  <% model_defn.fields.each do |field_defn| %>
+
+    public <%= field_defn.java_type %> <%= field_defn.getter %>{
+      return __<%= field_defn.name %>;
+    }
+
+    public Attributes set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
+      this.__<%= field_defn.name %> = newval;
+      cachedHashCode = 0;
+      return this;
+    }
+  <% end %>
+
+    public void setField(_Fields field, Object value) {
+      switch (field) {
+    <% model_defn.fields.each do |field_defn| %>
+        case <%= field_defn.name %>:
+          set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>) value);
+          break;
+    <% end %>
+        default:
+          throw new IllegalStateException("Invalid field: " + field);
+      }
+    }
+
+    public void setField(String fieldName, Object value) {
+    <% model_defn.fields.each do |field_defn| %>
+      if (fieldName.equals("<%= field_defn.name %>")) {
+        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)  value);
+        return;
+      }
+    <% end %>
+      throw new IllegalStateException("Invalid field: " + fieldName);
+    }
+
+    public static Class getFieldType(_Fields field) {
+      switch (field) {
+    <% model_defn.fields.each do |field_defn| %>
+        case <%= field_defn.name %>:
+          return <%= field_defn.java_type %>.class;
+    <% end %>
+        default:
+          throw new IllegalStateException("Invalid field: " + field);
+      }    
+    }
+
+    public static Class getFieldType(String fieldName) {    
+    <% model_defn.fields.each do |field_defn| %>
+      if (fieldName.equals("<%= field_defn.name %>")) {
+        return <%= field_defn.java_type %>.class;
+      }
+    <% end %>
+      throw new IllegalStateException("Invalid field name: " + fieldName);
+    }
+
+    @Override
+    public Object getField(String fieldName) {
+      if (fieldName.equals("id")) {
+        return getId();
+      }
+    <% model_defn.fields.each do |field_defn| %>
+      if (fieldName.equals("<%= field_defn.name %>")) {
+        return <%= field_defn.getter %>;
+      }
+    <% end %>
+      throw new IllegalStateException("Invalid field name: " + fieldName);
+    }
+
+    public Object getField(_Fields field) {
+      switch (field) {
+    <% model_defn.fields.each do |field_defn| %>
+        case <%= field_defn.name %>:
+          return <%= field_defn.getter %>;
+    <% end %>
+      }
+      throw new IllegalStateException("Invalid field: " + field);
+    }
+
+    public boolean hasField(String fieldName) {
+      if (fieldName.equals("id")) {
+        return true;
+      }
+    <% model_defn.fields.each do |field_defn| %>
+      if (fieldName.equals("<%= field_defn.name %>")) {
+        return true;
+      }
+    <% end %>
+      return false;
+    }
+
+    public static Object getDefaultValue(_Fields field) {
+      switch (field) {
+    <% model_defn.fields.each do |field_defn| %>
+        case <%= field_defn.name %>:
+          return <%= field_defn.default_value.nil? ? "null" : field_defn.default_value %>;
+    <% end %>
+      }
+      throw new IllegalStateException("Invalid field: " + field);
+    }
+    
+    @Override
+    public Set<Enum> getFieldSet() {
+      Set set = EnumSet.allOf(_Fields.class);
+      return set;
+    }
+    
+    public String toString() {
+      return "<<%= model_defn.model_name %>.Attributes"
+        <% model_defn.fields.each do |field_defn| %>
+        + " <%= field_defn.name %>: " + <%= field_defn.getter %>
+        <% end %>
+        + ">";
+    }
+  }
+
 }
