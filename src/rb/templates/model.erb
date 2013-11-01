@@ -56,7 +56,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"}.join %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -65,14 +65,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
     super(null);
-    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"}.join %>);
   }
 
 <% if model_defn.should_make_created_at_methods %>
   
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -81,7 +81,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>) {
     super(null);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
   }
 <% end %>
 
@@ -89,7 +89,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"}.join %>);
 
   <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -98,14 +98,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>) {
     super(null);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"}.join %>);
   }
 
  <% if model_defn.should_make_created_at_methods %>
    
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
 
     <% model_defn.associations.each do |assoc| %>
     this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
@@ -114,7 +114,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_small("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_small("created_at") %>) {
     super(null);
-    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"} %>);
+    attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable? && fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
   }
  <% end %>
 <% end %>
