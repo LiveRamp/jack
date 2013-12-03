@@ -244,7 +244,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
   
   
-  public static class Attributes extends AttributesWithId<Attributes> {
+  public static class Attributes extends AttributesWithId {
     
     public static final long serialVersionUID = 5384617403533794948L;
 
@@ -366,10 +366,6 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       return "<Image.Attributes"
         + " user_id: " + getUserId()
         + ">";
-    }
-
-    public Attributes deepCopy() {
-      return new Attributes(this);
     }
   }
 

@@ -400,7 +400,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
   
   
-  public static class Attributes extends AttributesWithId<Attributes> {
+  public static class Attributes extends AttributesWithId {
     
     public static final long serialVersionUID = -2156535913590481279L;
 
@@ -659,10 +659,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         + " commented_on_id: " + getCommentedOnId()
         + " created_at: " + getCreatedAt()
         + ">";
-    }
-
-    public Attributes deepCopy() {
-      return new Attributes(this);
     }
   }
 

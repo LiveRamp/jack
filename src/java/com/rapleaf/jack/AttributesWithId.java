@@ -6,7 +6,13 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Set;
 
-public abstract class AttributesWithId<T extends AttributesWithId<?>> implements Serializable {
+/**
+ * Created with IntelliJ IDEA.
+ * User: sean
+ * Date: 12/31/12
+ * Time: 10:51 AM
+ */
+public abstract class AttributesWithId implements Serializable {
 
   private final long id;
   transient protected int cachedHashCode = 0;
@@ -85,7 +91,5 @@ public abstract class AttributesWithId<T extends AttributesWithId<?>> implements
   public abstract void setField(String fieldName, Object value);
 
   public abstract Set<Enum> getFieldSet();
-
-  public abstract T deepCopy(); 
 
 }

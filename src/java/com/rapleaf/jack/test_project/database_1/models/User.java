@@ -552,7 +552,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   }
   
   
-  public static class Attributes extends AttributesWithId<Attributes> {
+  public static class Attributes extends AttributesWithId {
     
     public static final long serialVersionUID = 7482296567648746981L;
 
@@ -1022,10 +1022,6 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         + " some_decimal: " + getSomeDecimal()
         + " some_boolean: " + isSomeBoolean()
         + ">";
-    }
-
-    public Attributes deepCopy() {
-      return new Attributes(this);
     }
   }
 

@@ -355,7 +355,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   }
   
   
-  public static class Attributes extends AttributesWithId<Attributes> {
+  public static class Attributes extends AttributesWithId {
     
     public static final long serialVersionUID = -452436965662476312L;
 
@@ -591,10 +591,6 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
         + " user_id: " + getUserId()
         + " updated_at: " + getUpdatedAt()
         + ">";
-    }
-
-    public Attributes deepCopy() {
-      return new Attributes(this);
     }
   }
 
