@@ -18,20 +18,32 @@ import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
+public class Image extends ModelWithId<Image, Image.Id, IDatabases> implements Comparable<Image>{
   
   public static final long serialVersionUID = -3351451520429699622L;
 
   private final Attributes attributes;
+
+  private transient Image.Id cachedTypedId;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
     user_id,
+  }
+
+  @Override
+  public Image.Id getTypedId() {
+    if (cachedTypedId == null) {
+      cachedTypedId = new Image.Id(this.getId());
+    }
+    return cachedTypedId;
   }
 
   public Image(long id, final Integer user_id, IDatabases databases) {
@@ -368,5 +380,37 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
         + ">";
     }
   }
+
+  public static class Id implements ModelIdWrapper<Image.Id> {
+    private final long id;
+
+    public Id(Long id) {
+      this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+      return Long.valueOf(this.id);
+    }
+
+    @Override
+    public int compareTo(Id other) {
+      return this.getId().compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (other instanceof Id) {
+        return this.getId().equals(((Id) other).getId());
+      }
+      return false;
+    }
+
+    @Override
+    public int hashCode() {
+      return this.getId().hashCode();
+    }
+  }
+
 
 }

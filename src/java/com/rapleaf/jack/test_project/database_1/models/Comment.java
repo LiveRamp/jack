@@ -18,14 +18,18 @@ import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
+public class Comment extends ModelWithId<Comment, Comment.Id, IDatabases> implements Comparable<Comment>{
   
   public static final long serialVersionUID = 6213989608937906012L;
 
   private final Attributes attributes;
+
+  private transient Comment.Id cachedTypedId;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
@@ -36,6 +40,14 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     commenter_id,
     commented_on_id,
     created_at,
+  }
+
+  @Override
+  public Comment.Id getTypedId() {
+    if (cachedTypedId == null) {
+      cachedTypedId = new Comment.Id(this.getId());
+    }
+    return cachedTypedId;
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
@@ -661,5 +673,37 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         + ">";
     }
   }
+
+  public static class Id implements ModelIdWrapper<Comment.Id> {
+    private final long id;
+
+    public Id(Long id) {
+      this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+      return Long.valueOf(this.id);
+    }
+
+    @Override
+    public int compareTo(Id other) {
+      return this.getId().compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (other instanceof Id) {
+        return this.getId().equals(((Id) other).getId());
+      }
+      return false;
+    }
+
+    @Override
+    public int hashCode() {
+      return this.getId().hashCode();
+    }
+  }
+
 
 }

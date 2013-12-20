@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
+public abstract class ModelWithId<T extends ModelWithId, W extends ModelIdWrapper, D extends GenericDatabases> implements Serializable {
   protected D databases;
   transient protected int cachedHashCode = 0;
   private boolean created = false;
@@ -33,6 +33,8 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
   public long getId() {
     return getAttributes().getId();
   }
+
+  public abstract W getTypedId();
 
   public static int safeLongToInt(long l) {
     if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
@@ -70,7 +72,7 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
     ModelWithId other = (ModelWithId) obj;
     return equals(other);
   }
-  
+
   public boolean equals(ModelWithId obj) {
     if(obj == null) return false;
     if(!this.getClass().getName().equals(obj.getClass().getName())) {
@@ -79,7 +81,7 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
     if(getId() != obj.getId()) {
       return false;
     }
-    
+
     for (Enum field : getFieldSet()) {
       Object value1 = getField(field.name());
       Object value2 = obj.getField(field.name());
@@ -109,9 +111,9 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
   public abstract boolean save() throws IOException;
 
   public abstract Object getField(String fieldName);
-  
+
   public abstract boolean hasField(String fieldName);
-  
+
   public abstract void setField(String fieldName, Object value);
 
   public abstract Set<Enum> getFieldSet();

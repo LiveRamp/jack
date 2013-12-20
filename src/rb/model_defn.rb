@@ -79,6 +79,10 @@ class ModelDefn
   def mock_impl_name
     "BaseMock#{model_name}PersistenceImpl"
   end
+
+  def id_wrapper_name
+      "#{model_name}.Id"
+    end
   
   def persistence_getter
     x = table_name.camelcase

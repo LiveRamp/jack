@@ -12,12 +12,12 @@ import javax.script.ScriptException;
 
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
-public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
+public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, W, D>, W extends ModelIdWrapper, D extends GenericDatabases>
     implements IModelPersistence<T> {
 
   private final D databases;
   protected final Map<Long, T> records = new HashMap<Long, T>();
-  
+
   private static class JavaScriptRecordSelector<T extends ModelWithId>
       implements RecordSelector<T> {
 
