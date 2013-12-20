@@ -27,7 +27,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Image, Image.Id, IDatabases> implements IImagePersistence {
+public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Image, IDatabases> implements IImagePersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

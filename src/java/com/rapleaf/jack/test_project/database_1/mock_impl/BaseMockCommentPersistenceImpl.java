@@ -27,7 +27,7 @@ import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, Comment.Id, IDatabases> implements ICommentPersistence {
+public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, IDatabases> implements ICommentPersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

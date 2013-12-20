@@ -23,7 +23,7 @@ import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Post extends ModelWithId<Post, Post.Id, IDatabases> implements Comparable<Post>{
+public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
 

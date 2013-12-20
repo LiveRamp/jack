@@ -40,7 +40,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 <% end %>
 <% end %>
 
-public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, <%=model_defn.id_wrapper_name%>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
+public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 

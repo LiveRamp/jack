@@ -98,4 +98,9 @@ public class TestModelWithID extends TestCase {
     } catch (NullPointerException e) {
     }
   }
+
+  public void testCovarianceofTypedIdMethod() {
+    Image.Id typedId = imageModel.getTypedId();
+    ModelIdWrapper modelIdWrapper = ((ModelWithId) imageModel).getTypedId();
+  }
 }
