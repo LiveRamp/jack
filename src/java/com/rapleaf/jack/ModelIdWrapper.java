@@ -1,6 +1,8 @@
 package com.rapleaf.jack;
 
-public interface ModelIdWrapper {
+import java.io.Serializable;
+
+public interface ModelIdWrapper extends Serializable{
 
   public Long getId();
 }
