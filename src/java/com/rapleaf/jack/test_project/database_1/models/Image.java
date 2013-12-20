@@ -20,8 +20,9 @@ import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
+public class Image extends ModelWithId<Image, ImageId, IDatabases> implements Comparable<Image>{
   
   public static final long serialVersionUID = -3351451520429699622L;
 
@@ -32,6 +33,11 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public enum _Fields {
     user_id,
+  }
+
+  @Override
+  public ImageId getTypedId(){
+    return new ImageId(this.getId());
   }
 
   public Image(long id, final Integer user_id, IDatabases databases) {

@@ -20,8 +20,9 @@ import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
+public class Comment extends ModelWithId<Comment, CommentId, IDatabases> implements Comparable<Comment>{
   
   public static final long serialVersionUID = 6213989608937906012L;
 
@@ -36,6 +37,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     commenter_id,
     commented_on_id,
     created_at,
+  }
+
+  @Override
+  public CommentId getTypedId(){
+    return new CommentId(this.getId());
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {

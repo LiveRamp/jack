@@ -30,6 +30,8 @@ import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
+import <%= project_defn.databases_namespace %>.IDatabases;
+
 
 <% model_defn.associations.each do |a| %>
 <% if a.assoc_model.database_defn != model_defn.database_defn %>
@@ -37,7 +39,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 <% end %>
 <% end %>
 
-public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
+public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, <%=model_defn.id_wrapper_name%>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
@@ -52,6 +54,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% model_defn.fields.each do |field_defn| %>
     <%= field_defn.name %>,
   <% end %>
+  }
+
+  @Override
+  public <%=model_defn.id_wrapper_name%> getTypedId(){
+    return new <%=model_defn.model_name%>Id(this.getId());
   }
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {

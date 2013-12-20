@@ -20,8 +20,9 @@ import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
+public class Post extends ModelWithId<Post, PostId, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
 
@@ -36,6 +37,11 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     posted_at_millis,
     user_id,
     updated_at,
+  }
+
+  @Override
+  public PostId getTypedId(){
+    return new PostId(this.getId());
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {

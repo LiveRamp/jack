@@ -44,6 +44,7 @@ EOF
   PERSISTENCE_INTERFACE_TEMPLATE = load_template("templates/persistence_interface.erb")
   MOCK_PERSISTENCE_IMPL_TEMPLATE = load_template("templates/mock_persistence_impl.erb")
   MODEL_TEMPLATE = load_template("templates/model.erb")
+  MODEL_ID_WRAPPER_TEMPLATE = load_template("templates/model_id_wrapper.erb")
   PERSISTENCE_IMPL_TEMPLATE = load_template("templates/persistence_impl.erb")
 
   DATABASES_IFACE_TEMPLATE = load_template("templates/databases_iface.erb")
@@ -101,6 +102,10 @@ EOF
 
       file = File.new("#{output_dir}/models/#{model_defn.model_name}.java", "w")
       file.puts(MODEL_TEMPLATE.result(binding))
+      file.close
+
+      file = File.new("#{output_dir}/models/#{model_defn.id_wrapper_name}.java", "w")
+      file.puts(MODEL_ID_WRAPPER_TEMPLATE.result(binding))
       file.close
 
       file = File.new("#{output_dir}/iface/#{model_defn.iface_name}.java", "w")

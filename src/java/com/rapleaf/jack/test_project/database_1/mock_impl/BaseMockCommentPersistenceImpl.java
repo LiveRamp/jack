@@ -22,11 +22,12 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
+import com.rapleaf.jack.test_project.database_1.models.CommentId;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, IDatabases> implements ICommentPersistence {
+public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, CommentId, IDatabases> implements ICommentPersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

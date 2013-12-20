@@ -20,8 +20,9 @@ import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.IDatabases;
 
-public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
+public class User extends ModelWithId<User, UserId, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
 
@@ -43,6 +44,11 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     some_float,
     some_decimal,
     some_boolean,
+  }
+
+  @Override
+  public UserId getTypedId(){
+    return new UserId(this.getId());
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
