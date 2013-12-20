@@ -15,14 +15,17 @@ public class CommentId implements ModelIdWrapper<CommentId>{
     this.id = id;
   }
 
+  @Override
   public Long getId(){
     return Long.valueOf(this.id);
   }
 
+  @Override
   public int compareTo(CommentId other){
     return this.getId().compareTo(other.getId());
   }
 
+  @Override
   public boolean equals(Object other){
     if(other instanceof CommentId){
       return this.getId().equals(((CommentId) other).getId());
@@ -30,6 +33,7 @@ public class CommentId implements ModelIdWrapper<CommentId>{
     return false;
   }
 
+  @Override
   public int hashCode(){
     return this.getId().hashCode();
   }

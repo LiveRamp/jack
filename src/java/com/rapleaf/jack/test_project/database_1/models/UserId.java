@@ -15,14 +15,17 @@ public class UserId implements ModelIdWrapper<UserId>{
     this.id = id;
   }
 
+  @Override
   public Long getId(){
     return Long.valueOf(this.id);
   }
 
+  @Override
   public int compareTo(UserId other){
     return this.getId().compareTo(other.getId());
   }
 
+  @Override
   public boolean equals(Object other){
     if(other instanceof UserId){
       return this.getId().equals(((UserId) other).getId());
@@ -30,6 +33,7 @@ public class UserId implements ModelIdWrapper<UserId>{
     return false;
   }
 
+  @Override
   public int hashCode(){
     return this.getId().hashCode();
   }

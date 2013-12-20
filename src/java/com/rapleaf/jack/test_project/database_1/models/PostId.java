@@ -15,14 +15,17 @@ public class PostId implements ModelIdWrapper<PostId>{
     this.id = id;
   }
 
+  @Override
   public Long getId(){
     return Long.valueOf(this.id);
   }
 
+  @Override
   public int compareTo(PostId other){
     return this.getId().compareTo(other.getId());
   }
 
+  @Override
   public boolean equals(Object other){
     if(other instanceof PostId){
       return this.getId().equals(((PostId) other).getId());
@@ -30,6 +33,7 @@ public class PostId implements ModelIdWrapper<PostId>{
     return false;
   }
 
+  @Override
   public int hashCode(){
     return this.getId().hashCode();
   }

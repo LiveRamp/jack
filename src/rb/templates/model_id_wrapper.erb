@@ -25,14 +25,17 @@ public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper<<%=model_
     this.id = id;
   }
 
+  @Override
   public Long getId(){
     return Long.valueOf(this.id);
   }
 
+  @Override
   public int compareTo(<%=model_defn.id_wrapper_name%> other){
     return this.getId().compareTo(other.getId());
   }
 
+  @Override
   public boolean equals(Object other){
     if(other instanceof <%=model_defn.id_wrapper_name%>){
       return this.getId().equals(((<%=model_defn.id_wrapper_name%>) other).getId());
@@ -40,6 +43,7 @@ public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper<<%=model_
     return false;
   }
 
+  @Override
   public int hashCode(){
     return this.getId().hashCode();
   }
