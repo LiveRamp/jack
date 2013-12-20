@@ -28,6 +28,7 @@ import <%= JACK_NAMESPACE %>.AttributesWithId;
 import <%= JACK_NAMESPACE %>.BelongsToAssociation;
 import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
+import <%= JACK_NAMESPACE %>.ModelIdWrapper;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 import <%= project_defn.databases_namespace %>.IDatabases;
@@ -45,6 +46,8 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   private final Attributes attributes;
 
+  private transient <%=model_defn.id_wrapper_name%> cachedTypedId;
+
   // Associations
   <% model_defn.associations.each do |assoc| %>
   private <%= assoc.java_type %> <%= assoc.field_name %>;
@@ -58,7 +61,10 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   @Override
   public <%=model_defn.id_wrapper_name%> getTypedId(){
-    return new <%=model_defn.model_name%>Id(this.getId());
+    if(cachedTypedId == null){
+        cachedTypedId = new <%=model_defn.id_wrapper_name%>(this.getId());
+    }
+    return cachedTypedId;
   }
 
   public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
@@ -569,5 +575,37 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
         + ">";
     }
   }
+
+  public static class Id implements ModelIdWrapper<<%=model_defn.id_wrapper_name%>>{
+    private final long id;
+
+    public Id(Long id){
+      this.id = id;
+    }
+
+    @Override
+    public Long getId(){
+      return Long.valueOf(this.id);
+    }
+
+    @Override
+    public int compareTo(Id other){
+      return this.getId().compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object other){
+      if(other instanceof Id){
+        return this.getId().equals(((Id) other).getId());
+      }
+      return false;
+    }
+
+    @Override
+    public int hashCode(){
+      return this.getId().hashCode();
+    }
+  }
+
 
 }

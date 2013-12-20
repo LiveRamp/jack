@@ -22,12 +22,12 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
-import com.rapleaf.jack.test_project.database_1.models.ImageId;
+import com.rapleaf.jack.test_project.database_1.models.Image.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Image, ImageId, IDatabases> implements IImagePersistence {
+public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Image, Image.Id, IDatabases> implements IImagePersistence {
   private final IDatabases databases;
 
   private static AtomicInteger curId = new AtomicInteger(1);

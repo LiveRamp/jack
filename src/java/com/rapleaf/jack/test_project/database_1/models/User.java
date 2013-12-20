@@ -18,15 +18,18 @@ import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class User extends ModelWithId<User, UserId, IDatabases> implements Comparable<User>{
+public class User extends ModelWithId<User, User.Id, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
 
   private final Attributes attributes;
+
+  private transient User.Id cachedTypedId;
 
   // Associations
   private HasManyAssociation<Post> __assoc_posts;
@@ -47,8 +50,11 @@ public class User extends ModelWithId<User, UserId, IDatabases> implements Compa
   }
 
   @Override
-  public UserId getTypedId(){
-    return new UserId(this.getId());
+  public User.Id getTypedId(){
+    if(cachedTypedId == null){
+        cachedTypedId = new User.Id(this.getId());
+    }
+    return cachedTypedId;
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
@@ -1030,5 +1036,37 @@ public class User extends ModelWithId<User, UserId, IDatabases> implements Compa
         + ">";
     }
   }
+
+  public static class Id implements ModelIdWrapper<User.Id>{
+    private final long id;
+
+    public Id(Long id){
+      this.id = id;
+    }
+
+    @Override
+    public Long getId(){
+      return Long.valueOf(this.id);
+    }
+
+    @Override
+    public int compareTo(Id other){
+      return this.getId().compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object other){
+      if(other instanceof Id){
+        return this.getId().equals(((Id) other).getId());
+      }
+      return false;
+    }
+
+    @Override
+    public int hashCode(){
+      return this.getId().hashCode();
+    }
+  }
+
 
 }

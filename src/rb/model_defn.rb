@@ -81,7 +81,7 @@ class ModelDefn
   end
 
   def id_wrapper_name
-      "#{model_name}Id"
+      "#{model_name}.Id"
     end
   
   def persistence_getter

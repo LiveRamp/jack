@@ -18,15 +18,18 @@ import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Post extends ModelWithId<Post, PostId, IDatabases> implements Comparable<Post>{
+public class Post extends ModelWithId<Post, Post.Id, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
 
   private final Attributes attributes;
+
+  private transient Post.Id cachedTypedId;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
@@ -40,8 +43,11 @@ public class Post extends ModelWithId<Post, PostId, IDatabases> implements Compa
   }
 
   @Override
-  public PostId getTypedId(){
-    return new PostId(this.getId());
+  public Post.Id getTypedId(){
+    if(cachedTypedId == null){
+        cachedTypedId = new Post.Id(this.getId());
+    }
+    return cachedTypedId;
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
@@ -599,5 +605,37 @@ public class Post extends ModelWithId<Post, PostId, IDatabases> implements Compa
         + ">";
     }
   }
+
+  public static class Id implements ModelIdWrapper<Post.Id>{
+    private final long id;
+
+    public Id(Long id){
+      this.id = id;
+    }
+
+    @Override
+    public Long getId(){
+      return Long.valueOf(this.id);
+    }
+
+    @Override
+    public int compareTo(Id other){
+      return this.getId().compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object other){
+      if(other instanceof Id){
+        return this.getId().equals(((Id) other).getId());
+      }
+      return false;
+    }
+
+    @Override
+    public int hashCode(){
+      return this.getId().hashCode();
+    }
+  }
+
 
 }
