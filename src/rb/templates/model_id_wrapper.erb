@@ -18,7 +18,7 @@ package <%= root_package %>.models;
 
 import <%= JACK_NAMESPACE %>.ModelIdWrapper;
 
-public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper{
+public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper<<%=model_defn.id_wrapper_name%>>{
   private final Long id;
 
   public <%=model_defn.id_wrapper_name%>(Long id){
@@ -27,5 +27,9 @@ public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper{
 
   public Long getId(){
     return this.id;
+  }
+
+  public int compareTo(<%=model_defn.id_wrapper_name%> other){
+    return this.getId().compareTo(other.getId());
   }
 }

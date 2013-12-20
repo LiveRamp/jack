@@ -8,7 +8,7 @@ package com.rapleaf.jack.test_project.database_1.models;
 
 import com.rapleaf.jack.ModelIdWrapper;
 
-public class ImageId implements ModelIdWrapper{
+public class ImageId implements ModelIdWrapper<ImageId>{
   private final Long id;
 
   public ImageId(Long id){
@@ -17,5 +17,9 @@ public class ImageId implements ModelIdWrapper{
 
   public Long getId(){
     return this.id;
+  }
+
+  public int compareTo(ImageId other){
+    return this.getId().compareTo(other.getId());
   }
 }
