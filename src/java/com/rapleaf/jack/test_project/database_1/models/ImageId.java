@@ -22,4 +22,15 @@ public class ImageId implements ModelIdWrapper<ImageId>{
   public int compareTo(ImageId other){
     return this.getId().compareTo(other.getId());
   }
+
+  public boolean equals(Object other){
+    if(other instanceof ImageId){
+      return this.getId().equals(((ImageId) other).getId());
+    }
+    return false;
+  }
+
+  public int hashCode(){
+    return this.getId().hashCode();
+  }
 }

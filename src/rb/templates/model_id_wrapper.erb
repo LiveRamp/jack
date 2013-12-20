@@ -32,4 +32,15 @@ public class <%=model_defn.id_wrapper_name%> implements ModelIdWrapper<<%=model_
   public int compareTo(<%=model_defn.id_wrapper_name%> other){
     return this.getId().compareTo(other.getId());
   }
+
+  public boolean equals(Object other){
+    if(other instanceof <%=model_defn.id_wrapper_name%>){
+      return this.getId().equals(((<%=model_defn.id_wrapper_name%>) other).getId());
+    }
+    return false;
+  }
+
+  public int hashCode(){
+    return this.getId().hashCode();
+  }
 }

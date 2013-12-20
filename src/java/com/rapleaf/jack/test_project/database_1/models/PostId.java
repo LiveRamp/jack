@@ -22,4 +22,15 @@ public class PostId implements ModelIdWrapper<PostId>{
   public int compareTo(PostId other){
     return this.getId().compareTo(other.getId());
   }
+
+  public boolean equals(Object other){
+    if(other instanceof PostId){
+      return this.getId().equals(((PostId) other).getId());
+    }
+    return false;
+  }
+
+  public int hashCode(){
+    return this.getId().hashCode();
+  }
 }

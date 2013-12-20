@@ -22,4 +22,15 @@ public class CommentId implements ModelIdWrapper<CommentId>{
   public int compareTo(CommentId other){
     return this.getId().compareTo(other.getId());
   }
+
+  public boolean equals(Object other){
+    if(other instanceof CommentId){
+      return this.getId().equals(((CommentId) other).getId());
+    }
+    return false;
+  }
+
+  public int hashCode(){
+    return this.getId().hashCode();
+  }
 }

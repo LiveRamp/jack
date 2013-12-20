@@ -22,4 +22,15 @@ public class UserId implements ModelIdWrapper<UserId>{
   public int compareTo(UserId other){
     return this.getId().compareTo(other.getId());
   }
+
+  public boolean equals(Object other){
+    if(other instanceof UserId){
+      return this.getId().equals(((UserId) other).getId());
+    }
+    return false;
+  }
+
+  public int hashCode(){
+    return this.getId().hashCode();
+  }
 }
