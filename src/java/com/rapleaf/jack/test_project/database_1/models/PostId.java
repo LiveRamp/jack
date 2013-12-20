@@ -9,14 +9,14 @@ package com.rapleaf.jack.test_project.database_1.models;
 import com.rapleaf.jack.ModelIdWrapper;
 
 public class PostId implements ModelIdWrapper<PostId>{
-  private final Long id;
+  private final long id;
 
   public PostId(Long id){
     this.id = id;
   }
 
   public Long getId(){
-    return this.id;
+    return Long.valueOf(this.id);
   }
 
   public int compareTo(PostId other){
