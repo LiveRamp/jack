@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public abstract class ModelWithId<T extends ModelWithId, W extends ModelIdWrapper, D extends GenericDatabases> implements Serializable {
+public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   protected D databases;
   transient protected int cachedHashCode = 0;
   private boolean created = false;
@@ -34,7 +34,7 @@ public abstract class ModelWithId<T extends ModelWithId, W extends ModelIdWrappe
     return getAttributes().getId();
   }
 
-  public abstract W getTypedId();
+  public abstract ModelIdWrapper getTypedId();
 
   public static int safeLongToInt(long l) {
     if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {

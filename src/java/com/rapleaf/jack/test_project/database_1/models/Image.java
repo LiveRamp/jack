@@ -23,7 +23,7 @@ import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Image extends ModelWithId<Image, Image.Id, IDatabases> implements Comparable<Image>{
+public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   
   public static final long serialVersionUID = -3351451520429699622L;
 
