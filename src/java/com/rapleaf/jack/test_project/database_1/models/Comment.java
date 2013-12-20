@@ -43,9 +43,9 @@ public class Comment extends ModelWithId<Comment, Comment.Id, IDatabases> implem
   }
 
   @Override
-  public Comment.Id getTypedId(){
-    if(cachedTypedId == null){
-        cachedTypedId = new Comment.Id(this.getId());
+  public Comment.Id getTypedId() {
+    if (cachedTypedId == null) {
+      cachedTypedId = new Comment.Id(this.getId());
     }
     return cachedTypedId;
   }
@@ -674,33 +674,33 @@ public class Comment extends ModelWithId<Comment, Comment.Id, IDatabases> implem
     }
   }
 
-  public static class Id implements ModelIdWrapper<Comment.Id>{
+  public static class Id implements ModelIdWrapper<Comment.Id> {
     private final long id;
 
-    public Id(Long id){
+    public Id(Long id) {
       this.id = id;
     }
 
     @Override
-    public Long getId(){
+    public Long getId() {
       return Long.valueOf(this.id);
     }
 
     @Override
-    public int compareTo(Id other){
+    public int compareTo(Id other) {
       return this.getId().compareTo(other.getId());
     }
 
     @Override
-    public boolean equals(Object other){
-      if(other instanceof Id){
+    public boolean equals(Object other) {
+      if (other instanceof Id) {
         return this.getId().equals(((Id) other).getId());
       }
       return false;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
       return this.getId().hashCode();
     }
   }

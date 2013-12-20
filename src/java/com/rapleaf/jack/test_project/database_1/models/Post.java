@@ -43,9 +43,9 @@ public class Post extends ModelWithId<Post, Post.Id, IDatabases> implements Comp
   }
 
   @Override
-  public Post.Id getTypedId(){
-    if(cachedTypedId == null){
-        cachedTypedId = new Post.Id(this.getId());
+  public Post.Id getTypedId() {
+    if (cachedTypedId == null) {
+      cachedTypedId = new Post.Id(this.getId());
     }
     return cachedTypedId;
   }
@@ -606,33 +606,33 @@ public class Post extends ModelWithId<Post, Post.Id, IDatabases> implements Comp
     }
   }
 
-  public static class Id implements ModelIdWrapper<Post.Id>{
+  public static class Id implements ModelIdWrapper<Post.Id> {
     private final long id;
 
-    public Id(Long id){
+    public Id(Long id) {
       this.id = id;
     }
 
     @Override
-    public Long getId(){
+    public Long getId() {
       return Long.valueOf(this.id);
     }
 
     @Override
-    public int compareTo(Id other){
+    public int compareTo(Id other) {
       return this.getId().compareTo(other.getId());
     }
 
     @Override
-    public boolean equals(Object other){
-      if(other instanceof Id){
+    public boolean equals(Object other) {
+      if (other instanceof Id) {
         return this.getId().equals(((Id) other).getId());
       }
       return false;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
       return this.getId().hashCode();
     }
   }
