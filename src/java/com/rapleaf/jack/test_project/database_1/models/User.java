@@ -1038,6 +1038,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   }
 
   public static class Id implements ModelIdWrapper<User.Id> {
+    public static final long serialVersionUID = 1L;
+
     private final long id;
 
     public Id(Long id) {

@@ -607,6 +607,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   }
 
   public static class Id implements ModelIdWrapper<Post.Id> {
+    public static final long serialVersionUID = 1L;
+
     private final long id;
 
     public Id(Long id) {
