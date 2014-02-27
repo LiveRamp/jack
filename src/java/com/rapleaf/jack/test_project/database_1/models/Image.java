@@ -410,6 +410,11 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     public int hashCode() {
       return this.getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+      return "<Image.Id: "+this.getId()+">";
+    }
   }
 
 

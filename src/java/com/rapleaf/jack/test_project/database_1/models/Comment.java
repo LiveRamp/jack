@@ -703,6 +703,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     public int hashCode() {
       return this.getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+      return "<Comment.Id: "+this.getId()+">";
+    }
   }
 
 

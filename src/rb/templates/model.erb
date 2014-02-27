@@ -605,6 +605,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     public int hashCode() {
       return this.getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+      return "<<%= model_defn.model_name %>.Id: "+this.getId()+">";
+    }
   }
 
 
