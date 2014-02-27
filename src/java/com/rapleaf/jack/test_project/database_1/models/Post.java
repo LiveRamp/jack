@@ -635,6 +635,11 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     public int hashCode() {
       return this.getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+      return "<Post.Id: "+this.getId()+">";
+    }
   }
 
 

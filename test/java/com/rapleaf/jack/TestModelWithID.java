@@ -103,4 +103,9 @@ public class TestModelWithID extends TestCase {
     Image.Id typedId = imageModel.getTypedId();
     ModelIdWrapper modelIdWrapper = ((ModelWithId) imageModel).getTypedId();
   }
+
+  public void testIdToString() {
+    assertEquals("<Image.Id: 1>", new Image.Id(1l).toString());
+  }
+
 }

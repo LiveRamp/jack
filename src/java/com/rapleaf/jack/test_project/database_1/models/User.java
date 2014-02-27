@@ -1066,6 +1066,11 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     public int hashCode() {
       return this.getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+      return "<User.Id: "+this.getId()+">";
+    }
   }
 
 
