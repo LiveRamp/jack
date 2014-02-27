@@ -675,6 +675,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public static class Id implements ModelIdWrapper<Comment.Id> {
+    public static final long serialVersionUID = 1L;
+
     private final long id;
 
     public Id(Long id) {

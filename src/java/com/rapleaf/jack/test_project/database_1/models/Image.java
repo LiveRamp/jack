@@ -382,6 +382,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public static class Id implements ModelIdWrapper<Image.Id> {
+    public static final long serialVersionUID = 1L;
+
     private final long id;
 
     public Id(Long id) {
