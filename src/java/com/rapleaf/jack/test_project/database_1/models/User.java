@@ -1078,9 +1078,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
   public static Set<Attributes> convertToAttributesSet(Set<User> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
-      for (User model : models) {
-        attributes.add(model.getAttributes());
-      }
+    for (User model : models) {
+      attributes.add(model.getAttributes());
+    }
     return attributes;
   }
 

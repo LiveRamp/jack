@@ -647,9 +647,9 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
   public static Set<Attributes> convertToAttributesSet(Set<Post> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
-      for (Post model : models) {
-        attributes.add(model.getAttributes());
-      }
+    for (Post model : models) {
+      attributes.add(model.getAttributes());
+    }
     return attributes;
   }
 
