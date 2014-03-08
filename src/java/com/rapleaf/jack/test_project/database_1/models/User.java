@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
