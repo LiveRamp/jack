@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -1075,5 +1076,12 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     }
   }
 
+  public static Set<Attributes> convertToAttributesSet(Set<User> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (User model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
 
 }

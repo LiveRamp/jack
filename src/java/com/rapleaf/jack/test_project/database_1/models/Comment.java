@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -712,5 +713,12 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     }
   }
 
+  public static Set<Attributes> convertToAttributesSet(Set<Comment> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (Comment model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
 
 }
