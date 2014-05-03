@@ -126,3 +126,15 @@ The 1.0-SNAPSHOT build can be retrieved there:
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
+
+License
+====
+
+Copyright 2014 LiveRamp
+
+Licensed under the Apache License, Version 2.0
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+
+
