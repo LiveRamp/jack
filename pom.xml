@@ -50,4 +50,10 @@
 
   </distributionManagement>
 
+  <build>
+    <directory>${basedir}/build</directory>
+    <sourceDirectory>${basedir}/src/java</sourceDirectory>
+    <testSourceDirectory>${basedir}/test/java</testSourceDirectory>
+  </build>
+
 </project>
