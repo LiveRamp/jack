@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -31,6 +33,7 @@ import java.util.Set;
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
 
+  private static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
 
   protected static interface AttrSetter {
@@ -113,26 +116,46 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(insertStatement,
-        Statement.RETURN_GENERATED_KEYS);
+    int retryCount = 0;
+
+    PreparedStatement stmt = null;
     ResultSet generatedKeys = null;
-    try {
-      attrSetter.set(stmt);
-      stmt.execute();
-      generatedKeys = stmt.getGeneratedKeys();
-      generatedKeys.next();
-      long newId = generatedKeys.getLong(1);
-      return newId;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    while (true) {
       try {
-        if (generatedKeys != null) {
-          generatedKeys.close();
+        stmt = conn.getPreparedStatement(insertStatement,
+            Statement.RETURN_GENERATED_KEYS);
+        attrSetter.set(stmt);
+        stmt.execute();
+        generatedKeys = stmt.getGeneratedKeys();
+        generatedKeys.next();
+        long newId = generatedKeys.getLong(1);
+        return newId;
+      } catch (SQLNonTransientConnectionException e) {
+        if (!conn.getAutoCommit()) {
+          /* If auto-commit isn't on the transaction will need to be rolled back
+           * and replaced and that's outside the scope of this method.
+           */
+          throw new IOException(e);
         }
-        stmt.close();
+        conn.resetConnection();
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (generatedKeys != null) {
+            generatedKeys.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLNonTransientConnectionException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -158,27 +181,39 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     if (cachedById.containsKey(id) && useCache) {
       return cachedById.get(id);
     }
+    int retryCount = 0;
 
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
-        + tableName + " WHERE id=" + id);
+    PreparedStatement stmt = null;
     ResultSet rs = null;
     T model = null;
-    try {
-      rs = stmt.executeQuery();
-      model = rs.next() ? instanceFromResultSet(rs) : null;
-      if (model != null) {
-        model.setCreated(true);
-      }
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement("SELECT * FROM "
+            + tableName + " WHERE id=" + id);
+        rs = stmt.executeQuery();
+        model = rs.next() ? instanceFromResultSet(rs) : null;
+        if (model != null) {
+          model.setCreated(true);
         }
-        stmt.close();
+        break;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
     if (useCache) {
@@ -229,27 +264,40 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
+    int retryCount = 0;
+
     ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        foundSet.add(inst);
-        if (useCache) {
-          cachedById.put(inst.getId(), inst);
-        }
-      }
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          foundSet.add(inst);
+          if (useCache) {
+            cachedById.put(inst.getId(), inst);
+          }
         }
-        stmt.close();
+        break;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -338,38 +386,51 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
 
-    PreparedStatement stmt = conn.getPreparedStatement(String.format(
-        "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
+    int retryCount = 0;
+
+    PreparedStatement stmt = null;
     ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
-      ret = new HashSet<T>();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        if (useCache) {
-          if (cachedById.containsKey(inst.getId())) {
-            inst = cachedById.get(inst.getId());
-          } else {
-            cachedById.put(inst.getId(), inst);
-          }
-        }
-        ret.add(inst);
-      }
-      if (useCache) {
-        foreignKeyCache.put(id, ret);
-      }
-      return ret;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement(String.format(
+            "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
+        rs = stmt.executeQuery();
+        ret = new HashSet<T>();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          if (useCache) {
+            if (cachedById.containsKey(inst.getId())) {
+              inst = cachedById.get(inst.getId());
+            } else {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          ret.add(inst);
         }
-        stmt.close();
+        if (useCache) {
+          foreignKeyCache.put(id, ret);
+        }
+        return ret;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -411,21 +472,44 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement(statementString
-          .toString());
+
+      int retryCount = 0;
+
+      PreparedStatement stmt = null;
       ResultSet rs = null;
-      try {
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-          T inst = instanceFromResultSet(rs);
-          inst.setCreated(true);
-          foundSet.add(inst);
-          if (useCache) {
-            cachedById.put(inst.getId(), inst);
+
+      while (true) {
+        try {
+          stmt = conn.getPreparedStatement(statementString.toString());
+          rs = stmt.executeQuery();
+          while (rs.next()) {
+            T inst = instanceFromResultSet(rs);
+            inst.setCreated(true);
+            foundSet.add(inst);
+            if (useCache) {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          break;
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+          if (++retryCount > MAX_CONNECTION_RETRIES) {
+            throw new IOException(e);
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        } finally {
+          try {
+            if (rs != null) {
+              rs.close();
+            }
+            stmt.close();
+          } catch (SQLRecoverableException e) {
+            conn.resetConnection();
+          } catch (SQLException e) {
+            throw new IOException(e);
           }
         }
-      } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
     return foundSet;
@@ -533,36 +617,50 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public Set<T> findAll(String conditions) throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
-        + getTableName() + " WHERE " + conditions + ";");
-    ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
+    int retryCount = 0;
 
-      Set<T> results = new HashSet<T>();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        if (useCache) {
-          if (cachedById.containsKey(inst.getId())) {
-            inst = cachedById.get(inst.getId());
-          } else {
-            cachedById.put(inst.getId(), inst);
-          }
-        }
-        results.add(inst);
-      }
-      return results;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement("SELECT * FROM "
+            + getTableName() + " WHERE " + conditions + ";");
+
+        rs = stmt.executeQuery();
+
+        Set<T> results = new HashSet<T>();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          if (useCache) {
+            if (cachedById.containsKey(inst.getId())) {
+              inst = cachedById.get(inst.getId());
+            } else {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          results.add(inst);
         }
-        stmt.close();
+        return results;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
