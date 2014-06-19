@@ -159,27 +159,41 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     if (cachedById.containsKey(id) && useCache) {
       return cachedById.get(id);
     }
+    int retryCount = 0;
+    int maxRetries = 1;
 
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
-        + tableName + " WHERE id=" + id);
+
+    PreparedStatement stmt = null;
     ResultSet rs = null;
     T model = null;
-    try {
-      rs = stmt.executeQuery();
-      model = rs.next() ? instanceFromResultSet(rs) : null;
-      if (model != null) {
-        model.setCreated(true);
-      }
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement("SELECT * FROM "
+            + tableName + " WHERE id=" + id);
+        rs = stmt.executeQuery();
+        model = rs.next() ? instanceFromResultSet(rs) : null;
+        if (model != null) {
+          model.setCreated(true);
         }
-        stmt.close();
+        break;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > maxRetries) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
     if (useCache) {
@@ -230,27 +244,41 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
+    int retryCount = 0;
+    int maxRetries = 1;
+
     ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        foundSet.add(inst);
-        if (useCache) {
-          cachedById.put(inst.getId(), inst);
-        }
-      }
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          foundSet.add(inst);
+          if (useCache) {
+            cachedById.put(inst.getId(), inst);
+          }
         }
-        stmt.close();
+        break;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > maxRetries) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -339,38 +367,52 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
 
-    PreparedStatement stmt = conn.getPreparedStatement(String.format(
-        "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
+    int retryCount = 0;
+    int maxRetries = 1;
+
+    PreparedStatement stmt = null;
     ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
-      ret = new HashSet<T>();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        if (useCache) {
-          if (cachedById.containsKey(inst.getId())) {
-            inst = cachedById.get(inst.getId());
-          } else {
-            cachedById.put(inst.getId(), inst);
-          }
-        }
-        ret.add(inst);
-      }
-      if (useCache) {
-        foreignKeyCache.put(id, ret);
-      }
-      return ret;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement(String.format(
+            "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
+        rs = stmt.executeQuery();
+        ret = new HashSet<T>();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          if (useCache) {
+            if (cachedById.containsKey(inst.getId())) {
+              inst = cachedById.get(inst.getId());
+            } else {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          ret.add(inst);
         }
-        stmt.close();
+        if (useCache) {
+          foreignKeyCache.put(id, ret);
+        }
+        return ret;
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+        if (++retryCount > maxRetries) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -412,21 +454,45 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
       statementString.append(")");
-      PreparedStatement stmt = conn.getPreparedStatement(statementString
-          .toString());
+
+      int retryCount = 0;
+      int maxRetries = 1;
+
+      PreparedStatement stmt = null;
       ResultSet rs = null;
-      try {
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-          T inst = instanceFromResultSet(rs);
-          inst.setCreated(true);
-          foundSet.add(inst);
-          if (useCache) {
-            cachedById.put(inst.getId(), inst);
+
+      while (true) {
+        try {
+          stmt = conn.getPreparedStatement(statementString.toString());
+          rs = stmt.executeQuery();
+          while (rs.next()) {
+            T inst = instanceFromResultSet(rs);
+            inst.setCreated(true);
+            foundSet.add(inst);
+            if (useCache) {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          break;
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+          if (++retryCount > maxRetries) {
+            throw new IOException(e);
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        } finally {
+          try {
+            if (rs != null) {
+              rs.close();
+            }
+            stmt.close();
+          } catch (SQLRecoverableException e) {
+            conn.resetConnection();
+          } catch (SQLException e) {
+            throw new IOException(e);
           }
         }
-      } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
     return foundSet;
@@ -539,7 +605,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    
+
     while (true) {
       try {
         stmt = conn.getPreparedStatement("SELECT * FROM "
@@ -561,20 +627,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           results.add(inst);
         }
         return results;
-      } catch (SQLRecoverableException e1) {
+      } catch (SQLRecoverableException e) {
         conn.resetConnection();
         if (++retryCount > maxRetries) {
-          throw new IOException(e1);
+          throw new IOException(e);
         }
-      } catch (SQLException e2) {
-        throw new IOException(e2);
+      } catch (SQLException e) {
+        throw new IOException(e);
       } finally {
         try {
           if (rs != null) {
             rs.close();
           }
           stmt.close();
-        } catch (SQLRecoverableException e1) {
+        } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
           throw new IOException(e);
