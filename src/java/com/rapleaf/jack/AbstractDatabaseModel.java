@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -533,36 +534,51 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public Set<T> findAll(String conditions) throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement("SELECT * FROM "
-        + getTableName() + " WHERE " + conditions + ";");
-    ResultSet rs = null;
-    try {
-      rs = stmt.executeQuery();
+    int retryCount = 0;
+    int maxRetries = 1;
 
-      Set<T> results = new HashSet<T>();
-      while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
-        inst.setCreated(true);
-        if (useCache) {
-          if (cachedById.containsKey(inst.getId())) {
-            inst = cachedById.get(inst.getId());
-          } else {
-            cachedById.put(inst.getId(), inst);
-          }
-        }
-        results.add(inst);
-      }
-      return results;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    
+    while (true) {
       try {
-        if (rs != null) {
-          rs.close();
+        stmt = conn.getPreparedStatement("SELECT * FROM "
+            + getTableName() + " WHERE " + conditions + ";");
+
+        rs = stmt.executeQuery();
+
+        Set<T> results = new HashSet<T>();
+        while (rs.next()) {
+          T inst = instanceFromResultSet(rs);
+          inst.setCreated(true);
+          if (useCache) {
+            if (cachedById.containsKey(inst.getId())) {
+              inst = cachedById.get(inst.getId());
+            } else {
+              cachedById.put(inst.getId(), inst);
+            }
+          }
+          results.add(inst);
         }
-        stmt.close();
-      } catch (SQLException e) {
-        throw new IOException(e);
+        return results;
+      } catch (SQLRecoverableException e1) {
+        conn.resetConnection();
+        if (++retryCount > maxRetries) {
+          throw new IOException(e1);
+        }
+      } catch (SQLException e2) {
+        throw new IOException(e2);
+      } finally {
+        try {
+          if (rs != null) {
+            rs.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e1) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
