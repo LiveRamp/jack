@@ -33,6 +33,7 @@ import java.util.Set;
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
 
+  private static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
 
   protected static interface AttrSetter {
@@ -116,7 +117,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
     int retryCount = 0;
-    int maxRetries = 1;
 
     PreparedStatement stmt = null;
     ResultSet generatedKeys = null;
@@ -138,7 +138,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           throw new IOException(e);
         }
         conn.resetConnection();
-        if (++retryCount > maxRetries) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
@@ -182,8 +182,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       return cachedById.get(id);
     }
     int retryCount = 0;
-    int maxRetries = 1;
-
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -200,7 +198,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         break;
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
-        if (++retryCount > maxRetries) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
@@ -267,7 +265,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
     int retryCount = 0;
-    int maxRetries = 1;
 
     ResultSet rs = null;
 
@@ -285,7 +282,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         break;
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
-        if (++retryCount > maxRetries) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
@@ -390,7 +387,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
 
     int retryCount = 0;
-    int maxRetries = 1;
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -419,7 +415,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         return ret;
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
-        if (++retryCount > maxRetries) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
@@ -478,7 +474,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       statementString.append(")");
 
       int retryCount = 0;
-      int maxRetries = 1;
 
       PreparedStatement stmt = null;
       ResultSet rs = null;
@@ -498,7 +493,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           break;
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
-          if (++retryCount > maxRetries) {
+          if (++retryCount > MAX_CONNECTION_RETRIES) {
             throw new IOException(e);
           }
         } catch (SQLException e) {
@@ -623,7 +618,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   @Override
   public Set<T> findAll(String conditions) throws IOException {
     int retryCount = 0;
-    int maxRetries = 1;
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -651,7 +645,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         return results;
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
-        if (++retryCount > maxRetries) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
