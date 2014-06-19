@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -114,26 +115,47 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
-    PreparedStatement stmt = conn.getPreparedStatement(insertStatement,
-        Statement.RETURN_GENERATED_KEYS);
+    int retryCount = 0;
+    int maxRetries = 1;
+
+    PreparedStatement stmt = null;
     ResultSet generatedKeys = null;
-    try {
-      attrSetter.set(stmt);
-      stmt.execute();
-      generatedKeys = stmt.getGeneratedKeys();
-      generatedKeys.next();
-      long newId = generatedKeys.getLong(1);
-      return newId;
-    } catch (SQLException e) {
-      throw new IOException(e);
-    } finally {
+    while (true) {
       try {
-        if (generatedKeys != null) {
-          generatedKeys.close();
+        stmt = conn.getPreparedStatement(insertStatement,
+            Statement.RETURN_GENERATED_KEYS);
+        attrSetter.set(stmt);
+        stmt.execute();
+        generatedKeys = stmt.getGeneratedKeys();
+        generatedKeys.next();
+        long newId = generatedKeys.getLong(1);
+        return newId;
+      } catch (SQLNonTransientConnectionException e) {
+        if (!conn.getAutoCommit()) {
+          /* If auto-commit isn't on the transaction will need to be rolled back
+           * and replaced and that's outside the scope of this method.
+           */
+          throw new IOException(e);
         }
-        stmt.close();
+        conn.resetConnection();
+        if (++retryCount > maxRetries) {
+          throw new IOException(e);
+        }
       } catch (SQLException e) {
         throw new IOException(e);
+      } finally {
+        try {
+          if (generatedKeys != null) {
+            generatedKeys.close();
+          }
+          stmt.close();
+        } catch (SQLRecoverableException e) {
+          conn.resetConnection();
+        } catch (SQLNonTransientConnectionException e) {
+          conn.resetConnection();
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
