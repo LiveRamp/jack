@@ -268,36 +268,45 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     ResultSet rs = null;
 
-    while (true) {
-      try {
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-          T inst = instanceFromResultSet(rs);
-          inst.setCreated(true);
-          foundSet.add(inst);
-          if (useCache) {
-            cachedById.put(inst.getId(), inst);
-          }
-        }
-        break;
-      } catch (SQLRecoverableException e) {
-        conn.resetConnection();
-        if (++retryCount > MAX_CONNECTION_RETRIES) {
-          throw new IOException(e);
-        }
-      } catch (SQLException e) {
-        throw new IOException(e);
-      } finally {
+    try {
+      while (true) {
         try {
-          if (rs != null) {
-            rs.close();
+          rs = stmt.executeQuery();
+          while (rs.next()) {
+            T inst = instanceFromResultSet(rs);
+            inst.setCreated(true);
+            foundSet.add(inst);
+            if (useCache) {
+              cachedById.put(inst.getId(), inst);
+            }
           }
-          stmt.close();
+          break;
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
+          if (++retryCount > MAX_CONNECTION_RETRIES) {
+            throw new IOException(e);
+          }
         } catch (SQLException e) {
           throw new IOException(e);
+        } finally {
+          try {
+            if (rs != null) {
+              rs.close();
+            }
+          } catch (SQLRecoverableException e) {
+            conn.resetConnection();
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
         }
+      }
+    } finally {
+      try {
+        stmt.close();
+      } catch (SQLRecoverableException e) {
+        conn.resetConnection();
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
   }
