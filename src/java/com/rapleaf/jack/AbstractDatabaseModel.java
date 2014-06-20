@@ -148,7 +148,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           if (generatedKeys != null) {
             generatedKeys.close();
           }
-          stmt.close();
+          if (stmt != null) {
+            stmt.close();
+          }
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLNonTransientConnectionException e) {
@@ -208,7 +210,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           if (rs != null) {
             rs.close();
           }
-          stmt.close();
+          if (stmt != null) {
+            stmt.close();
+          }
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
@@ -434,7 +438,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           if (rs != null) {
             rs.close();
           }
-          stmt.close();
+          if (stmt != null) {
+            stmt.close();
+          }
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
@@ -512,7 +518,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
             if (rs != null) {
               rs.close();
             }
-            stmt.close();
+            if (stmt != null) {
+              stmt.close();
+            }
           } catch (SQLRecoverableException e) {
             conn.resetConnection();
           } catch (SQLException e) {
@@ -664,7 +672,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           if (rs != null) {
             rs.close();
           }
-          stmt.close();
+          if (stmt != null) {
+            stmt.close();
+          }
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
