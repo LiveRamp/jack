@@ -86,7 +86,7 @@ class ModelDefn
 
   def id_wrapper_name
       "#{model_name}.Id"
-    end
+   end
   
   def persistence_getter
     x = table_name.camelcase

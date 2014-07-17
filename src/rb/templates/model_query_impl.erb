@@ -7,7 +7,7 @@ import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 
 public class <%= model_defn.query_class_name %> extends AbstractModelQuery {
 
-  public <%= model_defn.query_class_name > (<%= model_defn.iface_name %> caller) {
+  public <%= model_defn.query_class_name %> (<%= model_defn.iface_name %> caller) {
     super(caller);
   }
 
@@ -17,5 +17,5 @@ public class <%= model_defn.query_class_name %> extends AbstractModelQuery {
     fieldsMap.put(<&= model_defn.name %>._Fields.<%= field_defn.name %>, value);
     return this;
   }
-  <% end >
+  <% end %>
 }
