@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ModelQueryImpl<M extends ModelWithId> implements ModelQuery<M> {
 
-  private Map<Enum, Object> fieldsMap;
+  protected Map<Enum, Object> fieldsMap;
   private IModelPersistence caller;
 
   public ModelQueryImpl(IModelPersistence caller) {
