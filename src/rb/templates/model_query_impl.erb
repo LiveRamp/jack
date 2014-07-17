@@ -14,7 +14,7 @@ public class <%= model_defn.query_class_name %> extends AbstractModelQuery {
   <% model_defn.fields.each do |field_defn| %>
 
   public <%= model_defn.query_class_name %> <%= field_defn.name %>(<%= field_defn.java_type %> value) {
-    fieldsMap.put(<&= model_defn.name %>._Fields.<%= field_defn.name %>, value);
+    fieldsMap.put(<%= model_defn.name %>._Fields.<%= field_defn.name %>, value);
     return this;
   }
   <% end %>
