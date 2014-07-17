@@ -80,6 +80,10 @@ class ModelDefn
     "BaseMock#{model_name}PersistenceImpl"
   end
 
+  def query_class_name
+    "#{model_name}Query'
+  end
+
   def id_wrapper_name
       "#{model_name}.Id"
     end
