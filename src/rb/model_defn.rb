@@ -81,7 +81,7 @@ class ModelDefn
   end
 
   def query_class_name
-    "#{model_name}Query'
+    "#{model_name}Query"
   end
 
   def id_wrapper_name
