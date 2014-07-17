@@ -1,15 +1,15 @@
 
 
 
-public class <%= model_defn.query_class_name %> extends ModelQueryImpl {
+public class <%= model_defn.query_class_name %> extends AbstractModelQuery {
 
-  public <%= model_defn.query_method_name > (IModelPersistence ///True class caller) {
+  public <%= model_defn.query_class_name > (<%= model_defn.iface_name %> caller) {
     super(caller);
   }
 
   <% model_defn.fields.each do |field_defn| %>
 
-  public <%= model_defn.query_method_name %> <%= field_defn.name %>(<%= field_defn.java_type %> value) {
+  public <%= model_defn.query_class_name %> <%= field_defn.name %>(<%= field_defn.java_type %> value) {
     fieldsMap.put(<&= model_defn.name %>._Fields.<%= field_defn.name %>, value);
     return this;
   }
