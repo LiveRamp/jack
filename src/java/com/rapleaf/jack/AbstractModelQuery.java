@@ -3,8 +3,8 @@ package com.rapleaf.jack;
 
 import java.util.Set;
 
-public interface AbstractModelQuery<T> {
+public interface AbstractModelQuery<M extends ModelWithId> {
 
-  public Set<T> find();
+  public Set<M> find();
 
 }
