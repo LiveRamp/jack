@@ -6,7 +6,7 @@ import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 
 
-public class ImageQuery extends AbstractModelQuery {
+public class ImageQuery extends AbstractModelQuery<Image> {
 
   public ImageQuery (IImagePersistence caller) {
     super(caller);

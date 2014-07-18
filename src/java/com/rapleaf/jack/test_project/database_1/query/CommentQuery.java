@@ -6,7 +6,7 @@ import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 
 
-public class CommentQuery extends AbstractModelQuery {
+public class CommentQuery extends AbstractModelQuery<Comment> {
 
   public CommentQuery (ICommentPersistence caller) {
     super(caller);

@@ -6,7 +6,7 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
 
-public class UserQuery extends AbstractModelQuery {
+public class UserQuery extends AbstractModelQuery<User> {
 
   public UserQuery (IUserPersistence caller) {
     super(caller);

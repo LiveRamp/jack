@@ -6,7 +6,7 @@ import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 
 
-public class PostQuery extends AbstractModelQuery {
+public class PostQuery extends AbstractModelQuery<Post> {
 
   public PostQuery (IPostPersistence caller) {
     super(caller);
