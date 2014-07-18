@@ -163,4 +163,10 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return find(new HashMap<Enum, Object>(){{put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);}});
   }
   <% end %>
+
+  public <%= model_defn.query_class_name %> query() {
+
+    return new <%= model_defn.query_class_name %>(this);
+
+  }
 }
