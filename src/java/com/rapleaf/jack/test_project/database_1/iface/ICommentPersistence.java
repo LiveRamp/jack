@@ -7,6 +7,8 @@
 package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
+import com.rapleaf.jack.test_project.database_1.query.CommentQuery;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;

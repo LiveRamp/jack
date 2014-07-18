@@ -24,6 +24,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
+import com.rapleaf.jack.test_project.database_1.query.CommentQuery;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
