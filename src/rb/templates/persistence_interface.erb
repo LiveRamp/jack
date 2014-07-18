@@ -34,4 +34,6 @@ public interface <%= model_defn.iface_name %> extends IModelPersistence<<%= mode
   <% model_defn.fields.each do |field_defn| %>
   public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> value)  throws IOException;
   <% end %>
+
+  public <%= model_defn.query_class_name %> query();
 }
