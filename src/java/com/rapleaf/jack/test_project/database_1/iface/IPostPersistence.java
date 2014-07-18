@@ -22,4 +22,6 @@ public interface IPostPersistence extends IModelPersistence<Post> {
   public Set<Post> findByPostedAtMillis(Long value)  throws IOException;
   public Set<Post> findByUserId(Integer value)  throws IOException;
   public Set<Post> findByUpdatedAt(Long value)  throws IOException;
+
+  public PostQuery query();
 }

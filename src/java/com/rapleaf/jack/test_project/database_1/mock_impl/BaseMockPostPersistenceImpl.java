@@ -93,4 +93,9 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
   public Set<Post> findByUpdatedAt(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
   }
+
+  public PostQuery query() {
+
+      return new PostQuery(this);
+    }
 }

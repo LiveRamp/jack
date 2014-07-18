@@ -163,6 +163,5 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   public ImageQuery query() {
 
     return new ImageQuery(this);
-
   }
 }

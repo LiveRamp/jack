@@ -19,4 +19,6 @@ public interface IImagePersistence extends IModelPersistence<Image> {
 
   public Image createDefaultInstance() throws IOException;
   public Set<Image> findByUserId(Integer value)  throws IOException;
+
+  public ImageQuery query();
 }

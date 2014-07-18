@@ -209,6 +209,5 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   public CommentQuery query() {
 
     return new CommentQuery(this);
-
   }
 }

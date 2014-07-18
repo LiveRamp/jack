@@ -220,6 +220,5 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   public PostQuery query() {
 
     return new PostQuery(this);
-
   }
 }

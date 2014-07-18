@@ -22,4 +22,6 @@ public interface ICommentPersistence extends IModelPersistence<Comment> {
   public Set<Comment> findByCommenterId(int value)  throws IOException;
   public Set<Comment> findByCommentedOnId(long value)  throws IOException;
   public Set<Comment> findByCreatedAt(long value)  throws IOException;
+
+  public CommentQuery query();
 }

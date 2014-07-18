@@ -28,4 +28,6 @@ public interface IUserPersistence extends IModelPersistence<User> {
   public Set<User> findBySomeFloat(Double value)  throws IOException;
   public Set<User> findBySomeDecimal(Double value)  throws IOException;
   public Set<User> findBySomeBoolean(Boolean value)  throws IOException;
+
+  public UserQuery query();
 }

@@ -94,4 +94,9 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   public Set<Comment> findByCreatedAt(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
+
+  public CommentQuery query() {
+
+      return new CommentQuery(this);
+    }
 }
