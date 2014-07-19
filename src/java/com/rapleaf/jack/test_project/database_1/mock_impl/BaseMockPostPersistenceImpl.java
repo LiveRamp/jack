@@ -96,7 +96,6 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
   }
 
   public PostQuery query() {
-
-      return new PostQuery(this);
-    }
+    return new PostQuery(this);
+  }
 }

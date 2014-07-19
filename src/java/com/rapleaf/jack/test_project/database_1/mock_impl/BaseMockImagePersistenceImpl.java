@@ -81,7 +81,6 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
 
   public ImageQuery query() {
-
-      return new ImageQuery(this);
-    }
+    return new ImageQuery(this);
+  }
 }

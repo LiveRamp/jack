@@ -97,7 +97,6 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
 
   public CommentQuery query() {
-
-      return new CommentQuery(this);
-    }
+    return new CommentQuery(this);
+  }
 }

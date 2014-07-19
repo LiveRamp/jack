@@ -126,7 +126,6 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
   }
 
   public UserQuery query() {
-
-      return new UserQuery(this);
-    }
+    return new UserQuery(this);
+  }
 }

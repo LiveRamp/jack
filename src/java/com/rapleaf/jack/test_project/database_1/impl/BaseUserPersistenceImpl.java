@@ -322,7 +322,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public UserQuery query() {
-
     return new UserQuery(this);
   }
 }

@@ -86,7 +86,6 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   <% end %>
 
   public <%= model_defn.query_class_name %> query() {
-
-      return new <%= model_defn.query_class_name %>(this);
-    }
+    return new <%= model_defn.query_class_name %>(this);
+  }
 }
