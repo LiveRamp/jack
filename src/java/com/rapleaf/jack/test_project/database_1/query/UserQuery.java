@@ -17,22 +17,22 @@ public class UserQuery extends AbstractModelQuery<User> {
     return this;
   }
 
-  public UserQuery created_at_millis(Long value) {
+  public UserQuery createdAtMillis(Long value) {
     fieldsMap.put(User._Fields.created_at_millis, value);
     return this;
   }
 
-  public UserQuery num_posts(int value) {
+  public UserQuery numPosts(int value) {
     fieldsMap.put(User._Fields.num_posts, value);
     return this;
   }
 
-  public UserQuery some_date(Long value) {
+  public UserQuery someDate(Long value) {
     fieldsMap.put(User._Fields.some_date, value);
     return this;
   }
 
-  public UserQuery some_datetime(Long value) {
+  public UserQuery someDatetime(Long value) {
     fieldsMap.put(User._Fields.some_datetime, value);
     return this;
   }
@@ -42,22 +42,22 @@ public class UserQuery extends AbstractModelQuery<User> {
     return this;
   }
 
-  public UserQuery some_binary(byte[] value) {
+  public UserQuery someBinary(byte[] value) {
     fieldsMap.put(User._Fields.some_binary, value);
     return this;
   }
 
-  public UserQuery some_float(Double value) {
+  public UserQuery someFloat(Double value) {
     fieldsMap.put(User._Fields.some_float, value);
     return this;
   }
 
-  public UserQuery some_decimal(Double value) {
+  public UserQuery someDecimal(Double value) {
     fieldsMap.put(User._Fields.some_decimal, value);
     return this;
   }
 
-  public UserQuery some_boolean(Boolean value) {
+  public UserQuery someBoolean(Boolean value) {
     fieldsMap.put(User._Fields.some_boolean, value);
     return this;
   }

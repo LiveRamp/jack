@@ -17,17 +17,17 @@ public class CommentQuery extends AbstractModelQuery<Comment> {
     return this;
   }
 
-  public CommentQuery commenter_id(int value) {
+  public CommentQuery commenterId(int value) {
     fieldsMap.put(Comment._Fields.commenter_id, value);
     return this;
   }
 
-  public CommentQuery commented_on_id(long value) {
+  public CommentQuery commentedOnId(long value) {
     fieldsMap.put(Comment._Fields.commented_on_id, value);
     return this;
   }
 
-  public CommentQuery created_at(long value) {
+  public CommentQuery createdAt(long value) {
     fieldsMap.put(Comment._Fields.created_at, value);
     return this;
   }

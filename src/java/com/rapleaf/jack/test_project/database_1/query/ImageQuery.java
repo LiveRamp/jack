@@ -12,7 +12,7 @@ public class ImageQuery extends AbstractModelQuery<Image> {
     super(caller);
   }
 
-  public ImageQuery user_id(Integer value) {
+  public ImageQuery userId(Integer value) {
     fieldsMap.put(Image._Fields.user_id, value);
     return this;
   }

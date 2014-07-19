@@ -21,10 +21,10 @@ public class TestModelQuery extends TestCase {
     dbs.getDatabase1().deleteAll();
     IUserPersistence users = dbs.getDatabase1().users();
 
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Rapper").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Rapper").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("Drug dealer").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Cool dentist").setNumPosts(3);
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
     userA.save();
     userB.save();
     userC.save();
@@ -32,27 +32,27 @@ public class TestModelQuery extends TestCase {
 
     Set<User> result;
 
-    // Empty query: should return an empty set
+    // an empty query should return an empty set
     result = users.query().find();
     assertTrue(result.isEmpty());
 
     // A simple query
-    result = users.query().bio("Cool dentist").find();
+    result = users.query().bio("Janitor").find();
     assertEquals(1, result.size());
     assertTrue(result.contains(userD));
 
     // A chained query
-    result = users.query().handle("A").bio("Rapper").num_posts(1).find();
+    result = users.query().handle("A").bio("Trader").numPosts(1).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(userA));
 
     // A chained query
-    result = users.query().bio("Rapper").num_posts(2).find();
+    result = users.query().bio("Trader").numPosts(2).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(userB));
 
     // A query with no results
-    result = users.query().num_posts(3).bio("Rapper").find();
+    result = users.query().numPosts(3).bio("CEO").find();
     assertTrue(result.isEmpty());
   }
 }

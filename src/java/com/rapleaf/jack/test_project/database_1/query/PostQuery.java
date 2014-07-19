@@ -17,17 +17,17 @@ public class PostQuery extends AbstractModelQuery<Post> {
     return this;
   }
 
-  public PostQuery posted_at_millis(Long value) {
+  public PostQuery postedAtMillis(Long value) {
     fieldsMap.put(Post._Fields.posted_at_millis, value);
     return this;
   }
 
-  public PostQuery user_id(Integer value) {
+  public PostQuery userId(Integer value) {
     fieldsMap.put(Post._Fields.user_id, value);
     return this;
   }
 
-  public PostQuery updated_at(Long value) {
+  public PostQuery updatedAt(Long value) {
     fieldsMap.put(Post._Fields.updated_at, value);
     return this;
   }
