@@ -29,6 +29,8 @@ import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
+import com.rapleaf.jack.test_project.database_1.query.PostQuery;
+
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -213,5 +215,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public Set<Post> findByUpdatedAt(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
+  }
+
+  public PostQuery query() {
+    return new PostQuery(this);
   }
 }

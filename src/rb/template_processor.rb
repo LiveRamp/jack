@@ -50,6 +50,8 @@ EOF
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
   MOCK_DATABASES_IMPL_TEMPLATE = load_template("templates/mock_databases_impl.erb")
 
+  MODEL_QUERY_TEMPLATE = load_template("templates/model_query_impl.erb")
+
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
   MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
   
@@ -90,6 +92,8 @@ EOF
     FileUtils.mkdir_p("#{output_dir}/iface/")
     FileUtils.mkdir_p("#{output_dir}/impl/")
     FileUtils.mkdir_p("#{output_dir}/mock_impl/")
+    FileUtils.mkdir_p("#{output_dir}/query/")
+
 
     db_name = database_defn.name
     root_package = database_defn.namespace
@@ -114,6 +118,11 @@ EOF
       file = File.new("#{output_dir}/mock_impl/#{model_defn.mock_impl_name}.java", "w")
       file.puts(MOCK_PERSISTENCE_IMPL_TEMPLATE.result(binding));
       file.close
+
+      file = File.new("#{output_dir}/query/#{model_defn.query_class_name}.java", "w")
+      file.puts(MODEL_QUERY_TEMPLATE.result(binding));
+      file.close
+
     end
 
     file = File.new("#{output_dir}/I#{db_name}.java", "w")

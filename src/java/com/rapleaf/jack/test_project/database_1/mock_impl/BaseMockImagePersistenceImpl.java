@@ -24,6 +24,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Image.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
+import com.rapleaf.jack.test_project.database_1.query.ImageQuery;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -77,5 +78,9 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
   public Set<Image> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
+  }
+
+  public ImageQuery query() {
+    return new ImageQuery(this);
   }
 }

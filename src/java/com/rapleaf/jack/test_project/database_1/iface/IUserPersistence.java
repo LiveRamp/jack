@@ -7,6 +7,8 @@
 package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
+import com.rapleaf.jack.test_project.database_1.query.UserQuery;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -28,4 +30,6 @@ public interface IUserPersistence extends IModelPersistence<User> {
   public Set<User> findBySomeFloat(Double value)  throws IOException;
   public Set<User> findBySomeDecimal(Double value)  throws IOException;
   public Set<User> findBySomeBoolean(Boolean value)  throws IOException;
+
+  public UserQuery query();
 }
