@@ -9,9 +9,9 @@ import java.util.Set;
 public abstract class AbstractModelQuery<M extends ModelWithId> implements ModelQuery<M> {
 
   protected Map<Enum, Object> fieldsMap;
-  private IModelPersistence caller;
+  private IModelPersistence<M> caller;
 
-  public AbstractModelQuery(IModelPersistence caller) {
+  public AbstractModelQuery(IModelPersistence<M> caller) {
     this.caller = caller;
     this.fieldsMap = new HashMap<Enum, Object>();
   }
