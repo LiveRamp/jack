@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractModelQuery<M extends ModelWithId> implements ModelQuery<M> {
+public abstract class AbstractQueryBuilder<M extends ModelWithId> implements QueryBuilder<M> {
 
   protected Map<Enum, Object> fieldsMap;
   private IModelPersistence<M> caller;
 
-  public AbstractModelQuery(IModelPersistence<M> caller) {
+  public AbstractQueryBuilder(IModelPersistence<M> caller) {
     this.caller = caller;
     this.fieldsMap = new HashMap<Enum, Object>();
   }
