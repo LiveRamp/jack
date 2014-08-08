@@ -142,7 +142,6 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM <%= model_defn.table_name %> WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
 
     Iterator<QueryConstraint> iter = constraints.iterator();
 
@@ -157,11 +156,13 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
         statementString.append(" AND ");
       }
     }
+    statementString.append(")");
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
+    int index = 0;
     for (QueryConstraint constraint : constraints) {
       <%= model_defn.model_name %>._Fields field = (<%= model_defn.model_name %>._Fields)constraint.getField();
-      int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
         continue;

@@ -15,7 +15,7 @@ public class TestModelQuery extends TestCase {
 
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
 
-  public void testQuery() throws IOException {
+  public void testBasicQuery() throws IOException {
 
     IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
     dbs.getDatabase1().deleteAll();
@@ -54,5 +54,28 @@ public class TestModelQuery extends TestCase {
     // A query with no results
     result = users.query().numPosts(3).bio("CEO").find();
     assertTrue(result.isEmpty());
+  }
+
+  public void testQueryOperators() throws IOException {
+
+    IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
+    dbs.getDatabase1().deleteAll();
+    IUserPersistence users = dbs.getDatabase1().users();
+
+    User userA = users.createDefaultInstance().setHandle("Roshan").setBio("Soccer player").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("Porter").setBio("Formula 1 driver").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("Ben").setBio("Singer").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("Yuwei").setBio("Ice skater").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    Set<User> result;
+
+    result = users.query().numPosts(JackMatchers.greaterThanOrEqualTo(2)).find();
+    for (User user : result) {
+      System.out.println(user.getHandle());
+    }
   }
 }

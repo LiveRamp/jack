@@ -1,6 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
+import com.rapleaf.jack.ISqlOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -18,8 +19,8 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder title(QueryConstraint<String> constraint) {
-    addConstraint(constraint);
+  public PostQueryBuilder title(ISqlOperator<String> operator) {
+    addConstraint(new QueryConstraint<String>(Post._Fields.title, operator));
     return this;
   }
 
@@ -28,8 +29,8 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder postedAtMillis(QueryConstraint<Long> constraint) {
-    addConstraint(constraint);
+  public PostQueryBuilder postedAtMillis(ISqlOperator<Long> operator) {
+    addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, operator));
     return this;
   }
 
@@ -38,8 +39,8 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder userId(QueryConstraint<Integer> constraint) {
-    addConstraint(constraint);
+  public PostQueryBuilder userId(ISqlOperator<Integer> operator) {
+    addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, operator));
     return this;
   }
 
@@ -48,8 +49,8 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder updatedAt(QueryConstraint<Long> constraint) {
-    addConstraint(constraint);
+  public PostQueryBuilder updatedAt(ISqlOperator<Long> operator) {
+    addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, operator));
     return this;
   }
 }

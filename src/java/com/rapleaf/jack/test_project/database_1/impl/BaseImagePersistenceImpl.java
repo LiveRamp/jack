@@ -149,7 +149,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
 
     Iterator<QueryConstraint> iter = constraints.iterator();
 
@@ -164,11 +163,13 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         statementString.append(" AND ");
       }
     }
+    statementString.append(")");
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
+    int index = 0;
     for (QueryConstraint constraint : constraints) {
       Image._Fields field = (Image._Fields)constraint.getField();
-      int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
         continue;

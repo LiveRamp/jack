@@ -171,7 +171,6 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM comments WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
 
     Iterator<QueryConstraint> iter = constraints.iterator();
 
@@ -186,11 +185,13 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         statementString.append(" AND ");
       }
     }
+    statementString.append(")");
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
+    int index = 0;
     for (QueryConstraint constraint : constraints) {
       Comment._Fields field = (Comment._Fields)constraint.getField();
-      int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
         continue;

@@ -1,6 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
+import com.rapleaf.jack.ISqlOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -18,8 +19,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder handle(QueryConstraint<String> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder handle(ISqlOperator<String> operator) {
+    addConstraint(new QueryConstraint<String>(User._Fields.handle, operator));
     return this;
   }
 
@@ -28,8 +29,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder createdAtMillis(QueryConstraint<Long> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder createdAtMillis(ISqlOperator<Long> operator) {
+    addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, operator));
     return this;
   }
 
@@ -38,8 +39,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder numPosts(QueryConstraint<Integer> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder numPosts(ISqlOperator<Integer> operator) {
+    addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, operator));
     return this;
   }
 
@@ -48,8 +49,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDate(QueryConstraint<Long> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someDate(ISqlOperator<Long> operator) {
+    addConstraint(new QueryConstraint<Long>(User._Fields.some_date, operator));
     return this;
   }
 
@@ -58,8 +59,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDatetime(QueryConstraint<Long> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someDatetime(ISqlOperator<Long> operator) {
+    addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, operator));
     return this;
   }
 
@@ -68,8 +69,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder bio(QueryConstraint<String> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder bio(ISqlOperator<String> operator) {
+    addConstraint(new QueryConstraint<String>(User._Fields.bio, operator));
     return this;
   }
 
@@ -78,8 +79,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someBinary(QueryConstraint<byte[]> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someBinary(ISqlOperator<byte[]> operator) {
+    addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, operator));
     return this;
   }
 
@@ -88,8 +89,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someFloat(QueryConstraint<Double> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someFloat(ISqlOperator<Double> operator) {
+    addConstraint(new QueryConstraint<Double>(User._Fields.some_float, operator));
     return this;
   }
 
@@ -98,8 +99,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDecimal(QueryConstraint<Double> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someDecimal(ISqlOperator<Double> operator) {
+    addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, operator));
     return this;
   }
 
@@ -108,8 +109,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someBoolean(QueryConstraint<Boolean> constraint) {
-    addConstraint(constraint);
+  public UserQueryBuilder someBoolean(ISqlOperator<Boolean> operator) {
+    addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }
 }

@@ -224,7 +224,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
 
     Iterator<QueryConstraint> iter = constraints.iterator();
 
@@ -239,11 +238,13 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
         statementString.append(" AND ");
       }
     }
+    statementString.append(")");
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
+    int index = 0;
     for (QueryConstraint constraint : constraints) {
       User._Fields field = (User._Fields)constraint.getField();
-      int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
         continue;
