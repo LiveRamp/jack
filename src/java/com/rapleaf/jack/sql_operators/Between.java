@@ -15,4 +15,9 @@ public class Between<N extends Number> extends SqlOperator<N> {
   public String getSqlStatement() {
     return " BETWEEN ? AND ? ";
   }
+
+  @Override
+  public int getNbNotNullParameters() {
+    return 2;
+  }
 }

@@ -15,4 +15,9 @@ public class Match extends SqlOperator<String> {
   public String getSqlStatement() {
     return " LIKE  ? ";
   }
+
+  @Override
+  public int getNbNotNullParameters() {
+    return 1;
+  }
 }

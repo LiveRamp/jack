@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class SqlOperator<T> implements ISqlOperator<T> {
 
-  protected final List<T> parameters;
+  private final List<T> parameters;
 
   public SqlOperator(T parameter) {
     this.parameters = new ArrayList<T>();
@@ -25,15 +25,5 @@ public abstract class SqlOperator<T> implements ISqlOperator<T> {
 
   public List<T> getParameters() {
     return parameters;
-  }
-
-  public int getNbNotNullParameters() {
-    int n = 0;
-    for (T param : parameters) {
-      if (param != null) {
-        n++;
-      }
-    }
-    return n;
   }
 }

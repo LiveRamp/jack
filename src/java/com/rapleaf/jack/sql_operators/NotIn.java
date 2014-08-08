@@ -22,4 +22,9 @@ public class NotIn<T> extends SqlOperator<T> {
     sb.append(" ) ");
     return sb.toString();
   }
+
+  @Override
+  public int getNbNotNullParameters() {
+    return getParameters().size();
+  }
 }

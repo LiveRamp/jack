@@ -17,4 +17,9 @@ public class LessThanOrEqualTo<N extends Number> extends SqlOperator<N> {
   public String getSqlStatement() {
     return " < ? ";
   }
+
+  @Override
+  public int getNbNotNullParameters() {
+    return 1;
+  }
 }
