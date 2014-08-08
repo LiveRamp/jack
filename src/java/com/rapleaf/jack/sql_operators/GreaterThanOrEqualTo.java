@@ -6,6 +6,9 @@ public class GreaterThanOrEqualTo<N extends Number> extends SqlOperator<N> {
 
   public GreaterThanOrEqualTo(N number) {
     super(number);
+    if (number == null) {
+      throw new IllegalArgumentException("You cannot pass null parameters.");
+    }
   }
 
   @Override

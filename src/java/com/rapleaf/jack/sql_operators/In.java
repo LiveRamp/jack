@@ -6,6 +6,11 @@ public class In<T> extends SqlOperator<T> {
 
   public In(T... parameters) {
     super(parameters);
+    for (T parameter : parameters) {
+      if (parameter == null) {
+        throw new IllegalArgumentException("You cannot pass null parameters.");
+      }
+    }
   }
 
   @Override

@@ -6,6 +6,9 @@ public class Match extends SqlOperator<String> {
 
   public Match(String pattern) {
     super(pattern);
+    if (pattern == null) {
+      throw new IllegalArgumentException("You cannot pass null parameters.");
+    }
   }
 
   @Override
