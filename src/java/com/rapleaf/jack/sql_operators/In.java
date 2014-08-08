@@ -32,9 +32,4 @@ public class In<T> extends SqlOperator<T> {
     }
     return false;
   }
-
-  @Override
-  public int getNbNotNullParameters() {
-    return getParameters().size();
-  }
 }

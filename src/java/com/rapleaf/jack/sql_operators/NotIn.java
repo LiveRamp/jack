@@ -32,9 +32,4 @@ public class NotIn<T> extends SqlOperator<T> {
     }
     return true;
   }
-
-  @Override
-  public int getNbNotNullParameters() {
-    return getParameters().size();
-  }
 }

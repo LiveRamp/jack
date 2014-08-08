@@ -21,11 +21,6 @@ public class Between<N extends Comparable<N>> extends SqlOperator<N> {
     return value.compareTo(getMin()) >= 0 && value.compareTo(getMax()) <= 0;
   }
 
-  @Override
-  public int getNbNotNullParameters() {
-    return 2;
-  }
-
   public N getMin() {
     return getParameters().get(0);
   }

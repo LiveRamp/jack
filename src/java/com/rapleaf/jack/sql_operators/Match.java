@@ -21,11 +21,6 @@ public class Match extends SqlOperator<String> {
     return value.matches(getParameter().replace("%", "(.*)"));
   }
 
-  @Override
-  public int getNbNotNullParameters() {
-    return 1;
-  }
-
   public String getParameter() {
     return getParameters().get(0);
   }

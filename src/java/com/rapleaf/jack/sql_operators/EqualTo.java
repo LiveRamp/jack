@@ -18,11 +18,6 @@ public class EqualTo<T> extends SqlOperator<T> {
     return value == getParameter();
   }
 
-  @Override
-  public int getNbNotNullParameters() {
-    return getParameter() != null ? 1 : 0;
-  }
-
   public T getParameter() {
     return getParameters().get(0);
   }

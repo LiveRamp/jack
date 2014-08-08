@@ -21,11 +21,6 @@ public class LessThan<N extends Comparable<N>> extends SqlOperator<N> {
     return value.compareTo(getParameter()) < 0;
   }
 
-  @Override
-  public int getNbNotNullParameters() {
-    return 1;
-  }
-
   public N getParameter() {
     return getParameters().get(0);
   }

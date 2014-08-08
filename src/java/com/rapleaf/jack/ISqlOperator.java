@@ -9,7 +9,4 @@ public interface ISqlOperator<T> {
   public List<T> getParameters();
 
   public boolean apply(T value);
-
-  public int getNbNotNullParameters();
-
 }
