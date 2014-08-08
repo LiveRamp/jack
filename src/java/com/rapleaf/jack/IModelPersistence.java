@@ -16,6 +16,7 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,9 +27,10 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   }
 
   public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
-  
+
   /**
    * Update an existing T instance in the persistence.
+   *
    * @param model
    * @return
    * @throws IOException
@@ -37,30 +39,34 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   /**
    * Find the T instance with specified id, or null if there is no such instance.
+   *
    * @param id
    * @return
    * @throws IOException
    */
   public T find(long id) throws IOException;
-  
+
   public Set<T> find(Set<Long> ids) throws IOException;
 
   public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
   public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
+  public Set<T> find(Collection<QueryConstraint> constraints) throws IOException;
+
   public void clearCacheById(long id) throws IOException;
 
   public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
-  
+
   public Set<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
 
   public void clearCacheByForeignKey(String foreignKey, long id);
-  
+
   public void clearForeignKeyCache();
 
   /**
    * Effectively the same as delete(model.getId()).
+   *
    * @param model
    * @return
    * @throws IOException
@@ -69,6 +75,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   /**
    * Destroy record with <i>id</i>.
+   *
    * @param id
    * @return
    * @throws IOException
@@ -77,6 +84,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   /**
    * Delete all records in this persistence.
+   *
    * @return
    * @throws IOException
    */
@@ -85,17 +93,17 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public Set<T> findAll() throws IOException;
 
   public Set<T> findAll(String conditions) throws IOException;
-  
+
   public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
-  
+
   /**
    * Caching is on by default, and is toggled with enableCaching() and disableCaching().
-   * 
-   * While caching is disabled, the cache is neither read from nor written to.  However, 
+   * <p/>
+   * While caching is disabled, the cache is neither read from nor written to.  However,
    * disableCaching() does not clear the cache, so the cache contents are preserved for when
    * caching is enabled again.
    */
-  public boolean isCaching();  
+  public boolean isCaching();
 
   public void enableCaching();
 

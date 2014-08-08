@@ -29,7 +29,7 @@ import com.rapleaf.jack.ModelWithId;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
-import com.rapleaf.jack.test_project.database_1.query.ImageQuery;
+import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -160,7 +160,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }
 
-  public ImageQuery query() {
-    return new ImageQuery(this);
+  public ImageQueryBuilder query() {
+    return new ImageQueryBuilder(this);
   }
 }

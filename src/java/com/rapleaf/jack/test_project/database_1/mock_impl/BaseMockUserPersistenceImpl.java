@@ -24,7 +24,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
-import com.rapleaf.jack.test_project.database_1.query.UserQuery;
+import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -125,7 +125,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
   }
 
-  public UserQuery query() {
-    return new UserQuery(this);
+  public UserQueryBuilder query() {
+    return new UserQueryBuilder(this);
   }
 }

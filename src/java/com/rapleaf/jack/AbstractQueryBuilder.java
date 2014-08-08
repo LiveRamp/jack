@@ -1,22 +1,26 @@
 package com.rapleaf.jack;
 
-
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
-public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
+public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
 
-  protected Map<Enum, Object> fieldsMap;
+  private Collection<QueryConstraint> constraints;
   private IModelPersistence<M> caller;
 
   public AbstractQueryBuilder(IModelPersistence<M> caller) {
     this.caller = caller;
-    this.fieldsMap = new HashMap<Enum, Object>();
+    this.constraints = new ArrayList<QueryConstraint>();
   }
 
+  public void addConstraint(QueryConstraint constraint) {
+    constraints.add(constraint);
+  }
+
+  @Override
   public Set<M> find() throws IOException {
-    return caller.find(fieldsMap);
+    return caller.find(constraints);
   }
 }

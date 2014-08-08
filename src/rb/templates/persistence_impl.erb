@@ -39,7 +39,7 @@ import <%= JACK_NAMESPACE %>.ModelWithId;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
-import <%= root_package %>.query.<%= model_defn.query_class_name %>;
+import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 
 
 import <%= project_defn.databases_namespace %>.IDatabases;
@@ -166,7 +166,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
   <% end %>
 
-  public <%= model_defn.query_class_name %> query() {
-    return new <%= model_defn.query_class_name %>(this);
+  public <%= model_defn.query_builder_name %> query() {
+    return new <%= model_defn.query_builder_name %>(this);
   }
 }

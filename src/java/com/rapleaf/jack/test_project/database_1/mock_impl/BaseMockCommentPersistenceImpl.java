@@ -24,7 +24,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
-import com.rapleaf.jack.test_project.database_1.query.CommentQuery;
+import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -96,7 +96,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 
-  public CommentQuery query() {
-    return new CommentQuery(this);
+  public CommentQueryBuilder query() {
+    return new CommentQueryBuilder(this);
   }
 }
