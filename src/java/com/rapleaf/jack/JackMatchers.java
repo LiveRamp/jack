@@ -1,21 +1,24 @@
 package com.rapleaf.jack;
 
 import com.rapleaf.jack.sql_operators.Between;
+import com.rapleaf.jack.sql_operators.EqualTo;
 import com.rapleaf.jack.sql_operators.GreaterThan;
 import com.rapleaf.jack.sql_operators.GreaterThanOrEqualTo;
+import com.rapleaf.jack.sql_operators.In;
 import com.rapleaf.jack.sql_operators.LessThan;
 import com.rapleaf.jack.sql_operators.LessThanOrEqualTo;
 import com.rapleaf.jack.sql_operators.Match;
+import com.rapleaf.jack.sql_operators.NotIn;
 
 public class JackMatchers {
 
-  public static <T> void equalto();
+  public static <T> EqualTo<T> equalto(T value);
 
-  public static <T> void notEqualto();
+  public static <T> EqualTo<T> notEqualto(T value);
 
-  public static <T> void in();
+  public static <T> In<T> in(T... values);
 
-  public static <T> void notIn();
+  public static <T> NotIn<T> notIn(T... values);
 
   public static <N extends Number> GreaterThan<N> greaterThan(N number);
 

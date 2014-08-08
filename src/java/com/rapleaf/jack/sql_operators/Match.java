@@ -10,6 +10,6 @@ public class Match extends SqlOperator<String> {
 
   @Override
   public String getSqlStatement() {
-    return " LIKE ";
+    return " LIKE  ? ";
   }
 }

@@ -1,10 +1,12 @@
 package com.rapleaf.jack.sql_operators;
 
+import com.sun.istack.internal.NotNull;
+
 import com.rapleaf.jack.SqlOperator;
 
 public class GreaterThan<N extends Number> extends SqlOperator<N> {
 
-  public GreaterThan(N number) {
+  public GreaterThan(@NotNull N number) {
     super(number);
   }
 
