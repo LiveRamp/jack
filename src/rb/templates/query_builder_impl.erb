@@ -16,7 +16,7 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   <% model_defn.fields.each do |field_defn| %>
 
   public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type %> value) {
-    addConstraint(JackMatchers.equalTo(value));
+    addConstraint(new QueryConstraint(field_defn.name, JackMatchers.equalTo(value));
     return this;
   }
 
