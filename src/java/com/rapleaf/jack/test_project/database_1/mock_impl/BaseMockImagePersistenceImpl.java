@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.QueryConstraint;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Image.Id;
@@ -74,6 +76,10 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
   public Set<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     return super.realFind(ids, fieldsMap);
+  }
+
+  public Set<Image> find(Collection<QueryConstraint> constraints) throws IOException {
+    return super.realFind(constraints);
   }
 
   public Set<Image> findByUserId(final Integer value) throws IOException {

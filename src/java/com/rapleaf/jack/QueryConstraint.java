@@ -1,5 +1,7 @@
 package com.rapleaf.jack;
 
+import java.util.List;
+
 public class QueryConstraint<T> {
   private Enum field;
   private final ISqlOperator<T> operator;
@@ -15,5 +17,9 @@ public class QueryConstraint<T> {
 
   public ISqlOperator<T> getOperator() {
     return operator;
+  }
+
+  public List<T> getParameters() {
+    return operator.getParameters();
   }
 }

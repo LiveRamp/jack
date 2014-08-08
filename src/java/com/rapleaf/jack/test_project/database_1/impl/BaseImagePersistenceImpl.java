@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -25,10 +26,11 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.ISqlOperator;
+import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.ModelWithId;
-
-import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
+import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
 
 
@@ -156,7 +158,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       Enum field = constraint.getField();
       ISqlOperator operator = constraint.getOperator();
 
-      statementString.append(field).append(operator.getSqlStatement);
+      statementString.append(field).append(operator.getSqlStatement());
 
       if (iter.hasNext()) {
         statementString.append(" AND ");
@@ -165,7 +167,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     for (QueryConstraint constraint : constraints) {
-      Image._Fields field = constraint.getField();
+      Image._Fields field = (Image._Fields)constraint.getField();
       int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {

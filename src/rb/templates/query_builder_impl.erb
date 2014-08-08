@@ -2,28 +2,27 @@ package <%= root_package %>.query;
 
 import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
 import <%= JACK_NAMESPACE %>.JackMatchers;
-
-import <%= root_package %>.models.<%= model_defn.model_name %>;
+import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
+import <%= root_package %>.models.<%= model_defn.model_name %>;
 
 
 public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<%=model_defn.model_name%>> {
 
-  public <%= model_defn.query_builder_name %> (<%= model_defn.iface_name %> caller) {
+  public <%= model_defn.query_builder_name %>(<%= model_defn.iface_name %> caller) {
     super(caller);
   }
 
   <% model_defn.fields.each do |field_defn| %>
 
-  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type %> value) {
-    addConstraint(new QueryConstraint(field_defn.name, JackMatchers.equalTo(value));
+  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type(true) %> value) {
+    addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(QueryConstraint<<%= field_defn.java_type(true) %> value) {
-    addConstraint(JackMatchers.equalTo(value));
+  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(QueryConstraint<<%= field_defn.java_type(true) %>> constraint) {
+    addConstraint(constraint);
     return this;
   }
-
   <% end %>
 }

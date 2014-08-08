@@ -18,6 +18,7 @@ package <%= root_package %>.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -35,10 +36,11 @@ import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
+import <%= JACK_NAMESPACE %>.ISqlOperator;
+import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= JACK_NAMESPACE %>.ModelWithId;
-
-import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
+import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 
 
@@ -149,7 +151,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
       Enum field = constraint.getField();
       ISqlOperator operator = constraint.getOperator();
 
-      statementString.append(field).append(operator.getSqlStatement);
+      statementString.append(field).append(operator.getSqlStatement());
 
       if (iter.hasNext()) {
         statementString.append(" AND ");
@@ -158,7 +160,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     for (QueryConstraint constraint : constraints) {
-      <%= model_defn.model_name %>._Fields field = constraint.getField();
+      <%= model_defn.model_name %>._Fields field = (<%= model_defn.model_name %>._Fields)constraint.getField();
       int index = 0;
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
