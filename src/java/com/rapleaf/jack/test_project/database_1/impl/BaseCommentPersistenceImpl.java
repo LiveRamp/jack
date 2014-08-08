@@ -160,6 +160,64 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return foundSet;
   }
 
+  public Set<Comment> find(Collection<QueryConstraint> constraints) throws IOException {
+    Set<Comment> foundSet = new HashSet<Comment>();
+    
+    if (constraints == null || constraints.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM comments WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+
+    Iterator<QueryConstraint> iter = constraints.iterator();
+
+    while (iter.hasNext()) {
+      QueryConstraint constraint = iter.next();
+      Enum field = constraint.getField();
+      ISqlOperator operator = constraint.getOperator();
+
+      statementString.append(field).append(operator.getSqlStatement);
+
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (QueryConstraint constraint : constraints) {
+      Comment._Fields field = constraint.getField();
+      int index = 0;
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case content:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case commenter_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case commented_on_id:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case created_at:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+  }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {

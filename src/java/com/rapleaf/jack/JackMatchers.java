@@ -13,11 +13,11 @@ import com.rapleaf.jack.sql_operators.NotIn;
 
 public class JackMatchers {
 
-  public static <T> EqualTo<T> equalto(T value) {
+  public static <T> EqualTo<T> equalTo(T value) {
     return new EqualTo<T>(value);
   }
 
-  public static <T> NotEqualTo<T> notEqualto(T value) {
+  public static <T> NotEqualTo<T> notEqualTo(T value) {
     return new NotEqualTo<T>(value);
   }
 

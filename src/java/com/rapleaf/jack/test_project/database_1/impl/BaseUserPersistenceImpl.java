@@ -213,6 +213,82 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return foundSet;
   }
 
+  public Set<User> find(Collection<QueryConstraint> constraints) throws IOException {
+    Set<User> foundSet = new HashSet<User>();
+    
+    if (constraints == null || constraints.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM users WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+
+    Iterator<QueryConstraint> iter = constraints.iterator();
+
+    while (iter.hasNext()) {
+      QueryConstraint constraint = iter.next();
+      Enum field = constraint.getField();
+      ISqlOperator operator = constraint.getOperator();
+
+      statementString.append(field).append(operator.getSqlStatement);
+
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (QueryConstraint constraint : constraints) {
+      User._Fields field = constraint.getField();
+      int index = 0;
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case num_posts:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case some_date:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+            case bio:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case some_binary:
+              preparedStatement.setBytes(++index, (byte[]) parameter);
+              break;
+            case some_float:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(++index, (Boolean) parameter);
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+  }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {

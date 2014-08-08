@@ -4,9 +4,9 @@ public class QueryConstraint<T> {
   private Enum field;
   private final ISqlOperator<T> operator;
 
-  public QueryConstraint(ISqlOperator<T> operator, Enum field) {
-    this.operator = operator;
+  public QueryConstraint(Enum field, ISqlOperator<T> operator) {
     this.field = field;
+    this.operator = operator;
   }
 
   public Enum getField() {

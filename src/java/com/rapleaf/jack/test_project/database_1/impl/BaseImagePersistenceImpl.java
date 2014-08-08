@@ -138,6 +138,55 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return foundSet;
   }
 
+  public Set<Image> find(Collection<QueryConstraint> constraints) throws IOException {
+    Set<Image> foundSet = new HashSet<Image>();
+    
+    if (constraints == null || constraints.isEmpty()) {
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM images WHERE (");
+    List<Object> nonNullValues = new ArrayList<Object>();
+
+    Iterator<QueryConstraint> iter = constraints.iterator();
+
+    while (iter.hasNext()) {
+      QueryConstraint constraint = iter.next();
+      Enum field = constraint.getField();
+      ISqlOperator operator = constraint.getOperator();
+
+      statementString.append(field).append(operator.getSqlStatement);
+
+      if (iter.hasNext()) {
+        statementString.append(" AND ");
+      }
+    }
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    for (QueryConstraint constraint : constraints) {
+      Image._Fields field = constraint.getField();
+      int index = 0;
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case user_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+  }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {

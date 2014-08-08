@@ -1,34 +1,54 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
-import com.rapleaf.jack.SimpleQueryBuilder;
+import com.rapleaf.jack.AbstractQueryBuilder;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 
 
-public class CommentQueryBuilder extends SimpleQueryBuilder<Comment> {
+public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder (ICommentPersistence caller) {
     super(caller);
   }
 
   public CommentQueryBuilder content(String value) {
-    fieldsMap.put(Comment._Fields.content, value);
+    addConstraint(JackMatchers.equalTo(value));
+    return this;
+  }
+
+  public CommentQueryBuilder content(QueryConstraint<String value) {
+    addConstraint(JackMatchers.equalTo(value));
     return this;
   }
 
   public CommentQueryBuilder commenterId(int value) {
-    fieldsMap.put(Comment._Fields.commenter_id, value);
+    addConstraint(JackMatchers.equalTo(value));
+    return this;
+  }
+
+  public CommentQueryBuilder commenterId(QueryConstraint<Integer value) {
+    addConstraint(JackMatchers.equalTo(value));
     return this;
   }
 
   public CommentQueryBuilder commentedOnId(long value) {
-    fieldsMap.put(Comment._Fields.commented_on_id, value);
+    addConstraint(JackMatchers.equalTo(value));
+    return this;
+  }
+
+  public CommentQueryBuilder commentedOnId(QueryConstraint<Long value) {
+    addConstraint(JackMatchers.equalTo(value));
     return this;
   }
 
   public CommentQueryBuilder createdAt(long value) {
-    fieldsMap.put(Comment._Fields.created_at, value);
+    addConstraint(JackMatchers.equalTo(value));
+    return this;
+  }
+
+  public CommentQueryBuilder createdAt(QueryConstraint<Long value) {
+    addConstraint(JackMatchers.equalTo(value));
     return this;
   }
 }
