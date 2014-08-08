@@ -24,6 +24,16 @@ public class NotIn<T> extends SqlOperator<T> {
   }
 
   @Override
+  public boolean apply(T value) {
+    for (T t : getParameters()) {
+      if (t == value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
   public int getNbNotNullParameters() {
     return getParameters().size();
   }

@@ -24,6 +24,16 @@ public class In<T> extends SqlOperator<T> {
   }
 
   @Override
+  public boolean apply(T value) {
+    for (T t : getParameters()) {
+      if (t == value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   public int getNbNotNullParameters() {
     return getParameters().size();
   }

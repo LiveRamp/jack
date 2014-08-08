@@ -2,7 +2,7 @@ package com.rapleaf.jack.sql_operators;
 
 import com.rapleaf.jack.SqlOperator;
 
-public class Between<N extends Number> extends SqlOperator<N> {
+public class Between<N extends Comparable<N>> extends SqlOperator<N> {
 
   public Between(N min, N max) {
     super(min, max);
@@ -17,7 +17,20 @@ public class Between<N extends Number> extends SqlOperator<N> {
   }
 
   @Override
+  public boolean apply(N value) {
+    return value.compareTo(getMin()) >= 0 && value.compareTo(getMax()) <= 0;
+  }
+
+  @Override
   public int getNbNotNullParameters() {
     return 2;
+  }
+
+  public N getMin() {
+    return getParameters().get(0);
+  }
+
+  public N getMax() {
+    return getParameters().get(1);
   }
 }

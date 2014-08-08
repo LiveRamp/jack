@@ -10,15 +10,20 @@ public class NotEqualTo<T> extends SqlOperator<T> {
 
   @Override
   public String getSqlStatement() {
-    return getSingleParameter() != null ? " <> ? " : " IS NOT NULL ";
+    return getParameter() != null ? " <> ? " : " IS NOT NULL ";
+  }
+
+  @Override
+  public boolean apply(T value) {
+    return value != getParameter();
   }
 
   @Override
   public int getNbNotNullParameters() {
-    return getSingleParameter() != null ? 1 : 0;
+    return getParameter() != null ? 1 : 0;
   }
 
-  public T getSingleParameter() {
+  public T getParameter() {
     return getParameters().get(0);
   }
 }

@@ -4,7 +4,7 @@ import com.sun.istack.internal.NotNull;
 
 import com.rapleaf.jack.SqlOperator;
 
-public class GreaterThan<N extends Number> extends SqlOperator<N> {
+public class GreaterThan<N extends Comparable<N>> extends SqlOperator<N> {
 
   public GreaterThan(@NotNull N number) {
     super(number);
@@ -19,7 +19,16 @@ public class GreaterThan<N extends Number> extends SqlOperator<N> {
   }
 
   @Override
+  public boolean apply(N value) {
+    return value.compareTo(getParameter()) > 0;
+  }
+
+  @Override
   public int getNbNotNullParameters() {
     return 1;
+  }
+
+  public N getParameter() {
+    return getParameters().get(0);
   }
 }

@@ -2,7 +2,7 @@ package com.rapleaf.jack.sql_operators;
 
 import com.rapleaf.jack.SqlOperator;
 
-public class GreaterThanOrEqualTo<N extends Number> extends SqlOperator<N> {
+public class GreaterThanOrEqualTo<N extends Comparable<N>> extends SqlOperator<N> {
 
   public GreaterThanOrEqualTo(N number) {
     super(number);
@@ -17,7 +17,16 @@ public class GreaterThanOrEqualTo<N extends Number> extends SqlOperator<N> {
   }
 
   @Override
+  public boolean apply(N value) {
+    return value.compareTo(getParameter()) > 0;
+  }
+
+  @Override
   public int getNbNotNullParameters() {
     return 1;
+  }
+
+  public N getParameter() {
+    return getParameters().get(0);
   }
 }
