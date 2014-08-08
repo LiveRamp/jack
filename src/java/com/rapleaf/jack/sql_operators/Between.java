@@ -4,9 +4,9 @@ import com.rapleaf.jack.SqlOperator;
 
 public class Between<N extends Number> extends SqlOperator<N> {
 
-  public Between(N param1, N param2) {
-    super(param1, param2);
-    if (param1 == null || param2 == null) {
+  public Between(N min, N max) {
+    super(min, max);
+    if (min == null || max == null) {
       throw new IllegalArgumentException("You cannot pass null parameters.");
     }
   }
