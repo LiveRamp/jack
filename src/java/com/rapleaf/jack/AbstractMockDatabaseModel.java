@@ -87,7 +87,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
     for (T record : records.values()) {
       boolean allMatch = true;
-      for (Map.Entry<Enum, Object> e : (fieldsMap).entrySet()) {
+      for (Map.Entry<Enum, Object> e : fieldsMap.entrySet()) {
         Object searchedForValue = e.getValue();
         Object existingValue = record.getField(e.getKey().name());
         if (ids != null && !ids.contains(record.getId())) {
@@ -110,7 +110,24 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   }
 
   protected Set<T> realFind(Collection<QueryConstraint> constraints) throws IOException {
-    return null;
+    Set<T> foundSet = new HashSet<T>();
+    if (constraints == null || constraints.isEmpty()) {
+      return foundSet;
+    }
+    for (T record : records.values()) {
+      boolean allMatch = true;
+      for (QueryConstraint constraint : constraints) {
+
+        Enum field = constraint.getField();
+        ISqlOperator operator = constraint.getOperator();
+        allMatch = allMatch && operator.apply(record.getField(field.name()));
+      }
+      if (allMatch) {
+        foundSet.add(record);
+      }
+    }
+
+    return foundSet;
   }
 
   @Override

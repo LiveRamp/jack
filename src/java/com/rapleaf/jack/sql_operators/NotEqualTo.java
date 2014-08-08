@@ -15,7 +15,12 @@ public class NotEqualTo<T> extends SqlOperator<T> {
 
   @Override
   public boolean apply(T value) {
-    return value != getParameter();
+    // If the parameter is not null, calls its method equals()
+    if (getParameter() != null) {
+      return !getParameter().equals(value);
+    }
+    // If the parameter is null, check if value is also null
+    return value != null;
   }
 
   public T getParameter() {
