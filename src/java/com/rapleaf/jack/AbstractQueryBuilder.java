@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractQueryBuilder<M extends ModelWithId> implements QueryBuilder<M> {
+public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
 
   protected Map<Enum, Object> fieldsMap;
   private IModelPersistence<M> caller;

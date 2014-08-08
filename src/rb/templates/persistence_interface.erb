@@ -17,7 +17,7 @@
 package <%= root_package %>.iface;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
-import <%= root_package %>.query.<%= model_defn.query_class_name %>;
+import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,5 +37,5 @@ public interface <%= model_defn.iface_name %> extends IModelPersistence<<%= mode
   public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> value)  throws IOException;
   <% end %>
 
-  public <%= model_defn.query_class_name %> query();
+  public <%= model_defn.query_builder_name %> query();
 }
