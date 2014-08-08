@@ -29,23 +29,23 @@ public class JackMatchers {
     return new NotIn<T>(values);
   }
 
-  public static <N extends Number> GreaterThan<N> greaterThan(N number) {
+  public static <N extends Comparable<N>> GreaterThan<N> greaterThan(N number) {
     return new GreaterThan<N>(number);
   }
 
-  public static <N extends Number> LessThan<N> lessThan(N number) {
+  public static <N extends Comparable<N>> LessThan<N> lessThan(N number) {
     return new LessThan<N>(number);
   }
 
-  public static <N extends Number> GreaterThanOrEqualTo<N> greaterThanOrEqualTo(N number) {
+  public static <N extends Comparable<N>> GreaterThanOrEqualTo<N> greaterThanOrEqualTo(N number) {
     return new GreaterThanOrEqualTo<N>(number);
   }
 
-  public static <N extends Number> LessThanOrEqualTo<N> lessThanOrEqualto(N number) {
+  public static <N extends Comparable<N>> LessThanOrEqualTo<N> lessThanOrEqualto(N number) {
     return new LessThanOrEqualTo<N>(number);
   }
 
-  public static <N extends Number> Between<N> between(N min, N max) {
+  public static <N extends Comparable<N>> Between<N> between(N min, N max) {
     return new Between<N>(min, max);
   }
 
