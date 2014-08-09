@@ -1,12 +1,10 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
-import com.sun.istack.internal.NotNull;
+import com.rapleaf.jack.QueryOperator;
 
-import com.rapleaf.jack.SqlOperator;
+public class LessThan<N extends Comparable<N>> extends QueryOperator<N> {
 
-public class GreaterThan<N extends Comparable<N>> extends SqlOperator<N> {
-
-  public GreaterThan(@NotNull N number) {
+  public LessThan(N number) {
     super(number);
     if (number == null) {
       throw new IllegalArgumentException("You cannot pass null parameters.");
@@ -15,12 +13,12 @@ public class GreaterThan<N extends Comparable<N>> extends SqlOperator<N> {
 
   @Override
   public String getSqlStatement() {
-    return " > ? ";
+    return " < ? ";
   }
 
   @Override
   public boolean apply(N value) {
-    return value.compareTo(getParameter()) > 0;
+    return value.compareTo(getParameter()) < 0;
   }
 
   public N getParameter() {

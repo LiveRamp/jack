@@ -1,15 +1,15 @@
 package com.rapleaf.jack;
 
-import com.rapleaf.jack.sql_operators.Between;
-import com.rapleaf.jack.sql_operators.EqualTo;
-import com.rapleaf.jack.sql_operators.GreaterThan;
-import com.rapleaf.jack.sql_operators.GreaterThanOrEqualTo;
-import com.rapleaf.jack.sql_operators.In;
-import com.rapleaf.jack.sql_operators.LessThan;
-import com.rapleaf.jack.sql_operators.LessThanOrEqualTo;
-import com.rapleaf.jack.sql_operators.Match;
-import com.rapleaf.jack.sql_operators.NotEqualTo;
-import com.rapleaf.jack.sql_operators.NotIn;
+import com.rapleaf.jack.query_operators.Between;
+import com.rapleaf.jack.query_operators.EqualTo;
+import com.rapleaf.jack.query_operators.GreaterThan;
+import com.rapleaf.jack.query_operators.GreaterThanOrEqualTo;
+import com.rapleaf.jack.query_operators.In;
+import com.rapleaf.jack.query_operators.LessThan;
+import com.rapleaf.jack.query_operators.LessThanOrEqualTo;
+import com.rapleaf.jack.query_operators.Match;
+import com.rapleaf.jack.query_operators.NotEqualTo;
+import com.rapleaf.jack.query_operators.NotIn;
 
 public class JackMatchers {
 

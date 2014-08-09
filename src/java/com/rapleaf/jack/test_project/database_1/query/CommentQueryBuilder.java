@@ -1,7 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.ISqlOperator;
+import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -19,7 +19,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder content(ISqlOperator<String> operator) {
+  public CommentQueryBuilder content(IQueryOperator<String> operator) {
     addConstraint(new QueryConstraint<String>(Comment._Fields.content, operator));
     return this;
   }
@@ -29,7 +29,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder commenterId(ISqlOperator<Integer> operator) {
+  public CommentQueryBuilder commenterId(IQueryOperator<Integer> operator) {
     addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, operator));
     return this;
   }
@@ -39,7 +39,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder commentedOnId(ISqlOperator<Long> operator) {
+  public CommentQueryBuilder commentedOnId(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, operator));
     return this;
   }
@@ -49,7 +49,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder createdAt(ISqlOperator<Long> operator) {
+  public CommentQueryBuilder createdAt(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, operator));
     return this;
   }

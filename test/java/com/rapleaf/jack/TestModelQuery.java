@@ -62,10 +62,10 @@ public class TestModelQuery extends TestCase {
     dbs.getDatabase1().deleteAll();
     IUserPersistence users = dbs.getDatabase1().users();
 
-    User userA = users.createDefaultInstance().setHandle("Roshan").setBio("Soccer player").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("Porter").setBio("Formula 1 driver").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("Ben").setBio("Singer").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("Yuwei").setBio("Ice skater").setNumPosts(3);
+    User userA = users.createDefaultInstance().setHandle("Roshan").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
+    User userB = users.createDefaultInstance().setHandle("Porter").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l);
+    User userC = users.createDefaultInstance().setHandle("Ben").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
+    User userD = users.createDefaultInstance().setHandle("Yuwei").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
     userA.save();
     userB.save();
     userC.save();
@@ -73,7 +73,9 @@ public class TestModelQuery extends TestCase {
 
     Set<User> result;
 
-    result = users.query().numPosts(JackMatchers.greaterThanOrEqualTo(2)).find();
+    result = users.query().numPosts(JackMatchers.greaterThanOrEqualTo(2))
+        .createdAtMillis(1l)
+        .find();
     for (User user : result) {
       System.out.println(user.getHandle());
     }

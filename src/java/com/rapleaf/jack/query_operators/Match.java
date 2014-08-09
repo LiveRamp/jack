@@ -1,8 +1,8 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
-import com.rapleaf.jack.SqlOperator;
+import com.rapleaf.jack.QueryOperator;
 
-public class Match extends SqlOperator<String> {
+public class Match extends QueryOperator<String> {
 
   public Match(String pattern) {
     super(pattern);

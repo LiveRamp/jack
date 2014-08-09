@@ -1,8 +1,8 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
-import com.rapleaf.jack.SqlOperator;
+import com.rapleaf.jack.QueryOperator;
 
-public class NotEqualTo<T> extends SqlOperator<T> {
+public class NotEqualTo<T> extends QueryOperator<T> {
 
   public NotEqualTo(T parameter) {
     super(parameter);

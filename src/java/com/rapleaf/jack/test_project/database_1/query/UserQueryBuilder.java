@@ -1,7 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.ISqlOperator;
+import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -19,7 +19,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder handle(ISqlOperator<String> operator) {
+  public UserQueryBuilder handle(IQueryOperator<String> operator) {
     addConstraint(new QueryConstraint<String>(User._Fields.handle, operator));
     return this;
   }
@@ -29,7 +29,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder createdAtMillis(ISqlOperator<Long> operator) {
+  public UserQueryBuilder createdAtMillis(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, operator));
     return this;
   }
@@ -39,7 +39,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder numPosts(ISqlOperator<Integer> operator) {
+  public UserQueryBuilder numPosts(IQueryOperator<Integer> operator) {
     addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, operator));
     return this;
   }
@@ -49,7 +49,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDate(ISqlOperator<Long> operator) {
+  public UserQueryBuilder someDate(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(User._Fields.some_date, operator));
     return this;
   }
@@ -59,7 +59,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDatetime(ISqlOperator<Long> operator) {
+  public UserQueryBuilder someDatetime(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, operator));
     return this;
   }
@@ -69,7 +69,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder bio(ISqlOperator<String> operator) {
+  public UserQueryBuilder bio(IQueryOperator<String> operator) {
     addConstraint(new QueryConstraint<String>(User._Fields.bio, operator));
     return this;
   }
@@ -79,7 +79,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someBinary(ISqlOperator<byte[]> operator) {
+  public UserQueryBuilder someBinary(IQueryOperator<byte[]> operator) {
     addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, operator));
     return this;
   }
@@ -89,7 +89,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someFloat(ISqlOperator<Double> operator) {
+  public UserQueryBuilder someFloat(IQueryOperator<Double> operator) {
     addConstraint(new QueryConstraint<Double>(User._Fields.some_float, operator));
     return this;
   }
@@ -99,7 +99,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someDecimal(ISqlOperator<Double> operator) {
+  public UserQueryBuilder someDecimal(IQueryOperator<Double> operator) {
     addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, operator));
     return this;
   }
@@ -109,7 +109,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder someBoolean(ISqlOperator<Boolean> operator) {
+  public UserQueryBuilder someBoolean(IQueryOperator<Boolean> operator) {
     addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }

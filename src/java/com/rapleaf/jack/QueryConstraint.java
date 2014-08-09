@@ -4,9 +4,9 @@ import java.util.List;
 
 public class QueryConstraint<T> {
   private Enum field;
-  private final ISqlOperator<T> operator;
+  private final IQueryOperator<T> operator;
 
-  public QueryConstraint(Enum field, ISqlOperator<T> operator) {
+  public QueryConstraint(Enum field, IQueryOperator<T> operator) {
     this.field = field;
     this.operator = operator;
   }
@@ -15,7 +15,7 @@ public class QueryConstraint<T> {
     return field;
   }
 
-  public ISqlOperator<T> getOperator() {
+  public IQueryOperator<T> getOperator() {
     return operator;
   }
 

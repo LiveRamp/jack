@@ -2,7 +2,7 @@ package com.rapleaf.jack;
 
 import java.util.List;
 
-public interface ISqlOperator<T> {
+public interface IQueryOperator<T> {
 
   public String getSqlStatement();
 

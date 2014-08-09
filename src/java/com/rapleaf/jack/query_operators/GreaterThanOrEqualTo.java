@@ -1,8 +1,8 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
-import com.rapleaf.jack.SqlOperator;
+import com.rapleaf.jack.QueryOperator;
 
-public class GreaterThanOrEqualTo<N extends Comparable<N>> extends SqlOperator<N> {
+public class GreaterThanOrEqualTo<N extends Comparable<N>> extends QueryOperator<N> {
 
   public GreaterThanOrEqualTo(N number) {
     super(number);

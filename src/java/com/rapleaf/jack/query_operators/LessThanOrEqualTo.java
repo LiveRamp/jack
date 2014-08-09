@@ -1,10 +1,10 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
 import com.sun.istack.internal.NotNull;
 
-import com.rapleaf.jack.SqlOperator;
+import com.rapleaf.jack.QueryOperator;
 
-public class LessThanOrEqualTo<N extends Comparable<N>> extends SqlOperator<N> {
+public class LessThanOrEqualTo<N extends Comparable<N>> extends QueryOperator<N> {
 
   public LessThanOrEqualTo(@NotNull N number) {
     super(number);

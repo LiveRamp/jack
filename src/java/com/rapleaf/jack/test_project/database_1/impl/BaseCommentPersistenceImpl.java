@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.ISqlOperator;
+import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -177,7 +177,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     while (iter.hasNext()) {
       QueryConstraint constraint = iter.next();
       Enum field = constraint.getField();
-      ISqlOperator operator = constraint.getOperator();
+      IQueryOperator operator = constraint.getOperator();
 
       statementString.append(field).append(operator.getSqlStatement());
 

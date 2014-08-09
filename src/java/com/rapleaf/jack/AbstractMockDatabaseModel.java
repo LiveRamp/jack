@@ -119,7 +119,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       for (QueryConstraint constraint : constraints) {
 
         Enum field = constraint.getField();
-        ISqlOperator operator = constraint.getOperator();
+        IQueryOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
       }
       if (allMatch) {

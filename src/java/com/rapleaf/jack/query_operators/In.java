@@ -1,10 +1,10 @@
-package com.rapleaf.jack.sql_operators;
+package com.rapleaf.jack.query_operators;
 
-import com.rapleaf.jack.SqlOperator;
+import com.rapleaf.jack.QueryOperator;
 
-public class NotIn<T> extends SqlOperator<T> {
+public class In<T> extends QueryOperator<T> {
 
-  public NotIn(T... parameters) {
+  public In(T... parameters) {
     super(parameters);
     for (T parameter : parameters) {
       if (parameter == null) {
@@ -27,9 +27,9 @@ public class NotIn<T> extends SqlOperator<T> {
   public boolean apply(T value) {
     for (T t : getParameters()) {
       if (t == value) {
-        return false;
+        return true;
       }
     }
-    return true;
+    return false;
   }
 }

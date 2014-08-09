@@ -36,7 +36,7 @@ import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
-import <%= JACK_NAMESPACE %>.ISqlOperator;
+import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
@@ -148,7 +148,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     while (iter.hasNext()) {
       QueryConstraint constraint = iter.next();
       Enum field = constraint.getField();
-      ISqlOperator operator = constraint.getOperator();
+      IQueryOperator operator = constraint.getOperator();
 
       statementString.append(field).append(operator.getSqlStatement());
 

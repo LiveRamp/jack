@@ -1,7 +1,7 @@
 package <%= root_package %>.query;
 
 import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
-import <%= JACK_NAMESPACE %>.ISqlOperator;
+import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.JackMatchers;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
@@ -21,7 +21,7 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(ISqlOperator<<%= field_defn.java_type(true) %>> operator) {
+  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(IQueryOperator<<%= field_defn.java_type(true) %>> operator) {
     addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, operator));
     return this;
   }
