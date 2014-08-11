@@ -10,6 +10,8 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
+import static com.rapleaf.jack.JackMatchers.*;
+
 
 public class TestModelQuery extends TestCase {
 
@@ -76,46 +78,46 @@ public class TestModelQuery extends TestCase {
     Set<User> result;
 
     // Equal To
-    result = users.query().handle(JackMatchers.equalTo("Brad")).find();
+    result = users.query().handle(equalTo("Brad")).find();
     assertEquals("Brad", result.iterator().next().getHandle());
 
     // Between
-    result = users.query().numPosts(JackMatchers.between(4, 8)).find();
+    result = users.query().numPosts(between(4, 8)).find();
     assertEquals("James", result.iterator().next().getHandle());
 
     // Less Than
-    result = users.query().createdAtMillis(JackMatchers.lessThan(2l)).find();
+    result = users.query().createdAtMillis(lessThan(2l)).find();
     assertEquals(2, result.size());
 
     // Greater Than
-    result = users.query().createdAtMillis(JackMatchers.greaterThan(1l)).find();
+    result = users.query().createdAtMillis(greaterThan(1l)).find();
     assertEquals(3, result.size());
 
     // Less Than Or Equal To
-    result = users.query().createdAtMillis(JackMatchers.lessThanOrEqualto(2l)).find();
+    result = users.query().createdAtMillis(lessThanOrEqualto(2l)).find();
     assertEquals(4, result.size());
 
     // Greater Than Or Equal To
-    result = users.query().createdAtMillis(JackMatchers.greaterThanOrEqualTo(1l)).find();
+    result = users.query().createdAtMillis(greaterThanOrEqualTo(1l)).find();
     assertEquals(5, result.size());
 
     // Ends With
-    result = users.query().bio(JackMatchers.endsWith("er")).find();
+    result = users.query().bio(endsWith("er")).find();
     assertEquals(5, result.size());
 
     // StartsWith
-    result = users.query().bio(JackMatchers.startsWith("er")).find();
+    result = users.query().bio(startsWith("er")).find();
     assertEquals(0, result.size());
 
     // Contains and In
-    result = users.query().bio(JackMatchers.contains("f"))
-        .numPosts(JackMatchers.in(1, 3, 5))
+    result = users.query().bio(contains("f"))
+        .numPosts(in(1, 3, 5))
         .find();
     assertEquals("James", result.iterator().next().getHandle());
 
     // Not In and Not Equal To
-    result = users.query().handle(JackMatchers.notIn("Brad", "Brandon", "Jennifer", "John"))
-        .numPosts(JackMatchers.notEqualTo(5))
+    result = users.query().handle(notIn("Brad", "Brandon", "Jennifer", "John"))
+        .numPosts(notEqualTo(5))
         .find();
     assertEquals("Casey", result.iterator().next().getHandle());
 
