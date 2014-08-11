@@ -73,11 +73,9 @@ public class TestModelQuery extends TestCase {
     userD.save();
     userE.save();
 
-
     Set<User> result;
 
-    result = users.query().handle(JackMatchers.startsWith("B"))
-        .createdAtMillis(JackMatchers.lessThan(2l))
+    result = users.query().someBoolean(JackMatchers.greaterThan(false))
         .find();
 
     for (User user : result) {

@@ -2,9 +2,9 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class GreaterThan<N extends Comparable<N>> extends QueryOperator<N> {
+public class GreaterThan<V extends Comparable<V>> extends QueryOperator<V> {
 
-  public GreaterThan(N value) {
+  public GreaterThan(V value) {
     super(value);
     ensureNoNullParameter();
   }
@@ -15,7 +15,7 @@ public class GreaterThan<N extends Comparable<N>> extends QueryOperator<N> {
   }
 
   @Override
-  public boolean apply(N value) {
+  public boolean apply(V value) {
     return value.compareTo(getSingleParameter()) > 0;
   }
 }

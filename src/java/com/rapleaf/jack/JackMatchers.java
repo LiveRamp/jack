@@ -29,24 +29,24 @@ public class JackMatchers {
     return new NotIn<T>(value1, otherValues);
   }
 
-  public static <N extends Comparable<N>> GreaterThan<N> greaterThan(N number) {
-    return new GreaterThan<N>(number);
+  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(T value) {
+    return new GreaterThan<T>(value);
   }
 
-  public static <N extends Comparable<N>> LessThan<N> lessThan(N number) {
-    return new LessThan<N>(number);
+  public static <N extends Comparable<N>> LessThan<N> lessThan(N value) {
+    return new LessThan<N>(value);
   }
 
-  public static <N extends Comparable<N>> GreaterThanOrEqualTo<N> greaterThanOrEqualTo(N number) {
-    return new GreaterThanOrEqualTo<N>(number);
+  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(T value) {
+    return new GreaterThanOrEqualTo<T>(value);
   }
 
-  public static <N extends Comparable<N>> LessThanOrEqualTo<N> lessThanOrEqualto(N number) {
-    return new LessThanOrEqualTo<N>(number);
+  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualto(T value) {
+    return new LessThanOrEqualTo<T>(value);
   }
 
-  public static <N extends Comparable<N>> Between<N> between(N min, N max) {
-    return new Between<N>(min, max);
+  public static <T extends Comparable<T>> Between<T> between(T min, T max) {
+    return new Between<T>(min, max);
   }
 
   public static Match match(String pattern) {

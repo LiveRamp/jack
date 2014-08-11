@@ -2,11 +2,10 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class NotIn<T> extends QueryOperator<T> {
+public class NotIn<V> extends QueryOperator<V> {
 
-  public NotIn(T value1, T... otherValues) {
+  public NotIn(V value1, V... otherValues) {
     super(value1, otherValues);
-    ensureNoNullParameter();
   }
 
   @Override
@@ -20,9 +19,12 @@ public class NotIn<T> extends QueryOperator<T> {
   }
 
   @Override
-  public boolean apply(T value) {
-    for (T t : getParameters()) {
-      if (t == value) {
+  public boolean apply(V value) {
+    for (V param : getParameters()) {
+      if (value != null && value.equals(param)) {
+        return false;
+      }
+      if (value == null && param == null) {
         return false;
       }
     }

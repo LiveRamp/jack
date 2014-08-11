@@ -2,9 +2,9 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class Between<N extends Comparable<N>> extends QueryOperator<N> {
+public class Between<V extends Comparable<V>> extends QueryOperator<V> {
 
-  public Between(N min, N max) {
+  public Between(V min, V max) {
     super(min, max);
     ensureNoNullParameter();
   }
@@ -15,15 +15,15 @@ public class Between<N extends Comparable<N>> extends QueryOperator<N> {
   }
 
   @Override
-  public boolean apply(N value) {
+  public boolean apply(V value) {
     return value.compareTo(getMin()) >= 0 && value.compareTo(getMax()) <= 0;
   }
 
-  public N getMin() {
+  public V getMin() {
     return getParameters().get(0);
   }
 
-  public N getMax() {
+  public V getMax() {
     return getParameters().get(1);
   }
 }

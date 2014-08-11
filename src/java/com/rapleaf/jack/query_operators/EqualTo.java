@@ -2,10 +2,10 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class EqualTo<T> extends QueryOperator<T> {
+public class EqualTo<V> extends QueryOperator<V> {
 
-  public EqualTo(T parameter) {
-    super(parameter);
+  public EqualTo(V value) {
+    super(value);
   }
 
   @Override
@@ -14,7 +14,7 @@ public class EqualTo<T> extends QueryOperator<T> {
   }
 
   @Override
-  public boolean apply(T value) {
+  public boolean apply(V value) {
     // If parameter is not null, call its method equals()
     if (getSingleParameter() != null) {
       return getSingleParameter().equals(value);
