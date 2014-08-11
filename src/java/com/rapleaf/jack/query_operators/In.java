@@ -6,6 +6,7 @@ public class In<V> extends QueryOperator<V> {
 
   public In(V value1, V... otherValues) {
     super(value1, otherValues);
+    ensureNoNullParameter();
   }
 
   @Override
@@ -21,10 +22,7 @@ public class In<V> extends QueryOperator<V> {
   @Override
   public boolean apply(V value) {
     for (V param : getParameters()) {
-      if (value != null && value.equals(param)) {
-        return true;
-      }
-      if (value == null && param == null) {
+      if (param.equals(value)) {
         return true;
       }
     }

@@ -41,7 +41,7 @@ public class JackMatchers {
     return new GreaterThanOrEqualTo<T>(value);
   }
 
-  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualto(T value) {
+  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(T value) {
     return new LessThanOrEqualTo<T>(value);
   }
 

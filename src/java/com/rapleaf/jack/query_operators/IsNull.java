@@ -2,20 +2,19 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class EqualTo<V> extends QueryOperator<V> {
+public class IsNull<V> extends QueryOperator<V> {
 
-  public EqualTo(V value) {
-    super(value);
-    ensureNoNullParameter();
+  public IsNull() {
+    super();
   }
 
   @Override
   public String getSqlStatement() {
-    return " = ? ";
+    return " IS NULL ";
   }
 
   @Override
   public boolean apply(V value) {
-    return getSingleParameter().equals(value);
+    return value == null;
   }
 }

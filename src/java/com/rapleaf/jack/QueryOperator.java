@@ -1,31 +1,37 @@
 package com.rapleaf.jack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class QueryOperator<T> implements IQueryOperator<T> {
+public abstract class QueryOperator<V> implements IQueryOperator<V> {
 
-  private final List<T> parameters;
+  private final List<V> parameters;
 
-  public QueryOperator(T parameter) {
-    this.parameters = new ArrayList<T>();
+  protected QueryOperator() {
+    parameters = Collections.emptyList();
+  }
+
+  public QueryOperator(V parameter) {
+    this.parameters = new ArrayList<V>();
     this.parameters.add(parameter);
   }
 
-  public QueryOperator(T param1, T param2) {
-    this.parameters = new ArrayList<T>();
+  public QueryOperator(V param1, V param2) {
+    this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     this.parameters.add(param2);
   }
 
-  public QueryOperator(T param1, T... otherParam) {
-    this.parameters = new ArrayList<T>();
+  public QueryOperator(V param1, V... otherParam) {
+    this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
-    this.parameters.addAll(Arrays.asList(otherParam));
+    for (V param : otherParam) {
+      this.parameters.add(param);
+    }
   }
 
-  public List<T> getParameters() {
+  public List<V> getParameters() {
     return parameters;
   }
 
@@ -33,7 +39,7 @@ public abstract class QueryOperator<T> implements IQueryOperator<T> {
   Return the first parameter.
   Useful for operators with only one parameter.
    */
-  public T getSingleParameter() {
+  public V getSingleParameter() {
     return parameters.get(0);
   }
 
@@ -42,7 +48,7 @@ public abstract class QueryOperator<T> implements IQueryOperator<T> {
   Throw an IllegalArgumentException if a null parameter is found.
    */
   public void ensureNoNullParameter() {
-    for (T parameter : parameters) {
+    for (V parameter : parameters) {
       if (parameter == null) {
         throw new IllegalArgumentException("You cannot pass null parameters.");
       }

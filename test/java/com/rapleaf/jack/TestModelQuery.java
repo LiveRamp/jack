@@ -65,10 +65,10 @@ public class TestModelQuery extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User userA = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
-    User userB = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l);
+    User userB = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDate(1000000000000l);
     User userC = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
     User userD = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
-    User userE = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l);
+    User userE = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDate(1l);
     userA.save();
     userB.save();
     userC.save();
@@ -94,7 +94,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(3, result.size());
 
     // Less Than Or Equal To
-    result = users.query().createdAtMillis(lessThanOrEqualto(2l)).find();
+    result = users.query().createdAtMillis(lessThanOrEqualTo(2l)).find();
     assertEquals(4, result.size());
 
     // Greater Than Or Equal To
@@ -120,6 +120,11 @@ public class TestModelQuery extends TestCase {
         .numPosts(notEqualTo(5))
         .find();
     assertEquals("Casey", result.iterator().next().getHandle());
+
+    result = users.query().someDate(in(1l, 2l, 3l, null)).find();
+    for (User user : result) {
+      System.out.println(user.getHandle());
+    }
 
   }
 }

@@ -2,12 +2,12 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
 
-  private Collection<QueryConstraint> constraints;
+  private List<QueryConstraint> constraints;
   private IModelPersistence<M> caller;
 
   public AbstractQueryBuilder(IModelPersistence<M> caller) {
