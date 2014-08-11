@@ -126,5 +126,14 @@ public class TestModelQuery extends TestCase {
 
     result = users.query().someDate(isNotNull()).find();
     assertEquals(2, result.size());
+
+    // If a null parameter is passed, an exeception should be thrown
+    try {
+      result = users.query().handle(in(null, "brandon")).find();
+      fail();
+    } catch (IllegalArgumentException e) {
+      // This is expected
+    }
+
   }
 }
