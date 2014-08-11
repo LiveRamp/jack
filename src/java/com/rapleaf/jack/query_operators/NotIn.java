@@ -4,13 +4,9 @@ import com.rapleaf.jack.QueryOperator;
 
 public class NotIn<T> extends QueryOperator<T> {
 
-  public NotIn(T... parameters) {
-    super(parameters);
-    for (T parameter : parameters) {
-      if (parameter == null) {
-        throw new IllegalArgumentException("You cannot pass null parameters.");
-      }
-    }
+  public NotIn(T value1, T... otherValues) {
+    super(value1, otherValues);
+    ensureNoNullParameter();
   }
 
   @Override

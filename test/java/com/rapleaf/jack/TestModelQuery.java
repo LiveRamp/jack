@@ -73,21 +73,16 @@ public class TestModelQuery extends TestCase {
     userD.save();
     userE.save();
 
-    User user1 = users.createDefaultInstance().setHandle("b");
-    User user2 = users.createDefaultInstance().setHandle("C");
-    User user3 = users.createDefaultInstance().setHandle("c");
-    user1.save();
-    user2.save();
-    user3.save();
-
 
     Set<User> result;
 
-    result = users.query().handle(JackMatchers.between("b", "d"))
+    result = users.query().handle(JackMatchers.startsWith("B"))
+        .createdAtMillis(JackMatchers.lessThan(2l))
         .find();
 
     for (User user : result) {
       System.out.println(user.getHandle());
     }
+
   }
 }
