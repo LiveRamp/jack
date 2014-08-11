@@ -6,9 +6,7 @@ public class Between<N extends Comparable<N>> extends QueryOperator<N> {
 
   public Between(N min, N max) {
     super(min, max);
-    if (min == null || max == null) {
-      throw new IllegalArgumentException("You cannot pass null parameters.");
-    }
+    ensureNoNullParameter();
   }
 
   @Override

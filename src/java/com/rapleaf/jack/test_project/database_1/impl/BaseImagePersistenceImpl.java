@@ -184,7 +184,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
           throw new IOException(e);
         }
       }
-  }
+    }
     executeQuery(foundSet, preparedStatement);
 
     return foundSet;

@@ -4,11 +4,9 @@ import com.rapleaf.jack.QueryOperator;
 
 public class GreaterThanOrEqualTo<N extends Comparable<N>> extends QueryOperator<N> {
 
-  public GreaterThanOrEqualTo(N number) {
-    super(number);
-    if (number == null) {
-      throw new IllegalArgumentException("You cannot pass null parameters.");
-    }
+  public GreaterThanOrEqualTo(N value) {
+    super(value);
+    ensureNoNullParameter();
   }
 
   @Override
@@ -18,10 +16,6 @@ public class GreaterThanOrEqualTo<N extends Comparable<N>> extends QueryOperator
 
   @Override
   public boolean apply(N value) {
-    return value.compareTo(getParameter()) > 0;
-  }
-
-  public N getParameter() {
-    return getParameters().get(0);
+    return value.compareTo(getSingleParameter()) > 0;
   }
 }

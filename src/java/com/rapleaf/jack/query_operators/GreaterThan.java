@@ -1,16 +1,12 @@
 package com.rapleaf.jack.query_operators;
 
-import com.sun.istack.internal.NotNull;
-
 import com.rapleaf.jack.QueryOperator;
 
 public class GreaterThan<N extends Comparable<N>> extends QueryOperator<N> {
 
-  public GreaterThan(@NotNull N number) {
-    super(number);
-    if (number == null) {
-      throw new IllegalArgumentException("You cannot pass null parameters.");
-    }
+  public GreaterThan(N value) {
+    super(value);
+    ensureNoNullParameter();
   }
 
   @Override
@@ -20,10 +16,6 @@ public class GreaterThan<N extends Comparable<N>> extends QueryOperator<N> {
 
   @Override
   public boolean apply(N value) {
-    return value.compareTo(getParameter()) > 0;
-  }
-
-  public N getParameter() {
-    return getParameters().get(0);
+    return value.compareTo(getSingleParameter()) > 0;
   }
 }

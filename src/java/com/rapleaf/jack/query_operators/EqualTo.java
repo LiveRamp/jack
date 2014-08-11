@@ -10,20 +10,16 @@ public class EqualTo<T> extends QueryOperator<T> {
 
   @Override
   public String getSqlStatement() {
-    return getParameter() != null ? " = ? " : " IS NULL";
+    return getSingleParameter() != null ? " = ? " : " IS NULL";
   }
 
   @Override
   public boolean apply(T value) {
     // If parameter is not null, call its method equals()
-    if (getParameter() != null) {
-      return getParameter().equals(value);
+    if (getSingleParameter() != null) {
+      return getSingleParameter().equals(value);
     }
     // If parameter is null, check if value is also null
     return value == null;
-  }
-
-  public T getParameter() {
-    return getParameters().get(0);
   }
 }

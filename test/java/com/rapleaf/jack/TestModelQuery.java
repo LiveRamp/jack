@@ -62,20 +62,30 @@ public class TestModelQuery extends TestCase {
     dbs.getDatabase1().deleteAll();
     IUserPersistence users = dbs.getDatabase1().users();
 
-    User userA = users.createDefaultInstance().setHandle("Roshan").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
-    User userB = users.createDefaultInstance().setHandle("Porter").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l);
-    User userC = users.createDefaultInstance().setHandle("Ben").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
-    User userD = users.createDefaultInstance().setHandle("Yuwei").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
+    User userA = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
+    User userB = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l);
+    User userC = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
+    User userD = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
+    User userE = users.createDefaultInstance().setHandle("James").setBio("Database").setNumPosts(3).setCreatedAtMillis(2l);
     userA.save();
     userB.save();
     userC.save();
     userD.save();
+    userE.save();
+
+    User user1 = users.createDefaultInstance().setHandle("b");
+    User user2 = users.createDefaultInstance().setHandle("C");
+    User user3 = users.createDefaultInstance().setHandle("c");
+    user1.save();
+    user2.save();
+    user3.save();
+
 
     Set<User> result;
 
-    result = users.query().numPosts(JackMatchers.greaterThanOrEqualTo(2))
-        .createdAtMillis(1l)
+    result = users.query().handle(JackMatchers.between("b", "d"))
         .find();
+
     for (User user : result) {
       System.out.println(user.getHandle());
     }

@@ -286,7 +286,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           throw new IOException(e);
         }
       }
-  }
+    }
     executeQuery(foundSet, preparedStatement);
 
     return foundSet;

@@ -4,13 +4,9 @@ import com.rapleaf.jack.QueryOperator;
 
 public class In<T> extends QueryOperator<T> {
 
-  public In(T... parameters) {
-    super(parameters);
-    for (T parameter : parameters) {
-      if (parameter == null) {
-        throw new IllegalArgumentException("You cannot pass null parameters.");
-      }
-    }
+  public In(T value1, T... otherValues) {
+    super(value1, otherValues);
+    ensureNoNullParameter();
   }
 
   @Override

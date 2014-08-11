@@ -15,7 +15,7 @@ public class NotIn<T> extends QueryOperator<T> {
 
   @Override
   public String getSqlStatement() {
-    StringBuilder sb = new StringBuilder(" IN ( ?");
+    StringBuilder sb = new StringBuilder(" NOT IN ( ?");
     for (int i = 0; i < getParameters().size() - 1; i++) {
       sb.append(", ?");
     }

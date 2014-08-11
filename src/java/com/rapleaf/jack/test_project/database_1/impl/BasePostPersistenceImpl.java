@@ -220,7 +220,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
           throw new IOException(e);
         }
       }
-  }
+    }
     executeQuery(foundSet, preparedStatement);
 
     return foundSet;

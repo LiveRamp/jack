@@ -215,7 +215,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
           throw new IOException(e);
         }
       }
-  }
+    }
     executeQuery(foundSet, preparedStatement);
 
     return foundSet;

@@ -6,9 +6,7 @@ public class Match extends QueryOperator<String> {
 
   public Match(String pattern) {
     super(pattern);
-    if (pattern == null) {
-      throw new IllegalArgumentException("You cannot pass null parameters.");
-    }
+    ensureNoNullParameter();
   }
 
   @Override
@@ -18,10 +16,6 @@ public class Match extends QueryOperator<String> {
 
   @Override
   public boolean apply(String value) {
-    return value.matches(getParameter().replace("%", "(.*)"));
-  }
-
-  public String getParameter() {
-    return getParameters().get(0);
+    return value.matches(getSingleParameter().replace("%", "(.*)"));
   }
 }

@@ -1,16 +1,12 @@
 package com.rapleaf.jack.query_operators;
 
-import com.sun.istack.internal.NotNull;
-
 import com.rapleaf.jack.QueryOperator;
 
 public class LessThanOrEqualTo<N extends Comparable<N>> extends QueryOperator<N> {
 
-  public LessThanOrEqualTo(@NotNull N number) {
-    super(number);
-    if (number == null) {
-      throw new IllegalArgumentException("You cannot pass null parameters.");
-    }
+  public LessThanOrEqualTo(N value) {
+    super(value);
+    ensureNoNullParameter();
   }
 
   @Override
