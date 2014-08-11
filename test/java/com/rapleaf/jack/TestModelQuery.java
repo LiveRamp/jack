@@ -75,35 +75,45 @@ public class TestModelQuery extends TestCase {
 
     Set<User> result;
 
+    // Equal To
     result = users.query().handle(JackMatchers.equalTo("Brad")).find();
     assertEquals("Brad", result.iterator().next().getHandle());
 
+    // Between
     result = users.query().numPosts(JackMatchers.between(4, 8)).find();
     assertEquals("James", result.iterator().next().getHandle());
 
+    // Less Than
     result = users.query().createdAtMillis(JackMatchers.lessThan(2l)).find();
     assertEquals(2, result.size());
 
+    // Greater Than
     result = users.query().createdAtMillis(JackMatchers.greaterThan(1l)).find();
     assertEquals(3, result.size());
 
+    // Less Than Or Equal To
     result = users.query().createdAtMillis(JackMatchers.lessThanOrEqualto(2l)).find();
     assertEquals(4, result.size());
 
+    // Greater Than Or Equal To
     result = users.query().createdAtMillis(JackMatchers.greaterThanOrEqualTo(1l)).find();
     assertEquals(5, result.size());
 
+    // Ends With
     result = users.query().bio(JackMatchers.endsWith("er")).find();
     assertEquals(5, result.size());
 
+    // StartsWith
     result = users.query().bio(JackMatchers.startsWith("er")).find();
     assertEquals(0, result.size());
 
+    // Contains and In
     result = users.query().bio(JackMatchers.contains("f"))
         .numPosts(JackMatchers.in(1, 3, 5))
         .find();
     assertEquals("James", result.iterator().next().getHandle());
 
+    // Not In and Not Equal To
     result = users.query().handle(JackMatchers.notIn("Brad", "Brandon", "Jennifer", "John"))
         .numPosts(JackMatchers.notEqualTo(5))
         .find();
