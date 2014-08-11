@@ -4,9 +4,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,7 +109,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     return foundSet;
   }
 
-  protected Set<T> realFind(Collection<QueryConstraint> constraints) throws IOException {
+  protected Set<T> realFind(List<QueryConstraint> constraints) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     if (constraints == null || constraints.isEmpty()) {
       return foundSet;

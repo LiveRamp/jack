@@ -8,7 +8,6 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -140,7 +139,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return foundSet;
   }
 
-  public Set<Image> find(Collection<QueryConstraint> constraints) throws IOException {
+  public Set<Image> find(List<QueryConstraint> constraints) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
     
     if (constraints == null || constraints.isEmpty()) {

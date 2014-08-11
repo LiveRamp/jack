@@ -16,7 +16,7 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +52,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
-  public Set<T> find(Collection<QueryConstraint> constraints) throws IOException;
+  public Set<T> find(List<QueryConstraint> constraints) throws IOException;
 
   public void clearCacheById(long id) throws IOException;
 

@@ -8,7 +8,6 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -167,7 +166,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return foundSet;
   }
 
-  public Set<Post> find(Collection<QueryConstraint> constraints) throws IOException {
+  public Set<Post> find(List<QueryConstraint> constraints) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
     
     if (constraints == null || constraints.isEmpty()) {

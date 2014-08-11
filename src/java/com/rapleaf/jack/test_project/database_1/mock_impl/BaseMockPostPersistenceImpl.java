@@ -7,9 +7,9 @@
 package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     return super.realFind(ids, fieldsMap);
   }
 
-  public Set<Post> find(Collection<QueryConstraint> constraints) throws IOException {
+  public Set<Post> find(List<QueryConstraint> constraints) throws IOException {
     return super.realFind(constraints);
   }
 

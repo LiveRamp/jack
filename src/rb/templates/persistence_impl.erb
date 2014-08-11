@@ -18,7 +18,6 @@ package <%= root_package %>.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -133,7 +132,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return foundSet;
   }
 
-  public Set<<%= model_defn.model_name %>> find(Collection<QueryConstraint> constraints) throws IOException {
+  public Set<<%= model_defn.model_name %>> find(List<QueryConstraint> constraints) throws IOException {
     Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
     
     if (constraints == null || constraints.isEmpty()) {
