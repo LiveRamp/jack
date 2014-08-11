@@ -5,6 +5,8 @@ import com.rapleaf.jack.query_operators.EqualTo;
 import com.rapleaf.jack.query_operators.GreaterThan;
 import com.rapleaf.jack.query_operators.GreaterThanOrEqualTo;
 import com.rapleaf.jack.query_operators.In;
+import com.rapleaf.jack.query_operators.IsNotNull;
+import com.rapleaf.jack.query_operators.IsNull;
 import com.rapleaf.jack.query_operators.LessThan;
 import com.rapleaf.jack.query_operators.LessThanOrEqualTo;
 import com.rapleaf.jack.query_operators.Match;
@@ -21,6 +23,14 @@ public class JackMatchers {
     return new NotEqualTo<T>(value);
   }
 
+  public static IsNull isNull() {
+    return new IsNull();
+  }
+
+  public static IsNotNull isNotNull() {
+    return new IsNotNull();
+  }
+
   public static <T> In<T> in(T value1, T... otherValues) {
     return new In<T>(value1, otherValues);
   }
@@ -33,8 +43,8 @@ public class JackMatchers {
     return new GreaterThan<T>(value);
   }
 
-  public static <N extends Comparable<N>> LessThan<N> lessThan(N value) {
-    return new LessThan<N>(value);
+  public static <T extends Comparable<T>> LessThan<T> lessThan(T value) {
+    return new LessThan<T>(value);
   }
 
   public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(T value) {

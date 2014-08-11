@@ -26,9 +26,7 @@ public abstract class QueryOperator<V> implements IQueryOperator<V> {
   public QueryOperator(V param1, V... otherParam) {
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
-    for (V param : otherParam) {
-      this.parameters.add(param);
-    }
+    Collections.addAll(this.parameters, otherParam);
   }
 
   public List<V> getParameters() {

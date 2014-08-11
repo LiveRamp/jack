@@ -121,10 +121,10 @@ public class TestModelQuery extends TestCase {
         .find();
     assertEquals("Casey", result.iterator().next().getHandle());
 
-    result = users.query().someDate(in(1l, 2l, 3l, null)).find();
-    for (User user : result) {
-      System.out.println(user.getHandle());
-    }
+    result = users.query().someDate(isNull()).find();
+    assertEquals(3, result.size());
 
+    result = users.query().someDate(isNotNull()).find();
+    assertEquals(2, result.size());
   }
 }
