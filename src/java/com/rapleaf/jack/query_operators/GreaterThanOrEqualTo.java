@@ -16,6 +16,6 @@ public class GreaterThanOrEqualTo<V extends Comparable<V>> extends QueryOperator
 
   @Override
   public boolean apply(V value) {
-    return value.compareTo(getSingleParameter()) > 0;
+    return value.compareTo(getSingleParameter()) >= 0;
   }
 }
