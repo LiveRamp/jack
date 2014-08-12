@@ -18,11 +18,25 @@ public class TestModelQuery extends TestCase {
 
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
 
-  public void testBasicQuery() throws IOException {
-
+  public void testDbImplQueries() throws IOException {
     IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
-    dbs.getDatabase1().deleteAll();
+
+    testBasicQuery(dbs);
+    testQueryOperators(dbs);
+  }
+
+  public void testMockDbQueries() throws IOException {
+    IDatabases dbs = new MockDatabasesImpl();
+
+    testBasicQuery(dbs);
+    testQueryOperators(dbs);
+  }
+
+
+  public void testBasicQuery(IDatabases dbs) throws IOException {
+
     IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
 
     User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
     User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
@@ -59,36 +73,38 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.isEmpty());
   }
 
-  public void testQueryOperators() throws IOException {
+  public void testQueryOperators(IDatabases dbs) throws IOException {
 
-    IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
-    dbs.getDatabase1().deleteAll();
     IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
 
-    User userA = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
-    User userB = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDate(1000000000000l);
-    User userC = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
-    User userD = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
-    User userE = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDate(1l);
-    userA.save();
-    userB.save();
-    userC.save();
-    userD.save();
-    userE.save();
+    User brad = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
+    User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDate(1000000000000l);
+    User casey = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
+    User john = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
+    User james = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDate(1l);
+    brad.save();
+    brandon.save();
+    casey.save();
+    john.save();
+    james.save();
 
     Set<User> result;
 
     // Equal To
     result = users.query().handle(equalTo("Brad")).find();
-    assertEquals("Brad", result.iterator().next().getHandle());
+    assertEquals(1, result.size());
+    assertTrue(result.contains(brad));
 
     // Between
     result = users.query().numPosts(between(4, 8)).find();
-    assertEquals("James", result.iterator().next().getHandle());
+    assertEquals(1, result.size());
+    assertTrue(result.contains(james));
 
     // Less Than
     result = users.query().createdAtMillis(lessThan(2l)).find();
     assertEquals(2, result.size());
+    assertTrue(result.contains(brad) && result.contains(brandon));
 
     // Greater Than
     result = users.query().createdAtMillis(greaterThan(1l)).find();
@@ -108,110 +124,35 @@ public class TestModelQuery extends TestCase {
 
     // StartsWith
     result = users.query().bio(startsWith("er")).find();
-    assertEquals(0, result.size());
+    assertTrue(result.isEmpty());
 
     // Contains and In
     result = users.query().bio(contains("f"))
         .numPosts(in(1, 3, 5))
         .find();
-    assertEquals("James", result.iterator().next().getHandle());
+    assertEquals(1, result.size());
+    assertTrue(result.contains(james));
 
     // Not In and Not Equal To
     result = users.query().handle(notIn("Brad", "Brandon", "Jennifer", "John"))
         .numPosts(notEqualTo(5))
         .find();
-    assertEquals("Casey", result.iterator().next().getHandle());
+    assertEquals(1, result.size());
+    assertTrue(result.contains(casey));
 
     result = users.query().someDate(isNull()).find();
     assertEquals(3, result.size());
 
     result = users.query().someDate(isNotNull()).find();
     assertEquals(2, result.size());
+    assertTrue(result.contains(brandon) && result.contains(james));
 
     // If a null parameter is passed, an exeception should be thrown
     try {
       users.query().handle(in(null, "brandon")).find();
       fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
-      // This is expected
+      // This exception is expected
     }
-  }
-
-  public void testMockDBQuery() throws IOException {
-    IDatabases dbs = new MockDatabasesImpl();
-    dbs.getDatabase1().deleteAll();
-    IUserPersistence users = dbs.getDatabase1().users();
-
-    User userA = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
-    User userB = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDate(1000000000000l);
-    User userC = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
-    User userD = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
-    User userE = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDate(1l);
-    userA.save();
-    userB.save();
-    userC.save();
-    userD.save();
-    userE.save();
-
-    Set<User> result;
-
-    // Equal To
-    result = users.query().handle(equalTo("Brad")).find();
-    assertEquals("Brad", result.iterator().next().getHandle());
-
-    // Between
-    result = users.query().numPosts(between(4, 8)).find();
-    assertEquals("James", result.iterator().next().getHandle());
-
-    // Less Than
-    result = users.query().createdAtMillis(lessThan(2l)).find();
-    assertEquals(2, result.size());
-
-    // Greater Than
-    result = users.query().createdAtMillis(greaterThan(1l)).find();
-    assertEquals(3, result.size());
-
-    // Less Than Or Equal To
-    result = users.query().createdAtMillis(lessThanOrEqualTo(2l)).find();
-    assertEquals(4, result.size());
-
-    // Greater Than Or Equal To
-    result = users.query().createdAtMillis(greaterThanOrEqualTo(1l)).find();
-    assertEquals(5, result.size());
-
-    // Ends With
-    result = users.query().bio(endsWith("er")).find();
-    assertEquals(5, result.size());
-
-    // StartsWith
-    result = users.query().bio(startsWith("er")).find();
-    assertEquals(0, result.size());
-
-    // Contains and In
-    result = users.query().bio(contains("f"))
-        .numPosts(in(1, 3, 5))
-        .find();
-    assertEquals("James", result.iterator().next().getHandle());
-
-    // Not In and Not Equal To
-    result = users.query().handle(notIn("Brad", "Brandon", "Jennifer", "John"))
-        .numPosts(notEqualTo(5))
-        .find();
-    assertEquals("Casey", result.iterator().next().getHandle());
-
-    result = users.query().someDate(isNull()).find();
-    assertEquals(3, result.size());
-
-    result = users.query().someDate(isNotNull()).find();
-    assertEquals(2, result.size());
-
-    // If a null parameter is passed, an exeception should be thrown
-    try {
-      users.query().handle(in(null, "brandon")).find();
-      fail("an In query with one null parameter should throw an exception");
-    } catch (IllegalArgumentException e) {
-      // This is expected
-    }
-
   }
 }
