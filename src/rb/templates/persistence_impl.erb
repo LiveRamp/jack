@@ -162,6 +162,8 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
         statementString.append(" AND ");
       }
     }
+
+    if (ids != null && !ids.isEmpty()) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

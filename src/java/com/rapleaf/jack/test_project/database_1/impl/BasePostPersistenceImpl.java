@@ -196,6 +196,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         statementString.append(" AND ");
       }
     }
+
+    if (ids != null && !ids.isEmpty()) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());

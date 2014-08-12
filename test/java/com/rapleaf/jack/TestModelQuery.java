@@ -1,6 +1,7 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -23,6 +24,7 @@ public class TestModelQuery extends TestCase {
 
     testBasicQuery(dbs);
     testQueryOperators(dbs);
+    testQueryById(dbs);
   }
 
   public void testMockDbQueries() throws IOException {
@@ -30,6 +32,7 @@ public class TestModelQuery extends TestCase {
 
     testBasicQuery(dbs);
     testQueryOperators(dbs);
+    testQueryById(dbs);
   }
 
 
@@ -79,10 +82,10 @@ public class TestModelQuery extends TestCase {
     users.deleteAll();
 
     User brad = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1l);
-    User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDate(1000000000000l);
+    User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1l).setSomeDatetime(0l);
     User casey = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2l);
     User john = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2l);
-    User james = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDate(1l);
+    User james = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3l).setSomeDatetime(1000000l);
     brad.save();
     brandon.save();
     casey.save();
@@ -104,7 +107,8 @@ public class TestModelQuery extends TestCase {
     // Less Than
     result = users.query().createdAtMillis(lessThan(2l)).find();
     assertEquals(2, result.size());
-    assertTrue(result.contains(brad) && result.contains(brandon));
+    assertTrue(result.contains(brad));
+    assertTrue(result.contains(brandon));
 
     // Greater Than
     result = users.query().createdAtMillis(greaterThan(1l)).find();
@@ -140,12 +144,13 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, result.size());
     assertTrue(result.contains(casey));
 
-    result = users.query().someDate(isNull()).find();
+    result = users.query().someDatetime(isNull()).find();
     assertEquals(3, result.size());
 
-    result = users.query().someDate(isNotNull()).find();
+    result = users.query().someDatetime(isNotNull()).find();
     assertEquals(2, result.size());
-    assertTrue(result.contains(brandon) && result.contains(james));
+    assertTrue(result.contains(brandon));
+    assertTrue(result.contains(james));
 
     // If a null parameter is passed, an exeception should be thrown
     try {
@@ -154,5 +159,47 @@ public class TestModelQuery extends TestCase {
     } catch (IllegalArgumentException e) {
       // This exception is expected
     }
+  }
+
+  public void testQueryById(IDatabases dbs) throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User[] sampleUsers = new User[5];
+    for (int i = 0; i < sampleUsers.length; i++) {
+      sampleUsers[i] = users.createDefaultInstance().setNumPosts(i % 2);
+      sampleUsers[i].save();
+    }
+
+    Set<User> result;
+
+    // Query by one id
+    result = users.query().id(sampleUsers[0].getId()).find();
+    assertEquals(1, result.size());
+    assertTrue(result.contains(sampleUsers[0]));
+
+    // Query by several ids
+    Set<Long> sampleIds = new HashSet<Long>();
+    sampleIds.add(sampleUsers[0].getId());
+    sampleIds.add(sampleUsers[3].getId());
+    sampleIds.add(sampleUsers[4].getId());
+    result = users.query().id(sampleIds).find();
+    assertEquals(3, result.size());
+    assertTrue(result.contains(sampleUsers[0]));
+    assertTrue(result.contains(sampleUsers[3]));
+    assertTrue(result.contains(sampleUsers[4]));
+
+    //Query by several ids and constraints
+    Set<Long> sampleIds2 = new HashSet<Long>();
+    sampleIds2.add(sampleUsers[2].getId());
+    sampleIds2.add(sampleUsers[3].getId());
+
+    result = users.query()
+        .numPosts(greaterThan(0))
+        .id(sampleIds2)
+        .find();
+    assertEquals(1, result.size());
+    assertTrue(result.contains(sampleUsers[3]));
+
   }
 }
