@@ -129,7 +129,7 @@ public class TestModelQuery extends TestCase {
 
     // If a null parameter is passed, an exeception should be thrown
     try {
-      result = users.query().handle(in(null, "brandon")).find();
+      users.query().handle(in(null, "brandon")).find();
       fail();
     } catch (IllegalArgumentException e) {
       // This is expected
