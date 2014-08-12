@@ -85,6 +85,10 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     return super.realFind(constraints);
   }
 
+  public Set<Post> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+    return super.realFind(ids, constraints);
+  }
+
   public Set<Post> findByTitle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
   }

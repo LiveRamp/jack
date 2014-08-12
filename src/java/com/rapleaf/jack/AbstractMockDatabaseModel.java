@@ -109,9 +109,17 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     return foundSet;
   }
 
+
   protected Set<T> realFind(List<QueryConstraint> constraints) throws IOException {
+    return realFind(null, constraints);
+  }
+
+  protected Set<T> realFind(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     if (constraints == null || constraints.isEmpty()) {
+      if (ids != null && !ids.isEmpty()) {
+        return find(ids);
+      }
       return foundSet;
     }
     for (T record : records.values()) {
@@ -121,6 +129,9 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         Enum field = constraint.getField();
         IQueryOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
+      }
+      if (ids != null && !ids.contains(record.getId())) {
+        allMatch = false;
       }
       if (allMatch) {
         foundSet.add(record);
@@ -143,7 +154,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     if (tmp == null) {
       return null;
     }
-    return (T)tmp.getCopy(databases);
+    return tmp.getCopy(databases);
   }
 
   @Override

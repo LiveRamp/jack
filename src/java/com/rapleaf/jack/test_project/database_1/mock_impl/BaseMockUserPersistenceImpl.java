@@ -91,6 +91,10 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return super.realFind(constraints);
   }
 
+  public Set<User> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+    return super.realFind(ids, constraints);
+  }
+
   public Set<User> findByHandle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
   }

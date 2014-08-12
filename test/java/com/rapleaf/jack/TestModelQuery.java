@@ -135,7 +135,6 @@ public class TestModelQuery extends TestCase {
     } catch (IllegalArgumentException e) {
       // This is expected
     }
-
   }
 
   public void testMockDBQuery() throws IOException {

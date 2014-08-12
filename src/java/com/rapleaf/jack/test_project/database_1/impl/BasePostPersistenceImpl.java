@@ -167,9 +167,16 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public Set<Post> find(List<QueryConstraint> constraints) throws IOException {
+    return find(null, constraints);
+  }
+
+  public Set<Post> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
     
     if (constraints == null || constraints.isEmpty()) {
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
       return foundSet;
     }
 

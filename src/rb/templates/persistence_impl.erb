@@ -133,9 +133,16 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   public Set<<%= model_defn.model_name %>> find(List<QueryConstraint> constraints) throws IOException {
+    return find(null, constraints);
+  }
+
+  public Set<<%= model_defn.model_name %>> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
     
     if (constraints == null || constraints.isEmpty()) {
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
       return foundSet;
     }
 

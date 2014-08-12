@@ -1,5 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Set;
+
 import com.rapleaf.jack.AbstractQueryBuilder;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
@@ -12,6 +14,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder(IPostPersistence caller) {
     super(caller);
+  }
+
+  public PostQueryBuilder id(Long value) {
+    addId(value);
+    return this;
+  }
+
+  public PostQueryBuilder id(Set<Long> values) {
+    addIds(values);
+    return this;
   }
 
   public PostQueryBuilder title(String value) {

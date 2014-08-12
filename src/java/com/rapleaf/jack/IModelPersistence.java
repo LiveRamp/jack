@@ -54,6 +54,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public Set<T> find(List<QueryConstraint> constraints) throws IOException;
 
+  public Set<T> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException;
+
   public void clearCacheById(long id) throws IOException;
 
   public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException;

@@ -215,9 +215,16 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public Set<User> find(List<QueryConstraint> constraints) throws IOException {
+    return find(null, constraints);
+  }
+
+  public Set<User> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<User> foundSet = new HashSet<User>();
     
     if (constraints == null || constraints.isEmpty()) {
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
       return foundSet;
     }
 

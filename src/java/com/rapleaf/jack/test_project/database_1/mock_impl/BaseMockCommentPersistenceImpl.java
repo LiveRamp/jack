@@ -86,6 +86,10 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(constraints);
   }
 
+  public Set<Comment> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+    return super.realFind(ids, constraints);
+  }
+
   public Set<Comment> findByContent(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }

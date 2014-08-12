@@ -140,9 +140,16 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Set<Image> find(List<QueryConstraint> constraints) throws IOException {
+    return find(null, constraints);
+  }
+
+  public Set<Image> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
     
     if (constraints == null || constraints.isEmpty()) {
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
       return foundSet;
     }
 

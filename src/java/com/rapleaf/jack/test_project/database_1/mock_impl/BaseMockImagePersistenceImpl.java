@@ -82,6 +82,10 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return super.realFind(constraints);
   }
 
+  public Set<Image> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+    return super.realFind(ids, constraints);
+  }
+
   public Set<Image> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }

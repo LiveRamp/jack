@@ -1,5 +1,7 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Set;
+
 import com.rapleaf.jack.AbstractQueryBuilder;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
@@ -12,6 +14,16 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder(ICommentPersistence caller) {
     super(caller);
+  }
+
+  public CommentQueryBuilder id(Long value) {
+    addId(value);
+    return this;
+  }
+
+  public CommentQueryBuilder id(Set<Long> values) {
+    addIds(values);
+    return this;
   }
 
   public CommentQueryBuilder content(String value) {

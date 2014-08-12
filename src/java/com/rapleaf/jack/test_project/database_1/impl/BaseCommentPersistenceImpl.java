@@ -162,9 +162,16 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   public Set<Comment> find(List<QueryConstraint> constraints) throws IOException {
+    return find(null, constraints);
+  }
+
+  public Set<Comment> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
     Set<Comment> foundSet = new HashSet<Comment>();
     
     if (constraints == null || constraints.isEmpty()) {
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
       return foundSet;
     }
 

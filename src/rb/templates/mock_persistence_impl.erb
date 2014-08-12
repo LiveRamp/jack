@@ -84,6 +84,10 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     return super.realFind(constraints);
   }
 
+  public Set<<%= model_defn.model_name %>> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+    return super.realFind(ids, constraints);
+  }
+
   <% model_defn.fields.each do |field_defn| %>
 
   public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {

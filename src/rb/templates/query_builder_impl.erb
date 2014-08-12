@@ -1,5 +1,7 @@
 package <%= root_package %>.query;
 
+import java.util.Set;
+
 import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
 import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.JackMatchers;
@@ -12,6 +14,16 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
 
   public <%= model_defn.query_builder_name %>(<%= model_defn.iface_name %> caller) {
     super(caller);
+  }
+
+  public <%= model_defn.query_builder_name %> id(Long value) {
+    addId(value);
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> id(Set<Long> values) {
+    addIds(values);
+    return this;
   }
 
   <% model_defn.fields.each do |field_defn| %>
