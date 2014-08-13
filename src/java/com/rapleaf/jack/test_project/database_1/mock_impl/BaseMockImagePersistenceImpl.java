@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 
@@ -78,12 +79,9 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return super.realFind(ids, fieldsMap);
   }
 
-  public Set<Image> find(List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(constraints);
-  }
 
-  public Set<Image> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(ids, constraints);
+  public Set<Image> find(ModelQuery query) throws IOException {
+    return super.realFind(query);
   }
 
   public Set<Image> findByUserId(final Integer value) throws IOException {

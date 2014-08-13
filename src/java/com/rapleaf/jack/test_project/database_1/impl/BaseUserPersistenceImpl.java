@@ -27,6 +27,7 @@ import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
@@ -214,14 +215,11 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return foundSet;
   }
 
-  public Set<User> find(List<QueryConstraint> constraints) throws IOException {
-    return find(null, constraints);
-  }
-
-  public Set<User> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+  public Set<User> find(ModelQuery query) throws IOException {
     Set<User> foundSet = new HashSet<User>();
     
-    if (constraints == null || constraints.isEmpty()) {
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
       return find(ids);
       }
@@ -230,28 +228,13 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
-
-    Iterator<QueryConstraint> iter = constraints.iterator();
-
-    while (iter.hasNext()) {
-      QueryConstraint constraint = iter.next();
-      Enum field = constraint.getField();
-      IQueryOperator operator = constraint.getOperator();
-
-      statementString.append(field).append(operator.getSqlStatement());
-
-      if (iter.hasNext()) {
-        statementString.append(" AND ");
-      }
-    }
-
-    if (ids != null && !ids.isEmpty()) statementString.append(" AND " + getIdSetCondition(ids));
-    statementString.append(")");
+    statementString.append(query.getSqlStatement());
+    statementString.append(");");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     int index = 0;
-    for (QueryConstraint constraint : constraints) {
+    for (QueryConstraint constraint : query.getConstraints()) {
       User._Fields field = (User._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {

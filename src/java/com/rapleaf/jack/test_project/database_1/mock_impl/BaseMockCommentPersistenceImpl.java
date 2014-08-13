@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 
@@ -82,12 +83,9 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(ids, fieldsMap);
   }
 
-  public Set<Comment> find(List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(constraints);
-  }
 
-  public Set<Comment> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(ids, constraints);
+  public Set<Comment> find(ModelQuery query) throws IOException {
+    return super.realFind(query);
   }
 
   public Set<Comment> findByContent(final String value) throws IOException {

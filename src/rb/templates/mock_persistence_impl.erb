@@ -30,6 +30,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractMockDatabaseModel;
+import <%= JACK_NAMESPACE %>.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 
@@ -80,12 +81,9 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     return super.realFind(ids, fieldsMap);
   }
 
-  public Set<<%= model_defn.model_name %>> find(List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(constraints);
-  }
 
-  public Set<<%= model_defn.model_name %>> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
-    return super.realFind(ids, constraints);
+  public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
+    return super.realFind(query);
   }
 
   <% model_defn.fields.each do |field_defn| %>
