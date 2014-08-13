@@ -16,9 +16,35 @@ public class ModelQuery {
     this.ids = new HashSet<Long>();
   }
 
-  public String getSqlStatement() {
+  public List<QueryConstraint> getConstraints() {
+    return constraints;
+  }
 
-    return getIdSetSqlCondition() + " AND " + getConstraintListSqlCondition();
+  public Set<Long> getIdSet() {
+    return ids;
+  }
+
+  public void addConstraint(QueryConstraint constraint) {
+    constraints.add(constraint);
+  }
+
+  public void addIds(Set<Long> ids) {
+    this.ids.addAll(ids);
+  }
+
+  public void addId(Long id) {
+    ids.add(id);
+  }
+
+  public String getSqlStatement() {
+    StringBuilder statementBuilder = new StringBuilder();
+    statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
+    if (!ids.isEmpty() && !constraints.isEmpty()) {
+      statementBuilder.append(" AND ");
+    }
+    statementBuilder.append(getConstraintListSqlCondition());
+
+    return statementBuilder.toString();
   }
 
   private String getIdSetSqlCondition() {

@@ -37,6 +37,7 @@ import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
+import <%= JACK_NAMESPACE %>.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
@@ -136,10 +137,11 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return find(null, constraints);
   }
 
-  public Set<<%= model_defn.model_name %>> find(Set<Long> ids, List<QueryConstraint> constraints) throws IOException {
+  public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
     Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
     
-    if (constraints == null || constraints.isEmpty()) {
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
       return find(ids);
       }
@@ -148,23 +150,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM <%= model_defn.table_name %> WHERE (");
-
-    Iterator<QueryConstraint> iter = constraints.iterator();
-
-    while (iter.hasNext()) {
-      QueryConstraint constraint = iter.next();
-      Enum field = constraint.getField();
-      IQueryOperator operator = constraint.getOperator();
-
-      statementString.append(field).append(operator.getSqlStatement());
-
-      if (iter.hasNext()) {
-        statementString.append(" AND ");
-      }
-    }
-
-    if (ids != null && !ids.isEmpty()) statementString.append(" AND " + getIdSetCondition(ids));
-    statementString.append(")");
+    statementString.append(query.getSqlStatement());
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
