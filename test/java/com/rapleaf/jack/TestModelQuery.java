@@ -35,7 +35,6 @@ public class TestModelQuery extends TestCase {
     testQueryById(dbs);
   }
 
-
   public void testBasicQuery(IDatabases dbs) throws IOException {
 
     IUserPersistence users = dbs.getDatabase1().users();

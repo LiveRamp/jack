@@ -130,7 +130,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         IQueryOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
       }
-      if (ids != null && !ids.contains(record.getId())) {
+      if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {
         allMatch = false;
       }
       if (allMatch) {
