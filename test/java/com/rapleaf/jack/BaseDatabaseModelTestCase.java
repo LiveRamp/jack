@@ -41,7 +41,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t0 = System.currentTimeMillis();
     long t1 = t0 + 10;
     long t2 = t0 + 20;
-    byte[] someBinary = new byte[] {5, 4, 3, 2, 1};
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, 3.4d, true);
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
   }
@@ -67,7 +67,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t0 = System.currentTimeMillis();
     long t1 = t0 + 10;
     long t2 = t0 + 20;
-    byte[] someBinary = new byte[] {5, 4, 3, 2, 1};
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
 
     Map<Enum, Object> fieldsMap = new HashMap<Enum, Object>();
     fieldsMap.put(User._Fields.handle, "bryand");
@@ -81,7 +81,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     fieldsMap.put(User._Fields.some_decimal, 3.4d);
     fieldsMap.put(User._Fields.some_boolean, true);
 
-    User bryand = (User) users.create(fieldsMap);
+    User bryand = (User)users.create(fieldsMap);
     verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
   }
 
@@ -111,7 +111,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t0 = System.currentTimeMillis();
     long t1 = t0 + 10;
     long t2 = t0 + 20;
-    byte[] someBinary = new byte[] {5, 4, 3, 2, 1};
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, 3.4d, true);
 
     User bryand_again = users.find(bryand.getId());
@@ -141,7 +141,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t0 = System.currentTimeMillis();
     long t1 = t0 + 10;
     long t2 = t0 + 20;
-    byte[] someBinary = new byte[] {5, 4, 3, 2, 1};
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, 3.4d, true);
     User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, 3.4d, true);
     users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, 3.4d, true);
@@ -204,7 +204,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t0 = System.currentTimeMillis();
     long t1 = t0 + 10;
     long t2 = t0 + 20;
-    byte[] someBinary = new byte[] {5, 4, 3, 2, 1};
+    byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, 3.4d, true);
     User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, 3.4d, true);
     users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, 3.4d, true);
@@ -232,7 +232,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User user = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User user = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     User u1 = users.find(user.getId());
     User u2 = users.find(user.getId());
@@ -255,9 +255,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllFromCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     // fills cache
     User u1_1 = users.find(u1.getId());
@@ -273,11 +273,11 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     int numFound = 0;
     for (User user : allUsers) {
       if (user.getId() == u1_1.getId()) {
-        numFound++ ;
+        numFound++;
       } else if (user.getId() == u2_1.getId()) {
-        numFound++ ;
+        numFound++;
       } else if (user.getId() == u3_1.getId()) {
-        numFound++ ;
+        numFound++;
       }
     }
     assertEquals("findAll did not return cached objects for all 3 users!", 3, numFound);
@@ -285,9 +285,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllAndCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     Set<User> allUsers = users.findAll();
     assertTrue(allUsers.contains(u1));
@@ -339,9 +339,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("handle = 'bryand'"));
     assertEquals(Collections.singleton(u2), users.findAll("handle = 'thomask'"));
@@ -353,8 +353,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithNullValues() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("created_at_millis IS NOT NULL"));
     assertEquals(Collections.singleton(u2), users.findAll("created_at_millis IS NULL"));
@@ -364,9 +364,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithLikeConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u3 = users.create("as%df", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u3 = users.create("as%df", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("handle LIKE 'bryan_'"));
     assertEquals(Collections.singleton(u2), users.findAll("handle LIKE '%o%m%as%'"));
@@ -378,8 +378,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithNumericInConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND num_posts in (1 , 5)"));
     assertEquals(Collections.singleton(u2), users.findAll("5 < 4 OR num_posts in (3 , 7)"));
@@ -389,8 +389,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithStringInConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thomask", null, 3, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("5 > 4 AND handle in ('bryand' , 'asdf')"));
     assertEquals(Collections.singleton(u2), users.findAll("5 < 4 OR handle in ('thomask' , 'aswer')"));
@@ -400,8 +400,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindAllWithEscapedQuotesInStrings() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
-    User u2 = users.create("thoma\"sk", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u2 = users.create("thoma\"sk", null, 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     assertEquals(Collections.singleton(u1), users.findAll("handle = 'brya''nd'"));
     assertEquals(Collections.singleton(u2), users.findAll("handle = 'thoma\"sk'"));
@@ -411,30 +411,30 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testBelongsTo() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title", System.currentTimeMillis(), (int) u1.getId(), 0l);
+    Post p1 = posts.create("title", System.currentTimeMillis(), (int)u1.getId(), 0l);
     assertEquals(u1, p1.getUser());
   }
 
   public void testHasOne() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     IImagePersistence images = dbs.getDatabase1().images();
-    Image image = images.create((int) u1.getId());
+    Image image = images.create((int)u1.getId());
     assertEquals(u1, image.getUser());
   }
 
   public void testHasMany() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[] {5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
+    User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
     IPostPersistence posts = dbs.getDatabase1().posts();
-    Post p1 = posts.create("title1", System.currentTimeMillis(), (int) u1.getId(), 0l);
-    Post p2 = posts.create("title2", System.currentTimeMillis(), (int) u1.getId(), 0l);
-    Post p3 = posts.create("title3", System.currentTimeMillis(), (int) u1.getId(), 0l);
+    Post p1 = posts.create("title1", System.currentTimeMillis(), (int)u1.getId(), 0l);
+    Post p2 = posts.create("title2", System.currentTimeMillis(), (int)u1.getId(), 0l);
+    Post p3 = posts.create("title3", System.currentTimeMillis(), (int)u1.getId(), 0l);
 
     assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
@@ -518,11 +518,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u1));
     assertTrue(found.contains(u2));
 
-    found = users.find(new HashSet<Long>(Arrays.asList(u1.getId())), new HashMap<Enum, Object>() {
-      {
-        put(User._Fields.num_posts, 2);
-      }
-    });
+    found = users.query().id(u1.getId()).numPosts(2).find();
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
   }
@@ -560,9 +556,9 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     assertEquals("some_handle", copy.getHandle());
     assertEquals(1, copy.getNumPosts());
-    assertEquals((Object) 1L, copy.getCreatedAtMillis());
+    assertEquals((Object)1L, copy.getCreatedAtMillis());
     assertTrue(Arrays.equals("bio".getBytes(), copy.getSomeBinary()));
-    assertEquals((Object) true, copy.isSomeBoolean());
+    assertEquals((Object)true, copy.isSomeBoolean());
   }
 
   public void testCreateAssociation() throws Exception {
