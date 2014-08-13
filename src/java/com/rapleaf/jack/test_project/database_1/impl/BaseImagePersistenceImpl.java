@@ -154,7 +154,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
     statementString.append(query.getSqlStatement());
-    statementString.append(");");
+    statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 

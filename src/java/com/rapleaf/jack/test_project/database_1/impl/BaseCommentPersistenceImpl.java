@@ -176,7 +176,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM comments WHERE (");
     statementString.append(query.getSqlStatement());
-    statementString.append(");");
+    statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 

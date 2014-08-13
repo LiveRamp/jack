@@ -181,7 +181,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM posts WHERE (");
     statementString.append(query.getSqlStatement());
-    statementString.append(");");
+    statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 

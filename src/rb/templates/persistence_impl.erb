@@ -147,7 +147,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM <%= model_defn.table_name %> WHERE (");
     statementString.append(query.getSqlStatement());
-    statementString.append(");");
+    statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 

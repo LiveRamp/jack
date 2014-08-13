@@ -229,7 +229,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
     statementString.append(query.getSqlStatement());
-    statementString.append(");");
+    statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
