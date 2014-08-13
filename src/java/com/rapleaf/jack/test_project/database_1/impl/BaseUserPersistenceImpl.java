@@ -25,11 +25,13 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.IQueryOperator;
+import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-
-import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
-import com.rapleaf.jack.test_project.database_1.query.UserQuery;
+import com.rapleaf.jack.test_project.database_1.models.User;
+import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -213,6 +215,74 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return foundSet;
   }
 
+  public Set<User> find(ModelQuery query) throws IOException {
+    Set<User> foundSet = new HashSet<User>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM users WHERE (");
+    statementString.append(query.getSqlStatement());
+    statementString.append(")");
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    int index = 0;
+    for (QueryConstraint constraint : query.getConstraints()) {
+      User._Fields field = (User._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case num_posts:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case some_date:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+            case bio:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case some_binary:
+              preparedStatement.setBytes(++index, (byte[]) parameter);
+              break;
+            case some_float:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(++index, (Boolean) parameter);
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {
@@ -321,7 +391,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
   }
 
-  public UserQuery query() {
-    return new UserQuery(this);
+  public UserQueryBuilder query() {
+    return new UserQueryBuilder(this);
   }
 }

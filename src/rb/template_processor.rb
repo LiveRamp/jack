@@ -50,7 +50,7 @@ EOF
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
   MOCK_DATABASES_IMPL_TEMPLATE = load_template("templates/mock_databases_impl.erb")
 
-  MODEL_QUERY_TEMPLATE = load_template("templates/model_query_impl.erb")
+  QUERY_BUILDER_TEMPLATE = load_template("templates/query_builder_impl.erb")
 
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
   MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
@@ -119,8 +119,8 @@ EOF
       file.puts(MOCK_PERSISTENCE_IMPL_TEMPLATE.result(binding));
       file.close
 
-      file = File.new("#{output_dir}/query/#{model_defn.query_class_name}.java", "w")
-      file.puts(MODEL_QUERY_TEMPLATE.result(binding));
+      file = File.new("#{output_dir}/query/#{model_defn.query_builder_name}.java", "w")
+      file.puts(QUERY_BUILDER_TEMPLATE.result(binding));
       file.close
 
     end

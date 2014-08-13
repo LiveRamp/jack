@@ -25,11 +25,13 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.IQueryOperator;
+import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-
-import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
-import com.rapleaf.jack.test_project.database_1.query.CommentQuery;
+import com.rapleaf.jack.test_project.database_1.models.Comment;
+import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -160,6 +162,56 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return foundSet;
   }
 
+  public Set<Comment> find(ModelQuery query) throws IOException {
+    Set<Comment> foundSet = new HashSet<Comment>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM comments WHERE (");
+    statementString.append(query.getSqlStatement());
+    statementString.append(")");
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    int index = 0;
+    for (QueryConstraint constraint : query.getConstraints()) {
+      Comment._Fields field = (Comment._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case content:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case commenter_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case commented_on_id:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case created_at:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {
@@ -206,7 +258,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 
-  public CommentQuery query() {
-    return new CommentQuery(this);
+  public CommentQueryBuilder query() {
+    return new CommentQueryBuilder(this);
   }
 }

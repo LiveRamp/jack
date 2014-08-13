@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -19,12 +20,14 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.QueryConstraint;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
-import com.rapleaf.jack.test_project.database_1.query.UserQuery;
+import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -85,6 +88,11 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return super.realFind(ids, fieldsMap);
   }
 
+
+  public Set<User> find(ModelQuery query) throws IOException {
+    return super.realFind(query);
+  }
+
   public Set<User> findByHandle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
   }
@@ -125,7 +133,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
   }
 
-  public UserQuery query() {
-    return new UserQuery(this);
+  public UserQueryBuilder query() {
+    return new UserQueryBuilder(this);
   }
 }

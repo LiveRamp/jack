@@ -25,11 +25,13 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.IQueryOperator;
+import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-
-import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
-import com.rapleaf.jack.test_project.database_1.query.ImageQuery;
+import com.rapleaf.jack.test_project.database_1.models.Image;
+import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -138,6 +140,47 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return foundSet;
   }
 
+  public Set<Image> find(ModelQuery query) throws IOException {
+    Set<Image> foundSet = new HashSet<Image>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM images WHERE (");
+    statementString.append(query.getSqlStatement());
+    statementString.append(")");
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    int index = 0;
+    for (QueryConstraint constraint : query.getConstraints()) {
+      Image._Fields field = (Image._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case user_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {
@@ -160,7 +203,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }
 
-  public ImageQuery query() {
-    return new ImageQuery(this);
+  public ImageQueryBuilder query() {
+    return new ImageQueryBuilder(this);
   }
 }

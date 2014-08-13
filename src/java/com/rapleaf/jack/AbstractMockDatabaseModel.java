@@ -1,14 +1,14 @@
 package com.rapleaf.jack;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
@@ -43,7 +43,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
           query.append("=");
           if (fieldValue instanceof String) {
             query.append('"');
-            query.append(((String) fieldValue).replaceAll("\"", "\\\\\""));
+            query.append(((String)fieldValue).replaceAll("\"", "\\\\\""));
             query.append('"');
           } else {
             query.append(fieldValue);
@@ -53,7 +53,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         query.append(conditionJS);
         Object result = engine.eval(query.toString(), engine.createBindings());
         if (result instanceof Boolean) {
-          return (Boolean) result;
+          return (Boolean)result;
         } else {
           throw new RuntimeException(
               "Failed to translate condition from MySQL to JavaScript.  Unsupported or erroneous SQL syntax is likely. Where clause: " + condition);
@@ -75,11 +75,11 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     this.databases = databases;
   }
 
-  protected Set<T> realFind(Map fieldsMap) throws IOException {
+  protected Set<T> realFind(Map<Enum, Object> fieldsMap) throws IOException {
     return realFind(null, fieldsMap);
   }
 
-  protected Set<T> realFind(Set<Long> ids, Map fieldsMap) throws IOException {
+  protected Set<T> realFind(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     Set<T> foundSet = new HashSet<T>();
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundSet;
@@ -87,19 +87,53 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
     for (T record : records.values()) {
       boolean allMatch = true;
-      for (Map.Entry<Enum, Object> e : ((Map<Enum, Object>)fieldsMap).entrySet()) {
+      for (Map.Entry<Enum, Object> e : fieldsMap.entrySet()) {
         Object searchedForValue = e.getValue();
         Object existingValue = record.getField(e.getKey().name());
         if (ids != null && !ids.contains(record.getId())) {
           allMatch = false;
         }
-        if (existingValue == null){
-          if (searchedForValue != null) allMatch = false;
-        } else if (!existingValue.equals(searchedForValue)){
+        if (existingValue == null) {
+          if (searchedForValue != null) {
+            allMatch = false;
+          }
+        } else if (!existingValue.equals(searchedForValue)) {
           allMatch = false;
         }
       }
-      if (allMatch) foundSet.add(record);
+      if (allMatch) {
+        foundSet.add(record);
+      }
+    }
+
+    return foundSet;
+  }
+
+  protected Set<T> realFind(ModelQuery query) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+
+    List<QueryConstraint> constraints = query.getConstraints();
+    Set<Long> ids = query.getIdSet();
+    if (constraints == null || constraints.isEmpty()) {
+      if (ids != null && !ids.isEmpty()) {
+        return find(ids);
+      }
+      return foundSet;
+    }
+    for (T record : records.values()) {
+      boolean allMatch = true;
+      for (QueryConstraint constraint : constraints) {
+
+        Enum field = constraint.getField();
+        IQueryOperator operator = constraint.getOperator();
+        allMatch = allMatch && operator.apply(record.getField(field.name()));
+      }
+      if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {
+        allMatch = false;
+      }
+      if (allMatch) {
+        foundSet.add(record);
+      }
     }
 
     return foundSet;
@@ -118,7 +152,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     if (tmp == null) {
       return null;
     }
-    return (T) tmp.getCopy(databases);
+    return tmp.getCopy(databases);
   }
 
   @Override
@@ -149,7 +183,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
           ret.add(record.getCopy(databases));
         }
       } else if (foreignKeyValue instanceof Integer) {
-        if (((Integer) foreignKeyValue).longValue() == id) {
+        if (((Integer)foreignKeyValue).longValue() == id) {
           ret.add(record.getCopy(databases));
         }
       } else {
@@ -171,7 +205,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
           foundSet.add(record.getCopy(databases));
         }
       } else if (foreignKeyValue instanceof Integer) {
-        if (ids.contains(((Integer) foreignKeyValue).longValue())) {
+        if (ids.contains(((Integer)foreignKeyValue).longValue())) {
           foundSet.add(record.getCopy(databases));
         }
       } else {

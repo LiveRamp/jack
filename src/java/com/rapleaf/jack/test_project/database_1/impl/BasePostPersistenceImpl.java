@@ -25,11 +25,13 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.IQueryOperator;
+import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-
-import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
-import com.rapleaf.jack.test_project.database_1.query.PostQuery;
+import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -165,6 +167,56 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return foundSet;
   }
 
+  public Set<Post> find(ModelQuery query) throws IOException {
+    Set<Post> foundSet = new HashSet<Post>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+      return find(ids);
+      }
+      return foundSet;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM posts WHERE (");
+    statementString.append(query.getSqlStatement());
+    statementString.append(")");
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    int index = 0;
+    for (QueryConstraint constraint : query.getConstraints()) {
+      Post._Fields field = (Post._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case title:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case posted_at_millis:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case user_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case updated_at:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    executeQuery(foundSet, preparedStatement);
+
+    return foundSet;
+  }
+
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
     if (model.getTitle() == null) {
@@ -217,7 +269,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
   }
 
-  public PostQuery query() {
-    return new PostQuery(this);
+  public PostQueryBuilder query() {
+    return new PostQueryBuilder(this);
   }
 }

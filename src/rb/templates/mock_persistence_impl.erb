@@ -19,6 +19,7 @@ package <%= root_package %>.mock_impl;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -29,12 +30,14 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractMockDatabaseModel;
+import <%= JACK_NAMESPACE %>.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
+import <%= JACK_NAMESPACE %>.QueryConstraint;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.models.<%= model_defn.id_wrapper_name %>;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
-import <%= root_package %>.query.<%= model_defn.query_class_name %>;
+import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 
@@ -78,6 +81,11 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     return super.realFind(ids, fieldsMap);
   }
 
+
+  public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
+    return super.realFind(query);
+  }
+
   <% model_defn.fields.each do |field_defn| %>
 
   public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
@@ -85,7 +93,7 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   }
   <% end %>
 
-  public <%= model_defn.query_class_name %> query() {
-    return new <%= model_defn.query_class_name %>(this);
+  public <%= model_defn.query_builder_name %> query() {
+    return new <%= model_defn.query_builder_name %>(this);
   }
 }
