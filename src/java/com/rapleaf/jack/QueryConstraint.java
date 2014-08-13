@@ -22,4 +22,8 @@ public class QueryConstraint<T> {
   public List<T> getParameters() {
     return operator.getParameters();
   }
+
+  public String getSqlStatement() {
+    return field + " " + operator.getSqlStatement();
+  }
 }

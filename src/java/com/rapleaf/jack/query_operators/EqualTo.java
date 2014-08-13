@@ -11,7 +11,7 @@ public class EqualTo<V> extends QueryOperator<V> {
 
   @Override
   public String getSqlStatement() {
-    return " = ? ";
+    return "= ?";
   }
 
   @Override

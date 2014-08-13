@@ -11,7 +11,7 @@ public class GreaterThanOrEqualTo<V extends Comparable<V>> extends QueryOperator
 
   @Override
   public String getSqlStatement() {
-    return " >= ? ";
+    return ">= ?";
   }
 
   @Override

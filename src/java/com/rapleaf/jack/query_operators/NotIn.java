@@ -11,11 +11,11 @@ public class NotIn<V> extends QueryOperator<V> {
 
   @Override
   public String getSqlStatement() {
-    StringBuilder sb = new StringBuilder(" NOT IN ( ?");
+    StringBuilder sb = new StringBuilder("NOT IN (?");
     for (int i = 0; i < getParameters().size() - 1; i++) {
       sb.append(", ?");
     }
-    sb.append(" ) ");
+    sb.append(")");
     return sb.toString();
   }
 

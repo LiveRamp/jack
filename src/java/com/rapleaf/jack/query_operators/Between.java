@@ -11,7 +11,7 @@ public class Between<V extends Comparable<V>> extends QueryOperator<V> {
 
   @Override
   public String getSqlStatement() {
-    return " BETWEEN ? AND ? ";
+    return "BETWEEN ? AND ?";
   }
 
   @Override

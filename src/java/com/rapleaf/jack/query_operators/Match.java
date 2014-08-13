@@ -11,7 +11,7 @@ public class Match extends QueryOperator<String> {
 
   @Override
   public String getSqlStatement() {
-    return " LIKE  ? ";
+    return "LIKE  ?";
   }
 
   @Override

@@ -10,7 +10,7 @@ public class IsNotNull extends QueryOperator {
 
   @Override
   public String getSqlStatement() {
-    return " IS NOT NULL ";
+    return "IS NOT NULL";
   }
 
   @Override
