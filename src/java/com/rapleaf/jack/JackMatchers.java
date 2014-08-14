@@ -15,6 +15,20 @@ import com.rapleaf.jack.query_operators.NotIn;
 
 public class JackMatchers {
 
+  public static <T> IQueryOperator<T> equalToOrNull(T value) {
+    if (value == null) {
+      return new IsNull<T>();
+    }
+    return new EqualTo<T>(value);
+  }
+
+  public static <T> IQueryOperator<T> notEqualToOrNotNull(T value) {
+    if (value == null) {
+      return new IsNotNull<T>();
+    }
+    return new NotEqualTo<T>(value);
+  }
+
   public static <T> EqualTo<T> equalTo(T value) {
     return new EqualTo<T>(value);
   }
