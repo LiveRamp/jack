@@ -2,7 +2,7 @@ package com.rapleaf.jack.query_operators;
 
 import com.rapleaf.jack.QueryOperator;
 
-public class IsNotNull extends QueryOperator {
+public class IsNotNull<V> extends QueryOperator<V> {
 
   public IsNotNull() {
     super();
@@ -14,7 +14,7 @@ public class IsNotNull extends QueryOperator {
   }
 
   @Override
-  public boolean apply(Object value) {
+  public boolean apply(V value) {
     return value != null;
   }
 }
