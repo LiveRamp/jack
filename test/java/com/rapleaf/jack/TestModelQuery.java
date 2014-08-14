@@ -143,10 +143,10 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, result.size());
     assertTrue(result.contains(casey));
 
-    result = users.query().someDatetime(isNull()).find();
+    result = users.query().someDatetime(JackMatchers.<Long>isNull()).find();
     assertEquals(3, result.size());
 
-    result = users.query().someDatetime(isNotNull()).find();
+    result = users.query().someDatetime(JackMatchers.<Long>isNotNull()).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brandon));
     assertTrue(result.contains(james));

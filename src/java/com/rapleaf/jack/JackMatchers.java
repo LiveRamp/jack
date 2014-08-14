@@ -23,12 +23,12 @@ public class JackMatchers {
     return new NotEqualTo<T>(value);
   }
 
-  public static IsNull isNull() {
-    return new IsNull();
+  public static <T> IsNull<T> isNull() {
+    return new IsNull<T>();
   }
 
-  public static IsNotNull isNotNull() {
-    return new IsNotNull();
+  public static <T> IsNotNull<T> isNotNull() {
+    return new IsNotNull<T>();
   }
 
   public static <T> In<T> in(T value1, T... otherValues) {
