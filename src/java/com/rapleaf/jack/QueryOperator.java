@@ -48,8 +48,7 @@ public abstract class QueryOperator<V> implements IQueryOperator<V> {
   public void ensureNoNullParameter() {
     for (V parameter : parameters) {
       if (parameter == null) {
-        throw new IllegalArgumentException("You cannot pass null parameters." +
-            " Use the operator isNull() to query field with null values.");
+        throw new IllegalArgumentException("You cannot pass null parameters.");
       }
     }
   }
