@@ -10,7 +10,7 @@ public class EqualTo<V> extends QueryOperator<V> {
       ensureNoNullParameter();
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("You cannot pass a null value as a parameter. " +
-          "Use the IsNull operator instead.");
+          "Use the EqualToOrNull operator instead.");
     }
   }
 
