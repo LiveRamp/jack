@@ -27,7 +27,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder content(String value) {
-    addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.<String>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -37,7 +42,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commenterId(Integer value) {
-    addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.<Integer>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -47,7 +57,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commentedOnId(Long value) {
-    addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -57,7 +72,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder createdAt(Long value) {
-    addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 

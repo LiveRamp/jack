@@ -27,7 +27,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder title(String value) {
-    addConstraint(new QueryConstraint<String>(Post._Fields.title, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<String>(Post._Fields.title, JackMatchers.<String>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<String>(Post._Fields.title, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -37,7 +42,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder postedAtMillis(Long value) {
-    addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -47,7 +57,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder userId(Integer value) {
-    addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, JackMatchers.<Integer>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -57,7 +72,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder updatedAt(Long value) {
-    addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 

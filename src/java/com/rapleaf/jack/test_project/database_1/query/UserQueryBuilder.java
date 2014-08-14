@@ -27,7 +27,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder handle(String value) {
-    addConstraint(new QueryConstraint<String>(User._Fields.handle, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<String>(User._Fields.handle, JackMatchers.<String>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<String>(User._Fields.handle, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -37,7 +42,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder createdAtMillis(Long value) {
-    addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -47,7 +57,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder numPosts(Integer value) {
-    addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, JackMatchers.<Integer>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -57,7 +72,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDate(Long value) {
-    addConstraint(new QueryConstraint<Long>(User._Fields.some_date, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(User._Fields.some_date, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(User._Fields.some_date, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -67,7 +87,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDatetime(Long value) {
-    addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, JackMatchers.<Long>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -77,7 +102,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder bio(String value) {
-    addConstraint(new QueryConstraint<String>(User._Fields.bio, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<String>(User._Fields.bio, JackMatchers.<String>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<String>(User._Fields.bio, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -87,7 +117,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someBinary(byte[] value) {
-    addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, JackMatchers.<byte[]>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -97,7 +132,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someFloat(Double value) {
-    addConstraint(new QueryConstraint<Double>(User._Fields.some_float, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Double>(User._Fields.some_float, JackMatchers.<Double>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Double>(User._Fields.some_float, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -107,7 +147,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDecimal(Double value) {
-    addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, JackMatchers.<Double>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
@@ -117,7 +162,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someBoolean(Boolean value) {
-    addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.equalTo(value)));
+    if(value == null) {
+      addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.<Boolean>isNull()));
+    }
+    else {
+      addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.equalTo(value)));
+    }
     return this;
   }
 
