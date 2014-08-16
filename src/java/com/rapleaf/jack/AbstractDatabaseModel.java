@@ -705,21 +705,26 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     useCache = false;
   }
 
-  private long handleRailsUpdatedAt(T model) {
+  private boolean updatedAtCanBeHandled(T model) {
     if (model.hasField("updated_at")) {
       Object field = model.getField("updated_at");
-      if (field != null && field.getClass().equals(Long.class)) {
-        long oldUpdatedAt = (Long) field;
-        model.setField("updated_at", System.currentTimeMillis());
-        // return old value in case save fails and we need to reset
-        return oldUpdatedAt;
-      }
+      return (field != null && field.getClass().equals(Long.class));
+    }
+    return false;
+  }
+
+  private long handleRailsUpdatedAt(T model) {
+    if (updatedAtCanBeHandled(model)) {
+      long oldUpdatedAt = (Long)model.getField("updated_at");
+      model.setField("updated_at", System.currentTimeMillis());
+      // return old value in case save fails and we need to reset
+      return oldUpdatedAt;
     }
     return 0;
   }
 
   private void revertRailsUpdatedAt(T model, long oldUpdatedAt) {
-    if (model.hasField("updated_at") && model.getField("updated_at").getClass().equals(Long.class)) {
+    if (updatedAtCanBeHandled(model)) {
       model.setField("updated_at", oldUpdatedAt);
     }
   }
