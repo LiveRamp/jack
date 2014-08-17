@@ -6,6 +6,8 @@ import com.rapleaf.jack.AbstractQueryBuilder;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.QueryOrderConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
@@ -175,4 +177,43 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }
+
+  public UserQueryBuilder order() {
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
+  }
+  
+  public UserQueryBuilder order(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
+  }
+  
+  public UserQueryBuilder orderById() {
+    return order();
+  }
+  
+  public UserQueryBuilder orderById(QueryOrder queryOrder) {
+    return order();
+  }
+
+  public UserQueryBuilder orderByBio() {
+    this.addOrder(new QueryOrderConstraint(User._Fields.bio, QueryOrder.ASC));
+    return this;
+  }
+  
+  public UserQueryBuilder orderByBio(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(User._Fields.bio, queryOrder));
+    return this;
+  }
+
+  public UserQueryBuilder orderByNumPosts() {
+    this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, QueryOrder.ASC));
+    return null;
+  }
+  
+  public UserQueryBuilder orderByNumPosts(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, queryOrder));
+    return null;
+  }
+  
 }

@@ -41,7 +41,7 @@ public class ModelQuery {
   public void addOrder(QueryOrderConstraint orderConstraint) {
     orderConstraints.add(orderConstraint);
   }
-  
+    
   public String getSqlStatement() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
