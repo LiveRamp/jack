@@ -15,6 +15,7 @@ public class ModelQuery {
 
   public ModelQuery() {
     this.constraints = new ArrayList<QueryConstraint>();
+    orderConstraints = new ArrayList<QueryOrderConstraint>();
     this.ids = new HashSet<Long>();
   }
 
@@ -41,7 +42,11 @@ public class ModelQuery {
   public void addOrder(QueryOrderConstraint orderConstraint) {
     orderConstraints.add(orderConstraint);
   }
-    
+
+  public boolean isOrderedQuery() {
+    return !orderConstraints.isEmpty();
+  }
+  
   public String getSqlStatement() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
