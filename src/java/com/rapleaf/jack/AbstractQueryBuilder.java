@@ -16,6 +16,10 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
   public void addConstraint(QueryConstraint constraint) {
     query.addConstraint(constraint);
   }
+  
+  public void addOrder(QueryOrderConstraint orderConstraint) {
+    query.addOrder(orderConstraint);
+  }
 
   public void addIds(Set<Long> ids) {
     query.addIds(ids);
@@ -24,7 +28,7 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
   public void addId(Long id) {
     query.addId(id);
   }
-
+  
   @Override
   public Set<M> find() throws IOException {
     return caller.find(query);

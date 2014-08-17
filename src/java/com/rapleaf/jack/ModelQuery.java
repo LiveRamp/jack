@@ -2,6 +2,7 @@ package com.rapleaf.jack;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 public class ModelQuery {
 
   private List<QueryConstraint> constraints;
+  private ArrayList<QueryOrderConstraint> orderConstraints; 
   private Set<Long> ids;
 
   public ModelQuery() {
@@ -36,6 +38,10 @@ public class ModelQuery {
     ids.add(id);
   }
 
+  public void addOrder(QueryOrderConstraint orderConstraint) {
+    orderConstraints.add(orderConstraint);
+  }
+  
   public String getSqlStatement() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
@@ -43,7 +49,8 @@ public class ModelQuery {
       statementBuilder.append(" AND ");
     }
     statementBuilder.append(getConstraintListSqlCondition());
-
+    statementBuilder.append(getOrderByClauseSqlCondition());
+    
     return statementBuilder.toString();
   }
 
@@ -75,4 +82,20 @@ public class ModelQuery {
     return sb.toString();
   }
 
+  private String getOrderByClauseSqlCondition() {
+  	StringBuilder sb = new StringBuilder();
+  	if (!orderConstraints.isEmpty()) {
+  	  sb.append(" ORDER BY ");  	  
+  	  Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
+  	  while (it.hasNext()) {
+  	    QueryOrderConstraint orderConstraint = it.next();
+  	    sb.append(orderConstraint.getSqlStatement());
+  	    
+  	    if (it.hasNext()) {
+  	      sb.append(", ");
+  	    }
+  	  }
+  	}  	
+  	return sb.toString();
+  }
 }

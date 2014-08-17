@@ -1,10 +1,11 @@
 package com.rapleaf.jack;
 
-public abstract class QueryOrder {
-  private final String queryOrder;
-  
-  public QueryOrder(String queryOrder) {
-    this.queryOrder = queryOrder;
+public enum QueryOrder {
+  ASC("ASC"), DESC("DESC");
+  private String queryOrder;
+
+  private QueryOrder(String order) {
+    this.queryOrder = order;
   }
   
   public String getSqlStatement() {
