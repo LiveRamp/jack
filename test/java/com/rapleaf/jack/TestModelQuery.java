@@ -3,6 +3,7 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -200,5 +201,115 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
 
+  }
+  
+  public void testBasicOrderedQuery(IDatabases dbs) throws IOException {
+
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A").setBio("CEO").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Engineer").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("Analyst").setNumPosts(3);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Dean").setNumPosts(3);
+    User userE = users.createDefaultInstance().setHandle("E").setBio("Associate").setNumPosts(3);
+    User userF = users.createDefaultInstance().setHandle("F").setBio("Associate").setNumPosts(6);
+    User userG = users.createDefaultInstance().setHandle("G").setBio("Associate").setNumPosts(5);
+    User userH = users.createDefaultInstance().setHandle("H").setBio("Associate").setNumPosts(7);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+    userE.save();
+    userF.save();
+    userG.save();
+    userH.save();
+
+    List<User> sortedResult;
+    List<User> sortedResultEquivalent;
+
+    // an empty query should return an empty list
+    sortedResult = users.query().sort().find();
+    assertTrue(sortedResult.isEmpty());
+
+    // a query with no results should return an empty list
+    sortedResult = users.query().numPosts(3).bio("CEO").sort().find();
+    assertTrue(sortedResult.isEmpty());
+    
+    // a simple query with single result should return a list with one element
+    sortedResult = users.query().bio("Analyst").sort().find();
+    assertEquals(1, sortedResult.size());
+    assertTrue(sortedResult.contains(userC));
+
+    // a chained query with single result should return a list with one element
+    sortedResult = users.query().handle("A").bio("CEO").numPosts(1).sort().find();
+    assertEquals(1, sortedResult.size());
+    assertTrue(sortedResult.contains(userA));
+
+    // a chained query with multiple results sorted by default
+    //   should be sorted by id in an ascending order
+    // expected result: [userC, userD, userE]
+    sortedResult = users.query().numPosts(3).sort().find();
+    sortedResultEquivalent = users.query().numPosts(3).sortById(asc()).find();
+    assertEquals(3, sortedResult.size());
+    assertEquals(0, sortedResult.indexOf(userC));
+    assertEquals(1, sortedResult.indexOf(userD));
+    assertEquals(2, sortedResult.indexOf(userE));
+    assertTrue(sortedResult.equals(sortedResultEquivalent));
+    
+    // a chained query with multiple results sorted by default in a descending order
+    //   should be sorted by id in an descending order
+    // sortedResult: [userE, userD, userC]
+    sortedResult = users.query().numPosts(3).sort(desc()).find();
+    sortedResultEquivalent = users.query().numPosts(3).sortById(desc()).find();
+    assertEquals(3, sortedResult.size());
+    assertEquals(2, sortedResult.indexOf(userC));
+    assertEquals(1, sortedResult.indexOf(userD));
+    assertEquals(0, sortedResult.indexOf(userE));
+    assertTrue(sortedResult.equals(sortedResultEquivalent));
+    
+    // a chained query with multiple results sorted by a specific field in an ascending order
+    //   should be sorted by the specified field in an asceding order
+    // sortedResult: [userC, userE, userD]
+    sortedResult = users.query().numPosts(3).sortByBio().find();
+    sortedResultEquivalent = users.query().numPosts(3).sortByBio(asc()).find();
+    assertEquals(3, sortedResult.size());
+    assertEquals(0, sortedResult.contains(userC));
+    assertEquals(1, sortedResult.contains(userE));
+    assertEquals(2, sortedResult.contains(userD));
+    assertTrue(sortedResult.equals(sortedResultEquivalent));
+    
+    // a chained query with multiple results sorted by specified field in a descending order
+    // sortedResult: [userD, userE, userC]
+    sortedResult = users.query().numPosts(3).sortByBio(desc()).find();
+    assertEquals(3, sortedResult.size());
+    assertEquals(2, sortedResult.contains(userC));
+    assertEquals(1, sortedResult.contains(userE));
+    assertEquals(0, sortedResult.contains(userD));
+    
+    // a chained sorted query with multiple results sorted by multiple fields should be sorted accordingly
+    // sortedResult: [userH, userF, userG, userC, userD, userE, userB]
+    sortedResult = users.query().numPosts(greaterThan(1)).sortByNumPosts(desc()).sortById(asc()).find();
+    assertEquals(7, sortedResult.size());
+    assertEquals(0, sortedResult.indexOf(userH));
+    assertEquals(1, sortedResult.indexOf(userF));
+    assertEquals(2, sortedResult.indexOf(userG));
+    assertEquals(3, sortedResult.indexOf(userC));
+    assertEquals(4, sortedResult.indexOf(userD));
+    assertEquals(5, sortedResult.indexOf(userE));
+    assertEquals(6, sortedResult.indexOf(userB));
+    
+    // a chained sorted query with multiple results sorted by multiple fields should be sorted accordingly
+    // sortedResult: [userH, userF, userG, userD, userE, userC, userB, userA]
+    sortedResult = users.query().numPosts(greaterThan(0)).sortByNumPosts(desc()).sortByBio(asc()).find();
+    assertEquals(8, sortedResult.size());
+    assertEquals(0, sortedResult.indexOf(userH));
+    assertEquals(1, sortedResult.indexOf(userF));
+    assertEquals(2, sortedResult.indexOf(userG));
+    assertEquals(3, sortedResult.indexOf(userD));
+    assertEquals(4, sortedResult.indexOf(userE));
+    assertEquals(5, sortedResult.indexOf(userC));
+    assertEquals(6, sortedResult.indexOf(userB));
+    assertEquals(6, sortedResult.indexOf(userA));
   }
 }
