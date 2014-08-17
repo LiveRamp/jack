@@ -153,7 +153,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
@@ -181,6 +181,10 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return foundSet;
   }
 
+  public List<Image> findWithOrder(ModelQuery query) throws IOException {
+    return null;
+  }
+  
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {

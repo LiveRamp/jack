@@ -27,6 +27,8 @@ public class TestModelQuery extends TestCase {
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
+    testQueryWithOrder(dbs);
+    testQueryByIdWithOrder(dbs);
   }
 
   public void testMockDbQueries() throws IOException {
@@ -204,7 +206,7 @@ public class TestModelQuery extends TestCase {
 
   }
   
-  public void testBasicOrderedQuery(IDatabases dbs) throws IOException {
+  public void testQueryWithOrder(IDatabases dbs) throws IOException {
 
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -226,91 +228,131 @@ public class TestModelQuery extends TestCase {
     userG.save();
     userH.save();
 
-    List<User> orderedResult;
-    List<User> orderedResultEquivalent;
+    List<User> orderedResult1;
+    List<User> orderedResult2;
 
-    // an empty query should return an empty list
-    orderedResult = users.query().order().find();
-    assertTrue(orderedResult.isEmpty());
+    // An empty query should return an empty list.
+    orderedResult1 = users.query().order().findWithOrder();
+    assertTrue(orderedResult1.isEmpty());
 
-    // a query with no results should return an empty list
-    orderedResult = users.query().numPosts(3).bio("CEO").order().find();
-    assertTrue(orderedResult.isEmpty());
+    // A query with no results should return an empty list.
+    orderedResult1 = users.query().numPosts(3).bio("CEO").order().findWithOrder();
+    assertTrue(orderedResult1.isEmpty());
     
-    // a simple query with single result should return a list with one element
-    orderedResult = users.query().bio("Analyst").order().find();
-    assertEquals(1, orderedResult.size());
-    assertTrue(orderedResult.contains(userC));
+    // A simple query with single result should return a list with one element.
+    orderedResult1 = users.query().bio("Analyst").order().findWithOrder();
+    assertEquals(1, orderedResult1.size());
+    assertTrue(orderedResult1.contains(userC));
 
-    // a chained query with single result should return a list with one element
-    orderedResult = users.query().handle("A").bio("CEO").numPosts(1).order().find();
-    assertEquals(1, orderedResult.size());
-    assertTrue(orderedResult.contains(userA));
+    // A chained query with single result should return a list with one element.
+    orderedResult1 = users.query().handle("A").bio("CEO").numPosts(1).order().findWithOrder();
+    assertEquals(1, orderedResult1.size());
+    assertTrue(orderedResult1.contains(userA));
 
-    // a chained query with multiple results ordered by default
-    //   should be ordered by id in an ascending order
+    // A chained query ordered by default should be ordered by id in an ascending manner.
     // expected result: [userC, userD, userE]
-    orderedResult = users.query().numPosts(3).order().find();
-    orderedResultEquivalent = users.query().numPosts(3).orderById(asc()).find();
-    assertEquals(3, orderedResult.size());
-    assertEquals(0, orderedResult.indexOf(userC));
-    assertEquals(1, orderedResult.indexOf(userD));
-    assertEquals(2, orderedResult.indexOf(userE));
-    assertTrue(orderedResult.equals(orderedResultEquivalent));
+    orderedResult1 = users.query().numPosts(3).order().findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderById(asc()).findWithOrder();
+    assertEquals(3, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(userC));
+    assertEquals(1, orderedResult1.indexOf(userD));
+    assertEquals(2, orderedResult1.indexOf(userE));
+    assertTrue(orderedResult1.equals(orderedResult2));
     
-    // a chained query with multiple results ordered by default in a descending order
-    //   should be ordered by id in an descending order
-    // orderedResult: [userE, userD, userC]
-    orderedResult = users.query().numPosts(3).order(desc()).find();
-    orderedResultEquivalent = users.query().numPosts(3).orderById(desc()).find();
-    assertEquals(3, orderedResult.size());
-    assertEquals(2, orderedResult.indexOf(userC));
-    assertEquals(1, orderedResult.indexOf(userD));
-    assertEquals(0, orderedResult.indexOf(userE));
-    assertTrue(orderedResult.equals(orderedResultEquivalent));
+    // A chained query ordered by default in a descending manner should be ordered by id in an descending manner.
+    // expected result: [userE, userD, userC]
+    orderedResult1 = users.query().numPosts(3).order(desc()).findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderById(desc()).findWithOrder();
+    assertEquals(3, orderedResult1.size());
+    assertEquals(2, orderedResult1.indexOf(userC));
+    assertEquals(1, orderedResult1.indexOf(userD));
+    assertEquals(0, orderedResult1.indexOf(userE));
+    assertTrue(orderedResult1.equals(orderedResult2));
     
-    // a chained query with multiple results ordered by a specific field in an ascending order
-    //   should be ordered by the specified field in an asceding order
-    // orderedResult: [userC, userE, userD]
-    orderedResult = users.query().numPosts(3).orderByBio().find();
-    orderedResultEquivalent = users.query().numPosts(3).orderByBio(asc()).find();
-    assertEquals(3, orderedResult.size());
-    assertEquals(0, orderedResult.contains(userC));
-    assertEquals(1, orderedResult.contains(userE));
-    assertEquals(2, orderedResult.contains(userD));
-    assertTrue(orderedResult.equals(orderedResultEquivalent));
+    // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
+    // expected result: [userC, userE, userD]
+    orderedResult1 = users.query().numPosts(3).orderByBio().findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderByBio(asc()).findWithOrder();
+    assertEquals(3, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(userC));
+    assertEquals(1, orderedResult1.indexOf(userE));
+    assertEquals(2, orderedResult1.indexOf(userD));
+    assertTrue(orderedResult1.equals(orderedResult2));
     
-    // a chained query with multiple results ordered by specified field in a descending order
-    // orderedResult: [userD, userE, userC]
-    orderedResult = users.query().numPosts(3).orderByBio(desc()).find();
-    assertEquals(3, orderedResult.size());
-    assertEquals(2, orderedResult.contains(userC));
-    assertEquals(1, orderedResult.contains(userE));
-    assertEquals(0, orderedResult.contains(userD));
+    // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
+    // expected result: [userD, userE, userC]
+    orderedResult1 = users.query().numPosts(3).orderByBio(desc()).findWithOrder();
+    assertEquals(3, orderedResult1.size());
+    assertEquals(2, orderedResult1.indexOf(userC));
+    assertEquals(1, orderedResult1.indexOf(userE));
+    assertEquals(0, orderedResult1.indexOf(userD));
     
-    // a chained ordered query with multiple results ordered by multiple fields should be ordered accordingly
-    // orderedResult: [userH, userF, userG, userC, userD, userE, userB]
-    orderedResult = users.query().numPosts(greaterThan(1)).orderByNumPosts(desc()).orderById(asc()).find();
-    assertEquals(7, orderedResult.size());
-    assertEquals(0, orderedResult.indexOf(userH));
-    assertEquals(1, orderedResult.indexOf(userF));
-    assertEquals(2, orderedResult.indexOf(userG));
-    assertEquals(3, orderedResult.indexOf(userC));
-    assertEquals(4, orderedResult.indexOf(userD));
-    assertEquals(5, orderedResult.indexOf(userE));
-    assertEquals(6, orderedResult.indexOf(userB));
+    // A chained query ordered by multiple fields should be ordered accordingly.
+    // expected result: [userH, userF, userG, userC, userD, userE, userB]
+    orderedResult1 = users.query().numPosts(greaterThan(1)).orderByNumPosts(desc()).orderById(asc()).findWithOrder();
+    assertEquals(7, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(userH));
+    assertEquals(1, orderedResult1.indexOf(userF));
+    assertEquals(2, orderedResult1.indexOf(userG));
+    assertEquals(3, orderedResult1.indexOf(userC));
+    assertEquals(4, orderedResult1.indexOf(userD));
+    assertEquals(5, orderedResult1.indexOf(userE));
+    assertEquals(6, orderedResult1.indexOf(userB));
     
-    // a chained ordered query with multiple results ordered by multiple fields should be ordered accordingly
-    // orderedResult: [userH, userF, userG, userD, userE, userC, userB, userA]
-    orderedResult = users.query().numPosts(greaterThan(0)).orderByNumPosts(desc()).orderByBio(asc()).find();
-    assertEquals(8, orderedResult.size());
-    assertEquals(0, orderedResult.indexOf(userH));
-    assertEquals(1, orderedResult.indexOf(userF));
-    assertEquals(2, orderedResult.indexOf(userG));
-    assertEquals(3, orderedResult.indexOf(userD));
-    assertEquals(4, orderedResult.indexOf(userE));
-    assertEquals(5, orderedResult.indexOf(userC));
-    assertEquals(6, orderedResult.indexOf(userB));
-    assertEquals(6, orderedResult.indexOf(userA));
+    // a chained ordered query ordered by multiple fields should be ordered accordingly.
+    // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
+    orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(asc()).orderByBio(asc()).findWithOrder();
+    assertEquals(8, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(userA));
+    assertEquals(1, orderedResult1.indexOf(userB));
+    assertEquals(2, orderedResult1.indexOf(userC));
+    assertEquals(3, orderedResult1.indexOf(userE));
+    assertEquals(4, orderedResult1.indexOf(userD));
+    assertEquals(5, orderedResult1.indexOf(userG));
+    assertEquals(6, orderedResult1.indexOf(userF));
+    assertEquals(7, orderedResult1.indexOf(userH));
+  }
+
+  public void testQueryByIdWithOrder(IDatabases dbs) throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User[] sampleUsers = new User[5];
+    for (int i = 0; i < sampleUsers.length; i++) {
+      sampleUsers[i] = users.createDefaultInstance().setNumPosts(i % 2);
+      sampleUsers[i].save();
+    }
+
+    List<User> orderedResult1;
+    List<User> orderedResult2;
+
+    // A query by one id should return a list with one element.
+    orderedResult1 = users.query().id(sampleUsers[0].getId()).order().findWithOrder();
+    assertEquals(1, orderedResult1.size());
+    assertTrue(orderedResult1.contains(sampleUsers[0]));
+
+    // A query by several ids ordered by default should return a list ordered by id in an ascending manner.
+    Set<Long> sampleIds = new HashSet<Long>();
+    sampleIds.add(sampleUsers[0].getId());
+    sampleIds.add(sampleUsers[1].getId());
+    sampleIds.add(sampleUsers[2].getId());
+    orderedResult1 = users.query().id(sampleIds).order().findWithOrder();
+    orderedResult2 = users.query().id(sampleIds).orderById(asc()).findWithOrder();
+    assertEquals(3, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(sampleUsers[0]));
+    assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
+    assertEquals(2, orderedResult1.indexOf(sampleUsers[2]));
+    assertEquals(orderedResult1, orderedResult2);
+    
+    // A query by several ids ordered by a specific field should return a list ordered accordingly.
+    sampleIds.add(sampleUsers[3].getId());
+    sampleIds.add(sampleUsers[4].getId());
+    orderedResult1 = users.query().id(sampleIds).orderByNumPosts(desc()).orderById(desc()).findWithOrder();
+    assertEquals(5, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(sampleUsers[3]));
+    assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
+    assertEquals(2, orderedResult1.indexOf(sampleUsers[4]));
+    assertEquals(3, orderedResult1.indexOf(sampleUsers[2]));
+    assertEquals(4, orderedResult1.indexOf(sampleUsers[0]));
   }
 }

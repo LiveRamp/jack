@@ -88,11 +88,14 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<User> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
-
+  
+  public List<User> findWithOrder(ModelQuery query) throws IOException {
+    return super.realFindWithOrder(query);
+  }
+  
   public Set<User> findByHandle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
   }

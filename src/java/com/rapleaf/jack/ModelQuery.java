@@ -47,14 +47,13 @@ public class ModelQuery {
     return !orderConstraints.isEmpty();
   }
   
-  public String getSqlStatement() {
+  public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
     if (!ids.isEmpty() && !constraints.isEmpty()) {
       statementBuilder.append(" AND ");
     }
     statementBuilder.append(getConstraintListSqlCondition());
-    statementBuilder.append(getOrderByClauseSqlCondition());
     
     return statementBuilder.toString();
   }
@@ -87,7 +86,7 @@ public class ModelQuery {
     return sb.toString();
   }
 
-  private String getOrderByClauseSqlCondition() {
+  public String getOrderByClause() {
   	StringBuilder sb = new StringBuilder();
   	if (!orderConstraints.isEmpty()) {
   	  sb.append(" ORDER BY ");  	  

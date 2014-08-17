@@ -193,7 +193,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderById(QueryOrder queryOrder) {
-    return order();
+    return order(queryOrder);
   }
 
   public UserQueryBuilder orderByBio() {
@@ -208,12 +208,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
 
   public UserQueryBuilder orderByNumPosts() {
     this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, QueryOrder.ASC));
-    return null;
+    return this;
   }
   
   public UserQueryBuilder orderByNumPosts(QueryOrder queryOrder) {
     this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, queryOrder));
-    return null;
+    return this;
   }
   
 }

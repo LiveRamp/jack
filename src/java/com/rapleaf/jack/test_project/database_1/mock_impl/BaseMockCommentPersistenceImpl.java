@@ -23,12 +23,10 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
-
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
-
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, IDatabases> implements ICommentPersistence {
@@ -87,7 +85,11 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   public Set<Comment> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
-
+  
+  public List<Comment> findWithOrder(ModelQuery query) throws IOException {
+    return super.realFindWithOrder(query);
+  }
+  
   public Set<Comment> findByContent(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }

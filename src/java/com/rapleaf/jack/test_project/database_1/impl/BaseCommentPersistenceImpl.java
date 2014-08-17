@@ -175,7 +175,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM comments WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
@@ -212,6 +212,10 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return foundSet;
   }
 
+  public List<Comment> findWithOrder(ModelQuery query) throws IOException {
+    return null;
+  }
+  
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {

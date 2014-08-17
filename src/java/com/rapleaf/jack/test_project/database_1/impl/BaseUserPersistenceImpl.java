@@ -113,7 +113,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return newInst;
   }
 
-
   public User create(final String handle, final int num_posts) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -127,7 +126,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public User createDefaultInstance() throws IOException {
     return create("", 0);
@@ -228,9 +226,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
-
+    
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     int index = 0;
@@ -283,6 +281,76 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return foundSet;
   }
 
+  public List<User> findWithOrder(ModelQuery query) throws IOException {
+    List<User> foundList = new ArrayList<User>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+        foundList.addAll(find(ids));
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM users WHERE (");
+    statementString.append(query.getWhereClause());
+    statementString.append(")");
+    statementString.append(query.getOrderByClause());
+        
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+
+    int index = 0;
+    for (QueryConstraint constraint : query.getConstraints()) {
+      User._Fields field = (User._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+        continue;
+        }
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case num_posts:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case some_date:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+            case bio:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case some_binary:
+              preparedStatement.setBytes(++index, (byte[]) parameter);
+              break;
+            case some_float:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(++index, (Boolean) parameter);
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+    }
+    executeQuery(foundList, preparedStatement);
+
+    return foundList;
+  }
+  
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {
@@ -394,4 +462,5 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   public UserQueryBuilder query() {
     return new UserQueryBuilder(this);
   }
+
 }

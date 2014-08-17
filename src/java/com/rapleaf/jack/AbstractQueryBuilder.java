@@ -1,6 +1,7 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
@@ -32,5 +33,10 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
   @Override
   public Set<M> find() throws IOException {
     return caller.find(query);
+  }
+
+  @Override
+  public List<M> findWithOrder() throws IOException {
+    return caller.findWithOrder(query);
   }
 }

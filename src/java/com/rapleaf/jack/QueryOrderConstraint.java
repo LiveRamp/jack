@@ -18,6 +18,6 @@ public class QueryOrderConstraint {
   }
 
   public String getSqlStatement() {
-    return field + " " + order.getSqlStatement();
+    return (field == null ? "id" : field) + " " + order.getSqlStatement();
   }
 }

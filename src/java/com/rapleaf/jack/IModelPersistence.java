@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
@@ -46,12 +47,16 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public T find(long id) throws IOException;
 
   public Set<T> find(Set<Long> ids) throws IOException;
+  
+  public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException;
 
   public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
   public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
   public Set<T> find(ModelQuery query) throws IOException;
+  
+  public List<T> findWithOrder(ModelQuery query) throws IOException;
 
   public void clearCacheById(long id) throws IOException;
 

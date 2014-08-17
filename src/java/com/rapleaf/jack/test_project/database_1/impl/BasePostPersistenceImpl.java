@@ -31,6 +31,7 @@ import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
 
 
@@ -180,7 +181,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM posts WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
@@ -216,7 +217,11 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
     return foundSet;
   }
-
+  
+  public List<Post> findWithOrder(ModelQuery query) throws IOException {
+    return null;
+  }
+  
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
     if (model.getTitle() == null) {

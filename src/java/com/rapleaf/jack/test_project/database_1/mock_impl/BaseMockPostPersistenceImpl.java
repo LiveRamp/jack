@@ -23,12 +23,10 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
-
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.Post.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
-
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post, IDatabases> implements IPostPersistence {
@@ -85,6 +83,10 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
 
   public Set<Post> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<Post> findWithOrder(ModelQuery query) throws IOException {
+    return super.realFindWithOrder(query);
   }
 
   public Set<Post> findByTitle(final String value) throws IOException {
