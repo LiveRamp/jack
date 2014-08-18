@@ -102,21 +102,29 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
     Collections.sort(result, new Comparator<Comment>() {
       public int compare(Comment t1, Comment t2) {
-        for (QueryOrderConstraint orderConstraint : orderConstraints) {
-          Enum field = orderConstraint.getField();
-          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {          
           int compareResult;
-          // Both fields are converted to string to for the determination of their lexicographical order
-          String s1, s2;
-          if (field != null) {
-            String fieldName = field.toString();
-            s1 = t1.getField(fieldName).toString();
-            s2 = t2.getField(fieldName).toString();
+          Enum field = orderConstraint.getField();
+          String fieldName = field != null ? field.toString() : "id";
+
+          Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
+          Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
+          if (o1 instanceof java.lang.Long) {
+            compareResult = ((Long) o1).compareTo((Long) o2);
+          } else if (o1 instanceof java.lang.Integer) {
+            compareResult = ((Integer) o1).compareTo((Integer) o2);
+          } else if (o1 instanceof java.lang.Double) {
+            compareResult = ((Double) o1).compareTo((Double) o2);
+          } else if (o1 instanceof java.lang.Boolean) {
+            compareResult = ((Boolean) o1).compareTo((Boolean) o2);
+          } else if (o1 instanceof java.lang.String) {
+            compareResult = ((String) o1).compareTo((String) o2);
           } else {
-            s1 = Long.toString(t1.getId());
-            s2 = Long.toString(t2.getId());
+            compareResult = Integer.compare(o1.hashCode(), o2.hashCode());
           }
-          compareResult = orderDirection * s1.compareTo(s2);
+
+          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          compareResult = compareResult * orderDirection;
           if (compareResult == 0) {
             continue;
           } else if (compareResult < 0) {

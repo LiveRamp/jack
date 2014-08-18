@@ -213,14 +213,14 @@ public class TestModelQuery extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
 
-    User userA = users.createDefaultInstance().setHandle("A").setBio("CEO").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Engineer").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("Analyst").setNumPosts(3);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Dean").setNumPosts(3);
-    User userE = users.createDefaultInstance().setHandle("E").setBio("Associate").setNumPosts(3);
-    User userF = users.createDefaultInstance().setHandle("F").setBio("Associate").setNumPosts(6);
-    User userG = users.createDefaultInstance().setHandle("G").setBio("Associate").setNumPosts(5);
-    User userH = users.createDefaultInstance().setHandle("H").setBio("Associate").setNumPosts(7);
+    User userA = users.createDefaultInstance().setHandle("A").setBio("CEO").setNumPosts(1).setSomeDecimal(0.9);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Engineer").setNumPosts(2).setSomeDecimal(12.1);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("Analyst").setNumPosts(3).setSomeDecimal(-0.8);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Dean").setNumPosts(3).setSomeDecimal(0.9);
+    User userE = users.createDefaultInstance().setHandle("E").setBio("Associate").setNumPosts(3).setSomeDecimal(1.1);
+    User userF = users.createDefaultInstance().setHandle("F").setBio("Associate").setNumPosts(6).setSomeDecimal(1.0);
+    User userG = users.createDefaultInstance().setHandle("G").setBio("Associate").setNumPosts(5).setSomeDecimal(2.0);
+    User userH = users.createDefaultInstance().setHandle("H").setBio("Associate").setNumPosts(7).setSomeDecimal(0.0);
     userA.save();
     userB.save();
     userC.save();
@@ -289,18 +289,6 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userE));
     assertEquals(0, orderedResult1.indexOf(userD));
     
-    // A chained query ordered by multiple fields should be ordered accordingly.
-    // expected result: [userH, userF, userG, userC, userD, userE, userB]
-    orderedResult1 = users.query().numPosts(greaterThan(1)).orderByNumPosts(desc()).orderById(asc()).findWithOrder();
-    assertEquals(7, orderedResult1.size());
-    assertEquals(0, orderedResult1.indexOf(userH));
-    assertEquals(1, orderedResult1.indexOf(userF));
-    assertEquals(2, orderedResult1.indexOf(userG));
-    assertEquals(3, orderedResult1.indexOf(userC));
-    assertEquals(4, orderedResult1.indexOf(userD));
-    assertEquals(5, orderedResult1.indexOf(userE));
-    assertEquals(6, orderedResult1.indexOf(userB));
-    
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
     orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(asc()).orderByBio(asc()).findWithOrder();
@@ -313,6 +301,19 @@ public class TestModelQuery extends TestCase {
     assertEquals(5, orderedResult1.indexOf(userG));
     assertEquals(6, orderedResult1.indexOf(userF));
     assertEquals(7, orderedResult1.indexOf(userH));
+    
+    // a chained ordered query ordered by multiple fields should be ordered accordingly.
+    // expected result: [C, H, D, A, F, E, G, B]
+    orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(desc()).findWithOrder();
+    assertEquals(8, orderedResult1.size());
+    assertEquals(0, orderedResult1.indexOf(userC));
+    assertEquals(1, orderedResult1.indexOf(userH));
+    assertEquals(2, orderedResult1.indexOf(userD));
+    assertEquals(3, orderedResult1.indexOf(userA));
+    assertEquals(4, orderedResult1.indexOf(userF));
+    assertEquals(5, orderedResult1.indexOf(userE));
+    assertEquals(6, orderedResult1.indexOf(userG));
+    assertEquals(7, orderedResult1.indexOf(userB));    
   }
 
   public void testQueryByIdWithOrder(IDatabases dbs) throws IOException {
