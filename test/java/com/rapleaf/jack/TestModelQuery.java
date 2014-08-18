@@ -37,6 +37,8 @@ public class TestModelQuery extends TestCase {
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
+    testQueryWithOrder(dbs);
+    testQueryByIdWithOrder(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
@@ -343,7 +345,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
     assertEquals(2, orderedResult1.indexOf(sampleUsers[2]));
     assertEquals(orderedResult1, orderedResult2);
-    
+
     // A query by several ids ordered by a specific field should return a list ordered accordingly.
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());

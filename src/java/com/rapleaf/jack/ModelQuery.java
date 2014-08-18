@@ -14,7 +14,7 @@ public class ModelQuery {
 
   public ModelQuery() {
     this.constraints = new ArrayList<QueryConstraint>();
-    orderConstraints = new ArrayList<QueryOrderConstraint>();
+    this.orderConstraints = new ArrayList<QueryOrderConstraint>();
     this.ids = new HashSet<Long>();
   }
 
@@ -22,6 +22,10 @@ public class ModelQuery {
     return constraints;
   }
 
+  public List<QueryOrderConstraint> getOrderConstraints() {
+    return orderConstraints;
+  }
+  
   public Set<Long> getIdSet() {
     return ids;
   }

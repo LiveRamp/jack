@@ -3,10 +3,14 @@ package com.rapleaf.jack;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -138,11 +142,6 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
     return foundSet;
   }
-  
-  protected List<T> realFindWithOrder(ModelQuery query) throws IOException {
-    // currently ordered query is not supported for mock database model
-    return null;
-  }
 
   @Override
   public boolean save(T model) throws IOException {
@@ -170,11 +169,6 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       }
     }
     return results;
-  }
-
-  public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    // currently ordered query is not supported for mock database model
-    return null;
   }
   
   @Override

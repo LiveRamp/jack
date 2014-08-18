@@ -29,25 +29,25 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   }
 
   public <%= model_defn.query_builder_name %> order() {
+    return orderById();
+  }
+  
+  public <%= model_defn.query_builder_name %> order(QueryOrder queryOrder) {
+    return orderById(queryOrder);
+  }
+  
+  public <%= model_defn.query_builder_name %> orderById() {
     this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> order(QueryOrder queryOrder) {
+  public <%= model_defn.query_builder_name %> orderById(QueryOrder queryOrder) {    
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> orderById() {
-    return order();
-  }
-  
-  public <%= model_defn.query_builder_name %> orderById(QueryOrder queryOrder) {
-    return order(queryOrder);
-  }
-  
   <% model_defn.fields.each do |field_defn| %>
-
+  
   public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type(true) %> value) {
     if(value == null) {
       addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.<<%= field_defn.java_type(true) %>>isNull()));
@@ -72,6 +72,6 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     this.addOrder(new QueryOrderConstraint(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, queryOrder));
     return this;
   }
-  
+
   <% end %>
 }

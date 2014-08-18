@@ -255,7 +255,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundSet;
   }
 
-  @Override
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<T>();    
     if (!ids.isEmpty()) {
