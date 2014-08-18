@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
 
