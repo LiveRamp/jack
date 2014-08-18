@@ -23,10 +23,12 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
+
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Image.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
+
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Image, IDatabases> implements IImagePersistence {
@@ -77,15 +79,14 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<Image> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
-
+  
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
     return super.realFindWithOrder(query);
   }
-  
+
   public Set<Image> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }

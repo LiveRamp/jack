@@ -23,10 +23,12 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
+
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
+
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, IDatabases> implements ICommentPersistence {
@@ -45,7 +47,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
+    long created_at = created_at_tmp == null ? 18000000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
@@ -81,7 +83,6 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<Comment> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
@@ -89,7 +90,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {
     return super.realFindWithOrder(query);
   }
-  
+
   public Set<Comment> findByContent(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }

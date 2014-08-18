@@ -6,6 +6,8 @@ import com.rapleaf.jack.AbstractQueryBuilder;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.QueryOrderConstraint;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 
@@ -26,6 +28,24 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
+  public PostQueryBuilder order() {
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
+  }
+  
+  public PostQueryBuilder order(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
+  }
+  
+  public PostQueryBuilder orderById() {
+    return order();
+  }
+  
+  public PostQueryBuilder orderById(QueryOrder queryOrder) {
+    return order(queryOrder);
+  }
+
   public PostQueryBuilder title(String value) {
     if(value == null) {
       addConstraint(new QueryConstraint<String>(Post._Fields.title, JackMatchers.<String>isNull()));
@@ -38,6 +58,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder title(IQueryOperator<String> operator) {
     addConstraint(new QueryConstraint<String>(Post._Fields.title, operator));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByTitle() {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.title, QueryOrder.ASC));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByTitle(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.title, queryOrder));
     return this;
   }
 
@@ -55,6 +85,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, operator));
     return this;
   }
+  
+  public PostQueryBuilder orderByPostedAtMillis() {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.posted_at_millis, QueryOrder.ASC));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByPostedAtMillis(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.posted_at_millis, queryOrder));
+    return this;
+  }
 
   public PostQueryBuilder userId(Integer value) {
     if(value == null) {
@@ -70,6 +110,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, operator));
     return this;
   }
+  
+  public PostQueryBuilder orderByUserId() {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.user_id, QueryOrder.ASC));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByUserId(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.user_id, queryOrder));
+    return this;
+  }
 
   public PostQueryBuilder updatedAt(Long value) {
     if(value == null) {
@@ -83,6 +133,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder updatedAt(IQueryOperator<Long> operator) {
     addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, operator));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByUpdatedAt() {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.updated_at, QueryOrder.ASC));
+    return this;
+  }
+  
+  public PostQueryBuilder orderByUpdatedAt(QueryOrder queryOrder) {
+    this.addOrder(new QueryOrderConstraint(Post._Fields.updated_at, queryOrder));
     return this;
   }
 }

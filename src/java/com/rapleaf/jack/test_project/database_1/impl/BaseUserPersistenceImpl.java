@@ -113,6 +113,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return newInst;
   }
 
+
   public User create(final String handle, final int num_posts) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
@@ -126,6 +127,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     clearForeignKeyCache();
     return newInst;
   }
+
 
   public User createDefaultInstance() throws IOException {
     return create("", 0);
@@ -228,7 +230,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     statementString.append("SELECT * FROM users WHERE (");
     statementString.append(query.getWhereClause());
     statementString.append(")");
-    
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     int index = 0;
@@ -297,7 +299,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     statementString.append(query.getWhereClause());
     statementString.append(") ");
     statementString.append(query.getOrderByClause());
-    
+
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     int index = 0;
@@ -461,5 +463,4 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   public UserQueryBuilder query() {
     return new UserQueryBuilder(this);
   }
-
 }

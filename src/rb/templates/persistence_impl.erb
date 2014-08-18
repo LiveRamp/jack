@@ -177,7 +177,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
-    List<<%= model_defn.model_name %>> foundList = new HashSet<<%= model_defn.model_name %>>();
+    List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
     
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
