@@ -257,7 +257,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   @Override
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    List<T> foundSet = new ArrayList<T>();    
+    List<T> foundList = new ArrayList<T>();    
     if (!ids.isEmpty()) {
       StringBuilder statementString = new StringBuilder();
       statementString.append("SELECT * FROM ");
@@ -265,9 +265,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       statementString.append(" WHERE ");
       statementString.append(getIdSetCondition(ids));
       statementString.append(query.getOrderByClause());
-      executeQuery(foundSet, statementString.toString());
+      executeQuery(foundList, statementString.toString());
     }
-    return foundSet;
+    return foundList;
   }
   
   protected String getIdSetCondition(Set<Long> ids) {

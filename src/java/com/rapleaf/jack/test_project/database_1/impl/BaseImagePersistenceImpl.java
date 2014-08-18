@@ -146,7 +146,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-      return find(ids);
+        return find(ids);
       }
       return foundSet;
     }
@@ -157,26 +157,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-
-    int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
-      Image._Fields field = (Image._Fields)constraint.getField();
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-        continue;
-        }
-        try {
-          switch (field) {
-            case user_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-          }
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
-      }
-    }
-    executeQuery(foundSet, preparedStatement);
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundSet, completeStatement);
 
     return foundSet;
   }
@@ -199,7 +181,13 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(query.getOrderByClause());
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundList, completeStatement);
 
+    return foundList;
+  }
+  
+  private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Image._Fields field = (Image._Fields)constraint.getField();
@@ -210,7 +198,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         try {
           switch (field) {
             case user_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
+              statement.setInt(++index, (Integer) parameter);
               break;
           }
         } catch (SQLException e) {
@@ -218,9 +206,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         }
       }
     }
-    executeQuery(foundList, preparedStatement);
-
-    return foundList;
+    return statement;
   }
   
   @Override

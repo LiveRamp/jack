@@ -168,7 +168,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-      return find(ids);
+        return find(ids);
       }
       return foundSet;
     }
@@ -179,35 +179,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-
-    int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
-      Comment._Fields field = (Comment._Fields)constraint.getField();
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-        continue;
-        }
-        try {
-          switch (field) {
-            case content:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case commenter_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-            case commented_on_id:
-              preparedStatement.setLong(++index, (Long) parameter);
-              break;
-            case created_at:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-              break;
-          }
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
-      }
-    }
-    executeQuery(foundSet, preparedStatement);
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundSet, completeStatement);
 
     return foundSet;
   }
@@ -230,7 +203,13 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     statementString.append(query.getOrderByClause());
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundList, completeStatement);
 
+    return foundList;
+  }
+  
+  private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Comment._Fields field = (Comment._Fields)constraint.getField();
@@ -241,16 +220,16 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         try {
           switch (field) {
             case content:
-              preparedStatement.setString(++index, (String) parameter);
+              statement.setString(++index, (String) parameter);
               break;
             case commenter_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
+              statement.setInt(++index, (Integer) parameter);
               break;
             case commented_on_id:
-              preparedStatement.setLong(++index, (Long) parameter);
+              statement.setLong(++index, (Long) parameter);
               break;
             case created_at:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              statement.setTimestamp(++index, new Timestamp((Long) parameter));
               break;
           }
         } catch (SQLException e) {
@@ -258,9 +237,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         }
       }
     }
-    executeQuery(foundList, preparedStatement);
-
-    return foundList;
+    return statement;
   }
   
   @Override

@@ -29,23 +29,23 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder order() {
+    return orderById();
+  }
+  
+  public ImageQueryBuilder order(QueryOrder queryOrder) {
+    return orderById(queryOrder);
+  }
+  
+  public ImageQueryBuilder orderById() {
     this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
     return this;
   }
   
-  public ImageQueryBuilder order(QueryOrder queryOrder) {
+  public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
   
-  public ImageQueryBuilder orderById() {
-    return order();
-  }
-  
-  public ImageQueryBuilder orderById(QueryOrder queryOrder) {
-    return order(queryOrder);
-  }
-
   public ImageQueryBuilder userId(Integer value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Integer>(Image._Fields.user_id, JackMatchers.<Integer>isNull()));
