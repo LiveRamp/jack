@@ -2,7 +2,6 @@ package com.rapleaf.jack;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +53,7 @@ public class ModelQuery {
       statementBuilder.append(" AND ");
     }
     statementBuilder.append(getConstraintListSqlCondition());
-    
+
     return statementBuilder.toString();
   }
 
@@ -87,19 +86,19 @@ public class ModelQuery {
   }
 
   public String getOrderByClause() {
-  	StringBuilder sb = new StringBuilder();
-  	if (!orderConstraints.isEmpty()) {
-  	  sb.append("ORDER BY ");  	  
-  	  Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
-  	  while (it.hasNext()) {
-  	    QueryOrderConstraint orderConstraint = it.next();
-  	    sb.append(orderConstraint.getSqlStatement());
-  	    
-  	    if (it.hasNext()) {
-  	      sb.append(", ");
-  	    }
-  	  }
-  	}  	
-  	return sb.toString();
+    StringBuilder sb = new StringBuilder();
+    if (!orderConstraints.isEmpty()) {
+      sb.append("ORDER BY ");  	  
+      Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
+      while (it.hasNext()) {
+        QueryOrderConstraint orderConstraint = it.next();
+        sb.append(orderConstraint.getSqlStatement());
+        
+        if (it.hasNext()) {
+          sb.append(", ");
+        }
+      }
+    }  	
+    return sb.toString();
   }
 }

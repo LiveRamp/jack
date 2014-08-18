@@ -8,6 +8,6 @@ import java.util.List;
 public interface IQueryBuilder<M extends ModelWithId> {
 
   public Set<M> find() throws IOException;
-  
+
   public List<M> findWithOrder() throws IOException;
 }

@@ -29,7 +29,7 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
   public void addId(Long id) {
     query.addId(id);
   }
-  
+
   @Override
   public Set<M> find() throws IOException {
     return caller.find(query);
