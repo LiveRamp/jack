@@ -45,7 +45,7 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
-  
+
   public ImageQueryBuilder userId(Integer value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Integer>(Image._Fields.user_id, JackMatchers.<Integer>isNull()));

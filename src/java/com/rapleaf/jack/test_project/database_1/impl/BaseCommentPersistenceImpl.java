@@ -209,7 +209,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return foundList;
   }
 
-  private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
+  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Comment._Fields field = (Comment._Fields)constraint.getField();
@@ -220,16 +220,16 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         try {
           switch (field) {
             case content:
-              statement.setString(++index, (String) parameter);
+              preparedStatement.setString(++index, (String) parameter);
               break;
             case commenter_id:
-              statement.setInt(++index, (Integer) parameter);
+              preparedStatement.setInt(++index, (Integer) parameter);
               break;
             case commented_on_id:
-              statement.setLong(++index, (Long) parameter);
+              preparedStatement.setLong(++index, (Long) parameter);
               break;
             case created_at:
-              statement.setTimestamp(++index, new Timestamp((Long) parameter));
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
               break;
           }
         } catch (SQLException e) {
@@ -237,7 +237,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         }
       }
     }
-    return statement;
+    return preparedStatement;
   }
 
   @Override

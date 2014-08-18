@@ -45,7 +45,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder handle(String value) {
     if(value == null) {
       addConstraint(new QueryConstraint<String>(User._Fields.handle, JackMatchers.<String>isNull()));
@@ -70,7 +70,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.handle, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder createdAtMillis(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(User._Fields.created_at_millis, JackMatchers.<Long>isNull()));
@@ -95,7 +95,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.created_at_millis, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder numPosts(Integer value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Integer>(User._Fields.num_posts, JackMatchers.<Integer>isNull()));
@@ -120,7 +120,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someDate(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(User._Fields.some_date, JackMatchers.<Long>isNull()));
@@ -145,7 +145,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.some_date, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someDatetime(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(User._Fields.some_datetime, JackMatchers.<Long>isNull()));
@@ -170,7 +170,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.some_datetime, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder bio(String value) {
     if(value == null) {
       addConstraint(new QueryConstraint<String>(User._Fields.bio, JackMatchers.<String>isNull()));
@@ -195,7 +195,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.bio, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someBinary(byte[] value) {
     if(value == null) {
       addConstraint(new QueryConstraint<byte[]>(User._Fields.some_binary, JackMatchers.<byte[]>isNull()));
@@ -220,7 +220,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.some_binary, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someFloat(Double value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Double>(User._Fields.some_float, JackMatchers.<Double>isNull()));
@@ -245,7 +245,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.some_float, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someDecimal(Double value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Double>(User._Fields.some_decimal, JackMatchers.<Double>isNull()));
@@ -270,7 +270,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     this.addOrder(new QueryOrderConstraint(User._Fields.some_decimal, queryOrder));
     return this;
   }
-  
+
   public UserQueryBuilder someBoolean(Boolean value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.<Boolean>isNull()));

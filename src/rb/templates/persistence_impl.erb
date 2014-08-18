@@ -180,7 +180,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return foundList;
   }
 
-  private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
+  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       <%= model_defn.model_name %>._Fields field = (<%= model_defn.model_name %>._Fields)constraint.getField();
@@ -192,7 +192,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
           switch (field) {
       <% model_defn.fields.each do |field_defn| %>
             case <%= field_defn.name %>:
-              statement.set<%=field_defn.prep_stmt_type%>(++index, <%=field_defn.prep_stmt_modifier("(#{field_defn.java_type(true)}) parameter")%>);
+              preparedStatement.set<%=field_defn.prep_stmt_type%>(++index, <%=field_defn.prep_stmt_modifier("(#{field_defn.java_type(true)}) parameter")%>);
               break;
       <% end %>
           }
@@ -201,7 +201,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
         }
       }
     }
-    return statement;
+    return preparedStatement;
   }
 
   @Override

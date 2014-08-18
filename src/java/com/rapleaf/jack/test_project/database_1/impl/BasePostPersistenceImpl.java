@@ -214,7 +214,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return foundList;
   }
 
-  private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
+  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Post._Fields field = (Post._Fields)constraint.getField();
@@ -225,16 +225,16 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         try {
           switch (field) {
             case title:
-              statement.setString(++index, (String) parameter);
+              preparedStatement.setString(++index, (String) parameter);
               break;
             case posted_at_millis:
-              statement.setDate(++index, new Date((Long) parameter));
+              preparedStatement.setDate(++index, new Date((Long) parameter));
               break;
             case user_id:
-              statement.setInt(++index, (Integer) parameter);
+              preparedStatement.setInt(++index, (Integer) parameter);
               break;
             case updated_at:
-              statement.setTimestamp(++index, new Timestamp((Long) parameter));
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
               break;
           }
         } catch (SQLException e) {
@@ -242,7 +242,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         }
       }
     }
-    return statement;
+    return preparedStatement;
   }
 
   @Override

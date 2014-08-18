@@ -45,7 +45,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
-  
+
   public PostQueryBuilder title(String value) {
     if(value == null) {
       addConstraint(new QueryConstraint<String>(Post._Fields.title, JackMatchers.<String>isNull()));
@@ -70,7 +70,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     this.addOrder(new QueryOrderConstraint(Post._Fields.title, queryOrder));
     return this;
   }
-  
+
   public PostQueryBuilder postedAtMillis(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.<Long>isNull()));
@@ -95,7 +95,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     this.addOrder(new QueryOrderConstraint(Post._Fields.posted_at_millis, queryOrder));
     return this;
   }
-  
+
   public PostQueryBuilder userId(Integer value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Integer>(Post._Fields.user_id, JackMatchers.<Integer>isNull()));
@@ -120,7 +120,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     this.addOrder(new QueryOrderConstraint(Post._Fields.user_id, queryOrder));
     return this;
   }
-  
+
   public PostQueryBuilder updatedAt(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(Post._Fields.updated_at, JackMatchers.<Long>isNull()));

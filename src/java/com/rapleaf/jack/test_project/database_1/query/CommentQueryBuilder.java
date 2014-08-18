@@ -45,7 +45,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     this.addOrder(new QueryOrderConstraint(null, queryOrder));
     return this;
   }
-  
+
   public CommentQueryBuilder content(String value) {
     if(value == null) {
       addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.<String>isNull()));
@@ -70,7 +70,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     this.addOrder(new QueryOrderConstraint(Comment._Fields.content, queryOrder));
     return this;
   }
-  
+
   public CommentQueryBuilder commenterId(Integer value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.<Integer>isNull()));
@@ -95,7 +95,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     this.addOrder(new QueryOrderConstraint(Comment._Fields.commenter_id, queryOrder));
     return this;
   }
-  
+
   public CommentQueryBuilder commentedOnId(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.<Long>isNull()));
@@ -120,7 +120,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     this.addOrder(new QueryOrderConstraint(Comment._Fields.commented_on_id, queryOrder));
     return this;
   }
-  
+
   public CommentQueryBuilder createdAt(Long value) {
     if(value == null) {
       addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.<Long>isNull()));

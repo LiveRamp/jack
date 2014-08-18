@@ -3,7 +3,6 @@ package com.rapleaf.jack;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -170,7 +169,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     }
     return results;
   }
-  
+
   @Override
   public void clearCacheById(long id) throws IOException {
     // No-op
