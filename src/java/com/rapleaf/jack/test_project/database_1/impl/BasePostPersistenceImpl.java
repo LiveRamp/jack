@@ -220,7 +220,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       Post._Fields field = (Post._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {

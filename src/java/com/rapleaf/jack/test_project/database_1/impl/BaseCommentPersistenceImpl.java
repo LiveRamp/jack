@@ -215,7 +215,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       Comment._Fields field = (Comment._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {

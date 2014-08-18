@@ -193,7 +193,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {

@@ -8,11 +8,11 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -28,11 +28,12 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.QueryOrderConstraint;
+
 import com.rapleaf.jack.test_project.database_1.models.Comment;
-import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
+
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Comment, IDatabases> implements ICommentPersistence {
@@ -91,39 +92,43 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(query);
   }
   
-  public List<Comment> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.find(ids), query);
-  }
-  
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {
     return sortUnorderedMockQuery(super.realFind(query), query);
   }
-  
+
   private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedRresult, ModelQuery query) {
     final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
     List<Comment> result = new ArrayList<Comment>(unorderedRresult);
-    
+
     Collections.sort(result, new Comparator<Comment>() {
       public int compare(Comment t1, Comment t2) {
         for (QueryOrderConstraint orderConstraint : orderConstraints) {
-          String fieldName = orderConstraint.getField().toString();
-          QueryOrder order = orderConstraint.getOrder();          
-          int i1 = t1.getField(fieldName).hashCode();
-          int i2 = t2.getField(fieldName).hashCode();          
-          int orderDirection = (order == QueryOrder.ASC) ? 1 : -1;
-          int result = orderDirection * Integer.compare(i1, i2);          
-          if (result < 0) {
-            return -1;
-          } else if (result > 0) {
-            return 1;
+          Enum field = orderConstraint.getField();
+          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          int compareResult;
+          // Both fields are converted to string to for the determination of their lexicographical order
+          String s1, s2;
+          if (field != null) {
+            String fieldName = field.toString();
+            s1 = t1.getField(fieldName).toString();
+            s2 = t2.getField(fieldName).toString();
           } else {
+            s1 = Long.toString(t1.getId());
+            s2 = Long.toString(t2.getId());
+          }
+          compareResult = orderDirection * s1.compareTo(s2);
+          if (compareResult == 0) {
             continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
           }
         }
         return 0;
       }
     });
-    
+
     return result;    
   }
 

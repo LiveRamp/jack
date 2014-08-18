@@ -8,7 +8,6 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,11 +28,12 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.QueryOrderConstraint;
-import com.rapleaf.jack.test_project.database_1.models.Post;
+
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
+
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User, IDatabases> implements IUserPersistence {
@@ -96,7 +96,7 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
   public Set<User> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
-
+  
   public List<User> findWithOrder(ModelQuery query) throws IOException {
     return sortUnorderedMockQuery(super.realFind(query), query);
   }
