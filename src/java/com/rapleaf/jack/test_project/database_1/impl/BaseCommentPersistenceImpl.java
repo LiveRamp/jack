@@ -208,7 +208,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     return foundList;
   }
-  
+
   private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
@@ -239,7 +239,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     }
     return statement;
   }
-  
+
   @Override
   protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
     if (model.getContent() == null) {

@@ -213,7 +213,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
     return foundList;
   }
-  
+
   private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
@@ -244,7 +244,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     }
     return statement;
   }
-  
+
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
     if (model.getTitle() == null) {

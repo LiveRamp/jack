@@ -261,14 +261,14 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     return foundList;
   }
-  
+
   private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       User._Fields field = (User._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {
@@ -310,7 +310,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     }
     return statement;
   }
-  
+
   @Override
   protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
     {

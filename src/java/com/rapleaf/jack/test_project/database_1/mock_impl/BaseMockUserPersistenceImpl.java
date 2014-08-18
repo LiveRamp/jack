@@ -8,8 +8,12 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -23,12 +27,13 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
-
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
-
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User, IDatabases> implements IUserPersistence {
@@ -91,9 +96,45 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
   public Set<User> find(ModelQuery query) throws IOException {
     return super.realFind(query);
   }
-  
+
   public List<User> findWithOrder(ModelQuery query) throws IOException {
-    return super.realFindWithOrder(query);
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+
+  private List<User> sortUnorderedMockQuery(Set<User> unorderedRresult, ModelQuery query) {
+    final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
+    List<User> result = new ArrayList<User>(unorderedRresult);
+
+    Collections.sort(result, new Comparator<User>() {
+      public int compare(User t1, User t2) {
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {
+          Enum field = orderConstraint.getField();
+          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          int compareResult;
+          // Both fields are converted to string to for the determination of their lexicographical order
+          String s1, s2;
+          if (field != null) {
+            String fieldName = field.toString();
+            s1 = t1.getField(fieldName).toString();
+            s2 = t2.getField(fieldName).toString();
+          } else {
+            s1 = Long.toString(t1.getId());
+            s2 = Long.toString(t2.getId());
+          }
+          compareResult = orderDirection * s1.compareTo(s2);
+          if (compareResult == 0) {
+            continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+        return 0;
+      }
+    });
+
+    return result;    
   }
 
   public Set<User> findByHandle(final String value) throws IOException {

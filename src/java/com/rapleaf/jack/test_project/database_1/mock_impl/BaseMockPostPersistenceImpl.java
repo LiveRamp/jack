@@ -8,6 +8,9 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +26,13 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
-
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.QueryOrderConstraint;
 import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.Post.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
-
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post, IDatabases> implements IPostPersistence {
@@ -86,8 +90,40 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     return super.realFind(query);
   }
   
+  public List<Post> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
+    return sortUnorderedMockQuery(super.find(ids), query);
+  }
+  
   public List<Post> findWithOrder(ModelQuery query) throws IOException {
-    return super.realFindWithOrder(query);
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+  
+  private List<Post> sortUnorderedMockQuery(Set<Post> unorderedRresult, ModelQuery query) {
+    final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
+    List<Post> result = new ArrayList<Post>(unorderedRresult);
+    
+    Collections.sort(result, new Comparator<Post>() {
+      public int compare(Post t1, Post t2) {
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {
+          String fieldName = orderConstraint.getField().toString();
+          QueryOrder order = orderConstraint.getOrder();          
+          int i1 = t1.getField(fieldName).hashCode();
+          int i2 = t2.getField(fieldName).hashCode();          
+          int orderDirection = (order == QueryOrder.ASC) ? 1 : -1;
+          int result = orderDirection * Integer.compare(i1, i2);          
+          if (result < 0) {
+            return -1;
+          } else if (result > 0) {
+            return 1;
+          } else {
+            continue;
+          }
+        }
+        return 0;
+      }
+    });
+    
+    return result;    
   }
 
   public Set<Post> findByTitle(final String value) throws IOException {

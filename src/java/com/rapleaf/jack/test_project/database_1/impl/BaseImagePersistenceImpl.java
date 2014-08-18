@@ -186,7 +186,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
     return foundList;
   }
-  
+
   private PreparedStatement getCompleteStatement(PreparedStatement statement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
@@ -208,7 +208,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     }
     return statement;
   }
-  
+
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
     if (model.getUserId() == null) {
