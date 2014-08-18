@@ -89,7 +89,7 @@ public class ModelQuery {
   public String getOrderByClause() {
   	StringBuilder sb = new StringBuilder();
   	if (!orderConstraints.isEmpty()) {
-  	  sb.append(" ORDER BY ");  	  
+  	  sb.append("ORDER BY ");  	  
   	  Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
   	  while (it.hasNext()) {
   	    QueryOrderConstraint orderConstraint = it.next();

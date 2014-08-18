@@ -287,7 +287,6 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-        foundList.addAll(find(ids));
         return findWithOrder(ids, query);
       }
       return foundList;
@@ -296,9 +295,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
     statementString.append(query.getWhereClause());
-    statementString.append(")");
+    statementString.append(") ");
     statementString.append(query.getOrderByClause());
-        
+    
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
 
     int index = 0;

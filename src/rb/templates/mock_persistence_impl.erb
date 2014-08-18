@@ -81,9 +81,12 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
+    return super.realFindWithOrder(query);
   }
 
   <% model_defn.fields.each do |field_defn| %>
