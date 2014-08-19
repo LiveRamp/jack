@@ -7,7 +7,7 @@ import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.OrderCriterion;
 import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
@@ -40,22 +40,22 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder order() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
   
   public CommentQueryBuilder orderById() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
 
@@ -75,12 +75,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
   
   public CommentQueryBuilder orderByContent() {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.content, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(Comment._Fields.content, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderByContent(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.content, queryOrder));
+    this.addOrder(new OrderCriterion(Comment._Fields.content, queryOrder));
     return this;
   }
 
@@ -100,12 +100,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
   
   public CommentQueryBuilder orderByCommenterId() {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.commenter_id, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderByCommenterId(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.commenter_id, queryOrder));
+    this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, queryOrder));
     return this;
   }
 
@@ -125,12 +125,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
   
   public CommentQueryBuilder orderByCommentedOnId() {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.commented_on_id, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderByCommentedOnId(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.commented_on_id, queryOrder));
+    this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, queryOrder));
     return this;
   }
 
@@ -150,12 +150,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
   
   public CommentQueryBuilder orderByCreatedAt() {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.created_at, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(Comment._Fields.created_at, QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderByCreatedAt(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(Comment._Fields.created_at, queryOrder));
+    this.addOrder(new OrderCriterion(Comment._Fields.created_at, queryOrder));
     return this;
   }
 }

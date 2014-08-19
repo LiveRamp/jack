@@ -27,7 +27,7 @@ import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.Post.Id;
@@ -96,14 +96,14 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
   }
 
   private List<Post> sortUnorderedMockQuery(Set<Post> unorderedRresult, ModelQuery query) {
-    final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
+    final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
     List<Post> result = new ArrayList<Post>(unorderedRresult);
 
     Collections.sort(result, new Comparator<Post>() {
       public int compare(Post t1, Post t2) {
-        for (QueryOrderConstraint orderConstraint : orderConstraints) {
+        for (OrderCriterion orderCriterion : orderCriteria) {
           int compareResult;
-          Enum field = orderConstraint.getField();
+          Enum field = orderCriterion.getField();
           String fieldName = field != null ? field.toString() : "id";
 
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
@@ -114,7 +114,7 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
             compareResult = Integer.compare(o1.hashCode(), o2.hashCode());
           }
 
-          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
           compareResult = compareResult * orderDirection;
           if (compareResult == 0) {
             continue;

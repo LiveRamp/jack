@@ -14,7 +14,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static com.rapleaf.jack.JackMatchers.*;
-import static com.rapleaf.jack.JackOrders.*;
+import static com.rapleaf.jack.QueryOrder.*;
 
 
 public class TestModelQuery extends TestCase {
@@ -254,7 +254,7 @@ public class TestModelQuery extends TestCase {
     // A chained query ordered by default should be ordered by id in an ascending manner.
     // expected result: [userC, userD, userE]
     orderedResult1 = users.query().numPosts(3).order().findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderById(asc()).findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderById(ASC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userD));
@@ -263,8 +263,8 @@ public class TestModelQuery extends TestCase {
     
     // A chained query ordered by default in a descending manner should be ordered by id in an descending manner.
     // expected result: [userE, userD, userC]
-    orderedResult1 = users.query().numPosts(3).order(desc()).findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderById(desc()).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).order(DESC).findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderById(DESC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userD));
@@ -274,7 +274,7 @@ public class TestModelQuery extends TestCase {
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
     orderedResult1 = users.query().numPosts(3).orderByBio().findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderByBio(asc()).findWithOrder();
+    orderedResult2 = users.query().numPosts(3).orderByBio(ASC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
@@ -283,7 +283,7 @@ public class TestModelQuery extends TestCase {
     
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
-    orderedResult1 = users.query().numPosts(3).orderByBio(desc()).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).orderByBio(DESC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
@@ -291,7 +291,7 @@ public class TestModelQuery extends TestCase {
     
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(asc()).orderByBio(asc()).findWithOrder();
+    orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userA));
     assertEquals(1, orderedResult1.indexOf(userB));
@@ -304,7 +304,7 @@ public class TestModelQuery extends TestCase {
     
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(desc()).findWithOrder();
+    orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userH));
@@ -340,7 +340,7 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[1].getId());
     sampleIds.add(sampleUsers[2].getId());
     orderedResult1 = users.query().id(sampleIds).order().findWithOrder();
-    orderedResult2 = users.query().id(sampleIds).orderById(asc()).findWithOrder();
+    orderedResult2 = users.query().id(sampleIds).orderById(ASC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[0]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
@@ -350,7 +350,7 @@ public class TestModelQuery extends TestCase {
     // A query by several ids ordered by a specific field should return a list ordered accordingly.
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    orderedResult1 = users.query().id(sampleIds).orderByNumPosts(desc()).orderById(desc()).findWithOrder();
+    orderedResult1 = users.query().id(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
     assertEquals(5, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[3]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));

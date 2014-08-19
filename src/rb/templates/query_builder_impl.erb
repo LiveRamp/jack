@@ -7,7 +7,7 @@ import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.JackMatchers;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= JACK_NAMESPACE %>.QueryOrder;
-import <%= JACK_NAMESPACE %>.QueryOrderConstraint;
+import <%= JACK_NAMESPACE %>.OrderCriterion;
 import <%= JACK_NAMESPACE %>.LimitCriterion;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
@@ -40,22 +40,22 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   }
 
   public <%= model_defn.query_builder_name %> order() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> order(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> orderById() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> orderById(QueryOrder queryOrder) {    
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
 
@@ -76,13 +76,13 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase(:upper) %>() {
-    this.addOrder(new QueryOrderConstraint(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, QueryOrder.ASC));
+  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase() %>() {
+    this.addOrder(new OrderCriterion(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, QueryOrder.ASC));
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase(:upper) %>(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, queryOrder));
+  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase() %>(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, queryOrder));
     return this;
   }
 

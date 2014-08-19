@@ -1,10 +1,10 @@
 package com.rapleaf.jack;
 
-public class QueryOrderConstraint {
+public class OrderCriterion {
   private Enum field;
   private final QueryOrder order;
 
-  public QueryOrderConstraint(Enum field, QueryOrder order) {
+  public OrderCriterion(Enum field, QueryOrder order) {
     this.field = field;
     this.order = order;
   }
@@ -18,6 +18,6 @@ public class QueryOrderConstraint {
   }
 
   public String getSqlStatement() {
-    return (field == null ? "id" : field) + " " + order.getSqlStatement();
+    return (field == null ? "id" : field) + " " + order.getSqlKeyword();
   }
 }

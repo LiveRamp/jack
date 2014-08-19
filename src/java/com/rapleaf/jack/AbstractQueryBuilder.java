@@ -18,8 +18,8 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     query.addConstraint(constraint);
   }
 
-  public void addOrder(QueryOrderConstraint orderConstraint) {
-    query.addOrder(orderConstraint);
+  public void addOrder(OrderCriterion orderCriterion) {
+    query.addOrder(orderCriterion);
   }
 
   public void setLimit(LimitCriterion limitCriterion) {
