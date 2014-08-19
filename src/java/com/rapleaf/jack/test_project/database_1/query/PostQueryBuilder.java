@@ -8,6 +8,7 @@ import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 
@@ -25,6 +26,16 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder id(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public PostQueryBuilder limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public PostQueryBuilder limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
     return this;
   }
 

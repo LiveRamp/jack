@@ -8,6 +8,7 @@ import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
@@ -25,6 +26,16 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
 
   public UserQueryBuilder id(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public UserQueryBuilder limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public UserQueryBuilder limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
     return this;
   }
 

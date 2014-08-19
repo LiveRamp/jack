@@ -9,8 +9,9 @@ import java.util.Set;
 public class ModelQuery {
 
   private List<QueryConstraint> constraints;
-  private ArrayList<QueryOrderConstraint> orderConstraints; 
+  private ArrayList<QueryOrderConstraint> orderConstraints;
   private Set<Long> ids;
+  private LimitCriterion limitCriterion;
 
   public ModelQuery() {
     this.constraints = new ArrayList<QueryConstraint>();
@@ -25,9 +26,13 @@ public class ModelQuery {
   public List<QueryOrderConstraint> getOrderConstraints() {
     return orderConstraints;
   }
-  
+
   public Set<Long> getIdSet() {
     return ids;
+  }
+
+  public void setLimitCriterion(LimitCriterion limitCriterion) {
+    this.limitCriterion = limitCriterion;
   }
 
   public void addConstraint(QueryConstraint constraint) {
@@ -88,17 +93,17 @@ public class ModelQuery {
   public String getOrderByClause() {
     StringBuilder sb = new StringBuilder();
     if (!orderConstraints.isEmpty()) {
-      sb.append("ORDER BY ");  	  
+      sb.append("ORDER BY ");
       Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
       while (it.hasNext()) {
         QueryOrderConstraint orderConstraint = it.next();
         sb.append(orderConstraint.getSqlStatement());
-        
+
         if (it.hasNext()) {
           sb.append(", ");
         }
       }
-    }  	
+    }
     return sb.toString();
   }
 }

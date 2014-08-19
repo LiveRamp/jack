@@ -8,6 +8,7 @@ import <%= JACK_NAMESPACE %>.JackMatchers;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= JACK_NAMESPACE %>.QueryOrder;
 import <%= JACK_NAMESPACE %>.QueryOrderConstraint;
+import <%= JACK_NAMESPACE %>.LimitCriterion;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 
@@ -25,6 +26,16 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
 
   public <%= model_defn.query_builder_name %> id(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
     return this;
   }
 

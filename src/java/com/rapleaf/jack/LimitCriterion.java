@@ -1,14 +1,14 @@
 package com.rapleaf.jack;
 
-public class LimitCriteria {
+public class LimitCriterion {
   private int offset;
   private int numberOfResults;
 
-  public LimitCriteria(int offset, int numberOfResults) {
+  public LimitCriterion(int offset, int numberOfResults) {
     this.offset = offset;
     this.numberOfResults = numberOfResults;
   }
-  public LimitCriteria(int numberOfResults) {
+  public LimitCriterion(int numberOfResults) {
     this.offset = 0;
     this.numberOfResults = numberOfResults;
   }

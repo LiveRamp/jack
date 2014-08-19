@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
-  public static final long serialVersionUID = 2764180304945930907L;
+  public static final long serialVersionUID = -966057050205502149L;
 
   private final Attributes attributes;
 
@@ -567,7 +567,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 5810949180036000899L;
+    public static final long serialVersionUID = 7482296567648746981L;
 
     // Fields
     private String __handle;

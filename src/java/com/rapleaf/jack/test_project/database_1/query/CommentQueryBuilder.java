@@ -8,6 +8,7 @@ import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 
@@ -25,6 +26,16 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder id(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public CommentQueryBuilder limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public CommentQueryBuilder limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
     return this;
   }
 

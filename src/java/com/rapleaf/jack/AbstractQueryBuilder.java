@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
+public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
 
   private ModelQuery query;
   private IModelPersistence<M> caller;
@@ -17,9 +17,13 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
   public void addConstraint(QueryConstraint constraint) {
     query.addConstraint(constraint);
   }
-  
+
   public void addOrder(QueryOrderConstraint orderConstraint) {
     query.addOrder(orderConstraint);
+  }
+
+  public void setLimit(LimitCriterion limitCriterion) {
+    query.setLimitCriterion(limitCriterion);
   }
 
   public void addIds(Set<Long> ids) {
