@@ -18,8 +18,11 @@ package <%= root_package %>.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -33,6 +36,8 @@ import <%= JACK_NAMESPACE %>.AbstractMockDatabaseModel;
 import <%= JACK_NAMESPACE %>.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
+import <%= JACK_NAMESPACE %>.QueryOrder;
+import <%= JACK_NAMESPACE %>.QueryOrderConstraint;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.models.<%= model_defn.id_wrapper_name %>;
@@ -81,9 +86,48 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+
+  private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedRresult, ModelQuery query) {
+    final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
+    List<<%= model_defn.model_name %>> result = new ArrayList<<%= model_defn.model_name %>>(unorderedRresult);
+
+    Collections.sort(result, new Comparator<<%= model_defn.model_name %>>() {
+      public int compare(<%= model_defn.model_name %> t1, <%= model_defn.model_name %> t2) {
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {
+          int compareResult;
+          Enum field = orderConstraint.getField();
+          String fieldName = field != null ? field.toString() : "id";
+
+          Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
+          Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
+          if (o1 instanceof java.lang.Comparable) {
+            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+          } else {
+            compareResult = Integer.compare(o1.hashCode(), o2.hashCode());
+          }
+
+          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          compareResult = compareResult * orderDirection;
+          if (compareResult == 0) {
+            continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+        return 0;
+      }
+    });
+
+    return result;    
   }
 
   <% model_defn.fields.each do |field_defn| %>

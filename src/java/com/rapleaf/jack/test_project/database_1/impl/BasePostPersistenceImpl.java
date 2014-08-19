@@ -173,24 +173,54 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-      return find(ids);
+        return find(ids);
       }
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM posts WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundSet, completeStatement);
 
+    return foundSet;
+  }
+
+  public List<Post> findWithOrder(ModelQuery query) throws IOException {
+    List<Post> foundList = new ArrayList<Post>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM posts WHERE (");
+    statementString.append(query.getWhereClause());
+    statementString.append(") ");
+    statementString.append(query.getOrderByClause());
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundList, completeStatement);
+
+    return foundList;
+  }
+
+  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Post._Fields field = (Post._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {
@@ -212,9 +242,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         }
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
+    return preparedStatement;
   }
 
   @Override

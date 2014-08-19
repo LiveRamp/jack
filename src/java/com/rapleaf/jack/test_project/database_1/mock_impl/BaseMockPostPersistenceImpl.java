@@ -8,8 +8,11 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -23,6 +26,8 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.QueryOrderConstraint;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.Post.Id;
@@ -82,9 +87,48 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<Post> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<Post> findWithOrder(ModelQuery query) throws IOException {
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+
+  private List<Post> sortUnorderedMockQuery(Set<Post> unorderedRresult, ModelQuery query) {
+    final List<QueryOrderConstraint> orderConstraints = query.getOrderConstraints();
+    List<Post> result = new ArrayList<Post>(unorderedRresult);
+
+    Collections.sort(result, new Comparator<Post>() {
+      public int compare(Post t1, Post t2) {
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {
+          int compareResult;
+          Enum field = orderConstraint.getField();
+          String fieldName = field != null ? field.toString() : "id";
+
+          Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
+          Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
+          if (o1 instanceof java.lang.Comparable) {
+            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+          } else {
+            compareResult = Integer.compare(o1.hashCode(), o2.hashCode());
+          }
+
+          int orderDirection = (orderConstraint.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          compareResult = compareResult * orderDirection;
+          if (compareResult == 0) {
+            continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+        return 0;
+      }
+    });
+
+    return result;    
   }
 
   public Set<Post> findByTitle(final String value) throws IOException {

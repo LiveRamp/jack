@@ -26,7 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -253,6 +255,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundSet;
   }
 
+  public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
+    List<T> foundList = new ArrayList<T>();    
+    if (!ids.isEmpty()) {
+      StringBuilder statementString = new StringBuilder();
+      statementString.append("SELECT * FROM ");
+      statementString.append(tableName);
+      statementString.append(" WHERE ");
+      statementString.append(getIdSetCondition(ids));
+      statementString.append(query.getOrderByClause());
+      executeQuery(foundList, statementString.toString());
+    }
+    return foundList;
+  }
+  
   protected String getIdSetCondition(Set<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
@@ -267,7 +283,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return sb.toString();
   }
 
-  protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws IOException {
     int retryCount = 0;
 
     ResultSet rs = null;
@@ -315,7 +331,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
-  protected void executeQuery(Set<T> foundSet, String statemenString) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, String statemenString) throws IOException {
     executeQuery(foundSet, conn.getPreparedStatement(statemenString));
   }
 

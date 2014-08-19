@@ -146,24 +146,54 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-      return find(ids);
+        return find(ids);
       }
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundSet, completeStatement);
 
+    return foundSet;
+  }
+
+  public List<Image> findWithOrder(ModelQuery query) throws IOException {
+    List<Image> foundList = new ArrayList<Image>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM images WHERE (");
+    statementString.append(query.getWhereClause());
+    statementString.append(") ");
+    statementString.append(query.getOrderByClause());
+
+    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
+    executeQuery(foundList, completeStatement);
+
+    return foundList;
+  }
+
+  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
     for (QueryConstraint constraint : query.getConstraints()) {
       Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
-        continue;
+          continue;
         }
         try {
           switch (field) {
@@ -176,9 +206,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         }
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
+    return preparedStatement;
   }
 
   @Override

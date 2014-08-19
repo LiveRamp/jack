@@ -9,10 +9,12 @@ import java.util.Set;
 public class ModelQuery {
 
   private List<QueryConstraint> constraints;
+  private ArrayList<QueryOrderConstraint> orderConstraints; 
   private Set<Long> ids;
 
   public ModelQuery() {
     this.constraints = new ArrayList<QueryConstraint>();
+    this.orderConstraints = new ArrayList<QueryOrderConstraint>();
     this.ids = new HashSet<Long>();
   }
 
@@ -20,6 +22,10 @@ public class ModelQuery {
     return constraints;
   }
 
+  public List<QueryOrderConstraint> getOrderConstraints() {
+    return orderConstraints;
+  }
+  
   public Set<Long> getIdSet() {
     return ids;
   }
@@ -36,7 +42,11 @@ public class ModelQuery {
     ids.add(id);
   }
 
-  public String getSqlStatement() {
+  public void addOrder(QueryOrderConstraint orderConstraint) {
+    orderConstraints.add(orderConstraint);
+  }
+
+  public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
     if (!ids.isEmpty() && !constraints.isEmpty()) {
@@ -75,4 +85,20 @@ public class ModelQuery {
     return sb.toString();
   }
 
+  public String getOrderByClause() {
+    StringBuilder sb = new StringBuilder();
+    if (!orderConstraints.isEmpty()) {
+      sb.append("ORDER BY ");  	  
+      Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
+      while (it.hasNext()) {
+        QueryOrderConstraint orderConstraint = it.next();
+        sb.append(orderConstraint.getSqlStatement());
+        
+        if (it.hasNext()) {
+          sb.append(", ");
+        }
+      }
+    }  	
+    return sb.toString();
+  }
 }
