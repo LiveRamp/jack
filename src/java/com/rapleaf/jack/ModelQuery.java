@@ -105,4 +105,11 @@ public class ModelQuery {
     }
     return sb.toString();
   }
+
+  public String getLimitClause() {
+    if (limitCriterion == null) {
+      return "";
+    }
+    return limitCriterion.getSql();
+  }
 }
