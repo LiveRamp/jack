@@ -29,11 +29,13 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder order() {
-    return orderById();
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
   }
   
   public PostQueryBuilder order(QueryOrder queryOrder) {
-    return orderById(queryOrder);
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
   }
   
   public PostQueryBuilder orderById() {

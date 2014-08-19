@@ -29,11 +29,13 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder order() {
-    return orderById();
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
   }
   
   public CommentQueryBuilder order(QueryOrder queryOrder) {
-    return orderById(queryOrder);
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
   }
   
   public CommentQueryBuilder orderById() {

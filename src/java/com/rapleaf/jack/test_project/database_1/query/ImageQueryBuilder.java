@@ -29,11 +29,13 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder order() {
-    return orderById();
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
   }
   
   public ImageQueryBuilder order(QueryOrder queryOrder) {
-    return orderById(queryOrder);
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
   }
   
   public ImageQueryBuilder orderById() {

@@ -46,10 +46,6 @@ public class ModelQuery {
     orderConstraints.add(orderConstraint);
   }
 
-  public boolean isOrderedQuery() {
-    return !orderConstraints.isEmpty();
-  }
-  
   public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder();
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());

@@ -29,11 +29,13 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder order() {
-    return orderById();
+    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    return this;
   }
   
   public UserQueryBuilder order(QueryOrder queryOrder) {
-    return orderById(queryOrder);
+    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    return this;
   }
   
   public UserQueryBuilder orderById() {
