@@ -29,7 +29,6 @@ public class JackMatchers {
     return new NotEqualTo<T>(value);
   }
 
-  //To change?? NO!!
   public static <T> EqualTo<T> equalTo(T value) {
     return new EqualTo<T>(value);
   }
