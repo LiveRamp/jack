@@ -98,23 +98,15 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
     Collections.sort(result, new Comparator<Image>() {
       public int compare(Image t1, Image t2) {
-        for (QueryOrderConstraint orderConstraint : orderConstraints) {          
+        for (QueryOrderConstraint orderConstraint : orderConstraints) {
           int compareResult;
           Enum field = orderConstraint.getField();
           String fieldName = field != null ? field.toString() : "id";
 
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
           Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
-          if (o1 instanceof java.lang.Long) {
-            compareResult = ((Long) o1).compareTo((Long) o2);
-          } else if (o1 instanceof java.lang.Integer) {
-            compareResult = ((Integer) o1).compareTo((Integer) o2);
-          } else if (o1 instanceof java.lang.Double) {
-            compareResult = ((Double) o1).compareTo((Double) o2);
-          } else if (o1 instanceof java.lang.Boolean) {
-            compareResult = ((Boolean) o1).compareTo((Boolean) o2);
-          } else if (o1 instanceof java.lang.String) {
-            compareResult = ((String) o1).compareTo((String) o2);
+          if (o1 instanceof java.lang.Comparable) {
+            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
           } else {
             compareResult = Integer.compare(o1.hashCode(), o2.hashCode());
           }

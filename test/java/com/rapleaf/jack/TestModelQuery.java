@@ -313,7 +313,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(4, orderedResult1.indexOf(userF));
     assertEquals(5, orderedResult1.indexOf(userE));
     assertEquals(6, orderedResult1.indexOf(userG));
-    assertEquals(7, orderedResult1.indexOf(userB));    
+    assertEquals(7, orderedResult1.indexOf(userB));
   }
 
   public void testQueryByIdWithOrder(IDatabases dbs) throws IOException {
