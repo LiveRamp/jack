@@ -8,7 +8,7 @@ public enum QueryOrder {
     this.queryOrder = order;
   }
   
-  public String getSqlStatement() {
+  public String getSqlKeyword() {
     return this.queryOrder;
   }
 }

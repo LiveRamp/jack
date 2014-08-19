@@ -7,7 +7,7 @@ import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.OrderCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 
@@ -29,22 +29,22 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder order() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public ImageQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
   
   public ImageQueryBuilder orderById() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
 
@@ -64,12 +64,12 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
   
   public ImageQueryBuilder orderByUserId() {
-    this.addOrder(new QueryOrderConstraint(Image._Fields.user_id, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(Image._Fields.user_id, QueryOrder.ASC));
     return this;
   }
   
   public ImageQueryBuilder orderByUserId(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(Image._Fields.user_id, queryOrder));
+    this.addOrder(new OrderCriterion(Image._Fields.user_id, queryOrder));
     return this;
   }
 }

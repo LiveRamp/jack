@@ -7,7 +7,7 @@ import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.QueryOrderConstraint;
+import com.rapleaf.jack.OrderCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
@@ -29,22 +29,22 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder order() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
   
   public UserQueryBuilder orderById() {
-    this.addOrder(new QueryOrderConstraint(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new QueryOrderConstraint(null, queryOrder));
+    this.addOrder(new OrderCriterion(null, queryOrder));
     return this;
   }
 
@@ -64,12 +64,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderByHandle() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.handle, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.handle, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderByHandle(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.handle, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.handle, queryOrder));
     return this;
   }
 
@@ -89,12 +89,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderByCreatedAtMillis() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.created_at_millis, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.created_at_millis, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderByCreatedAtMillis(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.created_at_millis, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.created_at_millis, queryOrder));
     return this;
   }
 
@@ -114,12 +114,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderByNumPosts() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.num_posts, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderByNumPosts(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.num_posts, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.num_posts, queryOrder));
     return this;
   }
 
@@ -139,12 +139,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeDate() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_date, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_date, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeDate(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_date, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_date, queryOrder));
     return this;
   }
 
@@ -164,12 +164,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeDatetime() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_datetime, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_datetime, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeDatetime(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_datetime, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_datetime, queryOrder));
     return this;
   }
 
@@ -189,12 +189,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderByBio() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.bio, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.bio, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderByBio(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.bio, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.bio, queryOrder));
     return this;
   }
 
@@ -214,12 +214,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeBinary() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_binary, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_binary, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeBinary(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_binary, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_binary, queryOrder));
     return this;
   }
 
@@ -239,12 +239,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeFloat() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_float, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_float, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeFloat(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_float, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_float, queryOrder));
     return this;
   }
 
@@ -264,12 +264,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeDecimal() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_decimal, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_decimal, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeDecimal(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_decimal, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_decimal, queryOrder));
     return this;
   }
 
@@ -289,12 +289,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
   
   public UserQueryBuilder orderBySomeBoolean() {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_boolean, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(User._Fields.some_boolean, QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderBySomeBoolean(QueryOrder queryOrder) {
-    this.addOrder(new QueryOrderConstraint(User._Fields.some_boolean, queryOrder));
+    this.addOrder(new OrderCriterion(User._Fields.some_boolean, queryOrder));
     return this;
   }
 }

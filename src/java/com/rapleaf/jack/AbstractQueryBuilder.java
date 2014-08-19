@@ -18,8 +18,8 @@ public class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilde
     query.addConstraint(constraint);
   }
   
-  public void addOrder(QueryOrderConstraint orderConstraint) {
-    query.addOrder(orderConstraint);
+  public void addOrder(OrderCriterion orderCriterion) {
+    query.addOrder(orderCriterion);
   }
 
   public void addIds(Set<Long> ids) {

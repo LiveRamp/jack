@@ -9,12 +9,12 @@ import java.util.Set;
 public class ModelQuery {
 
   private List<QueryConstraint> constraints;
-  private ArrayList<QueryOrderConstraint> orderConstraints; 
+  private List<OrderCriterion> orderCriteria;
   private Set<Long> ids;
 
   public ModelQuery() {
     this.constraints = new ArrayList<QueryConstraint>();
-    this.orderConstraints = new ArrayList<QueryOrderConstraint>();
+    this.orderCriteria = new ArrayList<OrderCriterion>();
     this.ids = new HashSet<Long>();
   }
 
@@ -22,8 +22,8 @@ public class ModelQuery {
     return constraints;
   }
 
-  public List<QueryOrderConstraint> getOrderConstraints() {
-    return orderConstraints;
+  public List<OrderCriterion> getOrderCriteria() {
+    return orderCriteria;
   }
   
   public Set<Long> getIdSet() {
@@ -42,8 +42,8 @@ public class ModelQuery {
     ids.add(id);
   }
 
-  public void addOrder(QueryOrderConstraint orderConstraint) {
-    orderConstraints.add(orderConstraint);
+  public void addOrder(OrderCriterion orderCriterion) {
+    orderCriteria.add(orderCriterion);
   }
 
   public String getWhereClause() {
@@ -87,12 +87,12 @@ public class ModelQuery {
 
   public String getOrderByClause() {
     StringBuilder sb = new StringBuilder();
-    if (!orderConstraints.isEmpty()) {
+    if (!orderCriteria.isEmpty()) {
       sb.append("ORDER BY ");  	  
-      Iterator<QueryOrderConstraint> it = orderConstraints.iterator();
+      Iterator<OrderCriterion> it = orderCriteria.iterator();
       while (it.hasNext()) {
-        QueryOrderConstraint orderConstraint = it.next();
-        sb.append(orderConstraint.getSqlStatement());
+        OrderCriterion orderCriterion = it.next();
+        sb.append(orderCriterion.getSqlStatement());
         
         if (it.hasNext()) {
           sb.append(", ");
