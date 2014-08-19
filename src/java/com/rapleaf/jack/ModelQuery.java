@@ -110,6 +110,6 @@ public class ModelQuery {
     if (limitCriterion == null) {
       return "";
     }
-    return limitCriterion.getSql();
+    return limitCriterion.getSqlKeyword();
   }
 }
