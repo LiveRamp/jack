@@ -65,12 +65,12 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase(:upper) %>() {
+  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase() %>() {
     this.addOrder(new QueryOrderConstraint(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, QueryOrder.ASC));
     return this;
   }
   
-  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase(:upper) %>(QueryOrder queryOrder) {
+  public <%= model_defn.query_builder_name %> orderBy<%= field_defn.name.camelcase() %>(QueryOrder queryOrder) {
     this.addOrder(new QueryOrderConstraint(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, queryOrder));
     return this;
   }
