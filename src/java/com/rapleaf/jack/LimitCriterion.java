@@ -13,7 +13,7 @@ public class LimitCriterion {
     this.numberOfResults = numberOfResults;
   }
 
-  public String getSql() {
+  public String getSqlKeyword() {
     return "LIMIT " + offset + ", " + numberOfResults;
   }
 }
