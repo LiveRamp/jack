@@ -132,6 +132,7 @@ public class ModelQuery {
       return sqlClause.toString();
     }
 
+    sqlClause.append("id, ");
     Iterator<SelectCriterion> it = selectCriteria.iterator();
     while (it.hasNext()) {
       SelectCriterion selectCriterion = it.next();
