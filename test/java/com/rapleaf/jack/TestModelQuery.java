@@ -371,7 +371,9 @@ public class TestModelQuery extends TestCase {
       sampleUsers[i].save();
     }
 
-    List<User> result = users.query()
+    List<User> result;
+
+    result = users.query()
         .numPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
@@ -379,8 +381,18 @@ public class TestModelQuery extends TestCase {
 
     assertEquals(3, result.size());
     for (int i = 0; i < result.size(); i++) {
-      System.out.println(result.get(i).getNumPosts());
       assertEquals(i, result.get(i).getNumPosts());
+    }
+
+    result = users.query()
+        .numPosts(greaterThan(3))
+        .orderByNumPosts()
+        .limit(2, 3)
+        .findWithOrder();
+
+    assertEquals(3, result.size());
+    for (int i = 0; i < result.size(); i++) {
+      assertEquals(i + 6, result.get(i).getNumPosts());
     }
   }
 }

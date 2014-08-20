@@ -91,12 +91,17 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   }
   
   public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<<%= model_defn.model_name %>> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitcriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedRresult, ModelQuery query) {
+  private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<<%= model_defn.model_name %>> result = new ArrayList<<%= model_defn.model_name %>>(unorderedRresult);
+    List<<%= model_defn.model_name %>> result = new ArrayList<<%= model_defn.model_name %>>(unorderedResult);
 
     Collections.sort(result, new Comparator<<%= model_defn.model_name %>>() {
       public int compare(<%= model_defn.model_name %> t1, <%= model_defn.model_name %> t2) {

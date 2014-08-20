@@ -270,7 +270,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
   protected RecordSelector<T> getRecordSelector(String conditions)
       throws IOException {
-    return new JavaScriptRecordSelector(conditions);
+    return new JavaScriptRecordSelector<T>(conditions);
   }
 
   private boolean useCache = true;
