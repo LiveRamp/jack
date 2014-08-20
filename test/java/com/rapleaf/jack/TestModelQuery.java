@@ -363,15 +363,24 @@ public class TestModelQuery extends TestCase {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
 
+    int nbUsers = 10;
+    User[] sampleUsers = new User[nbUsers];
+
     for (int i = 0; i < 10; i++) {
-      users.createDefaultInstance().setNumPosts(i);
+      sampleUsers[i] = users.createDefaultInstance().setNumPosts(i);
+      sampleUsers[i].save();
     }
 
-    Set<User> result = users.query()
+    List<User> result = users.query()
         .numPosts(lessThan(5))
+        .orderByNumPosts()
         .limit(3)
-        .find();
+        .findWithOrder();
 
     assertEquals(3, result.size());
+    for (int i = 0; i < result.size(); i++) {
+      System.out.println(result.get(i).getNumPosts());
+      assertEquals(i, result.get(i).getNumPosts());
+    }
   }
 }
