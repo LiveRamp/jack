@@ -8,6 +8,7 @@ public class LimitCriterion {
     this.offset = offset;
     this.nResults = nResults;
   }
+
   public LimitCriterion(int nResults) {
     this.offset = 0;
     this.nResults = nResults;
@@ -21,7 +22,7 @@ public class LimitCriterion {
     return nResults;
   }
 
-  public String getSqlKeyword() {
+  public String getSqlClause() {
     return "LIMIT " + nResults + " OFFSET " + offset;
   }
 }
