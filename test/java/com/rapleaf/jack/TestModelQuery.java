@@ -34,13 +34,13 @@ public class TestModelQuery extends TestCase {
   }
 
   public void runAllTests(IDatabases dbs) throws IOException {
+    testQueryWithSelect(dbs);
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
     testQueryWithOrder(dbs);
     testQueryByIdWithOrder(dbs);
     testQueryWithLimit(dbs);
-    testQueryWithSelect(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
@@ -430,8 +430,9 @@ public class TestModelQuery extends TestCase {
 
     Collection<User> result;
 
+    /*
     result = users.query().select(User._Fields.handle)
-        .bio((String)null)
+        .bio(endsWith("man"))
         .find();
 
     for (User user : result) {
@@ -440,9 +441,11 @@ public class TestModelQuery extends TestCase {
       assertTrue(user.getBio() == null);
       assertTrue(user.getCreatedAtMillis() == null);
     }
+    */
+
 
     result = users.query().select(User._Fields.handle)
-        .bio((String)null)
+        .bio(endsWith("man"))
         .findWithOrder();
 
     for (User user : result) {
@@ -451,6 +454,7 @@ public class TestModelQuery extends TestCase {
       assertTrue(user.getCreatedAtMillis() != null);
       assertTrue(user.getBio() == null);
     }
+
 
   }
 }
