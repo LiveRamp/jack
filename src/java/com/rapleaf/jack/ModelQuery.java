@@ -55,13 +55,13 @@ public class ModelQuery {
   }
 
   public String getWhereClause() {
-    StringBuilder statementBuilder = new StringBuilder();
+    StringBuilder statementBuilder = new StringBuilder("WHERE (");
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
     if (!ids.isEmpty() && !constraints.isEmpty()) {
       statementBuilder.append(" AND ");
     }
     statementBuilder.append(getWhereSqlCriteria());
-
+    statementBuilder.append(")");
     return statementBuilder.toString();
   }
 
