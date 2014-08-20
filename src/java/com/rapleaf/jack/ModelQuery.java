@@ -12,6 +12,7 @@ public class ModelQuery {
   private List<OrderCriterion> orderCriteria;
   private Set<Long> ids;
   private LimitCriterion limitCriterion;
+  private SelectCriterion selectCriterion;
 
   public ModelQuery() {
     this.constraints = new ArrayList<WhereConstraint>();
@@ -115,5 +116,13 @@ public class ModelQuery {
 
   public LimitCriterion getLimitCriterion() {
     return limitCriterion;
+  }
+
+  public String getSelectClause() {
+    
+  }
+
+  public SelectCriterion getSelectCriterion() {
+    return selectCriterion;
   }
 }
