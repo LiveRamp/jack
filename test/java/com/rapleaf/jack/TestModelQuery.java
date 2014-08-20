@@ -1,6 +1,7 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,7 @@ public class TestModelQuery extends TestCase {
     testQueryWithOrder(dbs);
     testQueryByIdWithOrder(dbs);
     testQueryWithLimit(dbs);
+    testQueryWithSelect(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
@@ -412,5 +414,43 @@ public class TestModelQuery extends TestCase {
         .find();
 
     assertEquals(3, resultSet.size());
+  }
+
+  public void testQueryWithSelect(IDatabases dbs) throws IOException {
+
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("AAAA").setBio("Batman").setCreatedAtMillis(1L).setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("BBBB").setBio("Superman").setCreatedAtMillis(1L);
+    User userC = users.createDefaultInstance().setHandle("CCCC").setBio("Spiderman").setCreatedAtMillis(1L);
+    userA.save();
+    userB.save();
+    userC.save();
+
+    Collection<User> result;
+
+    result = users.query().select(User._Fields.handle)
+        .bio((String)null)
+        .find();
+
+    for (User user : result) {
+      System.out.println(user.getNumPosts());
+      assertTrue(user.getHandle() != null);
+      assertTrue(user.getBio() == null);
+      assertTrue(user.getCreatedAtMillis() == null);
+    }
+
+    result = users.query().select(User._Fields.handle)
+        .bio((String)null)
+        .findWithOrder();
+
+    for (User user : result) {
+      System.out.println(user.getNumPosts());
+      assertTrue(user.getHandle() != null);
+      assertTrue(user.getCreatedAtMillis() != null);
+      assertTrue(user.getBio() == null);
+    }
+
   }
 }
