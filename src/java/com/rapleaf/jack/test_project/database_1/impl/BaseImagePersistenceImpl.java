@@ -113,12 +113,12 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         nonNullValues.add(value);
       }
 
-      statementString.append(field + queryValue);
+      statementString.append(field).append(queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
-    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
+    if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
@@ -151,12 +151,11 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       return foundSet;
     }
 
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM images WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(")");
+    String statement = "SELECT * FROM images WHERE (";
+    statement += query.getWhereClause();
+    statement += ")";
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
     executeQuery(foundSet, completeStatement);
 
@@ -174,15 +173,14 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       return foundList;
     }
 
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM images WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(") ");
-    statementString.append(query.getOrderByClause());
-    statementString.append(" ");
-    statementString.append(query.getLimitClause());
+    String statement = "SELECT * FROM images WHERE (";
+    statement += query.getWhereClause();
+    statement += ") ";
+    statement += query.getOrderByClause();
+    statement += " ";
+    statement += query.getLimitClause();
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
     executeQuery(foundList, completeStatement);
 

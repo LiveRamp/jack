@@ -126,12 +126,12 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         nonNullValues.add(value);
       }
 
-      statementString.append(field + queryValue);
+      statementString.append(field).append(queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
-    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
+    if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
@@ -173,12 +173,11 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       return foundSet;
     }
 
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM comments WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(")");
+    String statement = "SELECT * FROM comments WHERE (";
+    statement += query.getWhereClause();
+    statement += ")";
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
     executeQuery(foundSet, completeStatement);
 
@@ -196,15 +195,14 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       return foundList;
     }
 
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM comments WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(") ");
-    statementString.append(query.getOrderByClause());
-    statementString.append(" ");
-    statementString.append(query.getLimitClause());
+    String statement = "SELECT * FROM comments WHERE (";
+    statement += query.getWhereClause();
+    statement += ") ";
+    statement += query.getOrderByClause();
+    statement += " ";
+    statement += query.getLimitClause();
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
     executeQuery(foundList, completeStatement);
 
