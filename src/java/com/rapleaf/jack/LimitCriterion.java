@@ -2,26 +2,26 @@ package com.rapleaf.jack;
 
 public class LimitCriterion {
   private int offset;
-  private int numberOfResults;
+  private int nResults;
 
-  public LimitCriterion(int offset, int numberOfResults) {
+  public LimitCriterion(int offset, int nResults) {
     this.offset = offset;
-    this.numberOfResults = numberOfResults;
+    this.nResults = nResults;
   }
-  public LimitCriterion(int numberOfResults) {
+  public LimitCriterion(int nResults) {
     this.offset = 0;
-    this.numberOfResults = numberOfResults;
+    this.nResults = nResults;
   }
 
   public int getOffset() {
     return offset;
   }
 
-  public int getNumberOfResults() {
-    return numberOfResults;
+  public int getNResults() {
+    return nResults;
   }
 
   public String getSqlKeyword() {
-    return "LIMIT " + offset + ", " + numberOfResults;
+    return "LIMIT " + offset + ", " + nResults;
   }
 }
