@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,7 +92,19 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
 
   public Set<Comment> find(ModelQuery query) throws IOException {
-    return super.realFind(query);
+    Set<Comment> allResults = super.realFind(query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    int i = 0;
+    Set<Comment> truncatedSet = new HashSet<Comment>();
+    Iterator<Comment> iterator = allResults.iterator();
+    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
   
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {

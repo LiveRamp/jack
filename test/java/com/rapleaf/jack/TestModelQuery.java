@@ -404,9 +404,6 @@ public class TestModelQuery extends TestCase {
         .find();
 
     assertEquals(3, resultSet.size());
-    for (int i = 0; i < resultList.size(); i++) {
-      assertTrue(resultSet.contains(sampleUsers[i]));
-    }
 
     resultSet = users.query()
         .numPosts(greaterThan(3))
@@ -415,8 +412,5 @@ public class TestModelQuery extends TestCase {
         .find();
 
     assertEquals(3, resultSet.size());
-    for (int i = 0; i < resultList.size(); i++) {
-      assertTrue(resultSet.contains(sampleUsers[i+6]));
-    }
   }
 }

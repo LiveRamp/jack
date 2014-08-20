@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -86,7 +88,19 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
 
   public Set<Image> find(ModelQuery query) throws IOException {
-    return super.realFind(query);
+    Set<Image> allResults = super.realFind(query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    int i = 0;
+    Set<Image> truncatedSet = new HashSet<Image>();
+    Iterator<Image> iterator = allResults.iterator();
+    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
   
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
