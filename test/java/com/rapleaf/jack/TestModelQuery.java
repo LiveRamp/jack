@@ -2,8 +2,8 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -14,7 +14,8 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static com.rapleaf.jack.JackMatchers.*;
-import static com.rapleaf.jack.QueryOrder.*;
+import static com.rapleaf.jack.QueryOrder.ASC;
+import static com.rapleaf.jack.QueryOrder.DESC;
 
 
 public class TestModelQuery extends TestCase {
@@ -23,17 +24,15 @@ public class TestModelQuery extends TestCase {
 
   public void testDbImplQueries() throws IOException {
     IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
-
-    testBasicQuery(dbs);
-    testQueryOperators(dbs);
-    testQueryById(dbs);
-    testQueryWithOrder(dbs);
-    testQueryByIdWithOrder(dbs);
+    runAllTests(dbs);
   }
 
   public void testMockDbQueries() throws IOException {
     IDatabases dbs = new MockDatabasesImpl();
+    runAllTests(dbs);
+  }
 
+  public void runAllTests(IDatabases dbs) throws IOException {
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
@@ -207,7 +206,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.contains(sampleUsers[3]));
 
   }
-  
+
   public void testQueryWithOrder(IDatabases dbs) throws IOException {
 
     IUserPersistence users = dbs.getDatabase1().users();
@@ -240,7 +239,7 @@ public class TestModelQuery extends TestCase {
     // A query with no results should return an empty list.
     orderedResult1 = users.query().numPosts(3).bio("CEO").order().findWithOrder();
     assertTrue(orderedResult1.isEmpty());
-    
+
     // A simple query with single result should return a list with one element.
     orderedResult1 = users.query().bio("Analyst").order().findWithOrder();
     assertEquals(1, orderedResult1.size());
@@ -260,7 +259,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userD));
     assertEquals(2, orderedResult1.indexOf(userE));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query ordered by default in a descending manner should be ordered by id in an descending manner.
     // expected result: [userE, userD, userC]
     orderedResult1 = users.query().numPosts(3).order(DESC).findWithOrder();
@@ -270,7 +269,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userD));
     assertEquals(0, orderedResult1.indexOf(userE));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
     orderedResult1 = users.query().numPosts(3).orderByBio().findWithOrder();
@@ -280,7 +279,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userE));
     assertEquals(2, orderedResult1.indexOf(userD));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
     orderedResult1 = users.query().numPosts(3).orderByBio(DESC).findWithOrder();
@@ -288,7 +287,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
     assertEquals(0, orderedResult1.indexOf(userD));
-    
+
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
     orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
@@ -301,7 +300,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(5, orderedResult1.indexOf(userG));
     assertEquals(6, orderedResult1.indexOf(userF));
     assertEquals(7, orderedResult1.indexOf(userH));
-    
+
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
     orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
@@ -357,5 +356,21 @@ public class TestModelQuery extends TestCase {
     assertEquals(2, orderedResult1.indexOf(sampleUsers[4]));
     assertEquals(3, orderedResult1.indexOf(sampleUsers[2]));
     assertEquals(4, orderedResult1.indexOf(sampleUsers[0]));
+  }
+
+  public void testQueryWithLimit(IDatabases dbs) throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    for (int i = 0; i < 10; i++) {
+      users.createDefaultInstance().setNumPosts(i);
+    }
+
+    Set<User> result = users.query()
+        .numPosts(lessThan(5))
+        .limit(3)
+        .find();
+
+    assertEquals(3, result.size());
   }
 }
