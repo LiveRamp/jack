@@ -27,6 +27,7 @@ import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
@@ -89,12 +90,17 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
   }
   
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<Image> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<Image> sortUnorderedMockQuery(Set<Image> unorderedRresult, ModelQuery query) {
+  private List<Image> sortUnorderedMockQuery(Set<Image> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<Image> result = new ArrayList<Image>(unorderedRresult);
+    List<Image> result = new ArrayList<Image>(unorderedResult);
 
     Collections.sort(result, new Comparator<Image>() {
       public int compare(Image t1, Image t2) {

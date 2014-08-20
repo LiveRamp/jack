@@ -27,6 +27,7 @@ import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
@@ -92,12 +93,17 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
   }
   
   public List<Post> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<Post> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<Post> sortUnorderedMockQuery(Set<Post> unorderedRresult, ModelQuery query) {
+  private List<Post> sortUnorderedMockQuery(Set<Post> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<Post> result = new ArrayList<Post>(unorderedRresult);
+    List<Post> result = new ArrayList<Post>(unorderedResult);
 
     Collections.sort(result, new Comparator<Post>() {
       public int compare(Post t1, Post t2) {

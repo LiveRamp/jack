@@ -27,6 +27,7 @@ import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
@@ -93,12 +94,17 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
   
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<Comment> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedRresult, ModelQuery query) {
+  private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<Comment> result = new ArrayList<Comment>(unorderedRresult);
+    List<Comment> result = new ArrayList<Comment>(unorderedResult);
 
     Collections.sort(result, new Comparator<Comment>() {
       public int compare(Comment t1, Comment t2) {

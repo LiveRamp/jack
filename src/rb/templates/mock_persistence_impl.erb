@@ -37,6 +37,7 @@ import <%= JACK_NAMESPACE %>.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.QueryConstraint;
 import <%= JACK_NAMESPACE %>.QueryOrder;
+import <%= JACK_NAMESPACE %>.LimitCriterion;
 import <%= JACK_NAMESPACE %>.OrderCriterion;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
@@ -96,7 +97,7 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
     if(limitCriterion == null) {
       return allResults;
     }
-    return allResults.subList(limitCriterion.getOffset(), limitcriterion.getNResults() + limitCriterion.getOffset());
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
   private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedResult, ModelQuery query) {
