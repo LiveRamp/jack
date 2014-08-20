@@ -130,7 +130,8 @@ public class ModelQuery {
 
     Iterator<SelectCriterion> it = selectCriteria.iterator();
     while (it.hasNext()) {
-      sqlClause.append(it.next());
+      SelectCriterion selectCriterion = it.next();
+      sqlClause.append(selectCriterion.getSqlClause());
       if (it.hasNext()) {
         sqlClause.append(", ");
       }
