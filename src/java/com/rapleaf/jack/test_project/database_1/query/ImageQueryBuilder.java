@@ -5,7 +5,7 @@ import java.util.Set;
 import com.rapleaf.jack.AbstractQueryBuilder;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
-import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.WhereConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.OrderCriterion;
 import com.rapleaf.jack.LimitCriterion;
@@ -61,16 +61,16 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
 
   public ImageQueryBuilder userId(Integer value) {
     if(value == null) {
-      addConstraint(new QueryConstraint<Integer>(Image._Fields.user_id, JackMatchers.<Integer>isNull()));
+      addConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.<Integer>isNull()));
     }
     else {
-      addConstraint(new QueryConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
+      addConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
     }
     return this;
   }
 
   public ImageQueryBuilder userId(IQueryOperator<Integer> operator) {
-    addConstraint(new QueryConstraint<Integer>(Image._Fields.user_id, operator));
+    addConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
     return this;
   }
   

@@ -8,18 +8,18 @@ import java.util.Set;
 
 public class ModelQuery {
 
-  private List<QueryConstraint> constraints;
+  private List<WhereConstraint> constraints;
   private List<OrderCriterion> orderCriteria;
   private Set<Long> ids;
   private LimitCriterion limitCriterion;
 
   public ModelQuery() {
-    this.constraints = new ArrayList<QueryConstraint>();
+    this.constraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.ids = new HashSet<Long>();
   }
 
-  public List<QueryConstraint> getConstraints() {
+  public List<WhereConstraint> getConstraints() {
     return constraints;
   }
 
@@ -35,7 +35,7 @@ public class ModelQuery {
     this.limitCriterion = limitCriterion;
   }
 
-  public void addConstraint(QueryConstraint constraint) {
+  public void addConstraint(WhereConstraint constraint) {
     constraints.add(constraint);
   }
 
@@ -78,9 +78,9 @@ public class ModelQuery {
 
   private String getConstraintListSqlCondition() {
     StringBuilder sb = new StringBuilder();
-    Iterator<QueryConstraint> it = constraints.iterator();
+    Iterator<WhereConstraint> it = constraints.iterator();
     while (it.hasNext()) {
-      QueryConstraint constraint = it.next();
+      WhereConstraint constraint = it.next();
       sb.append(constraint.getSqlStatement());
 
       if (it.hasNext()) {

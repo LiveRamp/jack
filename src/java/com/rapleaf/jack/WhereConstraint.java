@@ -2,11 +2,11 @@ package com.rapleaf.jack;
 
 import java.util.List;
 
-public class QueryConstraint<T> {
+public class WhereConstraint<T> {
   private Enum field;
   private final IQueryOperator<T> operator;
 
-  public QueryConstraint(Enum field, IQueryOperator<T> operator) {
+  public WhereConstraint(Enum field, IQueryOperator<T> operator) {
     this.field = field;
     this.operator = operator;
   }
