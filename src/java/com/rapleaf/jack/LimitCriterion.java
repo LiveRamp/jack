@@ -22,6 +22,6 @@ public class LimitCriterion {
   }
 
   public String getSqlKeyword() {
-    return "LIMIT " + offset + ", " + nResults;
+    return "LIMIT " + nResults + " OFFSET " + offset;
   }
 }
