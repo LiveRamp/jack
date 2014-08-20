@@ -146,7 +146,8 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
     String statement = "SELECT * FROM <%= model_defn.table_name %> WHERE (";
     statement += query.getWhereClause();
-    statement += ")";
+    statement += ") ";
+    statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
