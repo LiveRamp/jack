@@ -251,11 +251,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    List<T> foundList = new ArrayList<T>();    
+    List<T> foundList = new ArrayList<T>();
     if (!ids.isEmpty()) {
-      String statement = "SELECT * FROM ";
+      String statement = query.getSelectClause();
+      statement += " FROM ";
       statement += tableName;
-      statement +=" WHERE ";
+      statement += " WHERE ";
       statement += getIdSetCondition(ids);
       statement += query.getOrderByClause();
       statement += query.getLimitClause();
