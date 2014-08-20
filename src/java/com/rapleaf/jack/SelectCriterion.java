@@ -15,7 +15,7 @@ public class SelectCriterion {
     return selectedFields;
   }
 
-  public void addSelectedFields(Enum field) {
+  public void addSelectedField(Enum field) {
     this.selectedFields.add(field);
   }
 
