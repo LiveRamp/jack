@@ -14,7 +14,7 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     this.query = new ModelQuery();
   }
 
-  public void addConstraint(QueryConstraint constraint) {
+  public void addConstraint(WhereConstraint constraint) {
     query.addConstraint(constraint);
   }
 

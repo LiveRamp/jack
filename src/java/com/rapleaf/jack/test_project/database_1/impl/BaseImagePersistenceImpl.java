@@ -8,8 +8,6 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,15 +18,11 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.WhereConstraint;
 import com.rapleaf.jack.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
@@ -190,7 +184,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
+    for (WhereConstraint constraint : query.getConstraints()) {
       Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {

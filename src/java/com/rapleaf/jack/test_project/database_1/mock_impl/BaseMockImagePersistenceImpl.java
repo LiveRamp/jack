@@ -6,7 +6,6 @@
  */
 package com.rapleaf.jack.test_project.database_1.mock_impl;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,22 +17,14 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Date;
-import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.QueryConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
-import com.rapleaf.jack.test_project.database_1.models.Image.Id;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
 

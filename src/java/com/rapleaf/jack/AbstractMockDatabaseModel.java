@@ -112,7 +112,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   protected Set<T> realFind(ModelQuery query) throws IOException {
     Set<T> foundSet = new HashSet<T>();
 
-    List<QueryConstraint> constraints = query.getConstraints();
+    List<WhereConstraint> constraints = query.getConstraints();
     Set<Long> ids = query.getIdSet();
     if (constraints == null || constraints.isEmpty()) {
       if (ids != null && !ids.isEmpty()) {
@@ -122,7 +122,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     }
     for (T record : records.values()) {
       boolean allMatch = true;
-      for (QueryConstraint constraint : constraints) {
+      for (WhereConstraint constraint : constraints) {
 
         Enum field = constraint.getField();
         IQueryOperator operator = constraint.getOperator();
