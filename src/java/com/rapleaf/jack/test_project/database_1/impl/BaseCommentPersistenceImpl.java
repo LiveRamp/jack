@@ -175,7 +175,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     String statement = "SELECT * FROM comments WHERE (";
     statement += query.getWhereClause();
-    statement += ")";
+    statement += ") ";
+    statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);

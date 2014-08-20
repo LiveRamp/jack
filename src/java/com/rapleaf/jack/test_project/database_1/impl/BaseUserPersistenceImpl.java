@@ -228,7 +228,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     String statement = "SELECT * FROM users WHERE (";
     statement += query.getWhereClause();
-    statement += ")";
+    statement += ") ";
+    statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);

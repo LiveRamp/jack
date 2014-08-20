@@ -180,7 +180,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
     String statement = "SELECT * FROM posts WHERE (";
     statement += query.getWhereClause();
-    statement += ")";
+    statement += ") ";
+    statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
