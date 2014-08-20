@@ -38,6 +38,7 @@ public class TestModelQuery extends TestCase {
     testQueryById(dbs);
     testQueryWithOrder(dbs);
     testQueryByIdWithOrder(dbs);
+    testQueryWithLimit(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
