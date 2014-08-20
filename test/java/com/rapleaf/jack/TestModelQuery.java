@@ -371,28 +371,52 @@ public class TestModelQuery extends TestCase {
       sampleUsers[i].save();
     }
 
-    List<User> result;
+    List<User> resultList;
 
-    result = users.query()
+    resultList = users.query()
         .numPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
         .findWithOrder();
 
-    assertEquals(3, result.size());
-    for (int i = 0; i < result.size(); i++) {
-      assertEquals(i, result.get(i).getNumPosts());
+    assertEquals(3, resultList.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertEquals(i, resultList.get(i).getNumPosts());
     }
 
-    result = users.query()
+    resultList = users.query()
         .numPosts(greaterThan(3))
         .orderByNumPosts()
         .limit(2, 3)
         .findWithOrder();
 
-    assertEquals(3, result.size());
-    for (int i = 0; i < result.size(); i++) {
-      assertEquals(i + 6, result.get(i).getNumPosts());
+    assertEquals(3, resultList.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertEquals(i + 6, resultList.get(i).getNumPosts());
+    }
+
+    Set<User> resultSet;
+
+    resultSet = users.query()
+        .numPosts(lessThan(5))
+        .orderByNumPosts()
+        .limit(3)
+        .find();
+
+    assertEquals(3, resultSet.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertTrue(resultSet.contains(sampleUsers[i]));
+    }
+
+    resultSet = users.query()
+        .numPosts(greaterThan(3))
+        .orderByNumPosts()
+        .limit(2, 3)
+        .find();
+
+    assertEquals(3, resultSet.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertTrue(resultSet.contains(sampleUsers[i+6]));
     }
   }
 }
