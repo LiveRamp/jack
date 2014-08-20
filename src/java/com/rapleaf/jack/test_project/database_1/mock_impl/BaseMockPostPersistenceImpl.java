@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.WhereConstraint;
 import com.rapleaf.jack.QueryOrder;
 import com.rapleaf.jack.LimitCriterion;
 import com.rapleaf.jack.OrderCriterion;

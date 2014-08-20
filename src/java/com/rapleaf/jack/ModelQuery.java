@@ -30,6 +30,10 @@ public class ModelQuery {
     return orderCriteria;
   }
 
+  public List<SelectCriterion> getSelectCriteria() {
+    return selectCriteria;
+  }
+
   public Set<Long> getIdSet() {
     return ids;
   }
