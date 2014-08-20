@@ -179,6 +179,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(query.getWhereClause());
     statementString.append(") ");
     statementString.append(query.getOrderByClause());
+    statementString.append(" ");
+    statementString.append(query.getLimitClause());
 
     PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
