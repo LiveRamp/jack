@@ -112,4 +112,8 @@ public class ModelQuery {
     }
     return limitCriterion.getSqlKeyword();
   }
+
+  public LimitCriterion getLimitCriterion() {
+    return limitCriterion;
+  }
 }
