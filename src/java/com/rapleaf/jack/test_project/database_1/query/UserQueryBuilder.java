@@ -39,6 +39,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
+  public UserQueryBuilder select(User._Fields... fields) {
+    addSelectedFields(fields);
+    return this;
+  }
+
   public UserQueryBuilder order() {
     this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;

@@ -8,6 +8,8 @@ package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,8 +25,10 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.WhereConstraint;
 import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
@@ -174,9 +178,10 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       return foundSet;
     }
 
-    String statement = "SELECT * FROM posts WHERE (";
+    String statement = query.getSelectClause();
+    statement += " FROM posts ";
     statement += query.getWhereClause();
-    statement += ") ";
+    statement += " ";
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
@@ -197,9 +202,10 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       return foundList;
     }
 
-    String statement = "SELECT * FROM posts WHERE (";
+    String statement = query.getSelectClause();
+    statement += " FROM posts ";
     statement += query.getWhereClause();
-    statement += ") ";
+    statement += " ";
     statement += query.getOrderByClause();
     statement += " ";
     statement += query.getLimitClause();

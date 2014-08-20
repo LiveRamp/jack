@@ -39,6 +39,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
+  public CommentQueryBuilder select(Comment._Fields... fields) {
+    addSelectedFields(fields);
+    return this;
+  }
+
   public CommentQueryBuilder order() {
     this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;

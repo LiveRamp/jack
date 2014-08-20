@@ -39,6 +39,11 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
+  public PostQueryBuilder select(Post._Fields... fields) {
+    addSelectedFields(fields);
+    return this;
+  }
+
   public PostQueryBuilder order() {
     this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;

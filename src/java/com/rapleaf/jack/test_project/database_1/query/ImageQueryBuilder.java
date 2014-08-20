@@ -39,6 +39,11 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
 
+  public ImageQueryBuilder select(Image._Fields... fields) {
+    addSelectedFields(fields);
+    return this;
+  }
+
   public ImageQueryBuilder order() {
     this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
     return this;

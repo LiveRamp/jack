@@ -5,11 +5,10 @@ import java.util.Set;
 import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
 import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.JackMatchers;
-import <%= JACK_NAMESPACE %>.QueryConstraint;
+import <%= JACK_NAMESPACE %>.WhereConstraint;
 import <%= JACK_NAMESPACE %>.QueryOrder;
 import <%= JACK_NAMESPACE %>.OrderCriterion;
 import <%= JACK_NAMESPACE %>.LimitCriterion;
-import <%= JACK_NAMESPACE %>.SelectCriterion;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 
@@ -41,9 +40,7 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   }
 
   public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
-    for (<%=model_defn.model_name %>._Fields field : fields) {
-      addSelectCriterion(new SelectCriterion(field));
-    }
+    addSelectedFields(fields);
     return this;
   }
 
@@ -71,16 +68,16 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
 
   public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type(true) %> value) {
     if(value == null) {
-      addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.<<%= field_defn.java_type(true) %>>isNull()));
+      addConstraint(new WhereConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.<<%= field_defn.java_type(true) %>>isNull()));
     }
     else {
-      addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.equalTo(value)));
+      addConstraint(new WhereConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.equalTo(value)));
     }
     return this;
   }
 
   public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(IQueryOperator<<%= field_defn.java_type(true) %>> operator) {
-    addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, operator));
+    addConstraint(new WhereConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, operator));
     return this;
   }
   
