@@ -132,6 +132,13 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         allMatch = false;
       }
       if (allMatch) {
+        if (!query.getSelectCriteria().isEmpty()) {
+          for (Enum field : record.getFieldSet()) {
+            if (!query.getSelectCriteria().contains(new SelectCriterion(field))) {
+              record.setField(field.name(), null);
+            }
+          }
+        }
         foundSet.add(record);
       }
     }

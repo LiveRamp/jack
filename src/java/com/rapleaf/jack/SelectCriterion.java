@@ -13,6 +13,6 @@ public class SelectCriterion {
   }
 
   public String getSqlClause() {
-    return (selectedField.toString());
+    return (selectedField.name());
   }
 }
