@@ -117,17 +117,17 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
           if (o1 instanceof java.lang.Comparable) {
             compareResult = ((Comparable) o1).compareTo((Comparable) o2);
           } else {
-            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
           }
 
           int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
           compareResult = compareResult * orderDirection;
-          if (compareResult == 0) {
-            continue;
-          } else if (compareResult < 0) {
-            return -1;
-          } else {
-            return 1;
+          if (compareResult != 0) {
+            if (compareResult < 0) {
+              return -1;
+            } else {
+              return 1;
+            }
           }
         }
         return 0;
