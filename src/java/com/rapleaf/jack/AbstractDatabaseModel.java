@@ -245,12 +245,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       notCachedIds = ids;
     }
     if (!notCachedIds.isEmpty()) {
-      StringBuilder statementString = new StringBuilder();
-      statementString.append("SELECT * FROM ");
-      statementString.append(tableName);
-      statementString.append(" WHERE ");
-      statementString.append(getIdSetCondition(notCachedIds));
-      executeQuery(foundSet, statementString.toString());
+      executeQuery(foundSet, "SELECT * FROM " + tableName + " WHERE " + getIdSetCondition(notCachedIds));
     }
     return foundSet;
   }
@@ -258,13 +253,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<T>();    
     if (!ids.isEmpty()) {
-      StringBuilder statementString = new StringBuilder();
-      statementString.append("SELECT * FROM ");
-      statementString.append(tableName);
-      statementString.append(" WHERE ");
-      statementString.append(getIdSetCondition(ids));
-      statementString.append(query.getOrderByClause());
-      executeQuery(foundList, statementString.toString());
+      String statement = "SELECT * FROM ";
+      statement += tableName;
+      statement +=" WHERE ";
+      statement += getIdSetCondition(ids);
+      statement += query.getOrderByClause();
+      statement += query.getLimitClause();
+      executeQuery(foundList, statement);
     }
     return foundList;
   }
