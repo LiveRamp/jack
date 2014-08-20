@@ -1,6 +1,7 @@
 package com.rapleaf.jack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -10,13 +11,14 @@ public class ModelQuery {
 
   private List<WhereConstraint> constraints;
   private List<OrderCriterion> orderCriteria;
-  private Set<Long> ids;
+  private List<SelectCriterion> selectCriteria;
   private LimitCriterion limitCriterion;
-  private SelectCriterion selectCriterion;
+  private Set<Long> ids;
 
   public ModelQuery() {
     this.constraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
+    this.selectCriteria = new ArrayList<SelectCriterion>();
     this.ids = new HashSet<Long>();
   }
 
@@ -58,7 +60,7 @@ public class ModelQuery {
     if (!ids.isEmpty() && !constraints.isEmpty()) {
       statementBuilder.append(" AND ");
     }
-    statementBuilder.append(getConstraintListSqlCondition());
+    statementBuilder.append(getWhereSqlCriteria());
 
     return statementBuilder.toString();
   }
@@ -77,7 +79,7 @@ public class ModelQuery {
     return sb.toString();
   }
 
-  private String getConstraintListSqlCondition() {
+  private String getWhereSqlCriteria() {
     StringBuilder sb = new StringBuilder();
     Iterator<WhereConstraint> it = constraints.iterator();
     while (it.hasNext()) {
@@ -119,10 +121,28 @@ public class ModelQuery {
   }
 
   public String getSelectClause() {
-    
+    StringBuilder sqlClause = new StringBuilder("SELECT ");
+
+    if (selectCriteria.isEmpty()) {
+      sqlClause.append("*");
+      return sqlClause.toString();
+    }
+
+    Iterator<SelectCriterion> it = selectCriteria.iterator();
+    while (it.hasNext()) {
+      sqlClause.append(it.next());
+      if (it.hasNext()) {
+        sqlClause.append(", ");
+      }
+    }
+    return sqlClause.toString();
   }
 
-  public SelectCriterion getSelectCriterion() {
-    return selectCriterion;
+  public void addSelectCriteria(SelectCriterion... criteria) {
+    selectCriteria.addAll(Arrays.asList(criteria));
+  }
+
+  public void addSelectCriterion(SelectCriterion criterion) {
+    selectCriteria.add(criterion);
   }
 }
