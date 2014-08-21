@@ -167,56 +167,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return foundSet;
   }
 
-  public Set<Post> find(ModelQuery query) throws IOException {
-    Set<Post> foundSet = new HashSet<Post>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM posts ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
-
-    return foundSet;
-  }
-
-  public List<Post> findWithOrder(ModelQuery query) throws IOException {
-    List<Post> foundList = new ArrayList<Post>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM posts ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getOrderByClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundList, preparedStatement, query.getSelectedFields());
-
-    return foundList;
-  }
-
   @Override
   protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
