@@ -137,7 +137,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         if (!query.getSelectedFields().isEmpty()) {
           for (Enum field : record.getFieldSet()) {
             if (!query.getSelectedFields().contains(field)) {
-              if (!isPrimitiveOrWrapped(record.getField(field.name()).getClass())) {
+              if (record.getField(field.name()) == null || !isPrimitiveOrWrapped(record.getField(field.name()).getClass())) {
                 record.setField(field.name(), null);
               }
             }
@@ -299,6 +299,6 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   }
 
   private boolean isPrimitiveOrWrapped(Class clazz) {
-    return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) != null;
+    return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) == Integer.TYPE;
   }
 }
