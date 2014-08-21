@@ -267,9 +267,9 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Comment(rs.getLong("id"),
       allFields || selectedFields.contains(Comment._Fields.content) ? rs.getString("content") : null,
-      allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : null,
-      allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : null,
-      allFields || selectedFields.contains(Comment._Fields.created_at) ? getDateAsLong(rs, "created_at") : null,
+      allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : 0,
+      allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : 0L,
+      allFields || selectedFields.contains(Comment._Fields.created_at) ? getDateAsLong(rs, "created_at") : 0L,
       databases
     );
   }

@@ -369,9 +369,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   protected User instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new User(rs.getLong("id"),
-      allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : null,
+      allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : "",
       allFields || selectedFields.contains(User._Fields.created_at_millis) ? getLongOrNull(rs, "created_at_millis") : null,
-      allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : null,
+      allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : 0,
       allFields || selectedFields.contains(User._Fields.some_date) ? getDateAsLong(rs, "some_date") : null,
       allFields || selectedFields.contains(User._Fields.some_datetime) ? getDateAsLong(rs, "some_datetime") : null,
       allFields || selectedFields.contains(User._Fields.bio) ? rs.getString("bio") : null,

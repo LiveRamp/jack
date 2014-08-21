@@ -230,7 +230,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new <%= model_defn.model_name %>(rs.getLong("id"),
     <% model_defn.fields.each do |field_defn| %>
-      allFields || selectedFields.contains(<%= model_defn.model_name %>._Fields.<%=field_defn.name%>) ? <%= field_defn.get_from_rs %> : null,
+      allFields || selectedFields.contains(<%= model_defn.model_name %>._Fields.<%=field_defn.name%>) ? <%= field_defn.get_from_rs %> : <%= field_defn.nullable? ? "null" : field_defn.java_default_value %>,
     <% end %>
       databases
     );
