@@ -133,56 +133,6 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return foundSet;
   }
 
-  public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
-    Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM <%= model_defn.table_name %> ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
-
-    return foundSet;
-  }
-
-  public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
-    List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM <%= model_defn.table_name %> ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getOrderByClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundList, preparedStatement, query.getSelectedFields());
-
-    return foundList;
-  }
-
   @Override
   protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;

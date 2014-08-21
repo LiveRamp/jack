@@ -140,56 +140,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return foundSet;
   }
 
-  public Set<Image> find(ModelQuery query) throws IOException {
-    Set<Image> foundSet = new HashSet<Image>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM images ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
-
-    return foundSet;
-  }
-
-  public List<Image> findWithOrder(ModelQuery query) throws IOException {
-    List<Image> foundList = new ArrayList<Image>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM images ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getOrderByClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundList, preparedStatement, query.getSelectedFields());
-
-    return foundList;
-  }
-
   @Override
   protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;

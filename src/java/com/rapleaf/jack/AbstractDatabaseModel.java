@@ -269,6 +269,56 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundList;
   }
 
+  public Set<T> find(ModelQuery query) throws IOException {
+    Set<T> foundSet = new HashSet<T>();
+
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if (ids != null && !ids.isEmpty()) {
+        return find(ids);
+      }
+      return foundSet;
+    }
+
+    String statement = query.getSelectClause();
+    statement += " FROM " + getTableName() + " ";
+    statement += query.getWhereClause();
+    statement += " ";
+    statement += query.getLimitClause();
+
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
+
+    return foundSet;
+  }
+
+  public List<T> findWithOrder(ModelQuery query) throws IOException {
+    List<T> foundList = new ArrayList<T>();
+
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if (ids != null && !ids.isEmpty()) {
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    String statement = query.getSelectClause();
+    statement += " FROM users ";
+    statement += query.getWhereClause();
+    statement += " ";
+    statement += query.getOrderByClause();
+    statement += " ";
+    statement += query.getLimitClause();
+
+    PreparedStatement preparedStatement = getPreparedStatement(statement);
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundList, preparedStatement, query.getSelectedFields());
+
+    return foundList;
+  }
+
   protected String getIdSetCondition(Set<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();

@@ -162,56 +162,6 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return foundSet;
   }
 
-  public Set<Comment> find(ModelQuery query) throws IOException {
-    Set<Comment> foundSet = new HashSet<Comment>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM comments ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
-
-    return foundSet;
-  }
-
-  public List<Comment> findWithOrder(ModelQuery query) throws IOException {
-    List<Comment> foundList = new ArrayList<Comment>();
-    
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    String statement = query.getSelectClause();
-    statement += " FROM comments ";
-    statement += query.getWhereClause();
-    statement += " ";
-    statement += query.getOrderByClause();
-    statement += " ";
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
-    executeQuery(foundList, preparedStatement, query.getSelectedFields());
-
-    return foundList;
-  }
-
   @Override
   protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
