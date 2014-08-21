@@ -39,8 +39,9 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
+  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields, AggregatorFunction... aggregators) {
     addSelectedFields(fields);
+    addAggregatedFields(aggregators);
     return this;
   }
 
