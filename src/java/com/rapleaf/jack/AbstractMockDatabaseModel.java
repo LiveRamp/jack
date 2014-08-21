@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.ClassUtils;
-
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
 public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
@@ -136,13 +134,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       T newRecord = record.getCopy();
       if (allMatch) {
         if (!query.getSelectedFields().isEmpty()) {
-          for (Enum field : newRecord.getFieldSet()) {
-            if (!query.getSelectedFields().contains(field)) {
-              if (record.getField(field.name()) == null || !isPrimitiveOrWrapped(record.getField(field.name()).getClass())) {
-                newRecord.setField(field.name(), null);
-              }
-            }
-          }
+          throw new UnsupportedOperationException("SELECT not supported for the MockDatabase");
         }
         foundSet.add(newRecord);
       }
@@ -296,9 +288,5 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
   public void disableCaching() {
     useCache = false;
-  }
-
-  private boolean isPrimitiveOrWrapped(Class clazz) {
-    return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) == Integer.TYPE ||  ClassUtils.wrapperToPrimitive(clazz) == String.class;
   }
 }
