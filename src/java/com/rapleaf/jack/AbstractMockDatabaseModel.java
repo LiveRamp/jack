@@ -299,6 +299,6 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   }
 
   private boolean isPrimitiveOrWrapped(Class clazz) {
-    return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) == Integer.TYPE;
+    return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) == Integer.TYPE ||  ClassUtils.wrapperToPrimitive(clazz) == String.class;
   }
 }
