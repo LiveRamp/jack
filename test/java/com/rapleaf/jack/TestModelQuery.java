@@ -30,17 +30,22 @@ public class TestModelQuery extends TestCase {
 
   public void testMockDbQueries() throws IOException {
     IDatabases dbs = new MockDatabasesImpl();
-    runAllTests(dbs);
-  }
-
-  public void runAllTests(IDatabases dbs) throws IOException {
-    testQueryWithSelect(dbs);
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
     testQueryWithOrder(dbs);
     testQueryByIdWithOrder(dbs);
     testQueryWithLimit(dbs);
+  }
+
+  public void runAllTests(IDatabases dbs) throws IOException {
+    testBasicQuery(dbs);
+    testQueryOperators(dbs);
+    testQueryById(dbs);
+    testQueryWithOrder(dbs);
+    testQueryByIdWithOrder(dbs);
+    testQueryWithLimit(dbs);
+    testQueryWithSelect(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
