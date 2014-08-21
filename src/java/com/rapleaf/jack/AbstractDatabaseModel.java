@@ -256,43 +256,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   protected void executeQuery(Set<T> foundSet, PreparedStatement stmt) throws IOException {
-    int retryCount = 0;
-
     ResultSet rs = null;
 
     try {
-      while (true) {
-        try {
-          rs = stmt.executeQuery();
-          while (rs.next()) {
-            T inst = instanceFromResultSet(rs);
-            inst.setCreated(true);
-            foundSet.add(inst);
-            if (useCache) {
-              cachedById.put(inst.getId(), inst);
-            }
-          }
-          break;
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-          if (++retryCount > MAX_CONNECTION_RETRIES) {
-            throw new IOException(e);
-          }
-        } catch (SQLException e) {
-          throw new IOException(e);
-        } finally {
-          try {
-            if (rs != null) {
-              rs.close();
-            }
-          } catch (SQLRecoverableException e) {
-            conn.resetConnection();
-          } catch (SQLException e) {
-          }
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        T inst = instanceFromResultSet(rs);
+        inst.setCreated(true);
+        foundSet.add(inst);
+        if (useCache) {
+          cachedById.put(inst.getId(), inst);
         }
       }
+    } catch (SQLException e) {
+      throw new IOException(e);
     } finally {
       try {
+        if (rs != null) {
+          rs.close();
+        }
         stmt.close();
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
