@@ -9,21 +9,21 @@ import java.util.Set;
 
 public class ModelQuery {
 
-  private List<WhereConstraint> constraints;
+  private List<WhereConstraint> whereConstraints;
   private List<OrderCriterion> orderCriteria;
   private List<Enum> selectedFields;
   private LimitCriterion limitCriterion;
   private Set<Long> ids;
 
   public ModelQuery() {
-    this.constraints = new ArrayList<WhereConstraint>();
+    this.whereConstraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.selectedFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
   }
 
-  public List<WhereConstraint> getConstraints() {
-    return constraints;
+  public List<WhereConstraint> getWhereConstraints() {
+    return whereConstraints;
   }
 
   public List<OrderCriterion> getOrderCriteria() {
@@ -43,7 +43,7 @@ public class ModelQuery {
   }
 
   public void addConstraint(WhereConstraint constraint) {
-    constraints.add(constraint);
+    whereConstraints.add(constraint);
   }
 
   public void addIds(Set<Long> ids) {
@@ -61,7 +61,7 @@ public class ModelQuery {
   public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder("WHERE (");
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
-    if (!ids.isEmpty() && !constraints.isEmpty()) {
+    if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
       statementBuilder.append(" AND ");
     }
     statementBuilder.append(getWhereSqlCriteria());
@@ -85,7 +85,7 @@ public class ModelQuery {
 
   private String getWhereSqlCriteria() {
     StringBuilder sb = new StringBuilder();
-    Iterator<WhereConstraint> it = constraints.iterator();
+    Iterator<WhereConstraint> it = whereConstraints.iterator();
     while (it.hasNext()) {
       WhereConstraint constraint = it.next();
       sb.append(constraint.getSqlStatement());

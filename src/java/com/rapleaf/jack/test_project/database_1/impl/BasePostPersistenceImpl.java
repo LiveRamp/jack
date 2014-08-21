@@ -170,7 +170,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   public Set<Post> find(ModelQuery query) throws IOException {
     Set<Post> foundSet = new HashSet<Post>();
     
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
         return find(ids);
@@ -185,8 +185,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement, query.getSelectedFields());
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
 
     return foundSet;
   }
@@ -194,7 +194,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   public List<Post> findWithOrder(ModelQuery query) throws IOException {
     List<Post> foundList = new ArrayList<Post>();
     
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
         return findWithOrder(ids, query);
@@ -211,15 +211,16 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement, query.getSelectedFields());
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundList, preparedStatement, query.getSelectedFields());
 
     return foundList;
   }
 
-  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+  @Override
+  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : query.getConstraints()) {
+    for (WhereConstraint constraint : query.getWhereConstraints()) {
       Post._Fields field = (Post._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
@@ -245,7 +246,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         }
       }
     }
-    return preparedStatement;
   }
 
   @Override

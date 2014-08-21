@@ -283,6 +283,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return sb.toString();
   }
 
+  protected abstract void setStatementParameters(PreparedStatement statement, ModelQuery query) throws IOException;
+
   protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws IOException {
     executeQuery(foundSet, stmt, null);
   }

@@ -459,7 +459,5 @@ public class TestModelQuery extends TestCase {
       assertTrue(user.getCreatedAtMillis() != null);
       assertTrue(user.getBio() == null);
     }
-
-
   }
 }

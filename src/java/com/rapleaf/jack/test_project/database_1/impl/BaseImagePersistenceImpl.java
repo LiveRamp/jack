@@ -143,7 +143,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   public Set<Image> find(ModelQuery query) throws IOException {
     Set<Image> foundSet = new HashSet<Image>();
     
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
         return find(ids);
@@ -158,8 +158,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement, query.getSelectedFields());
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
 
     return foundSet;
   }
@@ -167,7 +167,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
     List<Image> foundList = new ArrayList<Image>();
     
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
         return findWithOrder(ids, query);
@@ -184,15 +184,16 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement, query.getSelectedFields());
+    setStatementParameters(preparedStatement, query);
+    executeQuery(foundList, preparedStatement, query.getSelectedFields());
 
     return foundList;
   }
 
-  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+  @Override
+  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : query.getConstraints()) {
+    for (WhereConstraint constraint : query.getWhereConstraints()) {
       Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
@@ -209,7 +210,6 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         }
       }
     }
-    return preparedStatement;
   }
 
   @Override

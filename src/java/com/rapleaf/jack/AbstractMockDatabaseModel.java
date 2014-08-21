@@ -114,7 +114,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   protected Set<T> realFind(ModelQuery query) throws IOException {
     Set<T> foundSet = new HashSet<T>();
 
-    List<WhereConstraint> constraints = query.getConstraints();
+    List<WhereConstraint> constraints = query.getWhereConstraints();
     Set<Long> ids = query.getIdSet();
     if (constraints == null || constraints.isEmpty()) {
       if (ids != null && !ids.isEmpty()) {
