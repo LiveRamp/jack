@@ -133,20 +133,20 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {
         allMatch = false;
       }
+      T newRecord = record.getCopy();
       if (allMatch) {
         if (!query.getSelectedFields().isEmpty()) {
-          for (Enum field : record.getFieldSet()) {
+          for (Enum field : newRecord.getFieldSet()) {
             if (!query.getSelectedFields().contains(field)) {
               if (record.getField(field.name()) == null || !isPrimitiveOrWrapped(record.getField(field.name()).getClass())) {
-                record.setField(field.name(), null);
+                newRecord.setField(field.name(), null);
               }
             }
           }
         }
-        foundSet.add(record);
+        foundSet.add(newRecord);
       }
     }
-
     return foundSet;
   }
 
