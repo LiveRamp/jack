@@ -263,12 +263,13 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected Comment instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Comment(rs.getLong("id"),
-      rs.getString("content"),
-      getIntOrNull(rs, "commenter_id"),
-      getLongOrNull(rs, "commented_on_id"),
-      getDateAsLong(rs, "created_at"),
+      allFields || selectedFields.contains(Comment._Fields.content) ? rs.getString("content") : null,
+      allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : null,
+      allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : null,
+      allFields || selectedFields.contains(Comment._Fields.created_at) ? getDateAsLong(rs, "created_at") : null,
       databases
     );
   }

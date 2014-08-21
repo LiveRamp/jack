@@ -27,9 +27,7 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
   }
 
   public void addSelectedFields(Enum... fields) {
-    for (Enum field : fields) {
-      query.addSelectCriterion(new SelectCriterion(field));
-    }
+    query.addSelectedFields(fields);
   }
 
   public void addIds(Set<Long> ids) {

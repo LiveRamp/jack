@@ -274,12 +274,13 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected Post instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Post(rs.getLong("id"),
-      rs.getString("title"),
-      getDateAsLong(rs, "posted_at_millis"),
-      getIntOrNull(rs, "user_id"),
-      getDateAsLong(rs, "updated_at"),
+      allFields || selectedFields.contains(Post._Fields.title) ? rs.getString("title") : null,
+      allFields || selectedFields.contains(Post._Fields.posted_at_millis) ? getDateAsLong(rs, "posted_at_millis") : null,
+      allFields || selectedFields.contains(Post._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,
+      allFields || selectedFields.contains(Post._Fields.updated_at) ? getDateAsLong(rs, "updated_at") : null,
       databases
     );
   }

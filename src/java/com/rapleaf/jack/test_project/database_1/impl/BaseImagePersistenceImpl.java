@@ -223,9 +223,10 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   @Override
-  protected Image instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected Image instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Image(rs.getLong("id"),
-      getIntOrNull(rs, "user_id"),
+      allFields || selectedFields.contains(Image._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,
       databases
     );
   }

@@ -22,13 +22,13 @@ import java.sql.SQLNonTransientConnectionException;
 import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   private boolean useCache = true;
 
   protected AbstractDatabaseModel(BaseDatabaseConnection conn,
-      String tableName, List<String> fieldNames) {
+                                  String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
@@ -79,7 +79,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String getSetFieldsPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -94,7 +94,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String getUpdateOnInsertPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(",");
       }
@@ -114,7 +114,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return conn;
   }
 
-  protected abstract T instanceFromResultSet(ResultSet rs) throws SQLException;
+  protected T instanceFromResultSet(ResultSet rs) throws SQLException {
+    return instanceFromResultSet(rs, null);
+  }
+
+  protected abstract T instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException;
 
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
@@ -169,7 +173,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String escapedFieldNames(List<String> fieldNames) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -264,7 +268,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
     return foundList;
   }
-  
+
   protected String getIdSetCondition(Set<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
@@ -280,6 +284,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws IOException {
+    executeQuery(foundSet, stmt, null);
+  }
+
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, List<Enum> selectedFields) throws IOException {
     int retryCount = 0;
 
     ResultSet rs = null;
@@ -289,7 +297,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         try {
           rs = stmt.executeQuery();
           while (rs.next()) {
-            T inst = instanceFromResultSet(rs);
+            T inst = instanceFromResultSet(rs, selectedFields);
             inst.setCreated(true);
             foundSet.add(inst);
             if (useCache) {
@@ -589,7 +597,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private static String qmarks(int size) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size; i++ ) {
+    for (int i = 0; i < size; i++) {
       if (i != 0) {
         sb.append(", ");
       }

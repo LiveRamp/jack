@@ -366,18 +366,19 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected User instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected User instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new User(rs.getLong("id"),
-      rs.getString("handle"),
-      getLongOrNull(rs, "created_at_millis"),
-      getIntOrNull(rs, "num_posts"),
-      getDateAsLong(rs, "some_date"),
-      getDateAsLong(rs, "some_datetime"),
-      rs.getString("bio"),
-      rs.getBytes("some_binary"),
-      getDoubleOrNull(rs, "some_float"),
-      getDoubleOrNull(rs, "some_decimal"),
-      getBooleanOrNull(rs, "some_boolean"),
+      allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : null,
+      allFields || selectedFields.contains(User._Fields.created_at_millis) ? getLongOrNull(rs, "created_at_millis") : null,
+      allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : null,
+      allFields || selectedFields.contains(User._Fields.some_date) ? getDateAsLong(rs, "some_date") : null,
+      allFields || selectedFields.contains(User._Fields.some_datetime) ? getDateAsLong(rs, "some_datetime") : null,
+      allFields || selectedFields.contains(User._Fields.bio) ? rs.getString("bio") : null,
+      allFields || selectedFields.contains(User._Fields.some_binary) ? rs.getBytes("some_binary") : null,
+      allFields || selectedFields.contains(User._Fields.some_float) ? getDoubleOrNull(rs, "some_float") : null,
+      allFields || selectedFields.contains(User._Fields.some_decimal) ? getDoubleOrNull(rs, "some_decimal") : null,
+      allFields || selectedFields.contains(User._Fields.some_boolean) ? getBooleanOrNull(rs, "some_boolean") : null,
       databases
     );
   }

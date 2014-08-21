@@ -11,14 +11,14 @@ public class ModelQuery {
 
   private List<WhereConstraint> constraints;
   private List<OrderCriterion> orderCriteria;
-  private List<SelectCriterion> selectCriteria;
+  private List<Enum> selectedFields;
   private LimitCriterion limitCriterion;
   private Set<Long> ids;
 
   public ModelQuery() {
     this.constraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
-    this.selectCriteria = new ArrayList<SelectCriterion>();
+    this.selectedFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
   }
 
@@ -30,8 +30,8 @@ public class ModelQuery {
     return orderCriteria;
   }
 
-  public List<SelectCriterion> getSelectCriteria() {
-    return selectCriteria;
+  public List<Enum> getSelectedFields() {
+    return selectedFields;
   }
 
   public Set<Long> getIdSet() {
@@ -127,16 +127,16 @@ public class ModelQuery {
   public String getSelectClause() {
     StringBuilder sqlClause = new StringBuilder("SELECT ");
 
-    if (selectCriteria.isEmpty()) {
+    if (selectedFields.isEmpty()) {
       sqlClause.append("*");
       return sqlClause.toString();
     }
 
     sqlClause.append("id, ");
-    Iterator<SelectCriterion> it = selectCriteria.iterator();
+    Iterator<Enum> it = selectedFields.iterator();
     while (it.hasNext()) {
-      SelectCriterion selectCriterion = it.next();
-      sqlClause.append(selectCriterion.getSqlClause());
+      Enum field = it.next();
+      sqlClause.append(field.name());
       if (it.hasNext()) {
         sqlClause.append(", ");
       }
@@ -144,11 +144,11 @@ public class ModelQuery {
     return sqlClause.toString();
   }
 
-  public void addSelectCriteria(SelectCriterion... criteria) {
-    selectCriteria.addAll(Arrays.asList(criteria));
+  public void addSelectedFields(Enum... fields) {
+    selectedFields.addAll(Arrays.asList(fields));
   }
 
-  public void addSelectCriterion(SelectCriterion criterion) {
-    selectCriteria.add(criterion);
+  public void addSelectedField(Enum field) {
+    selectedFields.add(field);
   }
 }
