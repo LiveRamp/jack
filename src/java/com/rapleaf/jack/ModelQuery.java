@@ -12,6 +12,7 @@ public class ModelQuery {
   private List<WhereConstraint> whereConstraints;
   private List<OrderCriterion> orderCriteria;
   private List<Enum> selectedFields;
+  private List<Enum> groupByFields;
   private LimitCriterion limitCriterion;
   private Set<Long> ids;
 
@@ -19,23 +20,28 @@ public class ModelQuery {
     this.whereConstraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.selectedFields = new ArrayList<Enum>();
+    this.groupByFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
-  }
-
-  public List<WhereConstraint> getWhereConstraints() {
-    return whereConstraints;
-  }
-
-  public List<OrderCriterion> getOrderCriteria() {
-    return orderCriteria;
   }
 
   public List<Enum> getSelectedFields() {
     return selectedFields;
   }
 
+  public List<WhereConstraint> getWhereConstraints() {
+    return whereConstraints;
+  }
+
   public Set<Long> getIdSet() {
     return ids;
+  }
+
+  public List<OrderCriterion> getOrderCriteria() {
+    return orderCriteria;
+  }
+
+  public LimitCriterion getLimitCriterion() {
+    return limitCriterion;
   }
 
   public void setLimitCriterion(LimitCriterion limitCriterion) {
@@ -56,6 +62,34 @@ public class ModelQuery {
 
   public void addOrder(OrderCriterion orderCriterion) {
     orderCriteria.add(orderCriterion);
+  }
+
+  public void addSelectedFields(Enum... fields) {
+    selectedFields.addAll(Arrays.asList(fields));
+  }
+
+  public void addGroupByFields(Enum... fields) {
+    groupByFields.addAll(Arrays.asList(fields));
+  }
+
+  public String getSelectClause() {
+    StringBuilder sqlClause = new StringBuilder("SELECT ");
+
+    if (selectedFields.isEmpty()) {
+      sqlClause.append("*");
+      return sqlClause.toString();
+    }
+
+    sqlClause.append("id, ");
+    Iterator<Enum> it = selectedFields.iterator();
+    while (it.hasNext()) {
+      Enum field = it.next();
+      sqlClause.append(field.name());
+      if (it.hasNext()) {
+        sqlClause.append(", ");
+      }
+    }
+    return sqlClause.toString();
   }
 
   public String getWhereClause() {
@@ -97,6 +131,21 @@ public class ModelQuery {
     return sb.toString();
   }
 
+  public String getGroupByClause() {
+    StringBuilder sb = new StringBuilder();
+    if (!groupByFields.isEmpty()) {
+      sb.append("GROUP BY ");
+      Iterator<Enum> it = groupByFields.iterator();
+      while (it.hasNext()) {
+        sb.append(it.next());
+        if (it.hasNext()) {
+          sb.append(", ");
+        }
+      }
+    }
+    return sb.toString();
+  }
+
   public String getOrderByClause() {
     StringBuilder sb = new StringBuilder();
     if (!orderCriteria.isEmpty()) {
@@ -120,35 +169,4 @@ public class ModelQuery {
     return limitCriterion.getSqlClause();
   }
 
-  public LimitCriterion getLimitCriterion() {
-    return limitCriterion;
-  }
-
-  public String getSelectClause() {
-    StringBuilder sqlClause = new StringBuilder("SELECT ");
-
-    if (selectedFields.isEmpty()) {
-      sqlClause.append("*");
-      return sqlClause.toString();
-    }
-
-    sqlClause.append("id, ");
-    Iterator<Enum> it = selectedFields.iterator();
-    while (it.hasNext()) {
-      Enum field = it.next();
-      sqlClause.append(field.name());
-      if (it.hasNext()) {
-        sqlClause.append(", ");
-      }
-    }
-    return sqlClause.toString();
-  }
-
-  public void addSelectedFields(Enum... fields) {
-    selectedFields.addAll(Arrays.asList(fields));
-  }
-
-  public void addSelectedField(Enum field) {
-    selectedFields.add(field);
-  }
 }
