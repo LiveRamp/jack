@@ -234,7 +234,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement);
+    executeQuery(foundSet, completeStatement, query.getSelectedFields());
 
     return foundSet;
   }
@@ -260,7 +260,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement);
+    executeQuery(foundList, completeStatement, query.getSelectedFields());
 
     return foundList;
   }

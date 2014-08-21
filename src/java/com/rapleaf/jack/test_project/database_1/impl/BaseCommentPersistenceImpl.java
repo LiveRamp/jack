@@ -181,7 +181,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement);
+    executeQuery(foundSet, completeStatement, query.getSelectedFields());
 
     return foundSet;
   }
@@ -207,7 +207,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement);
+    executeQuery(foundList, completeStatement, query.getSelectedFields());
 
     return foundList;
   }

@@ -430,27 +430,32 @@ public class TestModelQuery extends TestCase {
 
     Collection<User> result;
 
-    /*
     result = users.query().select(User._Fields.handle)
         .bio(endsWith("man"))
         .find();
 
     for (User user : result) {
-      System.out.println(user.getNumPosts());
       assertTrue(user.getHandle() != null);
       assertTrue(user.getBio() == null);
       assertTrue(user.getCreatedAtMillis() == null);
     }
-    */
 
-
-    result = users.query().select(User._Fields.handle)
+    result = users.query().select(User._Fields.handle, User._Fields.created_at_millis)
         .bio(endsWith("man"))
         .findWithOrder();
 
     for (User user : result) {
-      System.out.println(user.getNumPosts());
       assertTrue(user.getHandle() != null);
+      assertTrue(user.getCreatedAtMillis() != null);
+      assertTrue(user.getBio() == null);
+    }
+
+    result = users.query().select(User._Fields.created_at_millis)
+        .bio(endsWith("man"))
+        .findWithOrder();
+
+    for (User user : result) {
+      assertTrue(user.getHandle().equals(""));
       assertTrue(user.getCreatedAtMillis() != null);
       assertTrue(user.getBio() == null);
     }
