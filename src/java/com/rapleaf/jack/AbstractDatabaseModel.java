@@ -280,20 +280,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       return foundSet;
     }
 
-    String statement = query.getSelectClause();
-    statement += " FROM " + getTableName() + " ";
-    statement += query.getWhereClause();
-    statement += query.getGroupByClause();
-    statement += query.getLimitClause();
-
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
+    PreparedStatement preparedStatement = getPreparedStatement(query, false);
     setStatementParameters(preparedStatement, query);
-    System.out.println(preparedStatement.toString());
-    // Extract the list of selected columns from the list of FieldSelector we have
-    Set<Enum> selectedFields = new HashSet<Enum>();
-    for (FieldSelector selector : query.getSelectedFields()) {
-      selectedFields.add(selector.getField());
-    }
+    Set<Enum> selectedFields = getSelectedFields(query);
     executeQuery(foundSet, preparedStatement, selectedFields);
 
     return foundSet;
@@ -310,23 +299,32 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       return foundList;
     }
 
+    PreparedStatement preparedStatement = getPreparedStatement(query, true);
+    setStatementParameters(preparedStatement, query);
+    Set<Enum> selectedFields = getSelectedFields(query);
+    executeQuery(foundList, preparedStatement, selectedFields);
+
+    return foundList;
+  }
+
+  private PreparedStatement getPreparedStatement(ModelQuery query, boolean order) throws IOException {
     String statement = query.getSelectClause();
     statement += " FROM users ";
     statement += query.getWhereClause();
     statement += query.getGroupByClause();
-    statement += query.getOrderByClause();
+    statement += order ? query.getOrderByClause() : "";
     statement += query.getLimitClause();
 
-    PreparedStatement preparedStatement = getPreparedStatement(statement);
-    setStatementParameters(preparedStatement, query);
+    return getPreparedStatement(statement);
+  }
+
+  private Set<Enum> getSelectedFields(ModelQuery query) throws IOException {
     // Extract the list of selected columns from the list of FieldSelector we have
     Set<Enum> selectedFields = new HashSet<Enum>();
     for (FieldSelector selector : query.getSelectedFields()) {
       selectedFields.add(selector.getField());
     }
-    executeQuery(foundList, preparedStatement, selectedFields);
-
-    return foundList;
+    return selectedFields;
   }
 
   protected String getIdSetCondition(Set<Long> ids) {
