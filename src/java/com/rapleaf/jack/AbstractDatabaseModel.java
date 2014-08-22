@@ -282,8 +282,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     String statement = query.getSelectClause();
     statement += " FROM " + getTableName() + " ";
-    statement += query.getWhereClause() + " ";
-    statement += query.getGroupByClause() + " ";
+    statement += query.getWhereClause();
+    statement += query.getGroupByClause();
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
@@ -307,9 +307,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     String statement = query.getSelectClause();
     statement += " FROM users ";
-    statement += query.getWhereClause() + " ";
-    statement += query.getGroupByClause() + " ";
-    statement += query.getOrderByClause() + " ";
+    statement += query.getWhereClause();
+    statement += query.getGroupByClause();
+    statement += query.getOrderByClause();
     statement += query.getLimitClause();
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
