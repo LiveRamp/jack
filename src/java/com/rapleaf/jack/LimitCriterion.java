@@ -23,6 +23,6 @@ package com.rapleaf.jack;
     }
 
     public String getSqlClause() {
-      return "LIMIT " + nResults + " OFFSET " + offset;
+      return "LIMIT " + nResults + " OFFSET " + offset + "";
     }
   }
