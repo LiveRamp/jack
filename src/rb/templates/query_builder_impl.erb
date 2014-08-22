@@ -3,6 +3,7 @@ package <%= root_package %>.query;
 import java.util.Set;
 
 import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
+import <%= JACK_NAMESPACE %>.AggregatorFunction;
 import <%= JACK_NAMESPACE %>.IQueryOperator;
 import <%= JACK_NAMESPACE %>.JackMatchers;
 import <%= JACK_NAMESPACE %>.WhereConstraint;
@@ -39,9 +40,18 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields, AggregatorFunction... aggregators) {
+  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
     addSelectedFields(fields);
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> selectAgg(AggregatorFunction... aggregators) {
     addAggregatedFields(aggregators);
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> groupBy(<%=model_defn.model_name %>._Fields... fields) {
+    addGroupByFields(fields);
     return this;
   }
 

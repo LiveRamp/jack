@@ -3,6 +3,7 @@ package com.rapleaf.jack.test_project.database_1.query;
 import java.util.Set;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
+import com.rapleaf.jack.AggregatorFunction;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.WhereConstraint;
@@ -41,6 +42,16 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder select(Comment._Fields... fields) {
     addSelectedFields(fields);
+    return this;
+  }
+
+  public CommentQueryBuilder selectAgg(AggregatorFunction... aggregators) {
+    addAggregatedFields(aggregators);
+    return this;
+  }
+
+  public CommentQueryBuilder groupBy(Comment._Fields... fields) {
+    addGroupByFields(fields);
     return this;
   }
 
