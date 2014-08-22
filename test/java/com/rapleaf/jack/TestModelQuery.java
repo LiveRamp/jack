@@ -3,7 +3,6 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +14,18 @@ import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static com.rapleaf.jack.JackMatchers.*;
+import static com.rapleaf.jack.JackMatchers.between;
+import static com.rapleaf.jack.JackMatchers.contains;
+import static com.rapleaf.jack.JackMatchers.endsWith;
+import static com.rapleaf.jack.JackMatchers.equalTo;
+import static com.rapleaf.jack.JackMatchers.greaterThan;
+import static com.rapleaf.jack.JackMatchers.greaterThanOrEqualTo;
+import static com.rapleaf.jack.JackMatchers.in;
+import static com.rapleaf.jack.JackMatchers.lessThan;
+import static com.rapleaf.jack.JackMatchers.lessThanOrEqualTo;
+import static com.rapleaf.jack.JackMatchers.notEqualTo;
+import static com.rapleaf.jack.JackMatchers.notIn;
+import static com.rapleaf.jack.JackMatchers.startsWith;
 import static com.rapleaf.jack.QueryOrder.ASC;
 import static com.rapleaf.jack.QueryOrder.DESC;
 
@@ -477,7 +487,7 @@ public class TestModelQuery extends TestCase {
       user.save();
     }
 
-    Collection<User> result;
+    List<User> result;
 
     result = users.query()
         .select(User._Fields.handle)
@@ -487,14 +497,8 @@ public class TestModelQuery extends TestCase {
         .findWithOrder();
 
     assertEquals(2, result.size());
-    Iterator<User> it = result.iterator();
-    User userResult;
-    userResult = it.next();
-    assertEquals("0", userResult.getHandle());
-    assertEquals(98, userResult.getNumPosts());
-    userResult = it.next();
-    assertEquals("1", userResult.getHandle());
-    assertEquals(99, userResult.getNumPosts());
+    assertEquals(98, result.get(0).getNumPosts());
+    assertEquals(99, result.get(1).getNumPosts());
 
     result = users.query()
         .select(User._Fields.handle)
@@ -504,13 +508,31 @@ public class TestModelQuery extends TestCase {
         .findWithOrder();
 
     assertEquals(2, result.size());
-    it = result.iterator();
-    userResult = it.next();
-    assertEquals("0", userResult.getHandle());
-    assertEquals(0, userResult.getNumPosts());
-    userResult = it.next();
-    assertEquals("1", userResult.getHandle());
-    assertEquals(1, userResult.getNumPosts());
+    assertEquals(0, result.get(0).getNumPosts());
+    assertEquals(1, result.get(1).getNumPosts());
 
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunction.sum(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals(2450, result.get(0).getNumPosts());
+    assertEquals(2500, result.get(1).getNumPosts());
+
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunction.avg(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals(49, result.get(0).getNumPosts());
+    assertEquals(50, result.get(1).getNumPosts());
   }
+
+
 }
