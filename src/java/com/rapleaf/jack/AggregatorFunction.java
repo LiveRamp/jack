@@ -9,10 +9,6 @@ public class AggregatorFunction {
     this.aggregatorKeyword = aggregatorKeyword;
   }
 
-  public String getAggregatorKeyword() {
-    return aggregatorKeyword;
-  }
-
   public Enum getField() {
     return field;
   }
