@@ -12,6 +12,7 @@ public class ModelQuery {
   private List<WhereConstraint> whereConstraints;
   private List<OrderCriterion> orderCriteria;
   private List<Enum> selectedFields;
+  private List<AggregatorFunction> aggregatedFields;
   private List<Enum> groupByFields;
   private LimitCriterion limitCriterion;
   private Set<Long> ids;
@@ -20,6 +21,7 @@ public class ModelQuery {
     this.whereConstraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.selectedFields = new ArrayList<Enum>();
+    this.aggregatedFields = new ArrayList<AggregatorFunction>();
     this.groupByFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
   }
@@ -70,6 +72,10 @@ public class ModelQuery {
 
   public void addGroupByFields(Enum... fields) {
     groupByFields.addAll(Arrays.asList(fields));
+  }
+
+  public void addAggregatedFields(AggregatorFunction... aggregators) {
+    aggregatedFields.addAll(Arrays.asList(aggregators));
   }
 
   public String getSelectClause() {

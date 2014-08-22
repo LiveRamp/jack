@@ -30,6 +30,14 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     query.addSelectedFields(fields);
   }
 
+  public void addAggregatedFields(AggregatorFunction... aggregators) {
+    query.addAggregatedFields(aggregators);
+  }
+
+  public void addGroupByFields(Enum... fields) {
+    query.addGroupByFields(fields);
+  }
+
   public void addIds(Set<Long> ids) {
     query.addIds(ids);
   }
