@@ -111,6 +111,9 @@ public class ModelQuery {
   }
 
   public String getWhereClause() {
+    if (ids.isEmpty() && whereConstraints.isEmpty()) {
+      return "";
+    }
     StringBuilder statementBuilder = new StringBuilder("WHERE (");
     statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
     if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
