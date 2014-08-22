@@ -8,8 +8,11 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -23,6 +26,8 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
@@ -47,7 +52,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
+    long created_at = created_at_tmp == null ? 18000000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
@@ -83,9 +88,48 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<Comment> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<Comment> findWithOrder(ModelQuery query) throws IOException {
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+
+  private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedRresult, ModelQuery query) {
+    final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
+    List<Comment> result = new ArrayList<Comment>(unorderedRresult);
+
+    Collections.sort(result, new Comparator<Comment>() {
+      public int compare(Comment t1, Comment t2) {
+        for (OrderCriterion orderCriterion : orderCriteria) {
+          int compareResult;
+          Enum field = orderCriterion.getField();
+          String fieldName = field != null ? field.toString() : "id";
+
+          Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
+          Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
+          if (o1 instanceof java.lang.Comparable) {
+            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+          } else {
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+          }
+
+          int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          compareResult = compareResult * orderDirection;
+          if (compareResult == 0) {
+            continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+        return 0;
+      }
+    });
+
+    return result;    
   }
 
   public Set<Comment> findByContent(final String value) throws IOException {

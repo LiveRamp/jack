@@ -8,8 +8,11 @@ package com.rapleaf.jack.test_project.database_1.mock_impl;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
@@ -23,6 +26,8 @@ import com.rapleaf.jack.AbstractMockDatabaseModel;
 import com.rapleaf.jack.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.QueryConstraint;
+import com.rapleaf.jack.QueryOrder;
+import com.rapleaf.jack.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Image.Id;
@@ -79,9 +84,48 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
     return super.realFind(ids, fieldsMap);
   }
 
-
   public Set<Image> find(ModelQuery query) throws IOException {
     return super.realFind(query);
+  }
+  
+  public List<Image> findWithOrder(ModelQuery query) throws IOException {
+    return sortUnorderedMockQuery(super.realFind(query), query);
+  }
+
+  private List<Image> sortUnorderedMockQuery(Set<Image> unorderedRresult, ModelQuery query) {
+    final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
+    List<Image> result = new ArrayList<Image>(unorderedRresult);
+
+    Collections.sort(result, new Comparator<Image>() {
+      public int compare(Image t1, Image t2) {
+        for (OrderCriterion orderCriterion : orderCriteria) {
+          int compareResult;
+          Enum field = orderCriterion.getField();
+          String fieldName = field != null ? field.toString() : "id";
+
+          Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
+          Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
+          if (o1 instanceof java.lang.Comparable) {
+            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+          } else {
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+          }
+
+          int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
+          compareResult = compareResult * orderDirection;
+          if (compareResult == 0) {
+            continue;
+          } else if (compareResult < 0) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+        return 0;
+      }
+    });
+
+    return result;    
   }
 
   public Set<Image> findByUserId(final Integer value) throws IOException {

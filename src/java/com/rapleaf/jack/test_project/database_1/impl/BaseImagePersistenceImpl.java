@@ -160,14 +160,14 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
       Set<Long> ids = query.getIdSet();
       if(ids != null && !ids.isEmpty()){
-      return find(ids);
+        return find(ids);
       }
       return foundSet;
     }
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
-    statementString.append(query.getSqlStatement());
+    statementString.append(query.getWhereClause());
     statementString.append(")");
 
     int retryCount = 0;
@@ -181,7 +181,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         Image._Fields field = (Image._Fields)constraint.getField();
         for (Object parameter : constraint.getParameters()) {
           if (parameter == null) {
-          continue;
+            continue;
           }
           try {
             switch (field) {
@@ -206,7 +206,61 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
         throw new IOException(e);
       }
     }
+  }
 
+  public List<Image> findWithOrder(ModelQuery query) throws IOException {
+    List<Image> foundList = new ArrayList<Image>();
+    
+    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
+      Set<Long> ids = query.getIdSet();
+      if(ids != null && !ids.isEmpty()){
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    StringBuilder statementString = new StringBuilder();
+    statementString.append("SELECT * FROM images WHERE (");
+    statementString.append(query.getWhereClause());
+    statementString.append(") ");
+    statementString.append(query.getOrderByClause());
+
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
+
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        Image._Fields field = (Image._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+            continue;
+          }
+          try {
+            switch (field) {
+              case user_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
+        }
+      }
+
+      try {
+        executeQuery(foundList, preparedStatement);
+        return foundList;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   @Override
