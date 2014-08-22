@@ -3,6 +3,7 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -482,12 +483,34 @@ public class TestModelQuery extends TestCase {
         .select(User._Fields.handle)
         .selectAgg(AggregatorFunction.max(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
-        .find();
+        .orderByHandle()
+        .findWithOrder();
 
-    System.out.println(result.size());
+    assertEquals(2, result.size());
+    Iterator<User> it = result.iterator();
+    User userResult;
+    userResult = it.next();
+    assertEquals("0", userResult.getHandle());
+    assertEquals(98, userResult.getNumPosts());
+    userResult = it.next();
+    assertEquals("1", userResult.getHandle());
+    assertEquals(99, userResult.getNumPosts());
 
-    for (User user : result) {
-      System.out.println(user);
-    }
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunction.min(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    it = result.iterator();
+    userResult = it.next();
+    assertEquals("0", userResult.getHandle());
+    assertEquals(0, userResult.getNumPosts());
+    userResult = it.next();
+    assertEquals("1", userResult.getHandle());
+    assertEquals(1, userResult.getNumPosts());
+
   }
 }

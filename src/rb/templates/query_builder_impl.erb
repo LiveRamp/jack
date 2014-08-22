@@ -42,13 +42,13 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
 
   public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
     for (<%=model_defn.model_name %>._Fields field : fields){
-      addSelectedFields(new FieldSelector(fields));
+      addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
   public <%= model_defn.query_builder_name %> selectAgg(FieldSelector... aggregatedFields) {
-    addAggregatedFields(aggregatedFields);
+    addSelectedFields(aggregatedFields);
     return this;
   }
 

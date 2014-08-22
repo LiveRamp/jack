@@ -42,13 +42,13 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder select(Post._Fields... fields) {
     for (Post._Fields field : fields){
-      addSelectedFields(new FieldSelector(fields));
+      addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
   public PostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addAggregatedFields(aggregatedFields);
+    addSelectedFields(aggregatedFields);
     return this;
   }
 

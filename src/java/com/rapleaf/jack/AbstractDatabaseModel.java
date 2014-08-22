@@ -291,7 +291,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   public List<T> findWithOrder(ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<T>();
 
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
+    if (query.isEmptyQuery()) {
       Set<Long> ids = query.getIdSet();
       if (ids != null && !ids.isEmpty()) {
         return findWithOrder(ids, query);

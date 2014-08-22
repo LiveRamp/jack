@@ -42,13 +42,13 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
 
   public ImageQueryBuilder select(Image._Fields... fields) {
     for (Image._Fields field : fields){
-      addSelectedFields(new FieldSelector(fields));
+      addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
   public ImageQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addAggregatedFields(aggregatedFields);
+    addSelectedFields(aggregatedFields);
     return this;
   }
 

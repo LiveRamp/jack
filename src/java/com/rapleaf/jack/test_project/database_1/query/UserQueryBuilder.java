@@ -42,13 +42,13 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
 
   public UserQueryBuilder select(User._Fields... fields) {
     for (User._Fields field : fields){
-      addSelectedFields(new FieldSelector(fields));
+      addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
   public UserQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addAggregatedFields(aggregatedFields);
+    addSelectedFields(aggregatedFields);
     return this;
   }
 

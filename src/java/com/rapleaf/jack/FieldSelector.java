@@ -28,8 +28,4 @@ public class FieldSelector {
     // Hack to keep the name of the column in order to be able to access it later
     return aggregatorKeyword + "(" + field + ") AS " + field;
   }
-
-  public boolean hasSameField(FieldSelector selector) {
-    return selector.getField() == null ? field == null : selector.getField().equals(field);
-  }
 }

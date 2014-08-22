@@ -42,13 +42,13 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder select(Comment._Fields... fields) {
     for (Comment._Fields field : fields){
-      addSelectedFields(new FieldSelector(fields));
+      addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
   public CommentQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addAggregatedFields(aggregatedFields);
+    addSelectedFields(aggregatedFields);
     return this;
   }
 
