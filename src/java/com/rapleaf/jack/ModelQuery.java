@@ -11,8 +11,7 @@ public class ModelQuery {
 
   private List<WhereConstraint> whereConstraints;
   private List<OrderCriterion> orderCriteria;
-  private List<Enum> selectedFields;
-  private List<AggregatorFunction> aggregatedFields;
+  private List<FieldSelector> selectedFields;
   private List<Enum> groupByFields;
   private LimitCriterion limitCriterion;
   private Set<Long> ids;
@@ -20,13 +19,12 @@ public class ModelQuery {
   public ModelQuery() {
     this.whereConstraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
-    this.selectedFields = new ArrayList<Enum>();
-    this.aggregatedFields = new ArrayList<AggregatorFunction>();
+    this.selectedFields = new ArrayList<FieldSelector>();
     this.groupByFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
   }
 
-  public List<Enum> getSelectedFields() {
+  public List<FieldSelector> getSelectedFields() {
     return selectedFields;
   }
 
@@ -66,7 +64,7 @@ public class ModelQuery {
     orderCriteria.add(orderCriterion);
   }
 
-  public void addSelectedFields(Enum... fields) {
+  public void addSelectedFields(FieldSelector... fields) {
     selectedFields.addAll(Arrays.asList(fields));
   }
 
@@ -74,36 +72,20 @@ public class ModelQuery {
     groupByFields.addAll(Arrays.asList(fields));
   }
 
-  public void addAggregatedFields(AggregatorFunction... aggregators) {
-    aggregatedFields.addAll(Arrays.asList(aggregators));
-  }
-
   public String getSelectClause() {
     StringBuilder sqlClause = new StringBuilder("SELECT ");
 
-    if (selectedFields.isEmpty() && aggregatedFields.isEmpty()) {
+    if (selectedFields.isEmpty()) {
       sqlClause.append("*");
       return sqlClause.toString();
     }
 
     sqlClause.append("id, ");
-    Iterator<Enum> it1 = selectedFields.iterator();
+    Iterator<FieldSelector> it1 = selectedFields.iterator();
     while (it1.hasNext()) {
-      Enum field = it1.next();
-      sqlClause.append(field.name());
+      FieldSelector selector = it1.next();
+      sqlClause.append(selector.getSqlClause());
       if (it1.hasNext()) {
-        sqlClause.append(", ");
-      }
-    }
-
-    if (!selectedFields.isEmpty() && !aggregatedFields.isEmpty()) {
-      sqlClause.append(", ");
-    }
-    Iterator<AggregatorFunction> it2 = aggregatedFields.iterator();
-    while (it2.hasNext()) {
-      AggregatorFunction field = it2.next();
-      sqlClause.append(field.getSqlClause());
-      if (it2.hasNext()) {
         sqlClause.append(", ");
       }
     }
@@ -195,7 +177,6 @@ public class ModelQuery {
 
   public boolean isEmptyQuery() {
     return whereConstraints.isEmpty()
-        && selectedFields.isEmpty()
-        && aggregatedFields.isEmpty();
+        && selectedFields.isEmpty();
   }
 }
