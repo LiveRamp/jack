@@ -3,7 +3,6 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -477,8 +476,9 @@ public class TestModelQuery extends TestCase {
       user.save();
     }
 
-    Collection<User> result;
+    List<User> result;
 
+    // Test Max
     result = users.query()
         .select(User._Fields.handle)
         .selectAgg(AggregatorFunction.max(User._Fields.num_posts))
@@ -487,15 +487,12 @@ public class TestModelQuery extends TestCase {
         .findWithOrder();
 
     assertEquals(2, result.size());
-    Iterator<User> it = result.iterator();
-    User userResult;
-    userResult = it.next();
-    assertEquals("0", userResult.getHandle());
-    assertEquals(98, userResult.getNumPosts());
-    userResult = it.next();
-    assertEquals("1", userResult.getHandle());
-    assertEquals(99, userResult.getNumPosts());
+    assertEquals("0", result.get(0).getHandle());
+    assertEquals(98, result.get(0).getNumPosts());
+    assertEquals("1", result.get(1).getHandle());
+    assertEquals(99, result.get(1).getNumPosts());
 
+    // Test Min
     result = users.query()
         .select(User._Fields.handle)
         .selectAgg(AggregatorFunction.min(User._Fields.num_posts))
@@ -503,14 +500,22 @@ public class TestModelQuery extends TestCase {
         .orderByHandle()
         .findWithOrder();
 
-    assertEquals(2, result.size());
-    it = result.iterator();
-    userResult = it.next();
-    assertEquals("0", userResult.getHandle());
-    assertEquals(0, userResult.getNumPosts());
-    userResult = it.next();
-    assertEquals("1", userResult.getHandle());
-    assertEquals(1, userResult.getNumPosts());
+    assertEquals(0, result.get(0).getNumPosts());
+    assertEquals(1, result.get(1).getNumPosts());
+
+
+    // Test Count
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunction.count(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(50, result.get(0).getNumPosts());
+    assertEquals(50, result.get(1).getNumPosts());
+
+    // Test Count(*)
 
   }
 }
