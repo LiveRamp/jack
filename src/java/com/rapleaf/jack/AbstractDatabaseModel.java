@@ -294,7 +294,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     for (FieldSelector selector : query.getSelectedFields()) {
       selectedFields.add(selector.getField());
     }
-    ;
     executeQuery(foundSet, preparedStatement, selectedFields);
 
     return foundSet;
@@ -320,7 +319,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     setStatementParameters(preparedStatement, query);
-    executeQuery(foundList, preparedStatement, query.getSelectedFields());
+    // Extract the list of selected columns from the list of FieldSelector we have
+    Set<Enum> selectedFields = new HashSet<Enum>();
+    for (FieldSelector selector : query.getSelectedFields()) {
+      selectedFields.add(selector.getField());
+    }
+    executeQuery(foundList, preparedStatement, selectedFields);
 
     return foundList;
   }

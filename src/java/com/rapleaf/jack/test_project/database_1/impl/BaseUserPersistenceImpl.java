@@ -316,7 +316,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected User instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+  protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new User(rs.getLong("id"),
       allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : "",

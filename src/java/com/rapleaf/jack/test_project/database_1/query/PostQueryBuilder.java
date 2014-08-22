@@ -3,7 +3,7 @@ package com.rapleaf.jack.test_project.database_1.query;
 import java.util.Set;
 
 import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.AggregatorFunction;
+import com.rapleaf.jack.FieldSelector;
 import com.rapleaf.jack.IQueryOperator;
 import com.rapleaf.jack.JackMatchers;
 import com.rapleaf.jack.WhereConstraint;
@@ -41,12 +41,14 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder select(Post._Fields... fields) {
-    addSelectedFields(fields);
+    for (Post._Fields field : fields){
+      addSelectedFields(new FieldSelector(fields));
+    }
     return this;
   }
 
-  public PostQueryBuilder selectAgg(AggregatorFunction... aggregators) {
-    addAggregatedFields(aggregators);
+  public PostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addAggregatedFields(aggregatedFields);
     return this;
   }
 

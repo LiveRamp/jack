@@ -224,7 +224,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  protected Post instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+  protected Post instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Post(rs.getLong("id"),
       allFields || selectedFields.contains(Post._Fields.title) ? rs.getString("title") : null,
