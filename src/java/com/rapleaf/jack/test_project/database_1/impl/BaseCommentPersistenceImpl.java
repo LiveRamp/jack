@@ -6,6 +6,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -134,32 +135,45 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    for (int i = 0; i < nonNullValues.size(); i++) {
-      Comment._Fields field = nonNullValueFields.get(i);
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      for (int i = 0; i < nonNullValues.size(); i++) {
+        Comment._Fields field = nonNullValueFields.get(i);
+        try {
+          switch (field) {
+            case content:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case commenter_id:
+              preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+              break;
+            case commented_on_id:
+              preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
+              break;
+            case created_at:
+              preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+
       try {
-        switch (field) {
-          case content:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case commenter_id:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
-            break;
-          case commented_on_id:
-            preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
-            break;
-          case created_at:
-            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
-            break;
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
   }
 
   public Set<Comment> find(ModelQuery query) throws IOException {
@@ -178,38 +192,52 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     statementString.append(query.getSqlStatement());
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
-      Comment._Fields field = (Comment._Fields)constraint.getField();
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-        continue;
-        }
-        try {
-          switch (field) {
-            case content:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case commenter_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-            case commented_on_id:
-              preparedStatement.setLong(++index, (Long) parameter);
-              break;
-            case created_at:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-              break;
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        Comment._Fields field = (Comment._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+          continue;
           }
-        } catch (SQLException e) {
-          throw new IOException(e);
+          try {
+            switch (field) {
+              case content:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case commenter_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+              case commented_on_id:
+                preparedStatement.setLong(++index, (Long) parameter);
+                break;
+              case created_at:
+                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
         }
       }
-    }
-    executeQuery(foundSet, preparedStatement);
 
-    return foundSet;
+      try {
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+
   }
 
   @Override

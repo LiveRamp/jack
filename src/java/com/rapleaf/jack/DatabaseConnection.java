@@ -96,7 +96,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       if(conn == null) {
         Class.forName(driverClass);
         conn = DriverManager.getConnection(connectionString, username, password);
-      } else if (isExpired()) {
+      } else if (isExpired() || conn.isClosed()) {
         resetConnection();
       }
       updateExpiration();
