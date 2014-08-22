@@ -9,6 +9,11 @@ public class FieldSelector {
     this.aggregatorKeyword = aggregatorKeyword;
   }
 
+  public FieldSelector(Enum field) {
+    this.field = field;
+    this.aggregatorKeyword = null;
+  }
+
   public Enum getField() {
     return field;
   }
