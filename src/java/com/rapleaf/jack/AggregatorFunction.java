@@ -2,15 +2,15 @@ package com.rapleaf.jack;
 
 public class AggregatorFunction {
   private Enum field;
-  private String sqlKeyword;
+  private String aggregatorKeyword;
 
-  public AggregatorFunction(Enum field, String sqlKeyword) {
+  public AggregatorFunction(Enum field, String aggregatorKeyword) {
     this.field = field;
-    this.sqlKeyword = sqlKeyword;
+    this.aggregatorKeyword = aggregatorKeyword;
   }
 
-  public String getSqlKeyword() {
-    return sqlKeyword;
+  public String getAggregatorKeyword() {
+    return aggregatorKeyword;
   }
 
   public Enum getField() {
@@ -19,10 +19,10 @@ public class AggregatorFunction {
 
   public String getSqlClause() {
     if (field == null) {
-      return sqlKeyword + "(*)";
+      return aggregatorKeyword + "(*)";
     }
     // Hack to keep the name of the column in order to be able to access it later
-    return sqlKeyword + "(" + field + ") AS " + field;
+    return aggregatorKeyword + "(" + field + ") AS " + field;
   }
 
   public static AggregatorFunction count(Enum field) {
