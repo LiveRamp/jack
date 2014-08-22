@@ -46,6 +46,7 @@ public class TestModelQuery extends TestCase {
     testQueryByIdWithOrder(dbs);
     testQueryWithLimit(dbs);
     testQueryWithSelect(dbs);
+    testGroupBy(dbs);
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException {
@@ -463,6 +464,30 @@ public class TestModelQuery extends TestCase {
       assertTrue(user.getHandle().equals(""));
       assertTrue(user.getCreatedAtMillis() != null);
       assertTrue(user.getBio() == null);
+    }
+  }
+
+  public void testGroupBy(IDatabases dbs) throws IOException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    for (int i = 0; i < 100; i++) {
+      User user = users.createDefaultInstance().setHandle(String.valueOf(i % 2)).setNumPosts(i);
+      user.save();
+    }
+
+    Collection<User> result;
+
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunction.max(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .find();
+
+    System.out.println(result.size());
+
+    for (User user : result) {
+      System.out.println(user);
     }
   }
 }
