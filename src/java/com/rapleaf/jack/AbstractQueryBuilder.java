@@ -26,12 +26,8 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     query.setLimitCriterion(limitCriterion);
   }
 
-  public void addSelectedFields(Enum... fields) {
+  public void addSelectedFields(FieldSelector... fields) {
     query.addSelectedFields(fields);
-  }
-
-  public void addAggregatedFields(AggregatorFunction... aggregators) {
-    query.addAggregatedFields(aggregators);
   }
 
   public void addGroupByFields(Enum... fields) {
