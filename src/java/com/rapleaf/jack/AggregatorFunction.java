@@ -17,7 +17,7 @@ public class AggregatorFunction {
     return field;
   }
 
-  public String getsqlClause() {
+  public String getSqlClause() {
     if (field == null) {
       return sqlKeyword + "(*)";
     }

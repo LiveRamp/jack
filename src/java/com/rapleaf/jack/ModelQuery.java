@@ -81,17 +81,29 @@ public class ModelQuery {
   public String getSelectClause() {
     StringBuilder sqlClause = new StringBuilder("SELECT ");
 
-    if (selectedFields.isEmpty()) {
+    if (selectedFields.isEmpty() && aggregatedFields.isEmpty()) {
       sqlClause.append("*");
       return sqlClause.toString();
     }
 
     sqlClause.append("id, ");
-    Iterator<Enum> it = selectedFields.iterator();
-    while (it.hasNext()) {
-      Enum field = it.next();
+    Iterator<Enum> it1 = selectedFields.iterator();
+    while (it1.hasNext()) {
+      Enum field = it1.next();
       sqlClause.append(field.name());
-      if (it.hasNext()) {
+      if (it1.hasNext()) {
+        sqlClause.append(", ");
+      }
+    }
+
+    if (!selectedFields.isEmpty() && !aggregatedFields.isEmpty()) {
+      sqlClause.append(", ");
+    }
+    Iterator<AggregatorFunction> it2 = aggregatedFields.iterator();
+    while (it2.hasNext()) {
+      AggregatorFunction field = it2.next();
+      sqlClause.append(field.getSqlClause());
+      if (it2.hasNext()) {
         sqlClause.append(", ");
       }
     }
