@@ -78,16 +78,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder handle(String value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, JackMatchers.<String>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder handle(IQueryOperator<String> operator) {
+  public UserQueryBuilder whereHandle(IQueryOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, operator));
     return this;
   }
@@ -103,16 +98,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder createdAtMillis(Long value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder createdAtMillis(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereCreatedAtMillis(IQueryOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, operator));
     return this;
   }
@@ -128,16 +118,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder numPosts(Integer value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, JackMatchers.<Integer>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder numPosts(IQueryOperator<Integer> operator) {
+  public UserQueryBuilder whereNumPosts(IQueryOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, operator));
     return this;
   }
@@ -153,16 +138,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDate(Long value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someDate(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDate(IQueryOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, operator));
     return this;
   }
@@ -178,16 +158,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDatetime(Long value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someDatetime(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDatetime(IQueryOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, operator));
     return this;
   }
@@ -203,16 +178,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder bio(String value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, JackMatchers.<String>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder bio(IQueryOperator<String> operator) {
+  public UserQueryBuilder whereBio(IQueryOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, operator));
     return this;
   }
@@ -228,16 +198,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someBinary(byte[] value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.<byte[]>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someBinary(IQueryOperator<byte[]> operator) {
+  public UserQueryBuilder whereSomeBinary(IQueryOperator<byte[]> operator) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, operator));
     return this;
   }
@@ -253,16 +218,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someFloat(Double value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, JackMatchers.<Double>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someFloat(IQueryOperator<Double> operator) {
+  public UserQueryBuilder whereSomeFloat(IQueryOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, operator));
     return this;
   }
@@ -278,16 +238,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someDecimal(Double value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, JackMatchers.<Double>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someDecimal(IQueryOperator<Double> operator) {
+  public UserQueryBuilder whereSomeDecimal(IQueryOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, operator));
     return this;
   }
@@ -303,16 +258,11 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder someBoolean(Boolean value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.<Boolean>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public UserQueryBuilder someBoolean(IQueryOperator<Boolean> operator) {
+  public UserQueryBuilder whereSomeBoolean(IQueryOperator<Boolean> operator) {
     addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }

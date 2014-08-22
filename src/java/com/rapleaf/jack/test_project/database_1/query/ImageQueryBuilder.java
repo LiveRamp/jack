@@ -78,16 +78,11 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder userId(Integer value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.<Integer>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public ImageQueryBuilder userId(IQueryOperator<Integer> operator) {
+  public ImageQueryBuilder whereUserId(IQueryOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
     return this;
   }

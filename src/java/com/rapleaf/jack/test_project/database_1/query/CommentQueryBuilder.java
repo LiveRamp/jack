@@ -78,16 +78,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder content(String value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, JackMatchers.<String>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder content(IQueryOperator<String> operator) {
+  public CommentQueryBuilder whereContent(IQueryOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, operator));
     return this;
   }
@@ -103,16 +98,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commenterId(Integer value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.<Integer>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder commenterId(IQueryOperator<Integer> operator) {
+  public CommentQueryBuilder whereCommenterId(IQueryOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, operator));
     return this;
   }
@@ -128,16 +118,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commentedOnId(Long value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder commentedOnId(IQueryOperator<Long> operator) {
+  public CommentQueryBuilder whereCommentedOnId(IQueryOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, operator));
     return this;
   }
@@ -153,16 +138,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder createdAt(Long value) {
-    if(value == null) {
-      addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder createdAt(IQueryOperator<Long> operator) {
+  public CommentQueryBuilder whereCreatedAt(IQueryOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, operator));
     return this;
   }

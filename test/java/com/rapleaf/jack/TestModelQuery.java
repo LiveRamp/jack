@@ -108,66 +108,66 @@ public class TestModelQuery extends TestCase {
     Set<User> result;
 
     // Equal To
-    result = users.query().handle(equalTo("Brad")).find();
+    result = users.query().whereHandle(equalTo("Brad")).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(brad));
 
     // Between
-    result = users.query().numPosts(between(4, 8)).find();
+    result = users.query().whereNumPosts(between(4, 8)).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(james));
 
     // Less Than
-    result = users.query().createdAtMillis(lessThan(2l)).find();
+    result = users.query().whereCreatedAtMillis(lessThan(2l)).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brad));
     assertTrue(result.contains(brandon));
 
     // Greater Than
-    result = users.query().createdAtMillis(greaterThan(1l)).find();
+    result = users.query().whereCreatedAtMillis(greaterThan(1l)).find();
     assertEquals(3, result.size());
 
     // Less Than Or Equal To
-    result = users.query().createdAtMillis(lessThanOrEqualTo(2l)).find();
+    result = users.query().whereCreatedAtMillis(lessThanOrEqualTo(2l)).find();
     assertEquals(4, result.size());
 
     // Greater Than Or Equal To
-    result = users.query().createdAtMillis(greaterThanOrEqualTo(1l)).find();
+    result = users.query().whereCreatedAtMillis(greaterThanOrEqualTo(1l)).find();
     assertEquals(5, result.size());
 
     // Ends With
-    result = users.query().bio(endsWith("er")).find();
+    result = users.query().whereBio(endsWith("er")).find();
     assertEquals(5, result.size());
 
     // StartsWith
-    result = users.query().bio(startsWith("er")).find();
+    result = users.query().whereBio(startsWith("er")).find();
     assertTrue(result.isEmpty());
 
     // Contains and In
-    result = users.query().bio(contains("f"))
-        .numPosts(in(1, 3, 5))
+    result = users.query().whereBio(contains("f"))
+        .whereNumPosts(in(1, 3, 5))
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(james));
 
     // Not In and Not Equal To
-    result = users.query().handle(notIn("Brad", "Brandon", "Jennifer", "John"))
-        .numPosts(notEqualTo(5))
+    result = users.query().whereHandle(notIn("Brad", "Brandon", "Jennifer", "John"))
+        .whereNumPosts(notEqualTo(5))
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(casey));
 
-    result = users.query().someDatetime(JackMatchers.<Long>isNull()).find();
+    result = users.query().whereSomeDatetime(JackMatchers.<Long>isNull()).find();
     assertEquals(3, result.size());
 
-    result = users.query().someDatetime(JackMatchers.<Long>isNotNull()).find();
+    result = users.query().whereSomeDatetime(JackMatchers.<Long>isNotNull()).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brandon));
     assertTrue(result.contains(james));
 
     // If a null parameter is passed, an exeception should be thrown
     try {
-      users.query().handle(in(null, "brandon")).find();
+      users.query().whereHandle(in(null, "brandon")).find();
       fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
       // This exception is expected
@@ -208,7 +208,7 @@ public class TestModelQuery extends TestCase {
     sampleIds2.add(sampleUsers[3].getId());
 
     result = users.query()
-        .numPosts(greaterThan(0))
+        .whereNumPosts(greaterThan(0))
         .id(sampleIds2)
         .find();
     assertEquals(1, result.size());
@@ -299,7 +299,7 @@ public class TestModelQuery extends TestCase {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userA));
     assertEquals(1, orderedResult1.indexOf(userB));
@@ -312,7 +312,7 @@ public class TestModelQuery extends TestCase {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userH));
@@ -382,7 +382,7 @@ public class TestModelQuery extends TestCase {
     List<User> resultList;
 
     resultList = users.query()
-        .numPosts(lessThan(5))
+        .whereNumPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
         .findWithOrder();
@@ -393,7 +393,7 @@ public class TestModelQuery extends TestCase {
     }
 
     resultList = users.query()
-        .numPosts(greaterThan(3))
+        .whereNumPosts(greaterThan(3))
         .orderByNumPosts()
         .limit(2, 3)
         .findWithOrder();
@@ -406,7 +406,7 @@ public class TestModelQuery extends TestCase {
     Set<User> resultSet;
 
     resultSet = users.query()
-        .numPosts(lessThan(5))
+        .whereNumPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
         .find();
@@ -414,7 +414,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(3, resultSet.size());
 
     resultSet = users.query()
-        .numPosts(greaterThan(3))
+        .whereNumPosts(greaterThan(3))
         .orderByNumPosts()
         .limit(2, 3)
         .find();
@@ -437,7 +437,7 @@ public class TestModelQuery extends TestCase {
     Collection<User> result;
 
     result = users.query().select(User._Fields.handle)
-        .bio(endsWith("man"))
+        .whereBio(endsWith("man"))
         .find();
 
     for (User user : result) {
@@ -447,7 +447,7 @@ public class TestModelQuery extends TestCase {
     }
 
     result = users.query().select(User._Fields.handle, User._Fields.created_at_millis)
-        .bio(endsWith("man"))
+        .whereBio(endsWith("man"))
         .findWithOrder();
 
     for (User user : result) {
@@ -457,7 +457,7 @@ public class TestModelQuery extends TestCase {
     }
 
     result = users.query().select(User._Fields.created_at_millis)
-        .bio(endsWith("man"))
+        .whereBio(endsWith("man"))
         .findWithOrder();
 
     for (User user : result) {
