@@ -272,7 +272,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   public Set<T> find(ModelQuery query) throws IOException {
     Set<T> foundSet = new HashSet<T>();
 
-    if (query.getWhereConstraints() == null || query.getWhereConstraints().isEmpty()) {
+    if (query.isEmptyQuery()) {
       Set<Long> ids = query.getIdSet();
       if (ids != null && !ids.isEmpty()) {
         return find(ids);
@@ -288,6 +288,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     setStatementParameters(preparedStatement, query);
+    System.out.println(preparedStatement.toString());
     executeQuery(foundSet, preparedStatement, query.getSelectedFields());
 
     return foundSet;

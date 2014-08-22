@@ -190,4 +190,9 @@ public class ModelQuery {
     return limitCriterion.getSqlClause();
   }
 
+  public boolean isEmptyQuery() {
+    return whereConstraints.isEmpty()
+        && selectedFields.isEmpty()
+        && aggregatedFields.isEmpty();
+  }
 }
