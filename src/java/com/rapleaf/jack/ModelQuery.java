@@ -101,8 +101,8 @@ public class ModelQuery {
     }
     Iterator<AggregatorFunction> it2 = aggregatedFields.iterator();
     while (it2.hasNext()) {
-      AggregatorFunction field = it2.next();
-      sqlClause.append(field.getSqlClause());
+      AggregatorFunction aggregator = it2.next();
+      sqlClause.append(aggregator.getSqlClause());
       if (it2.hasNext()) {
         sqlClause.append(", ");
       }
