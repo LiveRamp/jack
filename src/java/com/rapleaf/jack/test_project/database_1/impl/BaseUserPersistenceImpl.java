@@ -6,6 +6,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -169,50 +170,63 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    for (int i = 0; i < nonNullValues.size(); i++) {
-      User._Fields field = nonNullValueFields.get(i);
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      for (int i = 0; i < nonNullValues.size(); i++) {
+        User._Fields field = nonNullValueFields.get(i);
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
+              break;
+            case num_posts:
+              preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+              break;
+            case some_date:
+              preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+              break;
+            case bio:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case some_binary:
+              preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
+              break;
+            case some_float:
+              preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(i+1, (Boolean) nonNullValues.get(i));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+
       try {
-        switch (field) {
-          case handle:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case created_at_millis:
-            preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
-            break;
-          case num_posts:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
-            break;
-          case some_date:
-            preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
-            break;
-          case some_datetime:
-            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
-            break;
-          case bio:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case some_binary:
-            preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
-            break;
-          case some_float:
-            preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
-            break;
-          case some_decimal:
-            preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
-            break;
-          case some_boolean:
-            preparedStatement.setBoolean(i+1, (Boolean) nonNullValues.get(i));
-            break;
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
   }
 
   @Override

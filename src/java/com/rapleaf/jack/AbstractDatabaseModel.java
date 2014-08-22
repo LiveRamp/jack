@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
 import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -35,7 +34,7 @@ import java.util.Set;
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
 
-  private static final int MAX_CONNECTION_RETRIES = 1;
+  protected static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
 
   protected static interface AttrSetter {
@@ -128,21 +127,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     ResultSet generatedKeys = null;
     while (true) {
       try {
-        stmt = conn.getPreparedStatement(insertStatement,
-            Statement.RETURN_GENERATED_KEYS);
+        stmt = conn.getPreparedStatement(insertStatement, Statement.RETURN_GENERATED_KEYS);
         attrSetter.set(stmt);
         stmt.execute();
         generatedKeys = stmt.getGeneratedKeys();
         generatedKeys.next();
         long newId = generatedKeys.getLong(1);
         return newId;
-      } catch (SQLNonTransientConnectionException e) {
-        if (!conn.getAutoCommit()) {
-          /* If auto-commit isn't on the transaction will need to be rolled back
-           * and replaced and that's outside the scope of this method.
-           */
-          throw new IOException(e);
-        }
+      } catch (SQLRecoverableException e) {
         conn.resetConnection();
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -159,10 +151,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           }
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
-        } catch (SQLNonTransientConnectionException e) {
-          conn.resetConnection();
         } catch (SQLException e) {
-          throw new IOException(e);
         }
       }
     }
@@ -222,7 +211,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
-          throw new IOException(e);
         }
       }
     }
@@ -269,7 +257,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundList;
   }
 
-  public Set<T> find(ModelQuery query) throws IOException {
+  public Set<T> find(ModelQuery query) throws IOException, SQLException {
     Set<T> foundSet = new HashSet<T>();
 
     if (query.isEmptyQuery()) {
@@ -280,15 +268,30 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       return foundSet;
     }
 
-    PreparedStatement preparedStatement = getPreparedStatement(query, false);
-    setStatementParameters(preparedStatement, query);
-    Set<Enum> selectedFields = getSelectedFields(query);
-    executeQuery(foundSet, preparedStatement, selectedFields);
+    String statementString = getPreparedStatementString(query, false);
 
-    return foundSet;
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
+
+    while(true) {
+      preparedStatement = getPreparedStatement(statementString);
+      setStatementParameters(preparedStatement, query);
+      Set<Enum> selectedFields = getSelectedFields(query);
+
+      try {
+        executeQuery(foundSet, preparedStatement, selectedFields);
+        return foundSet;
+      } catch (SQLRecoverableException e){
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
-  public List<T> findWithOrder(ModelQuery query) throws IOException {
+  public List<T> findWithOrder(ModelQuery query) throws IOException, SQLException {
     List<T> foundList = new ArrayList<T>();
 
     if (query.isEmptyQuery()) {
@@ -299,15 +302,30 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       return foundList;
     }
 
-    PreparedStatement preparedStatement = getPreparedStatement(query, true);
-    setStatementParameters(preparedStatement, query);
-    Set<Enum> selectedFields = getSelectedFields(query);
-    executeQuery(foundList, preparedStatement, selectedFields);
+    String statementString = getPreparedStatementString(query, true);
 
-    return foundList;
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
+
+    while(true) {
+      preparedStatement = getPreparedStatement(statementString);
+      setStatementParameters(preparedStatement, query);
+      Set<Enum> selectedFields = getSelectedFields(query);
+
+      try {
+        executeQuery(foundList, preparedStatement, selectedFields);
+        return foundList;
+      } catch (SQLRecoverableException e){
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
-  private PreparedStatement getPreparedStatement(ModelQuery query, boolean order) throws IOException {
+  private String getPreparedStatementString(ModelQuery query, boolean order) throws IOException {
     String statement = query.getSelectClause();
     statement += " FROM users ";
     statement += query.getWhereClause();
@@ -315,7 +333,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     statement += order ? query.getOrderByClause() : "";
     statement += query.getLimitClause();
 
-    return getPreparedStatement(statement);
+    return statement;
   }
 
   private Set<Enum> getSelectedFields(ModelQuery query) throws IOException {
@@ -343,60 +361,56 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   protected abstract void setStatementParameters(PreparedStatement statement, ModelQuery query) throws IOException;
 
-  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws SQLException {
     executeQuery(foundSet, stmt, null);
   }
 
-  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws IOException {
-    int retryCount = 0;
-
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws SQLException {
     ResultSet rs = null;
 
     try {
-      while (true) {
-        try {
-          rs = stmt.executeQuery();
-          while (rs.next()) {
-            T inst = instanceFromResultSet(rs, selectedFields);
-            inst.setCreated(true);
-            foundSet.add(inst);
-            if (useCache) {
-              cachedById.put(inst.getId(), inst);
-            }
-          }
-          break;
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-          if (++retryCount > MAX_CONNECTION_RETRIES) {
-            throw new IOException(e);
-          }
-        } catch (SQLException e) {
-          throw new IOException(e);
-        } finally {
-          try {
-            if (rs != null) {
-              rs.close();
-            }
-          } catch (SQLRecoverableException e) {
-            conn.resetConnection();
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        T inst = instanceFromResultSet(rs, selectedFields);
+        inst.setCreated(true);
+        foundSet.add(inst);
+        if (useCache) {
+          cachedById.put(inst.getId(), inst);
         }
       }
+    } catch (SQLRecoverableException e) {
+      conn.resetConnection();
+      throw e;
     } finally {
       try {
+        if (rs != null) {
+          rs.close();
+        }
         stmt.close();
       } catch (SQLRecoverableException e) {
         conn.resetConnection();
       } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
   }
 
   protected void executeQuery(Collection<T> foundSet, String statemenString) throws IOException {
-    executeQuery(foundSet, conn.getPreparedStatement(statemenString));
+    int retryCount = 0;
+    PreparedStatement stmt;
+
+    while (true) {
+      try {
+        stmt = conn.getPreparedStatement(statemenString);
+        executeQuery(foundSet, stmt);
+        break;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   protected PreparedStatement getPreparedStatement(String statemenString) {
@@ -524,7 +538,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
-          throw new IOException(e);
         }
       }
     }
@@ -604,7 +617,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           } catch (SQLRecoverableException e) {
             conn.resetConnection();
           } catch (SQLException e) {
-            throw new IOException(e);
           }
         }
       }
@@ -758,7 +770,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         } catch (SQLRecoverableException e) {
           conn.resetConnection();
         } catch (SQLException e) {
-          throw new IOException(e);
         }
       }
     }

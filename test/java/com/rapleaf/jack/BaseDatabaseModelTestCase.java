@@ -2,6 +2,7 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -492,7 +493,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(post, posts.find(50));
   }
 
-  public void testFindWithFieldsMap() throws IOException {
+  public void testFindWithFieldsMap() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
 
     User u1 = users.create("a_handle", 2);

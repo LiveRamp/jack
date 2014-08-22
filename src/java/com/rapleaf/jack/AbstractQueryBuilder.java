@@ -1,6 +1,7 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -47,12 +48,12 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
   }
 
   @Override
-  public Set<M> find() throws IOException {
+  public Set<M> find() throws IOException, SQLException {
     return caller.find(query);
   }
 
   @Override
-  public List<M> findWithOrder() throws IOException {
+  public List<M> findWithOrder() throws IOException, SQLException {
     return caller.findWithOrder(query);
   }
 }

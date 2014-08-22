@@ -6,6 +6,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -139,32 +140,45 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    for (int i = 0; i < nonNullValues.size(); i++) {
-      Post._Fields field = nonNullValueFields.get(i);
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      for (int i = 0; i < nonNullValues.size(); i++) {
+        Post._Fields field = nonNullValueFields.get(i);
+        try {
+          switch (field) {
+            case title:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case posted_at_millis:
+              preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
+              break;
+            case user_id:
+              preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+              break;
+            case updated_at:
+              preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+
       try {
-        switch (field) {
-          case title:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case posted_at_millis:
-            preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
-            break;
-          case user_id:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
-            break;
-          case updated_at:
-            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
-            break;
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
   }
 
   @Override
