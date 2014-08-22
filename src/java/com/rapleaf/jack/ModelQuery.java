@@ -111,16 +111,17 @@ public class ModelQuery {
   }
 
   public String getWhereClause() {
-    if (ids.isEmpty() && whereConstraints.isEmpty()) {
-      return "";
+    StringBuilder statementBuilder = new StringBuilder();
+    if (!ids.isEmpty() || !whereConstraints.isEmpty()) {
+      statementBuilder.append("WHERE (");
+
+      statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
+      if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
+        statementBuilder.append(" AND ");
+      }
+      statementBuilder.append(getWhereSqlCriteria());
+      statementBuilder.append(") ");
     }
-    StringBuilder statementBuilder = new StringBuilder("WHERE (");
-    statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
-    if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
-      statementBuilder.append(" AND ");
-    }
-    statementBuilder.append(getWhereSqlCriteria());
-    statementBuilder.append(")");
     return statementBuilder.toString();
   }
 
@@ -163,6 +164,7 @@ public class ModelQuery {
           sb.append(", ");
         }
       }
+      sb.append(" ");
     }
     return sb.toString();
   }
@@ -179,6 +181,7 @@ public class ModelQuery {
           sb.append(", ");
         }
       }
+      sb.append(" ");
     }
     return sb.toString();
   }
