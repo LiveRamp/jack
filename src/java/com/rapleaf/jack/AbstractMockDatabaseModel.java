@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
 public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
@@ -113,6 +113,15 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   }
 
   protected Set<T> realFind(ModelQuery query) throws IOException {
+
+    if (!query.getSelectedFields().isEmpty()) {
+      throw new UnsupportedOperationException("SELECT operator is not supported in mock database queries.");
+    }
+
+    if (!query.getGroupByClause().isEmpty()) {
+      throw new UnsupportedOperationException("GROUP BY clause is not supported in mock database queries.");
+    }
+
     Set<T> foundSet = new HashSet<T>();
 
     List<WhereConstraint> constraints = query.getWhereConstraints();

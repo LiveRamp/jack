@@ -20,12 +20,24 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     super(caller);
   }
 
+  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
+    for (<%=model_defn.model_name %>._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public <%= model_defn.query_builder_name %> id(Long value) {
     addId(value);
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> id(Set<Long> values) {
+  public <%= model_defn.query_builder_name %> idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
@@ -37,18 +49,6 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
 
   public <%= model_defn.query_builder_name %> limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
-    return this;
-  }
-
-  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
-    for (<%=model_defn.model_name %>._Fields field : fields){
-      addSelectedField(new FieldSelector(field));
-    }
-    return this;
-  }
-
-  public <%= model_defn.query_builder_name %> selectAgg(FieldSelector... aggregatedFields) {
-    addSelectedFields(aggregatedFields);
     return this;
   }
 

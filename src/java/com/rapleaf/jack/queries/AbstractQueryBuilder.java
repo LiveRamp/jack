@@ -18,35 +18,35 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     this.query = new ModelQuery();
   }
 
-  public void addWhereConstraint(WhereConstraint whereConstraint) {
+  protected void addWhereConstraint(WhereConstraint whereConstraint) {
     query.addConstraint(whereConstraint);
   }
 
-  public void addOrder(OrderCriterion orderCriterion) {
+  protected void addOrder(OrderCriterion orderCriterion) {
     query.addOrder(orderCriterion);
   }
 
-  public void setLimit(LimitCriterion limitCriterion) {
+  protected void setLimit(LimitCriterion limitCriterion) {
     query.setLimitCriterion(limitCriterion);
   }
 
-  public void addSelectedField(FieldSelector field) {
+  protected void addSelectedField(FieldSelector field) {
     query.addSelectedField(field);
   }
 
-  public void addSelectedFields(FieldSelector... fields) {
+  protected void addSelectedFields(FieldSelector... fields) {
     query.addSelectedFields(fields);
   }
 
-  public void addGroupByFields(Enum... fields) {
+  protected void addGroupByFields(Enum... fields) {
     query.addGroupByFields(fields);
   }
 
-  public void addIds(Set<Long> ids) {
+  protected void addIds(Set<Long> ids) {
     query.addIds(ids);
   }
 
-  public void addId(Long id) {
+  protected void addId(Long id) {
     query.addId(id);
   }
 

@@ -17,9 +17,9 @@ import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 
 
 public class TestModelQuery extends TestCase {
@@ -199,7 +199,7 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    result = users.query().id(sampleIds).find();
+    result = users.query().idIn(sampleIds).find();
     assertEquals(3, result.size());
     assertTrue(result.contains(sampleUsers[0]));
     assertTrue(result.contains(sampleUsers[3]));
@@ -212,7 +212,7 @@ public class TestModelQuery extends TestCase {
 
     result = users.query()
         .whereNumPosts(greaterThan(0))
-        .id(sampleIds2)
+        .idIn(sampleIds2)
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
@@ -350,8 +350,8 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[1].getId());
     sampleIds.add(sampleUsers[2].getId());
-    orderedResult1 = users.query().id(sampleIds).order().findWithOrder();
-    orderedResult2 = users.query().id(sampleIds).orderById(ASC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).order().findWithOrder();
+    orderedResult2 = users.query().idIn(sampleIds).orderById(ASC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[0]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
@@ -361,7 +361,7 @@ public class TestModelQuery extends TestCase {
     // A query by several ids ordered by a specific field should return a list ordered accordingly.
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    orderedResult1 = users.query().id(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
     assertEquals(5, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[3]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));

@@ -20,12 +20,24 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     super(caller);
   }
 
+  public PostQueryBuilder select(Post._Fields... fields) {
+    for (Post._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public PostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public PostQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public PostQueryBuilder id(Set<Long> values) {
+  public PostQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
@@ -37,18 +49,6 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
 
   public PostQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
-    return this;
-  }
-
-  public PostQueryBuilder select(Post._Fields... fields) {
-    for (Post._Fields field : fields){
-      addSelectedField(new FieldSelector(field));
-    }
-    return this;
-  }
-
-  public PostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addSelectedFields(aggregatedFields);
     return this;
   }
 

@@ -20,12 +20,24 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     super(caller);
   }
 
+  public UserQueryBuilder select(User._Fields... fields) {
+    for (User._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public UserQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public UserQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public UserQueryBuilder id(Set<Long> values) {
+  public UserQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
@@ -37,18 +49,6 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
 
   public UserQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
-    return this;
-  }
-
-  public UserQueryBuilder select(User._Fields... fields) {
-    for (User._Fields field : fields){
-      addSelectedField(new FieldSelector(field));
-    }
-    return this;
-  }
-
-  public UserQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addSelectedFields(aggregatedFields);
     return this;
   }
 

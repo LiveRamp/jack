@@ -20,12 +20,24 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     super(caller);
   }
 
+  public CommentQueryBuilder select(Comment._Fields... fields) {
+    for (Comment._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public CommentQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public CommentQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public CommentQueryBuilder id(Set<Long> values) {
+  public CommentQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
@@ -37,18 +49,6 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
 
   public CommentQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
-    return this;
-  }
-
-  public CommentQueryBuilder select(Comment._Fields... fields) {
-    for (Comment._Fields field : fields){
-      addSelectedField(new FieldSelector(field));
-    }
-    return this;
-  }
-
-  public CommentQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addSelectedFields(aggregatedFields);
     return this;
   }
 

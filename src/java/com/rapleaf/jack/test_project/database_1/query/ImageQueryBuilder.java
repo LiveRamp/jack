@@ -20,12 +20,24 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     super(caller);
   }
 
+  public ImageQueryBuilder select(Image._Fields... fields) {
+    for (Image._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public ImageQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public ImageQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public ImageQueryBuilder id(Set<Long> values) {
+  public ImageQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
@@ -37,18 +49,6 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
 
   public ImageQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
-    return this;
-  }
-
-  public ImageQueryBuilder select(Image._Fields... fields) {
-    for (Image._Fields field : fields){
-      addSelectedField(new FieldSelector(field));
-    }
-    return this;
-  }
-
-  public ImageQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
-    addSelectedFields(aggregatedFields);
     return this;
   }
 

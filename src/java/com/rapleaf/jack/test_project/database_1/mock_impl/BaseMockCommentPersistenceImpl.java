@@ -130,7 +130,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
           Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
           if (o1 instanceof java.lang.Comparable) {
-            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+            compareResult = ((Comparable) o1).compareTo(o2);
           } else {
             compareResult = Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
           }
