@@ -6,6 +6,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -121,23 +122,36 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    for (int i = 0; i < nonNullValues.size(); i++) {
-      Image._Fields field = nonNullValueFields.get(i);
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      for (int i = 0; i < nonNullValues.size(); i++) {
+        Image._Fields field = nonNullValueFields.get(i);
+        try {
+          switch (field) {
+            case user_id:
+              preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+
       try {
-        switch (field) {
-          case user_id:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
-            break;
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
   }
 
   public Set<Image> find(ModelQuery query) throws IOException {
@@ -156,11 +170,42 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(query.getWhereClause());
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement);
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    return foundSet;
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        Image._Fields field = (Image._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+            continue;
+          }
+          try {
+            switch (field) {
+              case user_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
+        }
+      }
+
+      try {
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
@@ -180,33 +225,42 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(") ");
     statementString.append(query.getOrderByClause());
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement);
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    return foundList;
-  }
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
 
-  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
-    int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
-      Image._Fields field = (Image._Fields)constraint.getField();
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-          continue;
-        }
-        try {
-          switch (field) {
-            case user_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        Image._Fields field = (Image._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+            continue;
           }
-        } catch (SQLException e) {
-          throw new IOException(e);
+          try {
+            switch (field) {
+              case user_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
         }
       }
+
+      try {
+        executeQuery(foundList, preparedStatement);
+        return foundList;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
     }
-    return preparedStatement;
   }
 
   @Override

@@ -24,11 +24,10 @@ public abstract class BaseDatabaseConnection implements Serializable {
     if (conn != null) {
       try {
         if (!conn.getAutoCommit()) {
-          conn.commit();
+          throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.");
         }
         conn.close();
-      } catch (Exception e) {
-        // do nothing
+      } catch (SQLException e) {
       }
     }
     conn = null;

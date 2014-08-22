@@ -6,6 +6,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -169,50 +170,63 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    for (int i = 0; i < nonNullValues.size(); i++) {
-      User._Fields field = nonNullValueFields.get(i);
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      for (int i = 0; i < nonNullValues.size(); i++) {
+        User._Fields field = nonNullValueFields.get(i);
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
+              break;
+            case num_posts:
+              preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
+              break;
+            case some_date:
+              preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
+              break;
+            case bio:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
+            case some_binary:
+              preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
+              break;
+            case some_float:
+              preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(i+1, (Boolean) nonNullValues.get(i));
+              break;
+          }
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
+      }
+
       try {
-        switch (field) {
-          case handle:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case created_at_millis:
-            preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
-            break;
-          case num_posts:
-            preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
-            break;
-          case some_date:
-            preparedStatement.setDate(i+1, new Date((Long) nonNullValues.get(i)));
-            break;
-          case some_datetime:
-            preparedStatement.setTimestamp(i+1, new Timestamp((Long) nonNullValues.get(i)));
-            break;
-          case bio:
-            preparedStatement.setString(i+1, (String) nonNullValues.get(i));
-            break;
-          case some_binary:
-            preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
-            break;
-          case some_float:
-            preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
-            break;
-          case some_decimal:
-            preparedStatement.setDouble(i+1, (Double) nonNullValues.get(i));
-            break;
-          case some_boolean:
-            preparedStatement.setBoolean(i+1, (Boolean) nonNullValues.get(i));
-            break;
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       }
     }
-    executeQuery(foundSet, preparedStatement);
-
-    return foundSet;
   }
 
   public Set<User> find(ModelQuery query) throws IOException {
@@ -231,11 +245,69 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     statementString.append(query.getWhereClause());
     statementString.append(")");
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundSet, completeStatement);
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    return foundSet;
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
+
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        User._Fields field = (User._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+            continue;
+          }
+          try {
+            switch (field) {
+              case handle:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case created_at_millis:
+                preparedStatement.setLong(++index, (Long) parameter);
+                break;
+              case num_posts:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+              case some_date:
+                preparedStatement.setDate(++index, new Date((Long) parameter));
+                break;
+              case some_datetime:
+                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+                break;
+              case bio:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case some_binary:
+                preparedStatement.setBytes(++index, (byte[]) parameter);
+                break;
+              case some_float:
+                preparedStatement.setDouble(++index, (Double) parameter);
+                break;
+              case some_decimal:
+                preparedStatement.setDouble(++index, (Double) parameter);
+                break;
+              case some_boolean:
+                preparedStatement.setBoolean(++index, (Boolean) parameter);
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
+        }
+      }
+
+      try {
+        executeQuery(foundSet, preparedStatement);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   public List<User> findWithOrder(ModelQuery query) throws IOException {
@@ -255,60 +327,69 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     statementString.append(") ");
     statementString.append(query.getOrderByClause());
 
-    PreparedStatement preparedStatement = getPreparedStatement(statementString.toString());
-    PreparedStatement completeStatement = getCompleteStatement(preparedStatement, query);
-    executeQuery(foundList, completeStatement);
+    int retryCount = 0;
+    PreparedStatement preparedStatement = null;
 
-    return foundList;
-  }
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString.toString());
 
-  private PreparedStatement getCompleteStatement(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
-    int index = 0;
-    for (QueryConstraint constraint : query.getConstraints()) {
-      User._Fields field = (User._Fields)constraint.getField();
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-          continue;
-        }
-        try {
-          switch (field) {
-            case handle:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case created_at_millis:
-              preparedStatement.setLong(++index, (Long) parameter);
-              break;
-            case num_posts:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-            case some_date:
-              preparedStatement.setDate(++index, new Date((Long) parameter));
-              break;
-            case some_datetime:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-              break;
-            case bio:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case some_binary:
-              preparedStatement.setBytes(++index, (byte[]) parameter);
-              break;
-            case some_float:
-              preparedStatement.setDouble(++index, (Double) parameter);
-              break;
-            case some_decimal:
-              preparedStatement.setDouble(++index, (Double) parameter);
-              break;
-            case some_boolean:
-              preparedStatement.setBoolean(++index, (Boolean) parameter);
-              break;
+      int index = 0;
+      for (QueryConstraint constraint : query.getConstraints()) {
+        User._Fields field = (User._Fields)constraint.getField();
+        for (Object parameter : constraint.getParameters()) {
+          if (parameter == null) {
+            continue;
           }
-        } catch (SQLException e) {
-          throw new IOException(e);
+          try {
+            switch (field) {
+              case handle:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case created_at_millis:
+                preparedStatement.setLong(++index, (Long) parameter);
+                break;
+              case num_posts:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+              case some_date:
+                preparedStatement.setDate(++index, new Date((Long) parameter));
+                break;
+              case some_datetime:
+                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+                break;
+              case bio:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case some_binary:
+                preparedStatement.setBytes(++index, (byte[]) parameter);
+                break;
+              case some_float:
+                preparedStatement.setDouble(++index, (Double) parameter);
+                break;
+              case some_decimal:
+                preparedStatement.setDouble(++index, (Double) parameter);
+                break;
+              case some_boolean:
+                preparedStatement.setBoolean(++index, (Boolean) parameter);
+                break;
+            }
+          } catch (SQLException e) {
+            throw new IOException(e);
+          }
         }
       }
+
+      try {
+        executeQuery(foundList, preparedStatement);
+        return foundList;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
     }
-    return preparedStatement;
   }
 
   @Override
