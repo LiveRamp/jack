@@ -1,12 +1,8 @@
 package com.rapleaf.jack;
 
-public class AggregatorFunction {
+public class AggregatorFunctions {
   public static FieldSelector count(Enum field) {
     return new FieldSelector(field, "COUNT");
-  }
-
-  public static FieldSelector countAll() {
-    return count(null);
   }
 
   public static FieldSelector sum(Enum field) {

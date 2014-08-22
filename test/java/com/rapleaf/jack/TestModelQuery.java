@@ -481,7 +481,7 @@ public class TestModelQuery extends TestCase {
     // Test Max
     result = users.query()
         .select(User._Fields.handle)
-        .selectAgg(AggregatorFunction.max(User._Fields.num_posts))
+        .selectAgg(AggregatorFunctions.max(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
         .findWithOrder();
@@ -495,7 +495,7 @@ public class TestModelQuery extends TestCase {
     // Test Min
     result = users.query()
         .select(User._Fields.handle)
-        .selectAgg(AggregatorFunction.min(User._Fields.num_posts))
+        .selectAgg(AggregatorFunctions.min(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
         .findWithOrder();
@@ -507,7 +507,7 @@ public class TestModelQuery extends TestCase {
     // Test Count
     result = users.query()
         .select(User._Fields.handle)
-        .selectAgg(AggregatorFunction.count(User._Fields.num_posts))
+        .selectAgg(AggregatorFunctions.count(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
         .findWithOrder();
@@ -515,7 +515,30 @@ public class TestModelQuery extends TestCase {
     assertEquals(50, result.get(0).getNumPosts());
     assertEquals(50, result.get(1).getNumPosts());
 
-    // Test Count(*)
+    // Test Sum
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.sum(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
 
+    assertEquals(2, result.size());
+    assertEquals(2450, result.get(0).getNumPosts());
+    assertEquals(2500, result.get(1).getNumPosts());
+
+    // Test Avg
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.avg(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals(49, result.get(0).getNumPosts());
+    assertEquals(50, result.get(1).getNumPosts());
   }
+
+
 }
