@@ -176,7 +176,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   @Override
-  protected <%= model_defn.model_name %> instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException {
+  protected <%= model_defn.model_name %> instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new <%= model_defn.model_name %>(rs.getLong("id"),
     <% model_defn.fields.each do |field_defn| %>

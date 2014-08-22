@@ -85,11 +85,11 @@ public class ModelQuery {
     }
 
     sqlClause.append("id, ");
-    Iterator<FieldSelector> it1 = selectedFields.iterator();
-    while (it1.hasNext()) {
-      FieldSelector selector = it1.next();
+    Iterator<FieldSelector> iterator = selectedFields.iterator();
+    while (iterator.hasNext()) {
+      FieldSelector selector = iterator.next();
       sqlClause.append(selector.getSqlClause());
-      if (it1.hasNext()) {
+      if (iterator.hasNext()) {
         sqlClause.append(", ");
       }
     }

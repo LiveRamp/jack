@@ -118,7 +118,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return instanceFromResultSet(rs, null);
   }
 
-  protected abstract T instanceFromResultSet(ResultSet rs, List<Enum> selectedFields) throws SQLException;
+  protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
 
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
@@ -289,7 +289,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     PreparedStatement preparedStatement = getPreparedStatement(statement);
     setStatementParameters(preparedStatement, query);
     System.out.println(preparedStatement.toString());
-    executeQuery(foundSet, preparedStatement, query.getSelectedFields());
+    // Extract the list of selected columns from the list of FieldSelector we have
+    Set<Enum> selectedFields = new HashSet<Enum>();
+    for (FieldSelector selector : query.getSelectedFields()) {
+      selectedFields.add(selector.getField());
+    }
+    ;
+    executeQuery(foundSet, preparedStatement, selectedFields);
 
     return foundSet;
   }
@@ -339,7 +345,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     executeQuery(foundSet, stmt, null);
   }
 
-  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, List<Enum> selectedFields) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws IOException {
     int retryCount = 0;
 
     ResultSet rs = null;
