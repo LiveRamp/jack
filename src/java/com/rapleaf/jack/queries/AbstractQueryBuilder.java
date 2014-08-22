@@ -1,9 +1,12 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+
+import com.rapleaf.jack.IModelPersistence;
+import com.rapleaf.jack.ModelWithId;
 
 public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
 

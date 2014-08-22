@@ -1,8 +1,6 @@
-package com.rapleaf.jack.query_operators;
+package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.QueryOperator;
-
-public class IsNotNull<V> extends QueryOperator<V> {
+public class IsNotNull<V> extends WhereOperator<V> {
 
   public IsNotNull() {
     super();

@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.ModelQuery;
+
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
 

@@ -2,14 +2,14 @@ package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.FieldSelector;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.JackMatchers;
-import com.rapleaf.jack.WhereConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
-import com.rapleaf.jack.LimitCriterion;
+import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.OrderCriterion;
+import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
@@ -82,7 +82,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereHandle(IQueryOperator<String> operator) {
+  public UserQueryBuilder whereHandle(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, operator));
     return this;
   }
@@ -102,7 +102,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereCreatedAtMillis(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereCreatedAtMillis(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, operator));
     return this;
   }
@@ -122,7 +122,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereNumPosts(IQueryOperator<Integer> operator) {
+  public UserQueryBuilder whereNumPosts(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, operator));
     return this;
   }
@@ -142,7 +142,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeDate(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDate(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, operator));
     return this;
   }
@@ -162,7 +162,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeDatetime(IQueryOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDatetime(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, operator));
     return this;
   }
@@ -182,7 +182,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereBio(IQueryOperator<String> operator) {
+  public UserQueryBuilder whereBio(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, operator));
     return this;
   }
@@ -202,7 +202,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeBinary(IQueryOperator<byte[]> operator) {
+  public UserQueryBuilder whereSomeBinary(IWhereOperator<byte[]> operator) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, operator));
     return this;
   }
@@ -222,7 +222,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeFloat(IQueryOperator<Double> operator) {
+  public UserQueryBuilder whereSomeFloat(IWhereOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, operator));
     return this;
   }
@@ -242,7 +242,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeDecimal(IQueryOperator<Double> operator) {
+  public UserQueryBuilder whereSomeDecimal(IWhereOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, operator));
     return this;
   }
@@ -262,7 +262,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder whereSomeBoolean(IQueryOperator<Boolean> operator) {
+  public UserQueryBuilder whereSomeBoolean(IWhereOperator<Boolean> operator) {
     addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }

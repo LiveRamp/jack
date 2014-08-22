@@ -2,14 +2,14 @@ package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.FieldSelector;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.JackMatchers;
-import com.rapleaf.jack.WhereConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
-import com.rapleaf.jack.LimitCriterion;
+import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.OrderCriterion;
+import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 
@@ -82,7 +82,7 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
 
-  public ImageQueryBuilder whereUserId(IQueryOperator<Integer> operator) {
+  public ImageQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
     return this;
   }

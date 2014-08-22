@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.util.ArrayList;
 import java.util.Arrays;

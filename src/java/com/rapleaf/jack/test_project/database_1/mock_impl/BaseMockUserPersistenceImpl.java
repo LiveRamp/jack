@@ -25,12 +25,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.WhereConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.LimitCriterion;
-import com.rapleaf.jack.OrderCriterion;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.LimitCriterion;
+import com.rapleaf.jack.queries.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;

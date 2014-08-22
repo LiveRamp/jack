@@ -9,15 +9,17 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import com.rapleaf.jack.queries.AggregatorFunctions;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static com.rapleaf.jack.JackMatchers.*;
-import static com.rapleaf.jack.QueryOrder.ASC;
-import static com.rapleaf.jack.QueryOrder.DESC;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
+import static com.rapleaf.jack.queries.QueryOrder.ASC;
+import static com.rapleaf.jack.queries.QueryOrder.DESC;
 
 
 public class TestModelQuery extends TestCase {

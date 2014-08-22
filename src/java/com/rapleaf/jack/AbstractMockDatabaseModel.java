@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.ModelQuery;
+import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
 public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
@@ -125,7 +128,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       for (WhereConstraint constraint : constraints) {
 
         Enum field = constraint.getField();
-        IQueryOperator operator = constraint.getOperator();
+        IWhereOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
       }
       if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {

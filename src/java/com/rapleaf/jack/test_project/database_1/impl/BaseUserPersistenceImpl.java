@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.WhereConstraint;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;

@@ -1,8 +1,8 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries.where_operators;
 
 import java.util.List;
 
-public interface IQueryOperator<T> {
+public interface IWhereOperator<T> {
 
   public String getSqlStatement();
 

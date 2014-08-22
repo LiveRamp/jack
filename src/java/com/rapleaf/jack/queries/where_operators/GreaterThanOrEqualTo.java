@@ -1,8 +1,6 @@
-package com.rapleaf.jack.query_operators;
+package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.QueryOperator;
-
-public class GreaterThanOrEqualTo<V extends Comparable<V>> extends QueryOperator<V> {
+public class GreaterThanOrEqualTo<V extends Comparable<V>> extends WhereOperator<V> {
 
   public GreaterThanOrEqualTo(V value) {
     super(value);

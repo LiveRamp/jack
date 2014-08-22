@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 public class OrderCriterion {
   private Enum field;

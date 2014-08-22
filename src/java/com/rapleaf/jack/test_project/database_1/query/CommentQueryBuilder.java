@@ -2,14 +2,14 @@ package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.FieldSelector;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.JackMatchers;
-import com.rapleaf.jack.WhereConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
-import com.rapleaf.jack.LimitCriterion;
+import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.OrderCriterion;
+import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 
@@ -82,7 +82,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder whereContent(IQueryOperator<String> operator) {
+  public CommentQueryBuilder whereContent(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, operator));
     return this;
   }
@@ -102,7 +102,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder whereCommenterId(IQueryOperator<Integer> operator) {
+  public CommentQueryBuilder whereCommenterId(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, operator));
     return this;
   }
@@ -122,7 +122,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder whereCommentedOnId(IQueryOperator<Long> operator) {
+  public CommentQueryBuilder whereCommentedOnId(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, operator));
     return this;
   }
@@ -142,7 +142,7 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
-  public CommentQueryBuilder whereCreatedAt(IQueryOperator<Long> operator) {
+  public CommentQueryBuilder whereCreatedAt(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, operator));
     return this;
   }

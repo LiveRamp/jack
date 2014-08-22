@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 public class AggregatorFunctions {
   public static FieldSelector count(Enum field) {

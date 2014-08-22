@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 
+import com.rapleaf.jack.queries.ModelQuery;
+
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public interface RecordSelector<T extends ModelWithId> {

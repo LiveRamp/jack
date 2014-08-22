@@ -1,8 +1,6 @@
-package com.rapleaf.jack.query_operators;
+package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.QueryOperator;
-
-public class Match extends QueryOperator<String> {
+public class Match extends WhereOperator<String> {
 
   public Match(String pattern) {
     super(pattern);

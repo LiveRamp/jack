@@ -1,26 +1,24 @@
-package com.rapleaf.jack.query_operators;
+package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.QueryOperator;
+public class EqualTo<V> extends WhereOperator<V> {
 
-public class NotEqualTo<V> extends QueryOperator<V> {
-
-  public NotEqualTo(V value) {
+  public EqualTo(V value) {
     super(value);
     try {
       ensureNoNullParameter();
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("You cannot pass a null value as a parameter. " +
-          "Use the NotEqualToOrNull operator instead.");
+          "Use the EqualToOrNull operator instead.");
     }
   }
 
   @Override
   public String getSqlStatement() {
-    return "<> ?";
+    return "= ?";
   }
 
   @Override
   public boolean apply(V value) {
-    return !getSingleParameter().equals(value);
+    return getSingleParameter().equals(value);
   }
 }
