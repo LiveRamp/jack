@@ -21,7 +21,8 @@ public class AggregatorFunction {
     if (field == null) {
       return sqlKeyword + "(*)";
     }
-    return sqlKeyword + "(" + field + ")";
+    // Hack to keep the name of the column in order to be able to access it later
+    return sqlKeyword + "(" + field + ") AS " + field;
   }
 
   public static AggregatorFunction count(Enum field) {
