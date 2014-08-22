@@ -64,6 +64,10 @@ public class ModelQuery {
     orderCriteria.add(orderCriterion);
   }
 
+  public void addSelectedField(FieldSelector fields) {
+    selectedFields.add(fields);
+  }
+
   public void addSelectedFields(FieldSelector... fields) {
     selectedFields.addAll(Arrays.asList(fields));
   }
