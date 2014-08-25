@@ -145,9 +145,6 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       }
       T newRecord = record.getCopy();
       if (allMatch) {
-        if (!query.getSelectedFields().isEmpty()) {
-          throw new UnsupportedOperationException("SELECT not supported for the MockDatabase");
-        }
         foundSet.add(newRecord);
       }
     }
