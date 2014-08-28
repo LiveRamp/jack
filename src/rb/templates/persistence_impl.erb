@@ -114,7 +114,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());

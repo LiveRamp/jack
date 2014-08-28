@@ -141,7 +141,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());

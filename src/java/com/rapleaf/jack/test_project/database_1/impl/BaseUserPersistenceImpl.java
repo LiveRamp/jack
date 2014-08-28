@@ -171,7 +171,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());

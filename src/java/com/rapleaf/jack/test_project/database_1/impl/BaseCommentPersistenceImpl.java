@@ -136,7 +136,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());

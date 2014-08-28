@@ -123,7 +123,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());
