@@ -8,5 +8,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (>= 3.0.0)
+  activesupport (~> 3.0.0)
   i18n
