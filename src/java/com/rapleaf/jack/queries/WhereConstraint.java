@@ -1,12 +1,14 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.util.List;
 
-public class QueryConstraint<T> {
-  private Enum field;
-  private final IQueryOperator<T> operator;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
-  public QueryConstraint(Enum field, IQueryOperator<T> operator) {
+public class WhereConstraint<T> {
+  private Enum field;
+  private final IWhereOperator<T> operator;
+
+  public WhereConstraint(Enum field, IWhereOperator<T> operator) {
     this.field = field;
     this.operator = operator;
   }
@@ -15,7 +17,7 @@ public class QueryConstraint<T> {
     return field;
   }
 
-  public IQueryOperator<T> getOperator() {
+  public IWhereOperator<T> getOperator() {
     return operator;
   }
 

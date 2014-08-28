@@ -21,15 +21,18 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.ModelQuery;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
@@ -53,7 +56,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   private boolean useCache = true;
 
   protected AbstractDatabaseModel(BaseDatabaseConnection conn,
-      String tableName, List<String> fieldNames) {
+                                  String tableName, List<String> fieldNames) {
     this.conn = conn;
     this.tableName = tableName;
     this.fieldNames = fieldNames;
@@ -78,7 +81,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String getSetFieldsPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -93,7 +96,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String getUpdateOnInsertPrepStatementSection() {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(",");
       }
@@ -113,7 +116,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return conn;
   }
 
-  protected abstract T instanceFromResultSet(ResultSet rs) throws SQLException;
+  protected T instanceFromResultSet(ResultSet rs) throws SQLException {
+    return instanceFromResultSet(rs, null);
+  }
+
+  protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
 
   protected long realCreate(AttrSetter attrSetter, String insertStatement)
       throws IOException {
@@ -158,7 +165,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String escapedFieldNames(List<String> fieldNames) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < fieldNames.size(); i++ ) {
+    for (int i = 0; i < fieldNames.size(); i++) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -233,30 +240,114 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       notCachedIds = ids;
     }
     if (!notCachedIds.isEmpty()) {
-      StringBuilder statementString = new StringBuilder();
-      statementString.append("SELECT * FROM ");
-      statementString.append(tableName);
-      statementString.append(" WHERE ");
-      statementString.append(getIdSetCondition(notCachedIds));
-      executeQuery(foundSet, statementString.toString());
+      executeQuery(foundSet, "SELECT * FROM " + tableName + " WHERE " + getIdSetCondition(notCachedIds));
     }
     return foundSet;
   }
 
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    List<T> foundList = new ArrayList<T>();    
+    List<T> foundList = new ArrayList<T>();
     if (!ids.isEmpty()) {
-      StringBuilder statementString = new StringBuilder();
-      statementString.append("SELECT * FROM ");
-      statementString.append(tableName);
-      statementString.append(" WHERE ");
-      statementString.append(getIdSetCondition(ids));
-      statementString.append(query.getOrderByClause());
-      executeQuery(foundList, statementString.toString());
+      String statement = query.getSelectClause();
+      statement += " FROM ";
+      statement += tableName;
+      statement += " WHERE ";
+      statement += getIdSetCondition(ids);
+      statement += query.getOrderByClause();
+      statement += query.getLimitClause();
+      executeQuery(foundList, statement);
     }
     return foundList;
   }
-  
+
+  public Set<T> find(ModelQuery query) throws IOException, SQLException {
+    Set<T> foundSet = new HashSet<T>();
+
+    if (query.isEmptyQuery()) {
+      Set<Long> ids = query.getIdSet();
+      if (ids != null && !ids.isEmpty()) {
+        return find(ids);
+      }
+      return foundSet;
+    }
+
+    String statementString = getPreparedStatementString(query, false);
+
+    int retryCount = 0;
+    PreparedStatement preparedStatement;
+
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString);
+      setStatementParameters(preparedStatement, query);
+      Set<Enum> selectedFields = getSelectedFields(query);
+
+      try {
+        executeQuery(foundSet, preparedStatement, selectedFields);
+        return foundSet;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+  }
+
+  public List<T> findWithOrder(ModelQuery query) throws IOException, SQLException {
+    List<T> foundList = new ArrayList<T>();
+
+    if (query.isEmptyQuery()) {
+      Set<Long> ids = query.getIdSet();
+      if (ids != null && !ids.isEmpty()) {
+        return findWithOrder(ids, query);
+      }
+      return foundList;
+    }
+
+    String statementString = getPreparedStatementString(query, true);
+
+    int retryCount = 0;
+    PreparedStatement preparedStatement;
+
+    while (true) {
+      preparedStatement = getPreparedStatement(statementString);
+      setStatementParameters(preparedStatement, query);
+      Set<Enum> selectedFields = getSelectedFields(query);
+
+      try {
+        executeQuery(foundList, preparedStatement, selectedFields);
+        return foundList;
+      } catch (SQLRecoverableException e) {
+        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
+  }
+
+  private String getPreparedStatementString(ModelQuery query, boolean order) throws IOException {
+    String statement = query.getSelectClause();
+    statement += " FROM users ";
+    statement += query.getWhereClause();
+    statement += query.getGroupByClause();
+    statement += order ? query.getOrderByClause() : "";
+    statement += query.getLimitClause();
+
+    return statement;
+  }
+
+  private Set<Enum> getSelectedFields(ModelQuery query) throws IOException {
+    // Extract the list of selected columns from the list of FieldSelector we have
+    Set<Enum> selectedFields = new HashSet<Enum>();
+    for (FieldSelector selector : query.getSelectedFields()) {
+      selectedFields.add(selector.getField());
+    }
+    return selectedFields;
+  }
+
   protected String getIdSetCondition(Set<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
@@ -271,13 +362,19 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return sb.toString();
   }
 
+  protected abstract void setStatementParameters(PreparedStatement statement, ModelQuery query) throws IOException;
+
   protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws SQLException {
+    executeQuery(foundSet, stmt, null);
+  }
+
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws SQLException {
     ResultSet rs = null;
 
     try {
       rs = stmt.executeQuery();
       while (rs.next()) {
-        T inst = instanceFromResultSet(rs);
+        T inst = instanceFromResultSet(rs, selectedFields);
         inst.setCreated(true);
         foundSet.add(inst);
         if (useCache) {
@@ -575,7 +672,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private static String qmarks(int size) {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size; i++ ) {
+    for (int i = 0; i < size; i++) {
       if (i != 0) {
         sb.append(", ");
       }

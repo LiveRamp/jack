@@ -1,39 +1,18 @@
-package com.rapleaf.jack;
-
-import com.rapleaf.jack.query_operators.Between;
-import com.rapleaf.jack.query_operators.EqualTo;
-import com.rapleaf.jack.query_operators.GreaterThan;
-import com.rapleaf.jack.query_operators.GreaterThanOrEqualTo;
-import com.rapleaf.jack.query_operators.In;
-import com.rapleaf.jack.query_operators.IsNotNull;
-import com.rapleaf.jack.query_operators.IsNull;
-import com.rapleaf.jack.query_operators.LessThan;
-import com.rapleaf.jack.query_operators.LessThanOrEqualTo;
-import com.rapleaf.jack.query_operators.Match;
-import com.rapleaf.jack.query_operators.NotEqualTo;
-import com.rapleaf.jack.query_operators.NotIn;
+package com.rapleaf.jack.queries.where_operators;
 
 public class JackMatchers {
 
-  public static <T> IQueryOperator<T> equalToOrNull(T value) {
+  public static <T> IWhereOperator<T> equalTo(T value) {
     if (value == null) {
       return new IsNull<T>();
     }
     return new EqualTo<T>(value);
   }
 
-  public static <T> IQueryOperator<T> notEqualToOrNotNull(T value) {
+  public static <T> IWhereOperator<T> notEqualTo(T value) {
     if (value == null) {
       return new IsNotNull<T>();
     }
-    return new NotEqualTo<T>(value);
-  }
-
-  public static <T> EqualTo<T> equalTo(T value) {
-    return new EqualTo<T>(value);
-  }
-
-  public static <T> NotEqualTo<T> notEqualTo(T value) {
     return new NotEqualTo<T>(value);
   }
 

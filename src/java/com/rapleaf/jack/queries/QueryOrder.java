@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 public enum QueryOrder {
   ASC("ASC"), DESC("DESC");

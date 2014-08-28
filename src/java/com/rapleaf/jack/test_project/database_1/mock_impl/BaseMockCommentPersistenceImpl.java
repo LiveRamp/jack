@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,11 +25,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.LimitCriterion;
+import com.rapleaf.jack.queries.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Comment.Id;
@@ -52,7 +55,7 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 18000000 : created_at_tmp;
+    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
@@ -89,16 +92,33 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
   }
 
   public Set<Comment> find(ModelQuery query) throws IOException {
-    return super.realFind(query);
+    Set<Comment> allResults = super.realFind(query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    int i = 0;
+    Set<Comment> truncatedSet = new HashSet<Comment>();
+    Iterator<Comment> iterator = allResults.iterator();
+    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
   
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<Comment> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedRresult, ModelQuery query) {
+  private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<Comment> result = new ArrayList<Comment>(unorderedRresult);
+    List<Comment> result = new ArrayList<Comment>(unorderedResult);
 
     Collections.sort(result, new Comparator<Comment>() {
       public int compare(Comment t1, Comment t2) {
@@ -110,19 +130,19 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
           Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
           if (o1 instanceof java.lang.Comparable) {
-            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+            compareResult = ((Comparable) o1).compareTo(o2);
           } else {
-            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
           }
 
           int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
           compareResult = compareResult * orderDirection;
-          if (compareResult == 0) {
-            continue;
-          } else if (compareResult < 0) {
-            return -1;
-          } else {
-            return 1;
+          if (compareResult != 0) {
+            if (compareResult < 0) {
+              return -1;
+            } else {
+              return 1;
+            }
           }
         }
         return 0;

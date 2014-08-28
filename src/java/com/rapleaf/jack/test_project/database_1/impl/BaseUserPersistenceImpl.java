@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
@@ -162,16 +162,16 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
         nonNullValues.add(value);
       }
 
-      statementString.append(field + queryValue);
+      statementString.append(field).append(queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
-    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
+    if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());
@@ -229,165 +229,51 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     }
   }
 
-  public Set<User> find(ModelQuery query) throws IOException {
-    Set<User> foundSet = new HashSet<User>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM users WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(")");
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        User._Fields field = (User._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case handle:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case created_at_millis:
-                preparedStatement.setLong(++index, (Long) parameter);
-                break;
-              case num_posts:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case some_date:
-                preparedStatement.setDate(++index, new Date((Long) parameter));
-                break;
-              case some_datetime:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-              case bio:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case some_binary:
-                preparedStatement.setBytes(++index, (byte[]) parameter);
-                break;
-              case some_float:
-                preparedStatement.setDouble(++index, (Double) parameter);
-                break;
-              case some_decimal:
-                preparedStatement.setDouble(++index, (Double) parameter);
-                break;
-              case some_boolean:
-                preparedStatement.setBoolean(++index, (Boolean) parameter);
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
+  @Override
+  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+    int index = 0;
+    for (WhereConstraint constraint : query.getWhereConstraints()) {
+      User._Fields field = (User._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+          continue;
         }
-      }
-
-      try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+        try {
+          switch (field) {
+            case handle:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case created_at_millis:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case num_posts:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case some_date:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case some_datetime:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+            case bio:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case some_binary:
+              preparedStatement.setBytes(++index, (byte[]) parameter);
+              break;
+            case some_float:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_decimal:
+              preparedStatement.setDouble(++index, (Double) parameter);
+              break;
+            case some_boolean:
+              preparedStatement.setBoolean(++index, (Boolean) parameter);
+              break;
+          }
+        } catch (SQLException e) {
           throw new IOException(e);
         }
-      } catch (SQLException e) {
-        throw new IOException(e);
-      }
-    }
-  }
-
-  public List<User> findWithOrder(ModelQuery query) throws IOException {
-    List<User> foundList = new ArrayList<User>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM users WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(") ");
-    statementString.append(query.getOrderByClause());
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        User._Fields field = (User._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case handle:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case created_at_millis:
-                preparedStatement.setLong(++index, (Long) parameter);
-                break;
-              case num_posts:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case some_date:
-                preparedStatement.setDate(++index, new Date((Long) parameter));
-                break;
-              case some_datetime:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-              case bio:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case some_binary:
-                preparedStatement.setBytes(++index, (byte[]) parameter);
-                break;
-              case some_float:
-                preparedStatement.setDouble(++index, (Double) parameter);
-                break;
-              case some_decimal:
-                preparedStatement.setDouble(++index, (Double) parameter);
-                break;
-              case some_boolean:
-                preparedStatement.setBoolean(++index, (Boolean) parameter);
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
-        }
-      }
-
-      try {
-        executeQuery(foundList, preparedStatement);
-        return foundList;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
-          throw new IOException(e);
-        }
-      } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
   }
@@ -444,18 +330,19 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected User instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new User(rs.getLong("id"),
-      rs.getString("handle"),
-      getLongOrNull(rs, "created_at_millis"),
-      getIntOrNull(rs, "num_posts"),
-      getDateAsLong(rs, "some_date"),
-      getDateAsLong(rs, "some_datetime"),
-      rs.getString("bio"),
-      rs.getBytes("some_binary"),
-      getDoubleOrNull(rs, "some_float"),
-      getDoubleOrNull(rs, "some_decimal"),
-      getBooleanOrNull(rs, "some_boolean"),
+      allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : "",
+      allFields || selectedFields.contains(User._Fields.created_at_millis) ? getLongOrNull(rs, "created_at_millis") : null,
+      allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : 0,
+      allFields || selectedFields.contains(User._Fields.some_date) ? getDateAsLong(rs, "some_date") : null,
+      allFields || selectedFields.contains(User._Fields.some_datetime) ? getDateAsLong(rs, "some_datetime") : null,
+      allFields || selectedFields.contains(User._Fields.bio) ? rs.getString("bio") : null,
+      allFields || selectedFields.contains(User._Fields.some_binary) ? rs.getBytes("some_binary") : null,
+      allFields || selectedFields.contains(User._Fields.some_float) ? getDoubleOrNull(rs, "some_float") : null,
+      allFields || selectedFields.contains(User._Fields.some_decimal) ? getDoubleOrNull(rs, "some_decimal") : null,
+      allFields || selectedFields.contains(User._Fields.some_boolean) ? getBooleanOrNull(rs, "some_boolean") : null,
       databases
     );
   }

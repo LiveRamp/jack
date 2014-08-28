@@ -1,29 +1,29 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries.where_operators;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class QueryOperator<V> implements IQueryOperator<V> {
+public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
   private final List<V> parameters;
 
-  protected QueryOperator() {
+  protected WhereOperator() {
     parameters = Collections.emptyList();
   }
 
-  public QueryOperator(V parameter) {
+  public WhereOperator(V parameter) {
     this.parameters = new ArrayList<V>();
     this.parameters.add(parameter);
   }
 
-  public QueryOperator(V param1, V param2) {
+  public WhereOperator(V param1, V param2) {
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     this.parameters.add(param2);
   }
 
-  public QueryOperator(V param1, V... otherParam) {
+  public WhereOperator(V param1, V... otherParam) {
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     Collections.addAll(this.parameters, otherParam);

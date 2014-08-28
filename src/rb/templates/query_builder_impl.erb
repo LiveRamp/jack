@@ -2,12 +2,14 @@ package <%= root_package %>.query;
 
 import java.util.Set;
 
-import <%= JACK_NAMESPACE %>.AbstractQueryBuilder;
-import <%= JACK_NAMESPACE %>.IQueryOperator;
-import <%= JACK_NAMESPACE %>.JackMatchers;
-import <%= JACK_NAMESPACE %>.QueryConstraint;
-import <%= JACK_NAMESPACE %>.QueryOrder;
-import <%= JACK_NAMESPACE %>.OrderCriterion;
+import <%= JACK_NAMESPACE %>.queries.AbstractQueryBuilder;
+import <%= JACK_NAMESPACE %>.queries.FieldSelector;
+import <%= JACK_NAMESPACE %>.queries.where_operators.IWhereOperator;
+import <%= JACK_NAMESPACE %>.queries.where_operators.JackMatchers;
+import <%= JACK_NAMESPACE %>.queries.WhereConstraint;
+import <%= JACK_NAMESPACE %>.queries.QueryOrder;
+import <%= JACK_NAMESPACE %>.queries.OrderCriterion;
+import <%= JACK_NAMESPACE %>.queries.LimitCriterion;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 
@@ -18,13 +20,40 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     super(caller);
   }
 
+  public <%= model_defn.query_builder_name %> select(<%=model_defn.model_name %>._Fields... fields) {
+    for (<%=model_defn.model_name %>._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public <%= model_defn.query_builder_name %> id(Long value) {
     addId(value);
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> id(Set<Long> values) {
+  public <%= model_defn.query_builder_name %> idIn(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
+    return this;
+  }
+
+  public <%= model_defn.query_builder_name %> groupBy(<%=model_defn.model_name %>._Fields... fields) {
+    addGroupByFields(fields);
     return this;
   }
 
@@ -51,17 +80,12 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   <% model_defn.fields.each do |field_defn| %>
 
   public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(<%= field_defn.java_type(true) %> value) {
-    if(value == null) {
-      addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.<<%= field_defn.java_type(true) %>>isNull()));
-    }
-    else {
-      addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> <%= field_defn.name.camelcase(:lower) %>(IQueryOperator<<%= field_defn.java_type(true) %>> operator) {
-    addConstraint(new QueryConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, operator));
+  public <%= model_defn.query_builder_name %> where<%= field_defn.name.camelcase() %>(IWhereOperator<<%= field_defn.java_type(true) %>> operator) {
+    addWhereConstraint(new WhereConstraint<<%= field_defn.java_type(true) %>>(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, operator));
     return this;
   }
   

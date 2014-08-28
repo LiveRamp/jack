@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
@@ -132,16 +132,16 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
         nonNullValues.add(value);
       }
 
-      statementString.append(field + queryValue);
+      statementString.append(field).append(queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
-    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
+    if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());
@@ -181,129 +181,33 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     }
   }
 
-  public Set<Post> find(ModelQuery query) throws IOException {
-    Set<Post> foundSet = new HashSet<Post>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM posts WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(")");
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        Post._Fields field = (Post._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case title:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case posted_at_millis:
-                preparedStatement.setDate(++index, new Date((Long) parameter));
-                break;
-              case user_id:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case updated_at:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
+  @Override
+  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+    int index = 0;
+    for (WhereConstraint constraint : query.getWhereConstraints()) {
+      Post._Fields field = (Post._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+          continue;
         }
-      }
-
-      try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+        try {
+          switch (field) {
+            case title:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case posted_at_millis:
+              preparedStatement.setDate(++index, new Date((Long) parameter));
+              break;
+            case user_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case updated_at:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+          }
+        } catch (SQLException e) {
           throw new IOException(e);
         }
-      } catch (SQLException e) {
-        throw new IOException(e);
-      }
-    }
-  }
-
-  public List<Post> findWithOrder(ModelQuery query) throws IOException {
-    List<Post> foundList = new ArrayList<Post>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM posts WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(") ");
-    statementString.append(query.getOrderByClause());
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        Post._Fields field = (Post._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case title:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case posted_at_millis:
-                preparedStatement.setDate(++index, new Date((Long) parameter));
-                break;
-              case user_id:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case updated_at:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
-        }
-      }
-
-      try {
-        executeQuery(foundList, preparedStatement);
-        return foundList;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
-          throw new IOException(e);
-        }
-      } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
   }
@@ -334,12 +238,13 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  protected Post instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected Post instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Post(rs.getLong("id"),
-      rs.getString("title"),
-      getDateAsLong(rs, "posted_at_millis"),
-      getIntOrNull(rs, "user_id"),
-      getDateAsLong(rs, "updated_at"),
+      allFields || selectedFields.contains(Post._Fields.title) ? rs.getString("title") : null,
+      allFields || selectedFields.contains(Post._Fields.posted_at_millis) ? getDateAsLong(rs, "posted_at_millis") : null,
+      allFields || selectedFields.contains(Post._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,
+      allFields || selectedFields.contains(Post._Fields.updated_at) ? getDateAsLong(rs, "updated_at") : null,
       databases
     );
   }

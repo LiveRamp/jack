@@ -26,7 +26,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   
-  public static final long serialVersionUID = 8036617193786054443L;
+  public static final long serialVersionUID = 6213989608937906012L;
 
   private final Attributes attributes;
 
@@ -322,7 +322,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       case commented_on_id:
         return null;
       case created_at:
-        return 18000000;
+        return 28800000;
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
@@ -415,7 +415,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 5448907628943892063L;
+    public static final long serialVersionUID = -2156535913590481279L;
 
     // Fields
     private String __content;
@@ -467,7 +467,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
       long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
       Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-      long created_at = created_at_tmp == null ? 18000000 : created_at_tmp;
+      long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
       this.__content = content;
       this.__commenter_id = commenter_id;
       this.__commented_on_id = commented_on_id;
@@ -654,7 +654,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         case commented_on_id:
           return null;
         case created_at:
-          return 18000000;
+          return 28800000;
       }
       throw new IllegalStateException("Invalid field: " + field);
     }

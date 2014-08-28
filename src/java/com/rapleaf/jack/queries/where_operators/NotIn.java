@@ -1,21 +1,19 @@
-package com.rapleaf.jack.query_operators;
+package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.QueryOperator;
+public class NotIn<V> extends WhereOperator<V> {
 
-public class In<V> extends QueryOperator<V> {
-
-  public In(V value1, V... otherValues) {
+  public NotIn(V value1, V... otherValues) {
     super(value1, otherValues);
     ensureNoNullParameter();
   }
 
   @Override
   public String getSqlStatement() {
-    StringBuilder sb = new StringBuilder("IN ( ?");
+    StringBuilder sb = new StringBuilder("NOT IN (?");
     for (int i = 0; i < getParameters().size() - 1; i++) {
       sb.append(", ?");
     }
-    sb.append(" )");
+    sb.append(")");
     return sb.toString();
   }
 
@@ -23,9 +21,9 @@ public class In<V> extends QueryOperator<V> {
   public boolean apply(V value) {
     for (V param : getParameters()) {
       if (param.equals(value)) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 }

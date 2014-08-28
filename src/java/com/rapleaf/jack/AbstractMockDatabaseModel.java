@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.queries.ModelQuery;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.util.MysqlToJavaScriptTranslator;
 
 public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D extends GenericDatabases>
@@ -110,9 +113,18 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
   }
 
   protected Set<T> realFind(ModelQuery query) throws IOException {
+
+    if (!query.getSelectedFields().isEmpty()) {
+      throw new UnsupportedOperationException("SELECT operator is not supported in mock database queries.");
+    }
+
+    if (!query.getGroupByClause().isEmpty()) {
+      throw new UnsupportedOperationException("GROUP BY clause is not supported in mock database queries.");
+    }
+
     Set<T> foundSet = new HashSet<T>();
 
-    List<QueryConstraint> constraints = query.getConstraints();
+    List<WhereConstraint> constraints = query.getWhereConstraints();
     Set<Long> ids = query.getIdSet();
     if (constraints == null || constraints.isEmpty()) {
       if (ids != null && !ids.isEmpty()) {
@@ -122,20 +134,20 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     }
     for (T record : records.values()) {
       boolean allMatch = true;
-      for (QueryConstraint constraint : constraints) {
+      for (WhereConstraint constraint : constraints) {
 
         Enum field = constraint.getField();
-        IQueryOperator operator = constraint.getOperator();
+        IWhereOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
       }
       if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {
         allMatch = false;
       }
+      T newRecord = record.getCopy();
       if (allMatch) {
-        foundSet.add(record);
+        foundSet.add(newRecord);
       }
     }
-
     return foundSet;
   }
 
@@ -270,7 +282,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
 
   protected RecordSelector<T> getRecordSelector(String conditions)
       throws IOException {
-    return new JavaScriptRecordSelector(conditions);
+    return new JavaScriptRecordSelector<T>(conditions);
   }
 
   private boolean useCache = true;

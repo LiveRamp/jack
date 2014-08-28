@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
@@ -51,7 +51,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 18000000 : created_at_tmp;
+    long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
@@ -127,16 +127,16 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
         nonNullValues.add(value);
       }
 
-      statementString.append(field + queryValue);
+      statementString.append(field).append(queryValue);
       if (iter.hasNext()) {
         statementString.append(" AND ");
       }
     }
-    if (ids != null) statementString.append(" AND " + getIdSetCondition(ids));
+    if (ids != null) statementString.append(" AND ").append(getIdSetCondition(ids));
     statementString.append(")");
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());
@@ -176,129 +176,33 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     }
   }
 
-  public Set<Comment> find(ModelQuery query) throws IOException {
-    Set<Comment> foundSet = new HashSet<Comment>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return find(ids);
-      }
-      return foundSet;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM comments WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(")");
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        Comment._Fields field = (Comment._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case content:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case commenter_id:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case commented_on_id:
-                preparedStatement.setLong(++index, (Long) parameter);
-                break;
-              case created_at:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
+  @Override
+  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+    int index = 0;
+    for (WhereConstraint constraint : query.getWhereConstraints()) {
+      Comment._Fields field = (Comment._Fields)constraint.getField();
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+          continue;
         }
-      }
-
-      try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
+        try {
+          switch (field) {
+            case content:
+              preparedStatement.setString(++index, (String) parameter);
+              break;
+            case commenter_id:
+              preparedStatement.setInt(++index, (Integer) parameter);
+              break;
+            case commented_on_id:
+              preparedStatement.setLong(++index, (Long) parameter);
+              break;
+            case created_at:
+              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+              break;
+          }
+        } catch (SQLException e) {
           throw new IOException(e);
         }
-      } catch (SQLException e) {
-        throw new IOException(e);
-      }
-    }
-  }
-
-  public List<Comment> findWithOrder(ModelQuery query) throws IOException {
-    List<Comment> foundList = new ArrayList<Comment>();
-    
-    if (query.getConstraints() == null || query.getConstraints().isEmpty()) {
-      Set<Long> ids = query.getIdSet();
-      if(ids != null && !ids.isEmpty()){
-        return findWithOrder(ids, query);
-      }
-      return foundList;
-    }
-
-    StringBuilder statementString = new StringBuilder();
-    statementString.append("SELECT * FROM comments WHERE (");
-    statementString.append(query.getWhereClause());
-    statementString.append(") ");
-    statementString.append(query.getOrderByClause());
-
-    int retryCount = 0;
-    PreparedStatement preparedStatement = null;
-
-    while (true) {
-      preparedStatement = getPreparedStatement(statementString.toString());
-
-      int index = 0;
-      for (QueryConstraint constraint : query.getConstraints()) {
-        Comment._Fields field = (Comment._Fields)constraint.getField();
-        for (Object parameter : constraint.getParameters()) {
-          if (parameter == null) {
-            continue;
-          }
-          try {
-            switch (field) {
-              case content:
-                preparedStatement.setString(++index, (String) parameter);
-                break;
-              case commenter_id:
-                preparedStatement.setInt(++index, (Integer) parameter);
-                break;
-              case commented_on_id:
-                preparedStatement.setLong(++index, (Long) parameter);
-                break;
-              case created_at:
-                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-                break;
-            }
-          } catch (SQLException e) {
-            throw new IOException(e);
-          }
-        }
-      }
-
-      try {
-        executeQuery(foundList, preparedStatement);
-        return foundList;
-      } catch (SQLRecoverableException e) {
-        if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
-          throw new IOException(e);
-        }
-      } catch (SQLException e) {
-        throw new IOException(e);
       }
     }
   }
@@ -323,12 +227,13 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  protected Comment instanceFromResultSet(ResultSet rs) throws SQLException {
+  protected Comment instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+    boolean allFields = selectedFields == null || selectedFields.isEmpty();
     return new Comment(rs.getLong("id"),
-      rs.getString("content"),
-      getIntOrNull(rs, "commenter_id"),
-      getLongOrNull(rs, "commented_on_id"),
-      getDateAsLong(rs, "created_at"),
+      allFields || selectedFields.contains(Comment._Fields.content) ? rs.getString("content") : null,
+      allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : 0,
+      allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : 0L,
+      allFields || selectedFields.contains(Comment._Fields.created_at) ? getDateAsLong(rs, "created_at") : 0L,
       databases
     );
   }

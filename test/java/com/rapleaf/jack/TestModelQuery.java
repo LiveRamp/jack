@@ -1,47 +1,58 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import com.rapleaf.jack.queries.AggregatorFunctions;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static com.rapleaf.jack.JackMatchers.*;
-import static com.rapleaf.jack.QueryOrder.*;
+import static com.rapleaf.jack.queries.QueryOrder.ASC;
+import static com.rapleaf.jack.queries.QueryOrder.DESC;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 
 
 public class TestModelQuery extends TestCase {
 
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
 
-  public void testDbImplQueries() throws IOException {
+  public void testDbImplQueries() throws IOException, SQLException {
     IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
-
-    testBasicQuery(dbs);
-    testQueryOperators(dbs);
-    testQueryById(dbs);
-    testQueryWithOrder(dbs);
-    testQueryByIdWithOrder(dbs);
+    runAllTests(dbs);
   }
 
-  public void testMockDbQueries() throws IOException {
+  public void testMockDbQueries() throws IOException, SQLException {
     IDatabases dbs = new MockDatabasesImpl();
-
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
     testQueryWithOrder(dbs);
     testQueryByIdWithOrder(dbs);
+    testQueryWithLimit(dbs);
   }
 
-  public void testBasicQuery(IDatabases dbs) throws IOException {
+  public void runAllTests(IDatabases dbs) throws IOException, SQLException {
+    testBasicQuery(dbs);
+    testQueryOperators(dbs);
+    testQueryById(dbs);
+    testQueryWithOrder(dbs);
+    testQueryByIdWithOrder(dbs);
+    testQueryWithLimit(dbs);
+    testQueryWithSelect(dbs);
+    testGroupBy(dbs);
+  }
+
+  public void testBasicQuery(IDatabases dbs) throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -81,7 +92,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.isEmpty());
   }
 
-  public void testQueryOperators(IDatabases dbs) throws IOException {
+  public void testQueryOperators(IDatabases dbs) throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -100,73 +111,73 @@ public class TestModelQuery extends TestCase {
     Set<User> result;
 
     // Equal To
-    result = users.query().handle(equalTo("Brad")).find();
+    result = users.query().whereHandle(equalTo("Brad")).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(brad));
 
     // Between
-    result = users.query().numPosts(between(4, 8)).find();
+    result = users.query().whereNumPosts(between(4, 8)).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(james));
 
     // Less Than
-    result = users.query().createdAtMillis(lessThan(2l)).find();
+    result = users.query().whereCreatedAtMillis(lessThan(2l)).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brad));
     assertTrue(result.contains(brandon));
 
     // Greater Than
-    result = users.query().createdAtMillis(greaterThan(1l)).find();
+    result = users.query().whereCreatedAtMillis(greaterThan(1l)).find();
     assertEquals(3, result.size());
 
     // Less Than Or Equal To
-    result = users.query().createdAtMillis(lessThanOrEqualTo(2l)).find();
+    result = users.query().whereCreatedAtMillis(lessThanOrEqualTo(2l)).find();
     assertEquals(4, result.size());
 
     // Greater Than Or Equal To
-    result = users.query().createdAtMillis(greaterThanOrEqualTo(1l)).find();
+    result = users.query().whereCreatedAtMillis(greaterThanOrEqualTo(1l)).find();
     assertEquals(5, result.size());
 
     // Ends With
-    result = users.query().bio(endsWith("er")).find();
+    result = users.query().whereBio(endsWith("er")).find();
     assertEquals(5, result.size());
 
     // StartsWith
-    result = users.query().bio(startsWith("er")).find();
+    result = users.query().whereBio(startsWith("er")).find();
     assertTrue(result.isEmpty());
 
     // Contains and In
-    result = users.query().bio(contains("f"))
-        .numPosts(in(1, 3, 5))
+    result = users.query().whereBio(contains("f"))
+        .whereNumPosts(in(1, 3, 5))
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(james));
 
     // Not In and Not Equal To
-    result = users.query().handle(notIn("Brad", "Brandon", "Jennifer", "John"))
-        .numPosts(notEqualTo(5))
+    result = users.query().whereHandle(notIn("Brad", "Brandon", "Jennifer", "John"))
+        .whereNumPosts(notEqualTo(5))
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(casey));
 
-    result = users.query().someDatetime(JackMatchers.<Long>isNull()).find();
+    result = users.query().whereSomeDatetime(JackMatchers.<Long>isNull()).find();
     assertEquals(3, result.size());
 
-    result = users.query().someDatetime(JackMatchers.<Long>isNotNull()).find();
+    result = users.query().whereSomeDatetime(JackMatchers.<Long>isNotNull()).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brandon));
     assertTrue(result.contains(james));
 
     // If a null parameter is passed, an exeception should be thrown
     try {
-      users.query().handle(in(null, "brandon")).find();
+      users.query().whereHandle(in(null, "brandon")).find();
       fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
       // This exception is expected
     }
   }
 
-  public void testQueryById(IDatabases dbs) throws IOException {
+  public void testQueryById(IDatabases dbs) throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
 
@@ -188,7 +199,7 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    result = users.query().id(sampleIds).find();
+    result = users.query().idIn(sampleIds).find();
     assertEquals(3, result.size());
     assertTrue(result.contains(sampleUsers[0]));
     assertTrue(result.contains(sampleUsers[3]));
@@ -200,15 +211,15 @@ public class TestModelQuery extends TestCase {
     sampleIds2.add(sampleUsers[3].getId());
 
     result = users.query()
-        .numPosts(greaterThan(0))
-        .id(sampleIds2)
+        .whereNumPosts(greaterThan(0))
+        .idIn(sampleIds2)
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
 
   }
-  
-  public void testQueryWithOrder(IDatabases dbs) throws IOException {
+
+  public void testQueryWithOrder(IDatabases dbs) throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -240,7 +251,7 @@ public class TestModelQuery extends TestCase {
     // A query with no results should return an empty list.
     orderedResult1 = users.query().numPosts(3).bio("CEO").order().findWithOrder();
     assertTrue(orderedResult1.isEmpty());
-    
+
     // A simple query with single result should return a list with one element.
     orderedResult1 = users.query().bio("Analyst").order().findWithOrder();
     assertEquals(1, orderedResult1.size());
@@ -260,7 +271,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userD));
     assertEquals(2, orderedResult1.indexOf(userE));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query ordered by default in a descending manner should be ordered by id in an descending manner.
     // expected result: [userE, userD, userC]
     orderedResult1 = users.query().numPosts(3).order(DESC).findWithOrder();
@@ -270,7 +281,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userD));
     assertEquals(0, orderedResult1.indexOf(userE));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
     orderedResult1 = users.query().numPosts(3).orderByBio().findWithOrder();
@@ -280,7 +291,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, orderedResult1.indexOf(userE));
     assertEquals(2, orderedResult1.indexOf(userD));
     assertTrue(orderedResult1.equals(orderedResult2));
-    
+
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
     orderedResult1 = users.query().numPosts(3).orderByBio(DESC).findWithOrder();
@@ -288,10 +299,10 @@ public class TestModelQuery extends TestCase {
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
     assertEquals(0, orderedResult1.indexOf(userD));
-    
+
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userA));
     assertEquals(1, orderedResult1.indexOf(userB));
@@ -301,10 +312,10 @@ public class TestModelQuery extends TestCase {
     assertEquals(5, orderedResult1.indexOf(userG));
     assertEquals(6, orderedResult1.indexOf(userF));
     assertEquals(7, orderedResult1.indexOf(userH));
-    
+
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
-    orderedResult1 = users.query().numPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userH));
@@ -316,7 +327,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(7, orderedResult1.indexOf(userB));
   }
 
-  public void testQueryByIdWithOrder(IDatabases dbs) throws IOException {
+  public void testQueryByIdWithOrder(IDatabases dbs) throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
 
@@ -339,8 +350,8 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[1].getId());
     sampleIds.add(sampleUsers[2].getId());
-    orderedResult1 = users.query().id(sampleIds).order().findWithOrder();
-    orderedResult2 = users.query().id(sampleIds).orderById(ASC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).order().findWithOrder();
+    orderedResult2 = users.query().idIn(sampleIds).orderById(ASC).findWithOrder();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[0]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
@@ -350,12 +361,185 @@ public class TestModelQuery extends TestCase {
     // A query by several ids ordered by a specific field should return a list ordered accordingly.
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    orderedResult1 = users.query().id(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
     assertEquals(5, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[3]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
     assertEquals(2, orderedResult1.indexOf(sampleUsers[4]));
     assertEquals(3, orderedResult1.indexOf(sampleUsers[2]));
     assertEquals(4, orderedResult1.indexOf(sampleUsers[0]));
+  }
+
+  public void testQueryWithLimit(IDatabases dbs) throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    int nbUsers = 10;
+    User[] sampleUsers = new User[nbUsers];
+
+    for (int i = 0; i < 10; i++) {
+      sampleUsers[i] = users.createDefaultInstance().setNumPosts(i);
+      sampleUsers[i].save();
+    }
+
+    List<User> resultList;
+
+    resultList = users.query()
+        .whereNumPosts(lessThan(5))
+        .orderByNumPosts()
+        .limit(3)
+        .findWithOrder();
+
+    assertEquals(3, resultList.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertEquals(i, resultList.get(i).getNumPosts());
+    }
+
+    resultList = users.query()
+        .whereNumPosts(greaterThan(3))
+        .orderByNumPosts()
+        .limit(2, 3)
+        .findWithOrder();
+
+    assertEquals(3, resultList.size());
+    for (int i = 0; i < resultList.size(); i++) {
+      assertEquals(i + 6, resultList.get(i).getNumPosts());
+    }
+
+    Set<User> resultSet;
+
+    resultSet = users.query()
+        .whereNumPosts(lessThan(5))
+        .orderByNumPosts()
+        .limit(3)
+        .find();
+
+    assertEquals(3, resultSet.size());
+
+    resultSet = users.query()
+        .whereNumPosts(greaterThan(3))
+        .orderByNumPosts()
+        .limit(2, 3)
+        .find();
+
+    assertEquals(3, resultSet.size());
+  }
+
+  public void testQueryWithSelect(IDatabases dbs) throws IOException, SQLException {
+
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("AAAA").setBio("Batman").setCreatedAtMillis(1L).setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("BBBB").setBio("Superman").setCreatedAtMillis(1L);
+    User userC = users.createDefaultInstance().setHandle("CCCC").setBio("Spiderman").setCreatedAtMillis(1L);
+    userA.save();
+    userB.save();
+    userC.save();
+
+    Collection<User> result;
+
+    result = users.query().select(User._Fields.handle)
+        .whereBio(endsWith("man"))
+        .find();
+
+    for (User user : result) {
+      assertTrue(user.getHandle() != null);
+      assertTrue(user.getBio() == null);
+      assertTrue(user.getCreatedAtMillis() == null);
+    }
+
+    result = users.query().select(User._Fields.handle, User._Fields.created_at_millis)
+        .whereBio(endsWith("man"))
+        .findWithOrder();
+
+    for (User user : result) {
+      assertTrue(user.getHandle() != null);
+      assertTrue(user.getCreatedAtMillis() != null);
+      assertTrue(user.getBio() == null);
+    }
+
+    result = users.query().select(User._Fields.created_at_millis)
+        .whereBio(endsWith("man"))
+        .findWithOrder();
+
+    for (User user : result) {
+      assertTrue(user.getHandle().equals(""));
+      assertTrue(user.getCreatedAtMillis() != null);
+      assertTrue(user.getBio() == null);
+    }
+  }
+
+  public void testGroupBy(IDatabases dbs) throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    for (int i = 0; i < 100; i++) {
+      User user = users.createDefaultInstance().setHandle(String.valueOf(i % 2)).setNumPosts(i);
+      user.save();
+    }
+
+    List<User> result;
+
+    // Test Max
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.max(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals("0", result.get(0).getHandle());
+    assertEquals(98, result.get(0).getNumPosts());
+    assertEquals("1", result.get(1).getHandle());
+    assertEquals(99, result.get(1).getNumPosts());
+
+    // Test Min
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.min(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(0, result.get(0).getNumPosts());
+    assertEquals(1, result.get(1).getNumPosts());
+
+
+    // Test Count
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.count(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(50, result.get(0).getNumPosts());
+    assertEquals(50, result.get(1).getNumPosts());
+
+    // Test Sum
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.sum(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals(2450, result.get(0).getNumPosts());
+    assertEquals(2500, result.get(1).getNumPosts());
+
+    // Test Avg
+    result = users.query()
+        .select(User._Fields.handle)
+        .selectAgg(AggregatorFunctions.avg(User._Fields.num_posts))
+        .groupBy(User._Fields.handle)
+        .orderByHandle()
+        .findWithOrder();
+
+    assertEquals(2, result.size());
+    assertEquals(49, result.get(0).getNumPosts());
+    assertEquals(50, result.get(1).getNumPosts());
   }
 }

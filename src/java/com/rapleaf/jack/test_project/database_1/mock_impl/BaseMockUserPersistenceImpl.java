@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,11 +25,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractMockDatabaseModel;
-import com.rapleaf.jack.ModelQuery;
+import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.LimitCriterion;
+import com.rapleaf.jack.queries.OrderCriterion;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.models.User.Id;
@@ -94,16 +97,33 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
   }
 
   public Set<User> find(ModelQuery query) throws IOException {
-    return super.realFind(query);
+    Set<User> allResults = super.realFind(query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    int i = 0;
+    Set<User> truncatedSet = new HashSet<User>();
+    Iterator<User> iterator = allResults.iterator();
+    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
   
   public List<User> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<User> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<User> sortUnorderedMockQuery(Set<User> unorderedRresult, ModelQuery query) {
+  private List<User> sortUnorderedMockQuery(Set<User> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<User> result = new ArrayList<User>(unorderedRresult);
+    List<User> result = new ArrayList<User>(unorderedResult);
 
     Collections.sort(result, new Comparator<User>() {
       public int compare(User t1, User t2) {
@@ -115,19 +135,19 @@ public class BaseMockUserPersistenceImpl extends AbstractMockDatabaseModel<User,
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
           Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
           if (o1 instanceof java.lang.Comparable) {
-            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+            compareResult = ((Comparable) o1).compareTo(o2);
           } else {
-            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
           }
 
           int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
           compareResult = compareResult * orderDirection;
-          if (compareResult == 0) {
-            continue;
-          } else if (compareResult < 0) {
-            return -1;
-          } else {
-            return 1;
+          if (compareResult != 0) {
+            if (compareResult < 0) {
+              return -1;
+            } else {
+              return 1;
+            }
           }
         }
         return 0;

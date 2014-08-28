@@ -2,12 +2,14 @@ package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractQueryBuilder;
-import com.rapleaf.jack.IQueryOperator;
-import com.rapleaf.jack.JackMatchers;
-import com.rapleaf.jack.QueryConstraint;
-import com.rapleaf.jack.QueryOrder;
-import com.rapleaf.jack.OrderCriterion;
+import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.OrderCriterion;
+import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 
@@ -18,13 +20,40 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     super(caller);
   }
 
+  public CommentQueryBuilder select(Comment._Fields... fields) {
+    for (Comment._Fields field : fields){
+      addSelectedField(new FieldSelector(field));
+    }
+    return this;
+  }
+
+  public CommentQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+    addSelectedFields(aggregatedFields);
+    return this;
+  }
+
   public CommentQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public CommentQueryBuilder id(Set<Long> values) {
+  public CommentQueryBuilder idIn(Set<Long> values) {
     addIds(values);
+    return this;
+  }
+
+  public CommentQueryBuilder limit(int offset, int nResults) {
+    setLimit(new LimitCriterion(offset, nResults));
+    return this;
+  }
+
+  public CommentQueryBuilder limit(int nResults) {
+    setLimit(new LimitCriterion(nResults));
+    return this;
+  }
+
+  public CommentQueryBuilder groupBy(Comment._Fields... fields) {
+    addGroupByFields(fields);
     return this;
   }
 
@@ -49,17 +78,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder content(String value) {
-    if(value == null) {
-      addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.<String>isNull()));
-    }
-    else {
-      addConstraint(new QueryConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder content(IQueryOperator<String> operator) {
-    addConstraint(new QueryConstraint<String>(Comment._Fields.content, operator));
+  public CommentQueryBuilder whereContent(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, operator));
     return this;
   }
   
@@ -74,17 +98,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commenterId(Integer value) {
-    if(value == null) {
-      addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.<Integer>isNull()));
-    }
-    else {
-      addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder commenterId(IQueryOperator<Integer> operator) {
-    addConstraint(new QueryConstraint<Integer>(Comment._Fields.commenter_id, operator));
+  public CommentQueryBuilder whereCommenterId(IWhereOperator<Integer> operator) {
+    addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, operator));
     return this;
   }
   
@@ -99,17 +118,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder commentedOnId(Long value) {
-    if(value == null) {
-      addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder commentedOnId(IQueryOperator<Long> operator) {
-    addConstraint(new QueryConstraint<Long>(Comment._Fields.commented_on_id, operator));
+  public CommentQueryBuilder whereCommentedOnId(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, operator));
     return this;
   }
   
@@ -124,17 +138,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder createdAt(Long value) {
-    if(value == null) {
-      addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.<Long>isNull()));
-    }
-    else {
-      addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
-    }
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public CommentQueryBuilder createdAt(IQueryOperator<Long> operator) {
-    addConstraint(new QueryConstraint<Long>(Comment._Fields.created_at, operator));
+  public CommentQueryBuilder whereCreatedAt(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, operator));
     return this;
   }
   

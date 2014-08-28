@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashSet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,11 +35,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractMockDatabaseModel;
-import <%= JACK_NAMESPACE %>.ModelQuery;
+import <%= JACK_NAMESPACE %>.queries.ModelQuery;
 import <%= JACK_NAMESPACE %>.ModelWithId;
-import <%= JACK_NAMESPACE %>.QueryConstraint;
-import <%= JACK_NAMESPACE %>.QueryOrder;
-import <%= JACK_NAMESPACE %>.OrderCriterion;
+import <%= JACK_NAMESPACE %>.queries.WhereConstraint;
+import <%= JACK_NAMESPACE %>.queries.QueryOrder;
+import <%= JACK_NAMESPACE %>.queries.LimitCriterion;
+import <%= JACK_NAMESPACE %>.queries.OrderCriterion;
 
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.models.<%= model_defn.id_wrapper_name %>;
@@ -87,16 +90,33 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
   }
 
   public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
-    return super.realFind(query);
+    Set<<%= model_defn.model_name %>> allResults = super.realFind(query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    int i = 0;
+    Set<<%= model_defn.model_name %>> truncatedSet = new HashSet<<%= model_defn.model_name %>>();
+    Iterator<<%= model_defn.model_name %>> iterator = allResults.iterator();
+    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
   
   public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
-    return sortUnorderedMockQuery(super.realFind(query), query);
+    List<<%= model_defn.model_name %>> allResults = sortUnorderedMockQuery(super.realFind(query), query);
+    LimitCriterion limitCriterion = query.getLimitCriterion();
+    if(limitCriterion == null) {
+      return allResults;
+    }
+    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
   }
 
-  private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedRresult, ModelQuery query) {
+  private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedResult, ModelQuery query) {
     final List<OrderCriterion> orderCriteria = query.getOrderCriteria();
-    List<<%= model_defn.model_name %>> result = new ArrayList<<%= model_defn.model_name %>>(unorderedRresult);
+    List<<%= model_defn.model_name %>> result = new ArrayList<<%= model_defn.model_name %>>(unorderedResult);
 
     Collections.sort(result, new Comparator<<%= model_defn.model_name %>>() {
       public int compare(<%= model_defn.model_name %> t1, <%= model_defn.model_name %> t2) {
@@ -108,19 +128,19 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
           Object o1 = field != null ? t1.getField(fieldName) : t1.getId();
           Object o2 = field != null ? t2.getField(fieldName) : t2.getId();
           if (o1 instanceof java.lang.Comparable) {
-            compareResult = ((Comparable) o1).compareTo((Comparable) o2);
+            compareResult = ((Comparable) o1).compareTo(o2);
           } else {
-            compareResult = Integer.valueOf(o1.hashCode()).compareTo(Integer.valueOf(o2.hashCode()));
+            compareResult = Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
           }
 
           int orderDirection = (orderCriterion.getOrder() == QueryOrder.ASC) ? 1 : -1;
           compareResult = compareResult * orderDirection;
-          if (compareResult == 0) {
-            continue;
-          } else if (compareResult < 0) {
-            return -1;
-          } else {
-            return 1;
+          if (compareResult != 0) {
+            if (compareResult < 0) {
+              return -1;
+            } else {
+              return 1;
+            }
           }
         }
         return 0;
