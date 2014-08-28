@@ -274,9 +274,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     String statementString = getPreparedStatementString(query, false);
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
-    while(true) {
+    while (true) {
       preparedStatement = getPreparedStatement(statementString);
       setStatementParameters(preparedStatement, query);
       Set<Enum> selectedFields = getSelectedFields(query);
@@ -284,7 +284,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       try {
         executeQuery(foundSet, preparedStatement, selectedFields);
         return foundSet;
-      } catch (SQLRecoverableException e){
+      } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -308,9 +308,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     String statementString = getPreparedStatementString(query, true);
 
     int retryCount = 0;
-    PreparedStatement preparedStatement = null;
+    PreparedStatement preparedStatement;
 
-    while(true) {
+    while (true) {
       preparedStatement = getPreparedStatement(statementString);
       setStatementParameters(preparedStatement, query);
       Set<Enum> selectedFields = getSelectedFields(query);
@@ -318,7 +318,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       try {
         executeQuery(foundList, preparedStatement, selectedFields);
         return foundList;
-      } catch (SQLRecoverableException e){
+      } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
