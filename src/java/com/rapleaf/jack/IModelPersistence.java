@@ -55,9 +55,9 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
-  public Set<T> find(ModelQuery query) throws IOException, SQLException;
+  public Set<T> find(ModelQuery query) throws IOException;
   
-  public List<T> findWithOrder(ModelQuery query) throws IOException, SQLException;
+  public List<T> findWithOrder(ModelQuery query) throws IOException;
 
   public void clearCacheById(long id) throws IOException;
 
