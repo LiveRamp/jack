@@ -260,7 +260,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundList;
   }
 
-  public Set<T> find(ModelQuery query) throws IOException, SQLException {
+  public Set<T> find(ModelQuery query) throws IOException {
     Set<T> foundSet = new HashSet<T>();
 
     if (query.isEmptyQuery()) {
@@ -294,7 +294,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
-  public List<T> findWithOrder(ModelQuery query) throws IOException, SQLException {
+  public List<T> findWithOrder(ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<T>();
 
     if (query.isEmptyQuery()) {
