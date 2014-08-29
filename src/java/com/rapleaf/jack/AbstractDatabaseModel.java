@@ -330,7 +330,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private String getPreparedStatementString(ModelQuery query, boolean order) throws IOException {
     String statement = query.getSelectClause();
-    statement += " FROM users ";
+    statement += " FROM " + getTableName() + " ";
     statement += query.getWhereClause();
     statement += query.getGroupByClause();
     statement += order ? query.getOrderByClause() : "";
