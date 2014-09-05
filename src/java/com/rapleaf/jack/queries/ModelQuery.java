@@ -22,6 +22,7 @@ public class ModelQuery {
     this.selectedFields = new ArrayList<FieldSelector>();
     this.groupByFields = new ArrayList<Enum>();
     this.ids = new HashSet<Long>();
+    this.limitCriterion = null;
   }
 
   public List<FieldSelector> getSelectedFields() {
@@ -181,6 +182,8 @@ public class ModelQuery {
 
   public boolean isEmptyQuery() {
     return whereConstraints.isEmpty()
-        && selectedFields.isEmpty();
+        && selectedFields.isEmpty()
+        && orderCriteria.isEmpty()
+        && limitCriterion == null;
   }
 }
