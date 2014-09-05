@@ -245,7 +245,7 @@ public class TestModelQuery extends TestCase {
     List<User> orderedResult2;
 
     // An empty query should return an empty list.
-    orderedResult1 = users.query().order().findWithOrder();
+    orderedResult1 = users.query().findWithOrder();
     assertTrue(orderedResult1.isEmpty());
 
     // A query with no results should return an empty list.
