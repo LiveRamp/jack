@@ -17,9 +17,9 @@ public class In<V> extends WhereOperator<V> {
   @Override
   public String getSqlStatement() {
     StringBuilder sb = new StringBuilder("IN (");
-    for (int i = 0; i < getParameters().size() - 1; i++) {
+    for (int i = 0; i < getParameters().size(); i++) {
       sb.append("?");
-      if (i < getParameters().size() - 2) {
+      if (i < getParameters().size() - 1) {
         sb.append(", ");
       }
     }
