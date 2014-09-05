@@ -1,5 +1,7 @@
 package com.rapleaf.jack.queries.where_operators;
 
+import java.util.Collection;
+
 public class In<V> extends WhereOperator<V> {
 
   public In(V value1, V... otherValues) {
@@ -7,11 +9,19 @@ public class In<V> extends WhereOperator<V> {
     ensureNoNullParameter();
   }
 
+  public In(Collection<V> collection) {
+    super(collection);
+    ensureNoNullParameter();
+  }
+
   @Override
   public String getSqlStatement() {
-    StringBuilder sb = new StringBuilder("IN ( ?");
+    StringBuilder sb = new StringBuilder("IN (");
     for (int i = 0; i < getParameters().size() - 1; i++) {
-      sb.append(", ?");
+      sb.append("?");
+      if (i < getParameters().size() - 2) {
+        sb.append(", ");
+      }
     }
     sb.append(" )");
     return sb.toString();

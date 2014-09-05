@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries.where_operators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,10 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     Collections.addAll(this.parameters, otherParam);
+  }
+
+  public WhereOperator(Collection<V> collection) {
+    this.parameters = new ArrayList<V>(collection);
   }
 
   public List<V> getParameters() {

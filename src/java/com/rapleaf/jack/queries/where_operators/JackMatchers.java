@@ -1,5 +1,7 @@
 package com.rapleaf.jack.queries.where_operators;
 
+import java.util.Collection;
+
 public class JackMatchers {
 
   public static <T> IWhereOperator<T> equalTo(T value) {
@@ -26,6 +28,10 @@ public class JackMatchers {
 
   public static <T> In<T> in(T value1, T... otherValues) {
     return new In<T>(value1, otherValues);
+  }
+
+  public static <T> In<T> in(Collection<T> collection) {
+    return  new In<T>(collection);
   }
 
   public static <T> NotIn<T> notIn(T value1, T... otherValues) {
