@@ -8,7 +8,7 @@ public class NotEqualTo<V> extends WhereOperator<V> {
       ensureNoNullParameter();
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("You cannot pass a null value as a parameter. " +
-          "Use the NotEqualToOrNull operator instead.");
+          "Use the isNotNull operator instead, or JackMatchers.notEqualTo().");
     }
   }
 
