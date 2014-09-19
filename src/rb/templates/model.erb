@@ -311,7 +311,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% model_defn.associations.each do |association| %>
     <% assoc_field = association.assoc_model.fields.reject{|field_defn| field_defn.name != association.foreign_key }.first %>
     <% assoc_field_type = assoc_field.java_type rescue nil %>
-    <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.assoc_model_name %>
+    <% other_model_name = association.type == "belongs_to" ? association.foreign_key.gsub("_id", "").camelcase : association.name.camelcase %>
     <% other_model_field = model_defn.fields.reject{|field_defn| field_defn.name != (association.foreign_key) }.first %>
     <% new_model_name = "new" + association.assoc_model_name %>
     <% if association.type != "has_many" %>
