@@ -57,4 +57,23 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
       }
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    WhereOperator that = (WhereOperator)o;
+
+    return parameters.equals(that.parameters);
+  }
+
+  @Override
+  public int hashCode() {
+    return parameters.hashCode();
+  }
 }
