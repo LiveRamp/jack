@@ -16,14 +16,21 @@ public class In<V> extends WhereOperator<V> {
 
   @Override
   public String getSqlStatement() {
+
     StringBuilder sb = new StringBuilder("IN (");
-    for (int i = 0; i < getParameters().size(); i++) {
-      sb.append("?");
-      if (i < getParameters().size() - 1) {
-        sb.append(", ");
+
+    if (getParameters().isEmpty()) {
+      sb.append("null");
+    } else {
+      for (int i = 0; i < getParameters().size(); i++) {
+        sb.append("?");
+        if (i < getParameters().size() - 1) {
+          sb.append(", ");
+
+        }
       }
     }
-    sb.append(" )");
+    sb.append(")");
     return sb.toString();
   }
 
