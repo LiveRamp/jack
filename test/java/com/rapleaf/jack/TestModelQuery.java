@@ -3,6 +3,7 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -145,6 +146,20 @@ public class TestModelQuery extends TestCase {
     // StartsWith
     result = users.query().whereBio(startsWith("er")).find();
     assertTrue(result.isEmpty());
+
+    // In with empty collection
+    result = users.query().whereSomeDatetime(in(Collections.<Long>emptySet()))
+        .find();
+    assertTrue(result.isEmpty());
+
+    // NotIn with empty collection
+    try {
+      users.query().whereSomeDatetime(notIn(Collections.<Long>emptySet()))
+          .find();
+      fail("Using a NotIn operator with an empty collection should throw an exception.");
+    } catch (IllegalArgumentException e) {
+      //This is expected
+    }
 
     // Contains and In
     result = users.query().whereBio(contains("f"))
