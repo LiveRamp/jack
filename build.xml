@@ -254,6 +254,13 @@
     <delete includeemptydirs="true" dir="${doc}"/>
   </target>
 
+  <target name="install" depends="dist" description="Install">
+    <artifact:pom id="mypom" file="pom.xml" />
+    <artifact:install file="build/jack-1.0-SNAPSHOT.jar">
+      <pom refid="mypom"/>
+    </artifact:install>
+  </target>
+
   <target name="deploy" depends="dist" description="Deploy">
     <artifact:pom id="mypom" file="pom.xml" />
     <artifact:deploy file="build/jack-1.0-SNAPSHOT.jar">
