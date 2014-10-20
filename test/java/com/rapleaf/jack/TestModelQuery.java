@@ -18,6 +18,7 @@ import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
+import static com.rapleaf.jack.queries.AggregatorFunctions.max;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
 import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
@@ -499,7 +500,7 @@ public class TestModelQuery extends TestCase {
     // Test Max
     result = users.query()
         .select(User._Fields.handle)
-        .selectAgg(AggregatorFunctions.max(User._Fields.num_posts))
+        .selectAgg(max(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
         .findWithOrder();
