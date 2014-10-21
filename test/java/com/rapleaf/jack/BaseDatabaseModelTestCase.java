@@ -577,17 +577,6 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(i1, imageInDb);
   }
 
-  public void testCreateAssociationUnsetsForeignKeyInPreviousValue() throws Exception {
-    IUserPersistence users = dbs.getDatabase1().users();
-    User u1 = users.createDefaultInstance();
-
-    Image i1 = u1.createImage();
-    u1.createImage();
-    IImagePersistence images = dbs.getDatabase1().images();
-    Image i1InDb = images.find(i1.getId());
-    assertNull(i1InDb.getUserId());
-  }
-
   public void testComparable() {
     Post post1 = new Post(50, "Post1", 20L, 100, 0l, dbs);
     Post post2 = new Post(70, "Post2", 20L, 100, 0l, dbs);
