@@ -201,6 +201,6 @@ public class ModelQuery {
     return whereConstraints.isEmpty()
         && selectedFields.isEmpty()
         && orderCriteria.isEmpty()
-        && limitCriterion == null;
+        && !limitCriterion.isPresent();
   }
 }
