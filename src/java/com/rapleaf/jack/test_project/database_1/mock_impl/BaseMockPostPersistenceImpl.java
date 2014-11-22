@@ -91,27 +91,12 @@ public class BaseMockPostPersistenceImpl extends AbstractMockDatabaseModel<Post,
 
   public Set<Post> find(ModelQuery query) throws IOException {
     Set<Post> allResults = super.realFind(query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    int i = 0;
-    Set<Post> truncatedSet = new HashSet<Post>();
-    Iterator<Post> iterator = allResults.iterator();
-    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
-      truncatedSet.add(iterator.next());
-      i++;
-    }
-    return truncatedSet;
+    return truncateResults(allResults, query.getLimitCriterion());
   }
   
   public List<Post> findWithOrder(ModelQuery query) throws IOException {
     List<Post> allResults = sortUnorderedMockQuery(super.realFind(query), query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
+    return truncateResults(allResults, query.getLimitCriterion());
   }
 
   private List<Post> sortUnorderedMockQuery(Set<Post> unorderedResult, ModelQuery query) {

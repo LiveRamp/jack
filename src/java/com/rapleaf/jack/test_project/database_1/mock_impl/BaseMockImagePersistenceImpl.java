@@ -88,27 +88,12 @@ public class BaseMockImagePersistenceImpl extends AbstractMockDatabaseModel<Imag
 
   public Set<Image> find(ModelQuery query) throws IOException {
     Set<Image> allResults = super.realFind(query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    int i = 0;
-    Set<Image> truncatedSet = new HashSet<Image>();
-    Iterator<Image> iterator = allResults.iterator();
-    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
-      truncatedSet.add(iterator.next());
-      i++;
-    }
-    return truncatedSet;
+    return truncateResults(allResults, query.getLimitCriterion());
   }
   
   public List<Image> findWithOrder(ModelQuery query) throws IOException {
     List<Image> allResults = sortUnorderedMockQuery(super.realFind(query), query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
+    return truncateResults(allResults, query.getLimitCriterion());
   }
 
   private List<Image> sortUnorderedMockQuery(Set<Image> unorderedResult, ModelQuery query) {

@@ -6,10 +6,15 @@ import javax.script.ScriptException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
+
+import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
@@ -125,10 +130,10 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
     Set<T> foundSet = new HashSet<T>();
 
     List<WhereConstraint> constraints = query.getWhereConstraints();
-    Set<Long> ids = query.getIdSet();
+    Optional<Set<Long>> ids = query.getIdSet();
     if (constraints == null || constraints.isEmpty()) {
-      if (ids != null && !ids.isEmpty()) {
-        return find(ids);
+      if (ids.isPresent() && !ids.get().isEmpty()) {
+        return find(ids.get());
       }
       return foundSet;
     }
@@ -140,7 +145,7 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
         IWhereOperator operator = constraint.getOperator();
         allMatch = allMatch && operator.apply(record.getField(field.name()));
       }
-      if (ids != null && !ids.isEmpty() && !ids.contains(record.getId())) {
+      if (ids.isPresent() && !ids.get().isEmpty() && !ids.get().contains(record.getId())) {
         allMatch = false;
       }
       T newRecord = record.getCopy();
@@ -149,6 +154,33 @@ public abstract class AbstractMockDatabaseModel<T extends ModelWithId<T, D>, D e
       }
     }
     return foundSet;
+  }
+
+  protected List<T> truncateResults(List<T> allResults, Optional<LimitCriterion> optionalLimitCriterion) {
+
+    if (!optionalLimitCriterion.isPresent() || allResults.isEmpty()) {
+      return allResults;
+    }
+
+    LimitCriterion limitCriterion = optionalLimitCriterion.get();
+    int fromIndex = Math.min(limitCriterion.getOffset(), allResults.size() - 1);
+    int toIndex = Math.min(limitCriterion.getOffset() + limitCriterion.getNResults(), allResults.size() - 1);
+    return allResults.subList(fromIndex, toIndex);
+  }
+
+  protected Set<T> truncateResults(Set<T> allResults, Optional<LimitCriterion> optionalLimitCriterion) {
+
+    if (!optionalLimitCriterion.isPresent()) {
+      return allResults;
+    }
+    int i = 0;
+    Set<T> truncatedSet = Sets.newHashSet();
+    Iterator<T> iterator = allResults.iterator();
+    while (iterator.hasNext() && i < optionalLimitCriterion.get().getNResults()) {
+      truncatedSet.add(iterator.next());
+      i++;
+    }
+    return truncatedSet;
   }
 
   @Override

@@ -92,27 +92,12 @@ public class BaseMockCommentPersistenceImpl extends AbstractMockDatabaseModel<Co
 
   public Set<Comment> find(ModelQuery query) throws IOException {
     Set<Comment> allResults = super.realFind(query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    int i = 0;
-    Set<Comment> truncatedSet = new HashSet<Comment>();
-    Iterator<Comment> iterator = allResults.iterator();
-    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
-      truncatedSet.add(iterator.next());
-      i++;
-    }
-    return truncatedSet;
+    return truncateResults(allResults, query.getLimitCriterion());
   }
   
   public List<Comment> findWithOrder(ModelQuery query) throws IOException {
     List<Comment> allResults = sortUnorderedMockQuery(super.realFind(query), query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
+    return truncateResults(allResults, query.getLimitCriterion());
   }
 
   private List<Comment> sortUnorderedMockQuery(Set<Comment> unorderedResult, ModelQuery query) {
