@@ -233,6 +233,12 @@ public class TestModelQuery extends TestCase {
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
 
+    //Query by empty collection of ids
+    result = users.query()
+        .idIn(Collections.<Long>emptySet())
+        .find();
+    assertTrue(result.isEmpty());
+
   }
 
   public void testQueryWithOrder(IDatabases dbs) throws IOException, SQLException {

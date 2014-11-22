@@ -2,12 +2,15 @@ package com.rapleaf.jack.queries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 public class ModelQuery {
+
+  private final Set<Long> INTENTIONAL_EMPTY_LIST = Collections.emptySet();
 
   private List<WhereConstraint> whereConstraints;
   private List<OrderCriterion> orderCriteria;
@@ -61,6 +64,10 @@ public class ModelQuery {
     ids.add(id);
   }
 
+  public void setEmptyIdList() {
+    ids = INTENTIONAL_EMPTY_LIST;
+  }
+
   public void addOrder(OrderCriterion orderCriterion) {
     orderCriteria.add(orderCriterion);
   }
@@ -99,10 +106,10 @@ public class ModelQuery {
 
   public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder();
-    if (!ids.isEmpty() || !whereConstraints.isEmpty()) {
+    if (!ids.isEmpty() || ids == INTENTIONAL_EMPTY_LIST || !whereConstraints.isEmpty()) {
       statementBuilder.append("WHERE (");
 
-      statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
+      statementBuilder.append((!ids.isEmpty() || isIdSetIntentionalyEmpty()) ? getIdSetSqlCondition() : "");
       if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
         statementBuilder.append(" AND ");
       }
@@ -185,5 +192,9 @@ public class ModelQuery {
         && selectedFields.isEmpty()
         && orderCriteria.isEmpty()
         && limitCriterion == null;
+  }
+
+  private boolean isIdSetIntentionalyEmpty() {
+    return ids == INTENTIONAL_EMPTY_LIST;
   }
 }
