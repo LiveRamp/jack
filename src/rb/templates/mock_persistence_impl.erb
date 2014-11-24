@@ -90,27 +90,12 @@ public class <%= model_defn.mock_impl_name %> extends AbstractMockDatabaseModel<
 
   public Set<<%= model_defn.model_name %>> find(ModelQuery query) throws IOException {
     Set<<%= model_defn.model_name %>> allResults = super.realFind(query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    int i = 0;
-    Set<<%= model_defn.model_name %>> truncatedSet = new HashSet<<%= model_defn.model_name %>>();
-    Iterator<<%= model_defn.model_name %>> iterator = allResults.iterator();
-    while(iterator.hasNext() && i < limitCriterion.getNResults()) {
-      truncatedSet.add(iterator.next());
-      i++;
-    }
-    return truncatedSet;
+    return truncateResults(allResults, query.getLimitCriterion());
   }
   
   public List<<%= model_defn.model_name %>> findWithOrder(ModelQuery query) throws IOException {
     List<<%= model_defn.model_name %>> allResults = sortUnorderedMockQuery(super.realFind(query), query);
-    LimitCriterion limitCriterion = query.getLimitCriterion();
-    if(limitCriterion == null) {
-      return allResults;
-    }
-    return allResults.subList(limitCriterion.getOffset(), limitCriterion.getNResults() + limitCriterion.getOffset());
+    return truncateResults(allResults, query.getLimitCriterion());
   }
 
   private List<<%= model_defn.model_name %>> sortUnorderedMockQuery(Set<<%= model_defn.model_name %>> unorderedResult, ModelQuery query) {

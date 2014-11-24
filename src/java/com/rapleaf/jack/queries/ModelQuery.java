@@ -2,10 +2,13 @@ package com.rapleaf.jack.queries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 public class ModelQuery {
 
@@ -13,16 +16,17 @@ public class ModelQuery {
   private List<OrderCriterion> orderCriteria;
   private List<FieldSelector> selectedFields;
   private List<Enum> groupByFields;
-  private LimitCriterion limitCriterion;
-  private Set<Long> ids;
+  private Optional<LimitCriterion> limitCriterion;
+  private Optional<Set<Long>> selectedIds;
 
   public ModelQuery() {
     this.whereConstraints = new ArrayList<WhereConstraint>();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.selectedFields = new ArrayList<FieldSelector>();
     this.groupByFields = new ArrayList<Enum>();
-    this.ids = new HashSet<Long>();
-    this.limitCriterion = null;
+    //By default, no id selection and limit criteria
+    this.selectedIds = Optional.absent();
+    this.limitCriterion = Optional.absent();
   }
 
   public List<FieldSelector> getSelectedFields() {
@@ -33,20 +37,20 @@ public class ModelQuery {
     return whereConstraints;
   }
 
-  public Set<Long> getIdSet() {
-    return ids;
+  public Optional<Set<Long>> getIdSet() {
+    return selectedIds;
   }
 
   public List<OrderCriterion> getOrderCriteria() {
     return orderCriteria;
   }
 
-  public LimitCriterion getLimitCriterion() {
+  public Optional<LimitCriterion> getLimitCriterion() {
     return limitCriterion;
   }
 
   public void setLimitCriterion(LimitCriterion limitCriterion) {
-    this.limitCriterion = limitCriterion;
+    this.limitCriterion = Optional.of(limitCriterion);
   }
 
   public void addConstraint(WhereConstraint constraint) {
@@ -54,11 +58,14 @@ public class ModelQuery {
   }
 
   public void addIds(Set<Long> ids) {
-    this.ids.addAll(ids);
+    if (!selectedIds.isPresent()) {
+      selectedIds = Optional.<Set<Long>>of(Sets.<Long>newHashSet());
+    }
+    this.selectedIds.get().addAll(ids);
   }
 
   public void addId(Long id) {
-    ids.add(id);
+    addIds(Collections.singleton(id));
   }
 
   public void addOrder(OrderCriterion orderCriterion) {
@@ -99,11 +106,11 @@ public class ModelQuery {
 
   public String getWhereClause() {
     StringBuilder statementBuilder = new StringBuilder();
-    if (!ids.isEmpty() || !whereConstraints.isEmpty()) {
+    if (selectedIds.isPresent() || !whereConstraints.isEmpty()) {
       statementBuilder.append("WHERE (");
 
-      statementBuilder.append(ids.isEmpty() ? "" : getIdSetSqlCondition());
-      if (!ids.isEmpty() && !whereConstraints.isEmpty()) {
+      statementBuilder.append(getIdSetSqlCondition());
+      if (selectedIds.isPresent() && !whereConstraints.isEmpty()) {
         statementBuilder.append(" AND ");
       }
       statementBuilder.append(getWhereSqlCriteria());
@@ -113,13 +120,23 @@ public class ModelQuery {
   }
 
   private String getIdSetSqlCondition() {
+    if (!selectedIds.isPresent()) {
+      return "";
+    }
+
+    Set<Long> ids = selectedIds.get();
+
     StringBuilder sb = new StringBuilder("id in (");
-    Iterator<Long> iter = ids.iterator();
-    while (iter.hasNext()) {
-      Long obj = iter.next();
-      sb.append(obj.toString());
-      if (iter.hasNext()) {
-        sb.append(",");
+    if (ids.isEmpty()) {
+      sb.append("null");
+    } else {
+      Iterator<Long> idIterator = selectedIds.get().iterator();
+      while (idIterator.hasNext()) {
+        Long id = idIterator.next();
+        sb.append(id);
+        if (idIterator.hasNext()) {
+          sb.append(",");
+        }
       }
     }
     sb.append(")");
@@ -174,16 +191,16 @@ public class ModelQuery {
   }
 
   public String getLimitClause() {
-    if (limitCriterion == null) {
-      return "";
+    if (limitCriterion.isPresent()) {
+      return limitCriterion.get().getSqlClause();
     }
-    return limitCriterion.getSqlClause();
+    return "";
   }
 
-  public boolean isEmptyQuery() {
+  public boolean isOnlyIdQuery() {
     return whereConstraints.isEmpty()
         && selectedFields.isEmpty()
         && orderCriteria.isEmpty()
-        && limitCriterion == null;
+        && !limitCriterion.isPresent();
   }
 }

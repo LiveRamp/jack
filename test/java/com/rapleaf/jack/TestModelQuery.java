@@ -232,7 +232,6 @@ public class TestModelQuery extends TestCase {
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
-
   }
 
   public void testQueryWithOrder(IDatabases dbs) throws IOException, SQLException {
@@ -360,6 +359,14 @@ public class TestModelQuery extends TestCase {
     orderedResult1 = users.query().id(sampleUsers[0].getId()).order().findWithOrder();
     assertEquals(1, orderedResult1.size());
     assertTrue(orderedResult1.contains(sampleUsers[0]));
+
+    // A query with an empty collection of id should return nothing
+    orderedResult1 = users.query()
+        .idIn(Collections.<Long>emptySet())
+        .orderByNumPosts()
+        .limit(1)
+        .findWithOrder();
+    assertTrue(orderedResult1.isEmpty());
 
     // A query by several ids ordered by default should return a list ordered by id in an ascending manner.
     Set<Long> sampleIds = new HashSet<Long>();

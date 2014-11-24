@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Optional;
+
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.ModelQuery;
 
@@ -263,10 +265,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   public Set<T> find(ModelQuery query) throws IOException {
     Set<T> foundSet = new HashSet<T>();
 
-    if (query.isEmptyQuery()) {
-      Set<Long> ids = query.getIdSet();
-      if (ids != null && !ids.isEmpty()) {
-        return find(ids);
+    if (query.isOnlyIdQuery()) {
+      Optional<Set<Long>> ids = query.getIdSet();
+      if (ids.isPresent() && !ids.get().isEmpty()) {
+        return find(ids.get());
       }
       return foundSet;
     }
@@ -297,10 +299,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   public List<T> findWithOrder(ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<T>();
 
-    if (query.isEmptyQuery()) {
-      Set<Long> ids = query.getIdSet();
-      if (ids != null && !ids.isEmpty()) {
-        return findWithOrder(ids, query);
+    if (query.isOnlyIdQuery()) {
+      Optional<Set<Long>> ids = query.getIdSet();
+      if (ids.isPresent() && !ids.get().isEmpty()) {
+        return findWithOrder(ids.get(), query);
       }
       return foundList;
     }
