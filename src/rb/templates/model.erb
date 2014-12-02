@@ -386,7 +386,8 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       super(id);
     }
 
-  <% !if create_signature_full.empty? %>
+  <% if !create_signature_full.empty? %>
+
     public Attributes(long id, <%= create_signature_full %>) {
       super(id);
     <% model_defn.fields.each do |field_defn| %>
