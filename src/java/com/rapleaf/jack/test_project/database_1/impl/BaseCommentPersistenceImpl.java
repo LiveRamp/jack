@@ -41,7 +41,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   private final IDatabases databases;
 
   public BaseCommentPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "comments", Arrays.asList("content", "commenter_id", "commented_on_id", "created_at"));
+    super(conn, "comments", Arrays.<String>asList("content", "commenter_id", "commented_on_id", "created_at"));
     this.databases = databases;
   }
 

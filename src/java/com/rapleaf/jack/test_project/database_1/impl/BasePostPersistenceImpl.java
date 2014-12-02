@@ -41,7 +41,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   private final IDatabases databases;
 
   public BasePostPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "posts", Arrays.asList("title", "posted_at_millis", "user_id", "updated_at"));
+    super(conn, "posts", Arrays.<String>asList("title", "posted_at_millis", "user_id", "updated_at"));
     this.databases = databases;
   }
 

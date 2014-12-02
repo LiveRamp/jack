@@ -41,7 +41,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   private final IDatabases databases;
 
   public BaseImagePersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "images", Arrays.asList("user_id"));
+    super(conn, "images", Arrays.<String>asList("user_id"));
     this.databases = databases;
   }
 

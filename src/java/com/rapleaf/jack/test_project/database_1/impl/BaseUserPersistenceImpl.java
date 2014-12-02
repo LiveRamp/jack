@@ -41,7 +41,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   private final IDatabases databases;
 
   public BaseUserPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "users", Arrays.asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_decimal", "some_boolean"));
+    super(conn, "users", Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_decimal", "some_boolean"));
     this.databases = databases;
   }
 
