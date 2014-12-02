@@ -386,12 +386,15 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       super(id);
     }
 
-    public Attributes(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
+  <% if !create_signature_full.empty? %>
+
+    public Attributes(long id, <%= create_signature_full %>) {
       super(id);
     <% model_defn.fields.each do |field_defn| %>
       this.__<%= field_defn.name %> = <%= field_defn.name %>;
     <% end %>
     }
+  <% end %>
     
   <% if model_defn.should_make_created_at_methods %>
     
