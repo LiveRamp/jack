@@ -152,7 +152,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   @Override
   protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
-		<% if model_defn.fields.empty? %>
+    <% if model_defn.fields.empty? %>
     throw new RuntimeException("No parameters to set for " + getClass().getCanonicalName());
     <% else %>
     int index = 0;
