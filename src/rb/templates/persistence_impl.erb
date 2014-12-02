@@ -119,7 +119,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     while (true) {
       preparedStatement = getPreparedStatement(statementString.toString());
 
-			<% if ! model_defn.fields.empty? %>
+      <% if ! model_defn.fields.empty? %>
 
       for (int i = 0; i < nonNullValues.size(); i++) {
         <%= model_defn.model_name %>._Fields field = nonNullValueFields.get(i);
