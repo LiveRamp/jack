@@ -34,18 +34,23 @@ public class TestGenericQuery extends TestCase {
 
     User userA = users.createDefaultInstance().setHandle("A").setBio("Football Coach").setNumPosts(10);
     User userB = users.createDefaultInstance().setHandle("B").setBio("Snowman Builder").setNumPosts(30);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("Spaceship Rider").setNumPosts(30);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("Spaceship Rider").setNumPosts(20);
     User userD = users.createDefaultInstance().setHandle("D").setBio("PDP-10 Engineer").setNumPosts(40);
     userA.save();
     userB.save();
     userC.save();
     userD.save();
 
-    Comment commentA = comments.createDefaultInstance()
-        .setCommenterId(ModelWithId.safeLongToInt(userA.getId())).setContent("comments");
-
+    Comment commentA = comments.createDefaultInstance().setCommenterId(ModelWithId.safeLongToInt(userA.getId())).setContent("comments");
+    Comment commentB = comments.createDefaultInstance().setCommenterId(ModelWithId.safeLongToInt(userB.getId())).setContent("comments");
+    Comment commentC = comments.createDefaultInstance().setCommenterId(ModelWithId.safeLongToInt(userB.getId())).setContent("comments");
+    Comment commentD = comments.createDefaultInstance().setCommenterId(ModelWithId.safeLongToInt(userC.getId())).setContent("comments");
+    Comment commentE = comments.createDefaultInstance().setCommenterId(ModelWithId.safeLongToInt(userD.getId())).setContent("comments");
     commentA.save();
-
+    commentB.save();
+    commentC.save();
+    commentD.save();
+    commentE.save();
 
     List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
@@ -57,8 +62,9 @@ public class TestGenericQuery extends TestCase {
         .select(User.id(), User.bio(), User.handle(), User.num_posts(), Comment.id(), Comment.commenter_id(), Comment.content())
         .fetch();
 
-    System.out.println(results.size());
-    System.out.println(Joiner.on(", ").join(results));
+    for (Map<ModelField, Object> record : results) {
+      System.out.println(record.toString());
+    }
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException, SQLException {
