@@ -67,8 +67,14 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public String getSqlStatement(boolean isOrderedQuery) {
-    return genericQuery.getSqlStatement(isOrderedQuery);
+  public String getSqlStatement() {
+    return genericQuery.getSqlStatement();
+  }
+
+  public PreparedStatement getPreparedStatement() throws IOException {
+    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getSqlStatement());
+    setStatementParameters(preparedStatement);
+    return preparedStatement;
   }
 
   public List<Map<ModelField, Object>> fetch() throws IOException {
@@ -77,7 +83,7 @@ public class GenericQueryBuilder {
     List<Map<ModelField, Object>> results = Lists.newArrayList();
 
     while (true) {
-      preparedStatement = getPreparedStatement(genericQuery.isOrderedQuery());
+      preparedStatement = getPreparedStatement();
       try {
         queryExecution(results, preparedStatement);
         return results;
@@ -128,36 +134,15 @@ public class GenericQueryBuilder {
     return fieldCollection;
   }
 
-  private PreparedStatement getPreparedStatement(boolean isOrderedQuery) throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getSqlStatement(isOrderedQuery));
-    setStatementParameters(preparedStatement);
-    return preparedStatement;
-  }
-
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
     int index = 0;
     for (WhereCondition condition : genericQuery.getWhereConditions()) {
-      Class fieldType = condition.getModelFieldType();
       for (Object parameter : condition.getParameters()) {
         if (parameter == null) {
           continue;
         }
         try {
-          if (fieldType == Integer.class) {
-            preparedStatement.setInt(++index, (Integer)parameter);
-          } else if (fieldType == String.class) {
-            preparedStatement.setString(++index, (String)parameter);
-          } else if (fieldType == Long.class) {
-            preparedStatement.setLong(++index, (Long)parameter);
-          } else if (fieldType == byte[].class) {
-            preparedStatement.setBytes(++index, (byte[])parameter);
-          } else if (fieldType == Double.class) {
-            preparedStatement.setDouble(++index, (Double)parameter);
-          } else if (fieldType == Boolean.class) {
-            preparedStatement.setBoolean(++index, (Boolean)parameter);
-          } else {
-            throw new RuntimeException("Unsupported field type " + fieldType.getSimpleName());
-          }
+          preparedStatement.setObject(++index, parameter);
         } catch (SQLException e) {
           throw new IOException(e);
         }

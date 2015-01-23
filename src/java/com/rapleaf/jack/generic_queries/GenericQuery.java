@@ -75,14 +75,14 @@ public class GenericQuery {
     return !orderConditions.isEmpty();
   }
 
-  String getSqlStatement(boolean isOrderedQuery) {
+  String getSqlStatement() {
     StringBuilder statement = new StringBuilder();
 
     statement.append(getSelectClause())
         .append(getJoinClause())
         .append(getWhereClause());
 
-    if (isOrderedQuery) {
+    if (isOrderedQuery()) {
       statement.append(getOrderClause());
       if (!orderConditions.isEmpty()) {
         statement.append(getLimitClause());
