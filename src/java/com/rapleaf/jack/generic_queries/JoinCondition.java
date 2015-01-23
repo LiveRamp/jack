@@ -1,23 +1,25 @@
 package com.rapleaf.jack.generic_queries;
 
+import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.ModelWithId;
 
-public class JoinCondition {
+public class JoinCondition implements QueryCondition {
   private final Class<? extends ModelWithId> model;
-  private final ModelField field1;
-  private final ModelField field2;
+  private final IModelField IModelField1;
+  private final IModelField IModelField2;
 
-  public JoinCondition(Class<? extends ModelWithId> model, ModelField field1, ModelField field2) {
+  public JoinCondition(Class<? extends ModelWithId> model, IModelField IModelField1, IModelField IModelField2) {
     this.model = model;
-    this.field1 = field1;
-    this.field2 = field2;
+    this.IModelField1 = IModelField1;
+    this.IModelField2 = IModelField2;
   }
 
   public Class<? extends ModelWithId> getModel() {
     return model;
   }
 
+  @Override
   public String getSqlStatement() {
-    return "join " + model.getSimpleName() + field1.getSqlKeyword() + " = " + field2.getSqlKeyword();
+    return "JOIN " + Utility.getTableName(model) + " ON " + IModelField1.getSqlKeyword() + " = " + IModelField2.getSqlKeyword();
   }
 }

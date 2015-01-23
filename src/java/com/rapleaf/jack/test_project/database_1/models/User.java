@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
@@ -27,6 +28,14 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
+
+  public static IModelField id() {
+    return IModelField.fieldKey(User.class);
+  }
+
+  public static IModelField created_at_millis() {
+    return IModelField.field(User.class, _Fields.created_at_millis);
+  }
 
   private final Attributes attributes;
 
