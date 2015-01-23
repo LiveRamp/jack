@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IModelField;
+import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
@@ -21,23 +21,23 @@ public class GenericQueryBuilder {
     this.genericQuery = genericQuery;
   }
 
-  public GenericQueryBuilder join(Class<? extends ModelWithId> model, IModelField IModelField1, IModelField IModelField2) {
-    genericQuery.addJoinCondition(new JoinCondition(model, IModelField1, IModelField2));
+  public GenericQueryBuilder join(Class<? extends ModelWithId> model, ModelField modelField1, ModelField modelField2) {
+    genericQuery.addJoinCondition(new JoinCondition(model, modelField1, modelField2));
     return this;
   }
 
-  public GenericQueryBuilder where(IModelField IModelField, IWhereOperator operator) {
-    genericQuery.addWhereCondition(new WhereCondition(IModelField, operator));
+  public GenericQueryBuilder where(ModelField modelField, IWhereOperator operator) {
+    genericQuery.addWhereCondition(new WhereCondition(modelField, operator));
     return this;
   }
 
-  public GenericQueryBuilder orderBy(IModelField IModelField, QueryOrder queryOrder) {
-    genericQuery.addOrderCondition(new OrderCondition(IModelField, queryOrder));
+  public GenericQueryBuilder orderBy(ModelField modelField, QueryOrder queryOrder) {
+    genericQuery.addOrderCondition(new OrderCondition(modelField, queryOrder));
     return this;
   }
 
-  public GenericQueryBuilder orderBy(IModelField IModelField) {
-    genericQuery.addOrderCondition(new OrderCondition(IModelField, QueryOrder.ASC));
+  public GenericQueryBuilder orderBy(ModelField modelField) {
+    genericQuery.addOrderCondition(new OrderCondition(modelField, QueryOrder.ASC));
     return this;
   }
 
@@ -51,9 +51,9 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder select(IModelField... IModelFields) {
-    for (IModelField IModelField : IModelFields) {
-      genericQuery.addSelectedModelField(IModelField);
+  public GenericQueryBuilder select(ModelField... modelFields) {
+    for (ModelField modelField : modelFields) {
+      genericQuery.addSelectedModelField(modelField);
     }
     return this;
   }

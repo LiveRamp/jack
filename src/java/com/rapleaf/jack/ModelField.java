@@ -2,24 +2,26 @@ package com.rapleaf.jack;
 
 import com.rapleaf.jack.generic_queries.Utility;
 
-public class IModelField {
+public class ModelField {
 
   public static String DEFAULT_ID_FIELD = "id";
 
   private final Class<? extends ModelWithId> model;
   private final Enum field;
+  private final Class fieldType;
 
-  private IModelField(Class<? extends ModelWithId> model, Enum field) {
+  private ModelField(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
     this.model = model;
     this.field = field;
+    this.fieldType = fieldType;
   }
 
-  public static IModelField fieldKey(Class<? extends ModelWithId> model) {
-    return field(model, null);
+  public static ModelField fieldKey(Class<? extends ModelWithId> model) {
+    return field(model, null, Long.class);
   }
 
-  public static IModelField field(Class<? extends ModelWithId> model, Enum field) {
-    return new IModelField(model, field);
+  public static ModelField field(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
+    return new ModelField(model, field, fieldType);
   }
 
   public Class<? extends ModelWithId> getModel() {
@@ -30,8 +32,11 @@ public class IModelField {
     return field;
   }
 
+  public Class getFieldType() {
+    return fieldType;
+  }
+
   public String getSqlKeyword() {
-    // TODO: get table name from model name
     return Utility.getTableName(model) + "." + (field != null ? field.toString() : DEFAULT_ID_FIELD);
   }
 }

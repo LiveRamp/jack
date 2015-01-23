@@ -12,41 +12,36 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.IModelField;
+import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
-import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   
   public static final long serialVersionUID = 6213989608937906012L;
 
-  public static IModelField id() {
-    return IModelField.fieldKey(Comment.class);
+  public static ModelField id() {
+    return ModelField.fieldKey(Comment.class);
   }
 
-  public static IModelField content() {
-    return IModelField.field(Comment.class, _Fields.content);
+  public static ModelField content() {
+    return ModelField.field(Comment.class, _Fields.content, String.class);
   }
 
-  public static IModelField commenter_id() {
-    return IModelField.field(Comment.class, _Fields.commenter_id);
+  public static ModelField commenter_id() {
+    return ModelField.field(Comment.class, _Fields.commenter_id, Integer.class);
   }
 
-  public static IModelField commented_on_id() {
-    return IModelField.field(Comment.class, _Fields.commented_on_id);
+  public static ModelField commented_on_id() {
+    return ModelField.field(Comment.class, _Fields.commented_on_id, Long.class);
   }
 
-  public static IModelField created_at() {
-    return IModelField.field(Comment.class, _Fields.created_at);
+  public static ModelField created_at() {
+    return ModelField.field(Comment.class, _Fields.created_at, Long.class);
   }
 
   private final Attributes attributes;

@@ -12,65 +12,61 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.IModelField;
+import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
 
-  public static IModelField id() {
-    return IModelField.fieldKey(User.class);
+  public static ModelField id() {
+    return ModelField.fieldKey(User.class);
   }
 
-  public static IModelField handle() {
-    return IModelField.field(User.class, _Fields.handle);
+  public static ModelField handle() {
+    return ModelField.field(User.class, _Fields.handle, String.class);
   }
 
-  public static IModelField created_at_millis() {
-    return IModelField.field(User.class, _Fields.created_at_millis);
+  public static ModelField created_at_millis() {
+    return ModelField.field(User.class, _Fields.created_at_millis, Long.class);
   }
 
-  public static IModelField num_posts() {
-    return IModelField.field(User.class, _Fields.num_posts);
+  public static ModelField num_posts() {
+    return ModelField.field(User.class, _Fields.num_posts, Integer.class);
   }
 
-  public static IModelField some_date() {
-    return IModelField.field(User.class, _Fields.some_date);
+  public static ModelField some_date() {
+    return ModelField.field(User.class, _Fields.some_date, Long.class);
   }
 
-  public static IModelField some_datetime() {
-    return IModelField.field(User.class, _Fields.some_datetime);
+  public static ModelField some_datetime() {
+    return ModelField.field(User.class, _Fields.some_datetime, Long.class);
   }
 
-  public static IModelField bio() {
-    return IModelField.field(User.class, _Fields.bio);
+  public static ModelField bio() {
+    return ModelField.field(User.class, _Fields.bio, String.class);
   }
 
-  public static IModelField some_binary() {
-    return IModelField.field(User.class, _Fields.some_binary);
+  public static ModelField some_binary() {
+    return ModelField.field(User.class, _Fields.some_binary, byte[].class);
   }
 
-  public static IModelField some_float() {
-    return IModelField.field(User.class, _Fields.some_float);
+  public static ModelField some_float() {
+    return ModelField.field(User.class, _Fields.some_float, Double.class);
   }
 
-  public static IModelField some_decimal() {
-    return IModelField.field(User.class, _Fields.some_decimal);
+  public static ModelField some_decimal() {
+    return ModelField.field(User.class, _Fields.some_decimal, Double.class);
   }
 
-  public static IModelField some_boolean() {
-    return IModelField.field(User.class, _Fields.some_boolean);
+  public static ModelField some_boolean() {
+    return ModelField.field(User.class, _Fields.some_boolean, Boolean.class);
   }
 
   private final Attributes attributes;

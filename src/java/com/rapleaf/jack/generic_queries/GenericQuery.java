@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.IModelField;
+import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 
 public class GenericQuery {
@@ -20,7 +20,7 @@ public class GenericQuery {
   private final List<JoinCondition> joinConditions;
   private final Set<WhereCondition> whereConditions;
   private final Set<OrderCondition> orderConditions;
-  private final Set<IModelField> selectedIModelFields;
+  private final Set<ModelField> selectedIModelFields;
   private Optional<LimitCondition> limitCondition;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
@@ -59,8 +59,8 @@ public class GenericQuery {
     this.limitCondition = Optional.of(lmtCondition);
   }
 
-  void addSelectedModelField(IModelField IModelField) {
-    selectedIModelFields.add(IModelField);
+  void addSelectedModelField(ModelField modelField) {
+    selectedIModelFields.add(modelField);
   }
 
   String getSqlStatement(boolean isOrderedQuery) {
@@ -86,7 +86,7 @@ public class GenericQuery {
     if (selectedIModelFields.isEmpty()) {
       clause.append("*");
     } else {
-      Iterator<IModelField> it = selectedIModelFields.iterator();
+      Iterator<ModelField> it = selectedIModelFields.iterator();
       while (it.hasNext()) {
         clause.append(it.next().getSqlKeyword());
         if (it.hasNext()) {

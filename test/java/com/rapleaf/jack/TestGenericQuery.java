@@ -12,9 +12,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static com.rapleaf.jack.IModelField.*;
 import static com.rapleaf.jack.queries.QueryOrder.*;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 
 public class TestGenericQuery extends TestCase {
 
@@ -23,10 +21,10 @@ public class TestGenericQuery extends TestCase {
   public void test() throws IOException, SQLException {
     String statement = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
-        .join(Comment.class, fieldKey(User.class), field(Comment.class, Comment._Fields.commenter_id))
-        .where(field(User.class, User._Fields.bio), equalTo("Trader"))
-        .orderBy(field(User.class, User._Fields.num_posts), DESC)
-        .orderBy(fieldKey(Comment.class))
+        .join(Comment.class, User.id(), Comment.commenter_id())
+        .where(User.bio(), "= 'Trader'")
+        .orderBy(User.num_posts(), DESC)
+        .orderBy(Comment.id())
         .getSqlStatement(true);
 
     System.out.println(statement);
