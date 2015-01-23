@@ -54,7 +54,7 @@ public class TestGenericQuery extends TestCase {
 
     List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
-        .join(Comment.class, User.id(), Comment.commenter_id())
+        .leftJoin(Comment.class, User.id(), Comment.commenter_id())
         .where(User.bio(), in(Sets.newHashSet("Football Coach", "Snowman Builder", "Spaceship Rider")))
         .where(Comment.content(), isNotNull())
         .orderBy(User.num_posts(), DESC)

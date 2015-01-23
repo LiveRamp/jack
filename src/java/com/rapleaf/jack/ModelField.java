@@ -44,4 +44,14 @@ public class ModelField {
   public String toString() {
     return getSqlKeyword();
   }
+
+  @Override
+  public int hashCode() {
+    return getSqlKeyword().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    return that instanceof ModelField && this.toString().equals(((ModelField)that).toString());
+  }
 }
