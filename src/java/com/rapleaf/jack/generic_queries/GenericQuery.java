@@ -18,7 +18,7 @@ public class GenericQuery {
   private final BaseDatabaseConnection dbConnection;
   private final List<Class<? extends ModelWithId>> includedModels;
   private final List<JoinCondition> joinConditions;
-  private final Set<WhereCondition> whereConditions;
+  private final List<WhereCondition> whereConditions;
   private final Set<OrderCondition> orderConditions;
   private final Set<ModelField> selectedIModelFields;
   private Optional<LimitCondition> limitCondition;
@@ -27,7 +27,7 @@ public class GenericQuery {
     this.dbConnection = dbConnection;
     this.includedModels = Lists.newArrayList();
     this.joinConditions = Lists.newArrayList();
-    this.whereConditions = Sets.newHashSet();
+    this.whereConditions = Lists.newArrayList();
     this.orderConditions = Sets.newHashSet();
     this.selectedIModelFields = Sets.newHashSet();
     this.limitCondition = Optional.absent();
@@ -40,6 +40,14 @@ public class GenericQuery {
   public GenericQueryBuilder from(Class<? extends ModelWithId> model) {
     includedModels.add(model);
     return new GenericQueryBuilder(dbConnection, this);
+  }
+
+  List<WhereCondition> getWhereConditions() {
+    return whereConditions;
+  }
+
+  Set<ModelField> getSelectedIModelFields() {
+    return selectedIModelFields;
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
@@ -61,6 +69,10 @@ public class GenericQuery {
 
   void addSelectedModelField(ModelField modelField) {
     selectedIModelFields.add(modelField);
+  }
+
+  boolean isOrderedQuery() {
+    return !orderConditions.isEmpty();
   }
 
   String getSqlStatement(boolean isOrderedQuery) {

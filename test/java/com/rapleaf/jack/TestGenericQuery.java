@@ -2,32 +2,63 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import junit.framework.TestCase;
 
 import com.rapleaf.jack.generic_queries.GenericQuery;
 
+import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static com.rapleaf.jack.queries.QueryOrder.*;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 
 public class TestGenericQuery extends TestCase {
 
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
 
   public void test() throws IOException, SQLException {
-    String statement = GenericQuery.create(DATABASE_CONNECTION1)
+    IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
+    IUserPersistence users = dbs.getDatabase1().users();
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    users.deleteAll();
+    comments.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Football Coach").setNumPosts(10);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Snowman Builder").setNumPosts(30);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("Spaceship Rider").setNumPosts(30);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("PDP-10 Engineer").setNumPosts(40);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    Comment commentA = comments.createDefaultInstance()
+        .setCommenterId(ModelWithId.safeLongToInt(userA.getId())).setContent("comments");
+
+    commentA.save();
+
+
+    List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
         .join(Comment.class, User.id(), Comment.commenter_id())
-        .where(User.bio(), "= 'Trader'")
+        .where(User.bio(), in(Sets.newHashSet("Football Coach", "Snowman Builder", "Spaceship Rider")))
+        .where(Comment.content(), isNotNull())
         .orderBy(User.num_posts(), DESC)
         .orderBy(Comment.id())
-        .getSqlStatement(true);
+        .select(User.id(), User.bio(), User.handle(), User.num_posts(), Comment.id(), Comment.commenter_id(), Comment.content())
+        .fetch();
 
-    System.out.println(statement);
+    System.out.println(results.size());
+    System.out.println(Joiner.on(", ").join(results));
   }
 
   public void testBasicQuery(IDatabases dbs) throws IOException, SQLException {

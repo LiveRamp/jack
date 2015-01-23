@@ -39,4 +39,9 @@ public class ModelField {
   public String getSqlKeyword() {
     return Utility.getTableName(model) + "." + (field != null ? field.toString() : DEFAULT_ID_FIELD);
   }
+
+  @Override
+  public String toString() {
+    return getSqlKeyword();
+  }
 }

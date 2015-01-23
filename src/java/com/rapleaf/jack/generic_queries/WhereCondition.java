@@ -1,5 +1,7 @@
 package com.rapleaf.jack.generic_queries;
 
+import java.util.List;
+
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
@@ -11,6 +13,14 @@ public class WhereCondition implements QueryCondition {
   public WhereCondition(ModelField modelField, IWhereOperator operator) {
     this.modelField = modelField;
     this.operator = operator;
+  }
+
+  public Class getModelFieldType() {
+    return modelField.getFieldType();
+  }
+
+  public List getParameters() {
+    return operator.getParameters();
   }
 
   @Override
