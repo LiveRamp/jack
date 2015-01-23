@@ -24,6 +24,7 @@ import java.util.Set;
 
 import <%= root_package %>.I<%= db_name %>;
 
+import <%= JACK_NAMESPACE %>.IModelField;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
 import <%= JACK_NAMESPACE %>.BelongsToAssociation;
@@ -44,6 +45,18 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
+
+  public static IModelField id() {
+    return IModelField.fieldKey(<%= model_defn.model_name %>.class);
+  }
+
+  <% model_defn.fields.each do |field_defn| %>
+
+  public static IModelField <%= field_defn.name %>() {
+    return IModelField.field(<%= model_defn.model_name %>.class, _Fields.<%= field_defn.name%>);
+  }
+
+  <% end %>
 
   private final Attributes attributes;
 
