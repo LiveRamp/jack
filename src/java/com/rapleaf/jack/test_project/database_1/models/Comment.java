@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
+import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
@@ -27,6 +28,26 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   
   public static final long serialVersionUID = 6213989608937906012L;
+
+  public static IModelField id() {
+    return IModelField.fieldKey(Comment.class);
+  }
+
+  public static IModelField content() {
+    return IModelField.field(Comment.class, _Fields.content);
+  }
+
+  public static IModelField commenter_id() {
+    return IModelField.field(Comment.class, _Fields.commenter_id);
+  }
+
+  public static IModelField commented_on_id() {
+    return IModelField.field(Comment.class, _Fields.commented_on_id);
+  }
+
+  public static IModelField created_at() {
+    return IModelField.field(Comment.class, _Fields.created_at);
+  }
 
   private final Attributes attributes;
 

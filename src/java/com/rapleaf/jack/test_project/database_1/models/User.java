@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
+import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
@@ -33,8 +33,44 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     return IModelField.fieldKey(User.class);
   }
 
+  public static IModelField handle() {
+    return IModelField.field(User.class, _Fields.handle);
+  }
+
   public static IModelField created_at_millis() {
     return IModelField.field(User.class, _Fields.created_at_millis);
+  }
+
+  public static IModelField num_posts() {
+    return IModelField.field(User.class, _Fields.num_posts);
+  }
+
+  public static IModelField some_date() {
+    return IModelField.field(User.class, _Fields.some_date);
+  }
+
+  public static IModelField some_datetime() {
+    return IModelField.field(User.class, _Fields.some_datetime);
+  }
+
+  public static IModelField bio() {
+    return IModelField.field(User.class, _Fields.bio);
+  }
+
+  public static IModelField some_binary() {
+    return IModelField.field(User.class, _Fields.some_binary);
+  }
+
+  public static IModelField some_float() {
+    return IModelField.field(User.class, _Fields.some_float);
+  }
+
+  public static IModelField some_decimal() {
+    return IModelField.field(User.class, _Fields.some_decimal);
+  }
+
+  public static IModelField some_boolean() {
+    return IModelField.field(User.class, _Fields.some_boolean);
   }
 
   private final Attributes attributes;

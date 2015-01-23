@@ -2,7 +2,7 @@ package com.rapleaf.jack;
 
 import com.rapleaf.jack.generic_queries.Utility;
 
-public interface IModelField {
+public class IModelField {
 
   public static String DEFAULT_ID_FIELD = "id";
 

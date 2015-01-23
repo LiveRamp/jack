@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
+import com.rapleaf.jack.IModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
@@ -27,6 +28,14 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   
   public static final long serialVersionUID = -3351451520429699622L;
+
+  public static IModelField id() {
+    return IModelField.fieldKey(Image.class);
+  }
+
+  public static IModelField user_id() {
+    return IModelField.field(Image.class, _Fields.user_id);
+  }
 
   private final Attributes attributes;
 
