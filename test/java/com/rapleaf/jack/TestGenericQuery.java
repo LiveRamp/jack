@@ -32,10 +32,10 @@ public class TestGenericQuery extends TestCase {
     users.deleteAll();
     comments.deleteAll();
 
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Football Coach").setNumPosts(10);
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Assembly Coder").setNumPosts(10);
     User userB = users.createDefaultInstance().setHandle("B").setBio("Snowman Builder").setNumPosts(30);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("Spaceship Rider").setNumPosts(20);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("PDP-10 Engineer").setNumPosts(40);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("Spaceship Pilot").setNumPosts(20);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("PDP-10 Hacker").setNumPosts(40);
     userA.save();
     userB.save();
     userC.save();
@@ -55,7 +55,7 @@ public class TestGenericQuery extends TestCase {
     List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
         .leftJoin(Comment.class, User.id(), Comment.commenter_id())
-        .where(User.bio(), in(Sets.newHashSet("Football Coach", "Snowman Builder", "Spaceship Rider")))
+        .where(User.bio(), in(Sets.newHashSet("Assembly Coder", "Spaceship Pilot", "PDP-10 Hacker")))
         .where(Comment.content(), isNotNull())
         .orderBy(User.num_posts(), DESC)
         .orderBy(Comment.id())
