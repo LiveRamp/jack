@@ -23,7 +23,6 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
-import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   

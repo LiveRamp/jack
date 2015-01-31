@@ -23,7 +23,6 @@ import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
-import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   

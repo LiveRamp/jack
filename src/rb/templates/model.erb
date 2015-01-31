@@ -33,8 +33,6 @@ import <%= JACK_NAMESPACE %>.HasOneAssociation;
 import <%= JACK_NAMESPACE %>.ModelIdWrapper;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
-import <%= project_defn.databases_namespace %>.IDatabases;
-
 
 <% model_defn.associations.each do |a| %>
 <% if a.assoc_model.database_defn != model_defn.database_defn %>
