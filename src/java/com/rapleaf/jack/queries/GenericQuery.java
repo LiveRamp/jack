@@ -38,7 +38,7 @@ public class GenericQuery {
   }
 
   public GenericQueryBuilder from(Class<? extends ModelWithId> model) {
-    mainModel = model;
+    this.mainModel = model;
     return new GenericQueryBuilder(dbConnection, this);
   }
 
@@ -51,23 +51,23 @@ public class GenericQuery {
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    joinConditions.add(joinCondition);
+    this.joinConditions.add(joinCondition);
   }
 
   void addWhereCondition(WhereConstraint whereConstraint) {
-    whereConstraints.add(whereConstraint);
+    this.whereConstraints.add(whereConstraint);
   }
 
   void addOrderCondition(OrderCriterion orderCriterion) {
-    orderCriteria.add(orderCriterion);
+    this.orderCriteria.add(orderCriterion);
   }
 
-  void addLimitCondition(LimitCriterion lmtCondition) {
-    this.limitCondition = Optional.of(lmtCondition);
+  void addLimitCondition(LimitCriterion limitCriterion) {
+    this.limitCondition = Optional.of(limitCriterion);
   }
 
   void addSelectedModelField(ModelField modelField) {
-    selectedIModelFields.add(modelField);
+    this.selectedIModelFields.add(modelField);
   }
 
   boolean isOrderedQuery() {
