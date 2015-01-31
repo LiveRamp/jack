@@ -19,7 +19,7 @@ public class GenericQuery {
   private Class<? extends ModelWithId> mainModel;
   private List<JoinCondition> joinConditions;
   private List<WhereConstraint> whereConstraints;
-  private Set<OrderCriterion> orderCriteria;
+  private List<OrderCriterion> orderCriteria;
   private Set<ModelField> selectedIModelFields;
   private Optional<LimitCriterion> limitCondition;
 
@@ -28,7 +28,7 @@ public class GenericQuery {
     this.mainModel = null;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
-    this.orderCriteria = Sets.newHashSet();
+    this.orderCriteria = Lists.newArrayList();
     this.selectedIModelFields = Sets.newHashSet();
     this.limitCondition = Optional.absent();
   }
