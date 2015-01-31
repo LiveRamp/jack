@@ -106,7 +106,7 @@ public class GenericQuery {
       }
     }
 
-    String tableName = Utility.getTableNameFromModel(mainModel);
+    String tableName = Utility.getTableName(mainModel);
     return clause.append(" FROM ").append(tableName).append(" ").toString();
   }
 

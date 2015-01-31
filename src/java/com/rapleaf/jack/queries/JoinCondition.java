@@ -18,7 +18,7 @@ public class JoinCondition implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    String tableName = Utility.getTableNameFromModel(model);
+    String tableName = Utility.getTableName(model);
     return joinType.getSqlKeyword() + " " + tableName + " ON " + modelField1.getSqlKeyword() + " = " + modelField2.getSqlKeyword();
   }
 }

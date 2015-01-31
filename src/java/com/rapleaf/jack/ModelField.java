@@ -38,7 +38,7 @@ public class ModelField {
   public String getSqlKeyword() {
     String fieldKeyword = field != null ? field.toString() : DEFAULT_ID_FIELD;
     if (model != null) {
-      return Utility.getTableNameFromModel(model) + "." + fieldKeyword;
+      return Utility.getTableName(model) + "." + fieldKeyword;
     } else {
       return fieldKeyword;
     }
