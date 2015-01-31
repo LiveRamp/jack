@@ -6,11 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.ModelField;
@@ -91,10 +89,10 @@ public class GenericQueryBuilder {
     return preparedStatement;
   }
 
-  public List<Map<ModelField, Object>> fetch() throws IOException {
+  public List<QueryEntry> fetch() throws IOException {
     int retryCount = 0;
     PreparedStatement preparedStatement;
-    List<Map<ModelField, Object>> results = Lists.newArrayList();
+    List<QueryEntry> results = Lists.newArrayList();
 
     while (true) {
       preparedStatement = getPreparedStatement();
@@ -111,13 +109,13 @@ public class GenericQueryBuilder {
     }
   }
 
-  private void queryExecution(List<Map<ModelField, Object>> results, PreparedStatement preparedStatement) throws SQLException {
+  private void queryExecution(List<QueryEntry> results, PreparedStatement preparedStatement) throws SQLException {
     ResultSet queryResultSet = null;
 
     try {
       queryResultSet = preparedStatement.executeQuery();
       while (queryResultSet.next()) {
-        Map<ModelField, Object> fieldCollection = parseResultSet(queryResultSet);
+        QueryEntry fieldCollection = parseResultSet(queryResultSet);
         results.add(fieldCollection);
       }
     } catch (SQLRecoverableException e) {
@@ -136,16 +134,16 @@ public class GenericQueryBuilder {
     }
   }
 
-  private Map<ModelField, Object> parseResultSet(ResultSet queryResultSet) throws SQLException{
+  private QueryEntry parseResultSet(ResultSet queryResultSet) throws SQLException{
     Set<ModelField> selectedModelFields = genericQuery.getSelectedIModelFields();
-    Map<ModelField, Object> fieldCollection = Maps.newHashMapWithExpectedSize(selectedModelFields.size());
+    QueryEntry queryEntry = new QueryEntry(selectedModelFields.size());
 
     for (ModelField modelField : selectedModelFields) {
       String sqlKeyword = modelField.getSqlKeyword();
-      fieldCollection.put(modelField, queryResultSet.getObject(sqlKeyword));
+      queryEntry.addModelField(modelField, queryResultSet.getObject(sqlKeyword));
     }
 
-    return fieldCollection;
+    return queryEntry;
   }
 
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
