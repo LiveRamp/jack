@@ -3,7 +3,6 @@ package com.rapleaf.jack;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Sets;
 import junit.framework.TestCase;
@@ -65,7 +64,7 @@ public class TestGenericQuery extends TestCase {
     for (QueryEntry entry : results) {
       System.out.println(entry.getString(User.BIO));
       System.out.println(entry.getLong(User.ID));
-      System.out.println(entry.getInteger(User.NUM_POSTS));
+      System.out.println(entry.getInt(User.NUM_POSTS));
     }
   }
 }

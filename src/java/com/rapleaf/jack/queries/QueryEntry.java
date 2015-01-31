@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.ModelWithId;
 
 public class QueryEntry {
   private final Map<ModelField, Object> entry;
@@ -21,24 +22,12 @@ public class QueryEntry {
     return entry.containsKey(modelField);
   }
 
-  public Object getObject(ModelField modelField) {
-    if (entry.containsKey(modelField)) {
-      return entry.get(modelField);
-    } else {
-      throw new RuntimeException("Field " + modelField.toString() + " is not included in the query");
-    }
-  }
-
-  private Object checkTypeAndReturnObject(ModelField modelField, Class clazz) {
-    if (modelField.getType().equals(clazz)) {
-      return getObject(modelField);
-    } else {
-      throw new RuntimeException(getExceptionMessage(modelField, clazz));
-    }
-  }
-
-  public Integer getInteger(ModelField modelField) {
+  public Integer getInt(ModelField modelField) {
     return ((Number)checkTypeAndReturnObject(modelField, Integer.class)).intValue();
+  }
+
+  public Integer getIntFromLong(ModelField modelField) {
+    return ModelWithId.safeLongToInt(getLong(modelField));
   }
 
   public Long getLong(ModelField modelField) {
@@ -59,6 +48,22 @@ public class QueryEntry {
 
   public Boolean getBoolean(ModelField modelField) {
     return (Boolean)checkTypeAndReturnObject(modelField, Boolean.class);
+  }
+
+  private Object checkTypeAndReturnObject(ModelField modelField, Class clazz) {
+    if (modelField.getType().equals(clazz)) {
+      return getObject(modelField);
+    } else {
+      throw new RuntimeException(getExceptionMessage(modelField, clazz));
+    }
+  }
+
+  private Object getObject(ModelField modelField) {
+    if (entry.containsKey(modelField)) {
+      return entry.get(modelField);
+    } else {
+      throw new RuntimeException("Field " + modelField.toString() + " is not included in the query");
+    }
   }
 
   private String getExceptionMessage(ModelField modelField, Class clazz) throws RuntimeException {
