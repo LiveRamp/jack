@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import junit.framework.TestCase;
 
@@ -54,31 +53,16 @@ public class TestGenericQuery extends TestCase {
 
     List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
-        .leftJoin(Comment.class, User.id(), Comment.commenter_id())
-        .where(User.bio(), in(Sets.newHashSet("Assembly Coder", "Spaceship Pilot", "PDP-10 Hacker")))
-        .where(Comment.content(), isNotNull())
-        .orderBy(User.num_posts(), DESC)
-        .orderBy(Comment.id())
-        .select(User.id(), User.bio(), User.handle(), User.num_posts(), Comment.id(), Comment.commenter_id(), Comment.content())
+        .leftJoin(Comment.class, User.ID, Comment.COMMENTER_ID)
+        .where(User.BIO, in(Sets.newHashSet("Assembly Coder", "Spaceship Pilot", "PDP-10 Hacker")))
+        .where(Comment.CONTENT, isNotNull())
+        .orderBy(User.NUM_POSTS, DESC)
+        .orderBy(Comment.ID)
+        .select(User.ID, User.BIO, User.HANDLE, User.NUM_POSTS, Comment.ID, Comment.COMMENTER_ID, Comment.CONTENT)
         .fetch();
 
     for (Map<ModelField, Object> record : results) {
       System.out.println(record.toString());
     }
-  }
-
-  public void testBasicQuery(IDatabases dbs) throws IOException, SQLException {
-
-    IUserPersistence users = dbs.getDatabase1().users();
-    users.deleteAll();
-
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
-    userA.save();
-    userB.save();
-    userC.save();
-    userD.save();
   }
 }

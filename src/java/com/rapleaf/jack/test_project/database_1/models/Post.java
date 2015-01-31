@@ -12,42 +12,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
 
-  public static ModelField id() {
-    return ModelField.key(Post.class);
-  }
+  public static final String _TABLE_NAME = "posts";
 
-  public static ModelField title() {
-    return ModelField.field(Post.class, _Fields.title, String.class);
-  }
-
-  public static ModelField posted_at_millis() {
-    return ModelField.field(Post.class, _Fields.posted_at_millis, Long.class);
-  }
-
-  public static ModelField user_id() {
-    return ModelField.field(Post.class, _Fields.user_id, Integer.class);
-  }
-
-  public static ModelField updated_at() {
-    return ModelField.field(Post.class, _Fields.updated_at, Long.class);
-  }
+  public static final ModelField ID = ModelField.key(Post.class);
+  public static final ModelField TITLE = ModelField.field(Post.class, _Fields.title, String.class);
+  public static final ModelField POSTED_AT_MILLIS = ModelField.field(Post.class, _Fields.posted_at_millis, Long.class);
+  public static final ModelField USER_ID = ModelField.field(Post.class, _Fields.user_id, Integer.class);
+  public static final ModelField UPDATED_AT = ModelField.field(Post.class, _Fields.updated_at, Long.class);
 
   private final Attributes attributes;
 

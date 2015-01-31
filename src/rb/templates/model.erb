@@ -38,7 +38,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 
 <% model_defn.associations.each do |a| %>
 <% if a.assoc_model.database_defn != model_defn.database_defn %>
-<%= a.assoc_model.import %> 
+<%= a.assoc_model.import %>
 <% end %>
 <% end %>
 
@@ -46,16 +46,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
-  public static ModelField id() {
-    return ModelField.key(<%= model_defn.model_name %>.class);
-  }
+  public static final String _TABLE_NAME = "<%= model_defn.table_name %>";
 
+  public static final ModelField ID = ModelField.key(<%= model_defn.model_name %>.class);
   <% model_defn.fields.each do |field_defn| %>
-
-  public static ModelField <%= field_defn.name %>() {
-    return ModelField.field(<%= model_defn.model_name %>.class, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
-  }
-
+  public static final ModelField <%= field_defn.name.upcase %> = ModelField.field(<%= model_defn.model_name %>.class, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
   <% end %>
 
   private final Attributes attributes;

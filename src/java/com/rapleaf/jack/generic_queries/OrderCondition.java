@@ -15,6 +15,6 @@ public class OrderCondition implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return modelField.getSqlKeyword() + " " + queryOrder.getSqlKeyword();
+    return modelField.getFullSqlKeyword() + " " + queryOrder.getSqlKeyword();
   }
 }

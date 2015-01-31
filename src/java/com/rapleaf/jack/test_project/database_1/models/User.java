@@ -12,66 +12,32 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
 
-  public static ModelField id() {
-    return ModelField.key(User.class);
-  }
+  public static final String _TABLE_NAME = "users";
 
-  public static ModelField handle() {
-    return ModelField.field(User.class, _Fields.handle, String.class);
-  }
-
-  public static ModelField created_at_millis() {
-    return ModelField.field(User.class, _Fields.created_at_millis, Long.class);
-  }
-
-  public static ModelField num_posts() {
-    return ModelField.field(User.class, _Fields.num_posts, Integer.class);
-  }
-
-  public static ModelField some_date() {
-    return ModelField.field(User.class, _Fields.some_date, Long.class);
-  }
-
-  public static ModelField some_datetime() {
-    return ModelField.field(User.class, _Fields.some_datetime, Long.class);
-  }
-
-  public static ModelField bio() {
-    return ModelField.field(User.class, _Fields.bio, String.class);
-  }
-
-  public static ModelField some_binary() {
-    return ModelField.field(User.class, _Fields.some_binary, byte[].class);
-  }
-
-  public static ModelField some_float() {
-    return ModelField.field(User.class, _Fields.some_float, Double.class);
-  }
-
-  public static ModelField some_decimal() {
-    return ModelField.field(User.class, _Fields.some_decimal, Double.class);
-  }
-
-  public static ModelField some_boolean() {
-    return ModelField.field(User.class, _Fields.some_boolean, Boolean.class);
-  }
+  public static final ModelField ID = ModelField.key(User.class);
+  public static final ModelField HANDLE = ModelField.field(User.class, _Fields.handle, String.class);
+  public static final ModelField CREATED_AT_MILLIS = ModelField.field(User.class, _Fields.created_at_millis, Long.class);
+  public static final ModelField NUM_POSTS = ModelField.field(User.class, _Fields.num_posts, Integer.class);
+  public static final ModelField SOME_DATE = ModelField.field(User.class, _Fields.some_date, Long.class);
+  public static final ModelField SOME_DATETIME = ModelField.field(User.class, _Fields.some_datetime, Long.class);
+  public static final ModelField BIO = ModelField.field(User.class, _Fields.bio, String.class);
+  public static final ModelField SOME_BINARY = ModelField.field(User.class, _Fields.some_binary, byte[].class);
+  public static final ModelField SOME_FLOAT = ModelField.field(User.class, _Fields.some_float, Double.class);
+  public static final ModelField SOME_DECIMAL = ModelField.field(User.class, _Fields.some_decimal, Double.class);
+  public static final ModelField SOME_BOOLEAN = ModelField.field(User.class, _Fields.some_boolean, Boolean.class);
 
   private final Attributes attributes;
 

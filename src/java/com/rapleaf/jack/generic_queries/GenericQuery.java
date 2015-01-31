@@ -16,16 +16,16 @@ import com.rapleaf.jack.ModelWithId;
 public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
-  private final List<Class<? extends ModelWithId>> includedModels;
-  private final List<JoinCondition> joinConditions;
-  private final List<WhereCondition> whereConditions;
-  private final Set<OrderCondition> orderConditions;
-  private final Set<ModelField> selectedIModelFields;
+  private Class<? extends ModelWithId> mainModel;
+  private List<JoinCondition> joinConditions;
+  private List<WhereCondition> whereConditions;
+  private Set<OrderCondition> orderConditions;
+  private Set<ModelField> selectedIModelFields;
   private Optional<LimitCondition> limitCondition;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
     this.dbConnection = dbConnection;
-    this.includedModels = Lists.newArrayList();
+    this.mainModel = null;
     this.joinConditions = Lists.newArrayList();
     this.whereConditions = Lists.newArrayList();
     this.orderConditions = Sets.newHashSet();
@@ -38,7 +38,7 @@ public class GenericQuery {
   }
 
   public GenericQueryBuilder from(Class<? extends ModelWithId> model) {
-    includedModels.add(model);
+    mainModel = model;
     return new GenericQueryBuilder(dbConnection, this);
   }
 
@@ -51,7 +51,6 @@ public class GenericQuery {
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    includedModels.add(joinCondition.getModel());
     joinConditions.add(joinCondition);
   }
 
@@ -100,14 +99,15 @@ public class GenericQuery {
     } else {
       Iterator<ModelField> it = selectedIModelFields.iterator();
       while (it.hasNext()) {
-        clause.append(it.next().getSqlKeyword());
+        clause.append(it.next().getFullSqlKeyword());
         if (it.hasNext()) {
           clause.append(", ");
         }
       }
     }
 
-    return clause.append(" FROM ").append(Utility.getTableName(includedModels.get(0))).append(" ").toString();
+    String tableName = Utility.getTableNameFromModel(mainModel);
+    return clause.append(" FROM ").append(tableName).append(" ").toString();
   }
 
   private String getJoinClause() {

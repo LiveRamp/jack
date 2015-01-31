@@ -1,27 +1,24 @@
 package com.rapleaf.jack;
 
-import com.rapleaf.jack.generic_queries.Utility;
-
 public class ModelField {
-
-  public static String DEFAULT_ID_FIELD = "id";
+  private static String DEFAULT_ID_FIELD = "id";
 
   private final Class<? extends ModelWithId> model;
   private final Enum field;
-  private final Class fieldType;
+  private final Class type;
 
-  private ModelField(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
+  private ModelField(Class<? extends ModelWithId> model, Enum field, Class type) {
     this.model = model;
     this.field = field;
-    this.fieldType = fieldType;
+    this.type = type;
   }
 
   public static ModelField key(Class<? extends ModelWithId> model) {
     return field(model, null, Long.class);
   }
 
-  public static ModelField field(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
-    return new ModelField(model, field, fieldType);
+  public static ModelField field(Class<? extends ModelWithId> table, Enum field, Class fieldType) {
+    return new ModelField(table, field, fieldType);
   }
 
   public Class<? extends ModelWithId> getModel() {
@@ -32,22 +29,26 @@ public class ModelField {
     return field;
   }
 
-  public Class getFieldType() {
-    return fieldType;
+  public Class getType() {
+    return type;
   }
 
-  public String getSqlKeyword() {
-    return Utility.getTableName(model) + "." + (field != null ? field.toString() : DEFAULT_ID_FIELD);
+  public String getFullSqlKeyword() {
+    return model + "." + getSimpleSqlKeyword();
+  }
+
+  public String getSimpleSqlKeyword() {
+    return field != null ? field.toString() : DEFAULT_ID_FIELD;
   }
 
   @Override
   public String toString() {
-    return getSqlKeyword();
+    return getFullSqlKeyword();
   }
 
   @Override
   public int hashCode() {
-    return getSqlKeyword().hashCode();
+    return getFullSqlKeyword().hashCode();
   }
 
   @Override

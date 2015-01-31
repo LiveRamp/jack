@@ -16,7 +16,7 @@ public class WhereCondition implements QueryCondition {
   }
 
   public Class getModelFieldType() {
-    return modelField.getFieldType();
+    return modelField.getType();
   }
 
   public List getParameters() {
@@ -25,6 +25,6 @@ public class WhereCondition implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return modelField.getSqlKeyword() + " " + operator.getSqlStatement();
+    return modelField.getFullSqlKeyword() + " " + operator.getSqlStatement();
   }
 }

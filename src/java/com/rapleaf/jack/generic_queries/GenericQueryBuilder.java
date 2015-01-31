@@ -142,7 +142,7 @@ public class GenericQueryBuilder {
     Map<ModelField, Object> fieldCollection = Maps.newHashMapWithExpectedSize(selectedModelFields.size());
 
     for (ModelField modelField : selectedModelFields) {
-      String sqlKeyword = modelField.getSqlKeyword();
+      String sqlKeyword = modelField.getFullSqlKeyword();
       fieldCollection.put(modelField, queryResultSet.getObject(sqlKeyword));
     }
 
