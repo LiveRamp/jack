@@ -47,7 +47,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
   public static ModelField id() {
-    return ModelField.fieldKey(<%= model_defn.model_name %>.class);
+    return ModelField.key(<%= model_defn.model_name %>.class);
   }
 
   <% model_defn.fields.each do |field_defn| %>

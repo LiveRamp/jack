@@ -12,13 +12,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.test_project.database_1.IDatabase1;
+
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
+import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
+import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
@@ -26,7 +30,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public static final long serialVersionUID = -399049548729901546L;
 
   public static ModelField id() {
-    return ModelField.fieldKey(Post.class);
+    return ModelField.key(Post.class);
   }
 
   public static ModelField title() {

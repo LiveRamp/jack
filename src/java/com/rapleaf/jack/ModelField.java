@@ -16,7 +16,7 @@ public class ModelField {
     this.fieldType = fieldType;
   }
 
-  public static ModelField fieldKey(Class<? extends ModelWithId> model) {
+  public static ModelField key(Class<? extends ModelWithId> model) {
     return field(model, null, Long.class);
   }
 

@@ -12,12 +12,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.test_project.database_1.IDatabase1;
+
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.HasManyAssociation;
+import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
+import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
@@ -25,7 +30,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public static final long serialVersionUID = 6213989608937906012L;
 
   public static ModelField id() {
-    return ModelField.fieldKey(Comment.class);
+    return ModelField.key(Comment.class);
   }
 
   public static ModelField content() {
