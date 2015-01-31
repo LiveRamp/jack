@@ -58,22 +58,22 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder order() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public PostQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
   public PostQueryBuilder orderById() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public PostQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
 

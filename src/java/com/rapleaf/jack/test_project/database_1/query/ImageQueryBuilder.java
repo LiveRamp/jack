@@ -58,22 +58,22 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder order() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public ImageQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
   public ImageQueryBuilder orderById() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
 

@@ -1,23 +1,36 @@
 package com.rapleaf.jack.queries;
 
-public class OrderCriterion {
-  private Enum field;
+import com.rapleaf.jack.ModelField;
+
+public class OrderCriterion implements QueryCondition {
+  private ModelField modelField;
   private final QueryOrder order;
 
+  public OrderCriterion(QueryOrder order) {
+    this.modelField = ModelField.field(null, null, null);
+    this.order = order;
+  }
+
   public OrderCriterion(Enum field, QueryOrder order) {
-    this.field = field;
+    this.modelField = ModelField.field(null, field, null);
+    this.order = order;
+  }
+
+  public OrderCriterion(ModelField modelField, QueryOrder order) {
+    this.modelField = modelField;
     this.order = order;
   }
 
   public Enum getField() {
-    return field;
+    return modelField.getField();
   }
 
   public QueryOrder getOrder() {
     return order;
   }
 
+  @Override
   public String getSqlStatement() {
-    return (field == null ? "id" : field) + " " + order.getSqlKeyword();
+    return modelField.getSqlKeyword() + " " + order.getSqlKeyword();
   }
 }

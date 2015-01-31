@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
     
-  public class LimitCriterion {
+  public class LimitCriterion implements QueryCondition {
     private int offset;
     private int nResults;
 
@@ -22,7 +22,8 @@ package com.rapleaf.jack.queries;
       return nResults;
     }
 
-    public String getSqlClause() {
-      return "LIMIT " + nResults + " OFFSET " + offset + "";
+    @Override
+    public String getSqlStatement() {
+      return "LIMIT " + nResults + " OFFSET " + offset;
     }
   }

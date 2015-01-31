@@ -1,4 +1,4 @@
-package com.rapleaf.jack.generic_queries;
+package com.rapleaf.jack.queries;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -15,7 +15,6 @@ import com.google.common.collect.Maps;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericQueryBuilder {
@@ -51,27 +50,27 @@ public class GenericQueryBuilder {
   }
 
   public GenericQueryBuilder where(ModelField modelField, IWhereOperator operator) {
-    genericQuery.addWhereCondition(new WhereCondition(modelField, operator));
+    genericQuery.addWhereCondition(new WhereConstraint(modelField, operator));
     return this;
   }
 
   public GenericQueryBuilder orderBy(ModelField modelField, QueryOrder queryOrder) {
-    genericQuery.addOrderCondition(new OrderCondition(modelField, queryOrder));
+    genericQuery.addOrderCondition(new OrderCriterion(modelField, queryOrder));
     return this;
   }
 
   public GenericQueryBuilder orderBy(ModelField modelField) {
-    genericQuery.addOrderCondition(new OrderCondition(modelField, QueryOrder.ASC));
+    genericQuery.addOrderCondition(new OrderCriterion(modelField, QueryOrder.ASC));
     return this;
   }
 
   public GenericQueryBuilder limit(int offset, int limit) {
-    genericQuery.addLimitCondition(new LimitCondition(offset, limit));
+    genericQuery.addLimitCondition(new LimitCriterion(offset, limit));
     return this;
   }
 
   public GenericQueryBuilder limit(int limit) {
-    genericQuery.addLimitCondition(new LimitCondition(0, limit));
+    genericQuery.addLimitCondition(new LimitCriterion(0, limit));
     return this;
   }
 
@@ -142,7 +141,7 @@ public class GenericQueryBuilder {
     Map<ModelField, Object> fieldCollection = Maps.newHashMapWithExpectedSize(selectedModelFields.size());
 
     for (ModelField modelField : selectedModelFields) {
-      String sqlKeyword = modelField.getFullSqlKeyword();
+      String sqlKeyword = modelField.getSqlKeyword();
       fieldCollection.put(modelField, queryResultSet.getObject(sqlKeyword));
     }
 
@@ -151,8 +150,8 @@ public class GenericQueryBuilder {
 
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
     int index = 0;
-    for (WhereCondition condition : genericQuery.getWhereConditions()) {
-      for (Object parameter : condition.getParameters()) {
+    for (WhereConstraint constraint : genericQuery.getWhereConstraints()) {
+      for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
         }

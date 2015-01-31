@@ -1,4 +1,4 @@
-package com.rapleaf.jack.generic_queries;
+package com.rapleaf.jack.queries;
 
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.ModelWithId;
@@ -19,6 +19,6 @@ public class JoinCondition implements QueryCondition {
   @Override
   public String getSqlStatement() {
     String tableName = Utility.getTableNameFromModel(model);
-    return joinType.getSqlKeyword() + " " + tableName + " ON " + modelField1.getFullSqlKeyword() + " = " + modelField2.getFullSqlKeyword();
+    return joinType.getSqlKeyword() + " " + tableName + " ON " + modelField1.getSqlKeyword() + " = " + modelField2.getSqlKeyword();
   }
 }

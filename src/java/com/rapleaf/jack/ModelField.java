@@ -1,5 +1,7 @@
 package com.rapleaf.jack;
 
+import com.rapleaf.jack.queries.Utility;
+
 public class ModelField {
   private static String DEFAULT_ID_FIELD = "id";
 
@@ -17,8 +19,8 @@ public class ModelField {
     return field(model, null, Long.class);
   }
 
-  public static ModelField field(Class<? extends ModelWithId> table, Enum field, Class fieldType) {
-    return new ModelField(table, field, fieldType);
+  public static ModelField field(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
+    return new ModelField(model, field, fieldType);
   }
 
   public Class<? extends ModelWithId> getModel() {
@@ -33,22 +35,23 @@ public class ModelField {
     return type;
   }
 
-  public String getFullSqlKeyword() {
-    return model + "." + getSimpleSqlKeyword();
-  }
-
-  public String getSimpleSqlKeyword() {
-    return field != null ? field.toString() : DEFAULT_ID_FIELD;
+  public String getSqlKeyword() {
+    String fieldKeyword = field != null ? field.toString() : DEFAULT_ID_FIELD;
+    if (model != null) {
+      return Utility.getTableNameFromModel(model) + "." + fieldKeyword;
+    } else {
+      return fieldKeyword;
+    }
   }
 
   @Override
   public String toString() {
-    return getFullSqlKeyword();
+    return getSqlKeyword();
   }
 
   @Override
   public int hashCode() {
-    return getFullSqlKeyword().hashCode();
+    return getSqlKeyword().hashCode();
   }
 
   @Override

@@ -58,22 +58,22 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
   }
 
   public UserQueryBuilder order() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
   public UserQueryBuilder orderById() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public UserQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
 

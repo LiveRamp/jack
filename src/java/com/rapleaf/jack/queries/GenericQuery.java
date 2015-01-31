@@ -1,4 +1,4 @@
-package com.rapleaf.jack.generic_queries;
+package com.rapleaf.jack.queries;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,17 +18,17 @@ public class GenericQuery {
   private final BaseDatabaseConnection dbConnection;
   private Class<? extends ModelWithId> mainModel;
   private List<JoinCondition> joinConditions;
-  private List<WhereCondition> whereConditions;
-  private Set<OrderCondition> orderConditions;
+  private List<WhereConstraint> whereConstraints;
+  private Set<OrderCriterion> orderCriteria;
   private Set<ModelField> selectedIModelFields;
-  private Optional<LimitCondition> limitCondition;
+  private Optional<LimitCriterion> limitCondition;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
     this.dbConnection = dbConnection;
     this.mainModel = null;
     this.joinConditions = Lists.newArrayList();
-    this.whereConditions = Lists.newArrayList();
-    this.orderConditions = Sets.newHashSet();
+    this.whereConstraints = Lists.newArrayList();
+    this.orderCriteria = Sets.newHashSet();
     this.selectedIModelFields = Sets.newHashSet();
     this.limitCondition = Optional.absent();
   }
@@ -42,8 +42,8 @@ public class GenericQuery {
     return new GenericQueryBuilder(dbConnection, this);
   }
 
-  List<WhereCondition> getWhereConditions() {
-    return whereConditions;
+  List<WhereConstraint> getWhereConstraints() {
+    return whereConstraints;
   }
 
   Set<ModelField> getSelectedIModelFields() {
@@ -54,15 +54,15 @@ public class GenericQuery {
     joinConditions.add(joinCondition);
   }
 
-  void addWhereCondition(WhereCondition whereCondition) {
-    whereConditions.add(whereCondition);
+  void addWhereCondition(WhereConstraint whereConstraint) {
+    whereConstraints.add(whereConstraint);
   }
 
-  void addOrderCondition(OrderCondition orderCondition) {
-    orderConditions.add(orderCondition);
+  void addOrderCondition(OrderCriterion orderCriterion) {
+    orderCriteria.add(orderCriterion);
   }
 
-  void addLimitCondition(LimitCondition lmtCondition) {
+  void addLimitCondition(LimitCriterion lmtCondition) {
     this.limitCondition = Optional.of(lmtCondition);
   }
 
@@ -71,7 +71,7 @@ public class GenericQuery {
   }
 
   boolean isOrderedQuery() {
-    return !orderConditions.isEmpty();
+    return !orderCriteria.isEmpty();
   }
 
   String getSqlStatement() {
@@ -83,7 +83,7 @@ public class GenericQuery {
 
     if (isOrderedQuery()) {
       statement.append(getOrderClause());
-      if (!orderConditions.isEmpty()) {
+      if (!orderCriteria.isEmpty()) {
         statement.append(getLimitClause());
       }
     }
@@ -99,7 +99,7 @@ public class GenericQuery {
     } else {
       Iterator<ModelField> it = selectedIModelFields.iterator();
       while (it.hasNext()) {
-        clause.append(it.next().getFullSqlKeyword());
+        clause.append(it.next().getSqlKeyword());
         if (it.hasNext()) {
           clause.append(", ");
         }
@@ -115,11 +115,11 @@ public class GenericQuery {
   }
 
   private String getWhereClause() {
-    return getClause(whereConditions, "WHERE ", " AND ");
+    return getClause(whereConstraints, "WHERE ", " AND ");
   }
 
   private String getOrderClause() {
-    return getClause(orderConditions, "ORDER BY ", ", ");
+    return getClause(orderCriteria, "ORDER BY ", ", ");
   }
 
   private String getLimitClause() {

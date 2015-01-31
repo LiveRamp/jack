@@ -58,22 +58,22 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
   }
 
   public CommentQueryBuilder order() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder order(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
   public CommentQueryBuilder orderById() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public CommentQueryBuilder orderById(QueryOrder queryOrder) {    
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.common.collect.Sets;
 import junit.framework.TestCase;
 
-import com.rapleaf.jack.generic_queries.GenericQuery;
+import com.rapleaf.jack.queries.GenericQuery;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;

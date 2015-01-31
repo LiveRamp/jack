@@ -1,4 +1,4 @@
-package com.rapleaf.jack.generic_queries;
+package com.rapleaf.jack.queries;
 
 import com.rapleaf.jack.ModelWithId;
 
