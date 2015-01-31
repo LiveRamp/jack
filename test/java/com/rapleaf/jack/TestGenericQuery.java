@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 
 import com.rapleaf.jack.queries.GenericQuery;
 
+import com.rapleaf.jack.queries.QueryEntry;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -51,7 +52,7 @@ public class TestGenericQuery extends TestCase {
     commentD.save();
     commentE.save();
 
-    List<Map<ModelField, Object>> results = GenericQuery.create(DATABASE_CONNECTION1)
+    List<QueryEntry> results = GenericQuery.create(DATABASE_CONNECTION1)
         .from(User.class)
         .leftJoin(Comment.class, User.ID, Comment.COMMENTER_ID)
         .where(User.BIO, in(Sets.newHashSet("Assembly Coder", "Spaceship Pilot", "PDP-10 Hacker")))
@@ -61,8 +62,10 @@ public class TestGenericQuery extends TestCase {
         .select(User.ID, User.BIO, User.HANDLE, User.NUM_POSTS, Comment.ID, Comment.COMMENTER_ID, Comment.CONTENT)
         .fetch();
 
-    for (Map<ModelField, Object> record : results) {
-      System.out.println(record.toString());
+    for (QueryEntry entry : results) {
+      System.out.println(entry.getString(User.BIO));
+      System.out.println(entry.getLong(User.ID));
+      System.out.println(entry.getInteger(User.NUM_POSTS));
     }
   }
 }

@@ -17,6 +17,10 @@ public class QueryEntry {
     entry.put(modelField, value);
   }
 
+  public boolean contains(ModelField modelField) {
+    return entry.containsKey(modelField);
+  }
+
   public Object getObject(ModelField modelField) {
     if (entry.containsKey(modelField)) {
       return entry.get(modelField);
@@ -34,11 +38,11 @@ public class QueryEntry {
   }
 
   public Integer getInteger(ModelField modelField) {
-    return (Integer)checkTypeAndReturnObject(modelField, Integer.class);
+    return ((Number)checkTypeAndReturnObject(modelField, Integer.class)).intValue();
   }
 
   public Long getLong(ModelField modelField) {
-    return (Long)checkTypeAndReturnObject(modelField, Long.class);
+    return ((Number)checkTypeAndReturnObject(modelField, Long.class)).longValue();
   }
 
   public String getString(ModelField modelField) {
@@ -50,7 +54,7 @@ public class QueryEntry {
   }
 
   public Double getDouble(ModelField modelField) {
-    return (Double)checkTypeAndReturnObject(modelField, Double.class);
+    return ((Number)checkTypeAndReturnObject(modelField, Double.class)).doubleValue();
   }
 
   public Boolean getBoolean(ModelField modelField) {
