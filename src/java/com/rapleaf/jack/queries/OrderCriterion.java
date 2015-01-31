@@ -2,7 +2,7 @@ package com.rapleaf.jack.queries;
 
 import com.rapleaf.jack.ModelField;
 
-public class OrderCriterion implements QueryCondition {
+public class OrderCriterion implements IQueryCondition {
   private ModelField modelField;
   private final QueryOrder order;
 

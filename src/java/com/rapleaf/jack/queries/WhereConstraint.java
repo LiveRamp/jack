@@ -5,7 +5,7 @@ import java.util.List;
 import com.rapleaf.jack.ModelField;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
-public class WhereConstraint<T> implements QueryCondition {
+public class WhereConstraint<T> implements IQueryCondition {
   private ModelField modelField;
   private final IWhereOperator<T> operator;
 

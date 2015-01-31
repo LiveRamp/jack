@@ -130,7 +130,7 @@ public class GenericQuery {
     }
   }
 
-  private <T extends QueryCondition> String getClause(Collection<T> conditions, String initialKeyWord, String separator) {
+  private <T extends IQueryCondition> String getClause(Collection<T> conditions, String initialKeyWord, String separator) {
     if (conditions.isEmpty()) {
       return "";
     }
