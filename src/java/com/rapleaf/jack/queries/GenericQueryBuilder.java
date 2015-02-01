@@ -116,7 +116,9 @@ public class GenericQueryBuilder {
       queryResultSet = preparedStatement.executeQuery();
       while (queryResultSet.next()) {
         QueryEntry fieldCollection = parseResultSet(queryResultSet);
-        results.add(fieldCollection);
+        if (fieldCollection != null) {
+          results.add(fieldCollection);
+        }
       }
     } catch (SQLRecoverableException e) {
       dbConnection.resetConnection();
@@ -136,13 +138,15 @@ public class GenericQueryBuilder {
 
   private QueryEntry parseResultSet(ResultSet queryResultSet) throws SQLException{
     Set<ModelField> selectedModelFields = genericQuery.getSelectedIModelFields();
-    QueryEntry queryEntry = new QueryEntry(selectedModelFields.size());
+    if (selectedModelFields.isEmpty()) {
+      return null;
+    }
 
+    QueryEntry queryEntry = new QueryEntry(selectedModelFields.size());
     for (ModelField modelField : selectedModelFields) {
       String sqlKeyword = modelField.getSqlKeyword();
       queryEntry.addModelField(modelField, queryResultSet.getObject(sqlKeyword));
     }
-
     return queryEntry;
   }
 
