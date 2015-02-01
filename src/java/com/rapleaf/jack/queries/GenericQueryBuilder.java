@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -133,7 +132,7 @@ public class GenericQueryBuilder {
   }
 
   private QueryEntry parseResultSet(ResultSet queryResultSet) throws SQLException{
-    Set<ModelField> selectedModelFields = genericQuery.getSelectedIModelFields();
+    Set<ModelField> selectedModelFields = genericQuery.getSelectedModelFields();
     if (selectedModelFields.isEmpty()) {
       return null;
     }

@@ -46,7 +46,7 @@ public class GenericQuery {
     return whereConstraints;
   }
 
-  Set<ModelField> getSelectedIModelFields() {
+  Set<ModelField> getSelectedModelFields() {
     return selectedIModelFields;
   }
 

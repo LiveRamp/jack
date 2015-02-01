@@ -23,6 +23,10 @@ public class QueryEntry {
     return entry.containsKey(modelField);
   }
 
+  public int fieldCount() {
+    return entry.size();
+  }
+
   public Integer getInt(ModelField modelField) {
     Object value = checkTypeAndReturnObject(modelField, Integer.class);
     return value == null ? null : ((Number)value).intValue();
