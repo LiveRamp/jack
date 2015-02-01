@@ -42,11 +42,6 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder outerJoin(Class<? extends ModelWithId> model, ModelField modelField1, ModelField modelField2) {
-    genericQuery.addJoinCondition(new JoinCondition(JoinType.OUTER_JOIN, model, modelField1, modelField2));
-    return this;
-  }
-
   public GenericQueryBuilder where(ModelField modelField, IWhereOperator operator) {
     genericQuery.addWhereCondition(new WhereConstraint(modelField, operator));
     return this;
