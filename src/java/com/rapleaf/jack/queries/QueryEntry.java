@@ -1,5 +1,6 @@
 package com.rapleaf.jack.queries;
 
+import java.sql.Timestamp;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -31,7 +32,12 @@ public class QueryEntry {
   }
 
   public Long getLong(ModelField modelField) {
-    return ((Number)checkTypeAndReturnObject(modelField, Long.class)).longValue();
+    Object value = checkTypeAndReturnObject(modelField, Long.class);
+    if (value instanceof Timestamp) {
+      return ((Timestamp)value).getTime();
+    } else {
+      return ((Number)value).longValue();
+    }
   }
 
   public String getString(ModelField modelField) {

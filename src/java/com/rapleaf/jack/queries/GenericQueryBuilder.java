@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -140,7 +141,9 @@ public class GenericQueryBuilder {
     QueryEntry queryEntry = new QueryEntry(selectedModelFields.size());
     for (ModelField modelField : selectedModelFields) {
       String sqlKeyword = modelField.getSqlKeyword();
-      queryEntry.addModelField(modelField, queryResultSet.getObject(sqlKeyword));
+      Object value = queryResultSet.getObject(sqlKeyword);
+      value = queryResultSet.wasNull() ? null : value;
+      queryEntry.addModelField(modelField, value);
     }
     return queryEntry;
   }
