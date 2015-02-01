@@ -24,16 +24,20 @@ public class QueryEntry {
   }
 
   public Integer getInt(ModelField modelField) {
-    return ((Number)checkTypeAndReturnObject(modelField, Integer.class)).intValue();
+    Object value = checkTypeAndReturnObject(modelField, Integer.class);
+    return value == null ? null : ((Number)value).intValue();
   }
 
   public Integer getIntFromLong(ModelField modelField) {
-    return ModelWithId.safeLongToInt(getLong(modelField));
+    Object value = checkTypeAndReturnObject(modelField, Long.class);
+    return value == null ? null : ModelWithId.safeLongToInt(getLong(modelField));
   }
 
   public Long getLong(ModelField modelField) {
     Object value = checkTypeAndReturnObject(modelField, Long.class);
-    if (value instanceof Timestamp) {
+    if (value == null) {
+      return null;
+    } else if (value instanceof Timestamp) {
       return ((Timestamp)value).getTime();
     } else {
       return ((Number)value).longValue();
@@ -41,19 +45,23 @@ public class QueryEntry {
   }
 
   public String getString(ModelField modelField) {
-    return (String)checkTypeAndReturnObject(modelField, String.class);
+    Object value = checkTypeAndReturnObject(modelField, String.class);
+    return value == null ? null : (String)value;
   }
 
   public byte[] getByteArray(ModelField modelField) {
-    return (byte[])checkTypeAndReturnObject(modelField, byte[].class);
+    Object value = checkTypeAndReturnObject(modelField, byte[].class);
+    return value == null ? null : (byte[])value;
   }
 
   public Double getDouble(ModelField modelField) {
-    return ((Number)checkTypeAndReturnObject(modelField, Double.class)).doubleValue();
+    Object value = checkTypeAndReturnObject(modelField, Double.class);
+    return value == null ? null : ((Number)value).doubleValue();
   }
 
   public Boolean getBoolean(ModelField modelField) {
-    return (Boolean)checkTypeAndReturnObject(modelField, Boolean.class);
+    Object value = checkTypeAndReturnObject(modelField, Boolean.class);
+    return value == null ? null : (Boolean)value;
   }
 
   private Object checkTypeAndReturnObject(ModelField modelField, Class clazz) {
