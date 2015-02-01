@@ -34,6 +34,10 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
     return getAttributes().getId();
   }
 
+  public int getIntId() {
+    return safeLongToInt(getId());
+  }
+
   public abstract ModelIdWrapper getTypedId();
 
   public static int safeLongToInt(long l) {
