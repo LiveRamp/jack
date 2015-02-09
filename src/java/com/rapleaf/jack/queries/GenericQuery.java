@@ -17,11 +17,11 @@ public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
   private Class<? extends ModelWithId> mainModel;
-  private List<JoinCondition> joinConditions;
-  private List<WhereConstraint> whereConstraints;
-  private List<OrderCriterion> orderCriteria;
-  private Set<ModelField> selectedIModelFields;
-  private Optional<LimitCriterion> limitCondition;
+  private final List<JoinCondition> joinConditions;
+  private final List<WhereConstraint> whereConstraints;
+  private final List<OrderCriterion> orderCriteria;
+  private final Set<ModelField> selectedModelFields;
+  private Optional<LimitCriterion> limitCriteria;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
     this.dbConnection = dbConnection;
@@ -29,8 +29,8 @@ public class GenericQuery {
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
-    this.selectedIModelFields = Sets.newHashSet();
-    this.limitCondition = Optional.absent();
+    this.selectedModelFields = Sets.newHashSet();
+    this.limitCriteria = Optional.absent();
   }
 
   public static GenericQuery create(BaseDatabaseConnection dbConnection) {
@@ -47,7 +47,7 @@ public class GenericQuery {
   }
 
   Set<ModelField> getSelectedModelFields() {
-    return selectedIModelFields;
+    return selectedModelFields;
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
@@ -63,11 +63,11 @@ public class GenericQuery {
   }
 
   void addLimitCondition(LimitCriterion limitCriterion) {
-    this.limitCondition = Optional.of(limitCriterion);
+    this.limitCriteria = Optional.of(limitCriterion);
   }
 
   void addSelectedModelField(ModelField modelField) {
-    this.selectedIModelFields.add(modelField);
+    this.selectedModelFields.add(modelField);
   }
 
   boolean isOrderedQuery() {
@@ -83,9 +83,7 @@ public class GenericQuery {
 
     if (isOrderedQuery()) {
       statement.append(getOrderClause());
-      if (!orderCriteria.isEmpty()) {
-        statement.append(getLimitClause());
-      }
+      statement.append(getLimitClause());
     }
 
     return statement.toString();
@@ -94,10 +92,10 @@ public class GenericQuery {
   private String getSelectClause() {
     StringBuilder clause = new StringBuilder("SELECT ");
 
-    if (selectedIModelFields.isEmpty()) {
+    if (selectedModelFields.isEmpty()) {
       clause.append("*");
     } else {
-      Iterator<ModelField> it = selectedIModelFields.iterator();
+      Iterator<ModelField> it = selectedModelFields.iterator();
       while (it.hasNext()) {
         clause.append(it.next().getSqlKeyword());
         if (it.hasNext()) {
@@ -123,8 +121,8 @@ public class GenericQuery {
   }
 
   private String getLimitClause() {
-    if (limitCondition.isPresent()) {
-      return limitCondition.get().getSqlStatement() + " ";
+    if (limitCriteria.isPresent()) {
+      return limitCriteria.get().getSqlStatement() + " ";
     } else {
       return "";
     }
