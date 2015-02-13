@@ -5,18 +5,18 @@ import com.rapleaf.jack.queries.Utility;
 public class ModelField {
   private static String DEFAULT_ID_FIELD = "id";
 
-  private final Class<? extends ModelWithId> model;
-  private final Enum field;
-  private final Class type;
+  protected final Class<? extends ModelWithId> model;
+  protected final Enum field;
+  protected final Class type;
 
-  private ModelField(Class<? extends ModelWithId> model, Enum field, Class type) {
+  protected ModelField(Class<? extends ModelWithId> model, Enum field, Class type) {
     this.model = model;
     this.field = field;
     this.type = type;
   }
 
   public static ModelField key(Class<? extends ModelWithId> model) {
-    return field(model, null, Long.class);
+    return new ModelField(model, null, Long.class);
   }
 
   public static ModelField field(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
@@ -37,11 +37,7 @@ public class ModelField {
 
   public String getSqlKeyword() {
     String fieldKeyword = field != null ? field.toString() : DEFAULT_ID_FIELD;
-    if (model != null) {
-      return Utility.getTableName(model) + "." + fieldKeyword;
-    } else {
-      return fieldKeyword;
-    }
+    return (model != null ? Utility.getTableName(model) + "." : "") + fieldKeyword;
   }
 
   @Override

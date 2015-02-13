@@ -42,8 +42,18 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder where(ModelField modelField, IWhereOperator operator) {
-    genericQuery.addWhereCondition(new WhereConstraint(modelField, operator));
+  public GenericQueryBuilder where(ModelField modelField, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, null));
+    return this;
+  }
+
+  public GenericQueryBuilder and(ModelField modelField, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, WhereConstraint.Logic.AND));
+    return this;
+  }
+
+  public GenericQueryBuilder or(ModelField modelField, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, WhereConstraint.Logic.OR));
     return this;
   }
 
@@ -63,7 +73,7 @@ public class GenericQueryBuilder {
   }
 
   public GenericQueryBuilder limit(int limit) {
-    genericQuery.addLimitCondition(new LimitCriterion(0, limit));
+    genericQuery.addLimitCondition(new LimitCriterion(limit));
     return this;
   }
 
@@ -127,6 +137,7 @@ public class GenericQueryBuilder {
       } catch (SQLRecoverableException e) {
         dbConnection.resetConnection();
       } catch (SQLException e) {
+        // ignore
       }
     }
   }

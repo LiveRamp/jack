@@ -70,23 +70,12 @@ public class GenericQuery {
     this.selectedModelFields.add(modelField);
   }
 
-  boolean isOrderedQuery() {
-    return !orderCriteria.isEmpty();
-  }
-
   String getSqlStatement() {
-    StringBuilder statement = new StringBuilder();
-
-    statement.append(getSelectClause())
-        .append(getJoinClause())
-        .append(getWhereClause());
-
-    if (isOrderedQuery()) {
-      statement.append(getOrderClause());
-      statement.append(getLimitClause());
-    }
-
-    return statement.toString();
+    return getSelectClause()
+        + getJoinClause()
+        + getWhereClause()
+        + getOrderClause()
+        + getLimitClause();
   }
 
   private String getSelectClause() {
@@ -113,11 +102,15 @@ public class GenericQuery {
   }
 
   private String getWhereClause() {
-    return getClause(whereConstraints, "WHERE ", " AND ");
+    return getClause(whereConstraints, "WHERE ", " ");
   }
 
   private String getOrderClause() {
-    return getClause(orderCriteria, "ORDER BY ", ", ");
+    if (orderCriteria.isEmpty()) {
+      return "";
+    } else {
+      return getClause(orderCriteria, "ORDER BY ", ", ");
+    }
   }
 
   private String getLimitClause() {
@@ -128,12 +121,12 @@ public class GenericQuery {
     }
   }
 
-  private <T extends IQueryCondition> String getClause(Collection<T> conditions, String initialKeyWord, String separator) {
+  private <T extends IQueryCondition> String getClause(Collection<T> conditions, String initialKeyword, String separator) {
     if (conditions.isEmpty()) {
       return "";
     }
 
-    StringBuilder clause = new StringBuilder(initialKeyWord);
+    StringBuilder clause = new StringBuilder(initialKeyword);
     Iterator<T> it = conditions.iterator();
     while (it.hasNext()) {
       clause.append(it.next().getSqlStatement());

@@ -154,6 +154,5 @@ public class TestGenericQuery {
     assertEquals(commentD.getContent(), entryForCommentD.getString(Comment.CONTENT));
     assertEquals(userC.getHandle(), entryForCommentD.getString(User.HANDLE));
     assertEquals(postE.getTitle(), entryForCommentD.getString(Post.TITLE));
-
   }
 }
