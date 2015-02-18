@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelField;
@@ -35,6 +37,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public static final ModelField COMMENTER_ID = ModelField.field(Comment.class, _Fields.commenter_id, Integer.class);
   public static final ModelField COMMENTED_ON_ID = ModelField.field(Comment.class, _Fields.commented_on_id, Long.class);
   public static final ModelField CREATED_AT = ModelField.field(Comment.class, _Fields.created_at, Long.class);
+
+  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
 
   private final Attributes attributes;
 
