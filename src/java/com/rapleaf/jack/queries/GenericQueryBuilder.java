@@ -86,26 +86,19 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public String getSqlStatement() {
-    return genericQuery.getSqlStatement();
-  }
-
   public PreparedStatement getPreparedStatement() throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getSqlStatement());
+    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(genericQuery.getSqlStatement());
     setStatementParameters(preparedStatement);
     return preparedStatement;
   }
 
   public List<QueryEntry> fetch() throws IOException {
     int retryCount = 0;
-    PreparedStatement preparedStatement;
-    List<QueryEntry> results = Lists.newArrayList();
+    PreparedStatement preparedStatement = getPreparedStatement();
 
     while (true) {
-      preparedStatement = getPreparedStatement();
       try {
-        queryExecution(results, preparedStatement);
-        return results;
+        return queryExecution(preparedStatement);
       } catch (SQLRecoverableException e) {
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -116,17 +109,19 @@ public class GenericQueryBuilder {
     }
   }
 
-  private void queryExecution(List<QueryEntry> results, PreparedStatement preparedStatement) throws SQLException {
+  private List<QueryEntry> queryExecution(PreparedStatement preparedStatement) throws SQLException {
     ResultSet queryResultSet = null;
 
     try {
       queryResultSet = preparedStatement.executeQuery();
+      List<QueryEntry> results = Lists.newArrayList();
       while (queryResultSet.next()) {
         QueryEntry fieldCollection = parseResultSet(queryResultSet);
         if (fieldCollection != null) {
           results.add(fieldCollection);
         }
       }
+      return results;
     } catch (SQLRecoverableException e) {
       dbConnection.resetConnection();
       throw e;
