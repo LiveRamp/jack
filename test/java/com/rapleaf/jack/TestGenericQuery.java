@@ -124,8 +124,8 @@ public class TestGenericQuery {
 
     results = genericQuery
         .from(Comment.class)
-        .leftJoin(User.class, User.ID, Comment.COMMENTER_ID)
-        .leftJoin(Post.class, Post.ID, Comment.COMMENTED_ON_ID)
+        .leftJoin(User.class).on(User.ID, Comment.COMMENTER_ID)
+        .leftJoin(Post.class).on(Post.ID, Comment.COMMENTED_ON_ID)
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)

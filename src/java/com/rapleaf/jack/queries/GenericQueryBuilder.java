@@ -27,18 +27,20 @@ public class GenericQueryBuilder {
     this.genericQuery = genericQuery;
   }
 
-  public GenericQueryBuilder leftJoin(Class<? extends ModelWithId> model, ModelField modelField1, ModelField modelField2) {
-    genericQuery.addJoinCondition(new JoinCondition(JoinType.LEFT_JOIN, model, modelField1, modelField2));
-    return this;
+  public JoinConditionBuilder leftJoin(Class<? extends ModelWithId> model) {
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, model);
   }
 
-  public GenericQueryBuilder rightJoin(Class<? extends ModelWithId> model, ModelField modelField1, ModelField modelField2) {
-    genericQuery.addJoinCondition(new JoinCondition(JoinType.RIGHT_JOIN, model, modelField1, modelField2));
-    return this;
+  public JoinConditionBuilder rightJoin(Class<? extends ModelWithId> model) {
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, model);
   }
 
-  public GenericQueryBuilder innerJoin(Class<? extends ModelWithId> model, ModelField modelField1, ModelField modelField2) {
-    genericQuery.addJoinCondition(new JoinCondition(JoinType.INNER_JOIN, model, modelField1, modelField2));
+  public JoinConditionBuilder innerJoin(Class<? extends ModelWithId> model) {
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, model);
+  }
+
+  GenericQueryBuilder addJoinCondition(JoinCondition joinCondition) {
+    genericQuery.addJoinCondition(joinCondition);
     return this;
   }
 
