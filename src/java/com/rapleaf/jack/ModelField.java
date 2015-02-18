@@ -1,30 +1,39 @@
 package com.rapleaf.jack;
 
+import com.google.common.base.Preconditions;
+
 import com.rapleaf.jack.queries.Utility;
 
 public class ModelField {
   private static String DEFAULT_ID_FIELD = "id";
 
   protected final Class<? extends ModelWithId> model;
+  protected final String modelAlias;
   protected final Enum field;
   protected final Class type;
 
-  protected ModelField(Class<? extends ModelWithId> model, Enum field, Class type) {
+  protected ModelField(Class<? extends ModelWithId> model, String modelAlias, Enum field, Class type) {
     this.model = model;
+    this.modelAlias = modelAlias;
     this.field = field;
     this.type = type;
   }
 
   public static ModelField key(Class<? extends ModelWithId> model) {
-    return new ModelField(model, null, Long.class);
+    return new ModelField(model, null, null, Long.class);
   }
 
   public static ModelField field(Class<? extends ModelWithId> model, Enum field, Class fieldType) {
-    return new ModelField(model, field, fieldType);
+    return new ModelField(model, null, field, fieldType);
   }
 
   public Class<? extends ModelWithId> getModel() {
     return model;
+  }
+
+  public ModelField of(String alias) {
+    Preconditions.checkArgument(alias != null && !alias.isEmpty());
+    return new ModelField(model, alias, field, type);
   }
 
   public Enum getField() {
@@ -36,8 +45,21 @@ public class ModelField {
   }
 
   public String getSqlKeyword() {
-    String fieldKeyword = field != null ? field.toString() : DEFAULT_ID_FIELD;
-    return (model != null ? Utility.getTableName(model) + "." : "") + fieldKeyword;
+    StringBuilder sqlKeyword = new StringBuilder();
+
+    if (modelAlias != null) {
+      sqlKeyword.append(modelAlias).append(".");
+    } else if (model != null) {
+      sqlKeyword.append(Utility.getTableName(model)).append(".");
+    }
+
+    if (field != null) {
+      sqlKeyword.append(field.toString());
+    } else {
+      sqlKeyword.append(DEFAULT_ID_FIELD);
+    }
+
+    return sqlKeyword.toString();
   }
 
   @Override

@@ -9,7 +9,7 @@ public class AggregatedField extends ModelField {
   private final Function function;
 
   private AggregatedField(ModelField modelField, Function function) {
-    super(modelField.getModel(), modelField.getField(), modelField.getType());
+    super(modelField.getModel(), null, modelField.getField(), modelField.getType());
     this.function = function;
   }
 
