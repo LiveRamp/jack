@@ -34,10 +34,6 @@ public class ModelField {
     return new ModelField(model, null, field, fieldType);
   }
 
-  public Class<? extends ModelWithId> getModel() {
-    return model;
-  }
-
   public ModelField of(String modelAlias) {
     Preconditions.checkArgument(modelAlias != null && !modelAlias.isEmpty());
     this.modelAlias = modelAlias;

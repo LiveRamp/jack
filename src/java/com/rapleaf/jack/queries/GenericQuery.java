@@ -82,6 +82,7 @@ public class GenericQuery {
     return getSelectClause()
         + getJoinClause()
         + getWhereClause()
+        + getGroupByClause()
         + getOrderClause()
         + getLimitClause();
   }
@@ -111,6 +112,23 @@ public class GenericQuery {
 
   private String getWhereClause() {
     return getClause(whereConstraints, "WHERE ", " ");
+  }
+
+  private String getGroupByClause() {
+    if (groupByModelFields.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder groupByClause = new StringBuilder("GROUP BY ");
+    Iterator<ModelField> it = groupByModelFields.iterator();
+    while (it.hasNext()) {
+      groupByClause.append(it.next().getSqlKeyword());
+      if (it.hasNext()) {
+        groupByClause.append(", ");
+      }
+    }
+
+    return groupByClause.append(" ").toString();
   }
 
   private String getOrderClause() {
