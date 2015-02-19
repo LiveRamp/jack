@@ -16,7 +16,6 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericQueryBuilder {
-
   private static int MAX_CONNECTION_RETRIES = 1;
 
   private final GenericQuery genericQuery;
@@ -79,6 +78,11 @@ public class GenericQueryBuilder {
     return this;
   }
 
+  public GenericQueryBuilder groupBy(ModelField modelField, ModelField... modelFields) {
+    genericQuery.addGroupByModelFields(modelField, modelFields);
+    return this;
+  }
+
   public GenericQueryBuilder select(ModelField... modelFields) {
     for (ModelField modelField : modelFields) {
       genericQuery.addSelectedModelField(modelField);
@@ -98,7 +102,7 @@ public class GenericQueryBuilder {
 
     while (true) {
       try {
-        return queryExecution(preparedStatement);
+        return getQueryResults(preparedStatement);
       } catch (SQLRecoverableException e) {
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -109,7 +113,7 @@ public class GenericQueryBuilder {
     }
   }
 
-  private List<QueryEntry> queryExecution(PreparedStatement preparedStatement) throws SQLException {
+  private List<QueryEntry> getQueryResults(PreparedStatement preparedStatement) throws SQLException {
     ResultSet queryResultSet = null;
 
     try {

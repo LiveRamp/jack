@@ -128,6 +128,7 @@ public class TestGenericQuery {
         .leftJoin(Post.class).on(Post.ID, Comment.COMMENTED_ON_ID)
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
+        .groupBy(User.HANDLE)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
         .fetch();
 

@@ -1,5 +1,6 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +22,7 @@ public class GenericQuery {
   private final List<WhereConstraint> whereConstraints;
   private final List<OrderCriterion> orderCriteria;
   private final Set<ModelField> selectedModelFields;
+  private final Set<ModelField> groupByModelFields;
   private Optional<LimitCriterion> limitCriteria;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
@@ -30,6 +32,7 @@ public class GenericQuery {
     this.whereConstraints = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
     this.selectedModelFields = Sets.newHashSet();
+    this.groupByModelFields = Sets.newHashSet();
     this.limitCriteria = Optional.absent();
   }
 
@@ -64,6 +67,11 @@ public class GenericQuery {
 
   void addLimitCondition(LimitCriterion limitCriterion) {
     this.limitCriteria = Optional.of(limitCriterion);
+  }
+
+  void addGroupByModelFields(ModelField modelField, ModelField... modelFields) {
+    this.groupByModelFields.add(modelField);
+    this.groupByModelFields.addAll(Arrays.asList(modelFields));
   }
 
   void addSelectedModelField(ModelField modelField) {

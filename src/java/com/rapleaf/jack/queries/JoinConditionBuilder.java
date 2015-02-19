@@ -10,23 +10,23 @@ public class JoinConditionBuilder {
   private final GenericQueryBuilder queryBuilder;
   private final JoinType joinType;
   private final Class<? extends ModelWithId> model;
-  private Optional<String> alias;
+  private Optional<String> modelAlias;
 
   JoinConditionBuilder(GenericQueryBuilder queryBuilder, JoinType joinType, Class<? extends ModelWithId> model) {
     this.queryBuilder = queryBuilder;
     this.joinType = joinType;
     this.model = model;
-    this.alias = Optional.absent();
+    this.modelAlias = Optional.absent();
   }
 
-  public JoinConditionBuilder as(String alias) {
-    Preconditions.checkArgument(alias != null && !alias.isEmpty());
-    this.alias = Optional.of(alias);
+  public JoinConditionBuilder as(String modelAlias) {
+    Preconditions.checkArgument(modelAlias != null && !modelAlias.isEmpty());
+    this.modelAlias = Optional.of(modelAlias);
     return this;
   }
 
   public GenericQueryBuilder on(ModelField modelField1, ModelField modelField2) {
-    queryBuilder.addJoinCondition(new JoinCondition(joinType, model, alias, modelField1, modelField2));
+    queryBuilder.addJoinCondition(new JoinCondition(joinType, model, modelAlias, modelField1, modelField2));
     return queryBuilder;
   }
 }

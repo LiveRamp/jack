@@ -8,7 +8,7 @@ public class ModelField {
   private static String DEFAULT_ID_FIELD = "id";
 
   protected final Class<? extends ModelWithId> model;
-  protected final String modelAlias;
+  protected String modelAlias;
   protected final Enum field;
   protected final Class type;
 
@@ -17,6 +17,13 @@ public class ModelField {
     this.modelAlias = modelAlias;
     this.field = field;
     this.type = type;
+  }
+
+  protected ModelField(ModelField that) {
+    this.model = that.model;
+    this.modelAlias = that.modelAlias;
+    this.field = that.field;
+    this.type = that.type;
   }
 
   public static ModelField key(Class<? extends ModelWithId> model) {
@@ -31,9 +38,10 @@ public class ModelField {
     return model;
   }
 
-  public ModelField of(String alias) {
-    Preconditions.checkArgument(alias != null && !alias.isEmpty());
-    return new ModelField(model, alias, field, type);
+  public ModelField of(String modelAlias) {
+    Preconditions.checkArgument(modelAlias != null && !modelAlias.isEmpty());
+    this.modelAlias = modelAlias;
+    return this;
   }
 
   public Enum getField() {
