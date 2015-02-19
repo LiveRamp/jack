@@ -53,11 +53,14 @@ public class TestGenericQuery {
       users.createDefaultInstance();
     }
 
-    // query with no select clause should return an empty list
+    // query with no select clause should return all the model fields
+    genericQuery = GenericQuery.create(DATABASE_CONNECTION1);
     results = genericQuery.from(User.class).fetch();
-    assertTrue(results.isEmpty());
+    assertFalse(results.isEmpty());
+    assertEquals(11, results.get(0).fieldCount());
 
     // query with only select clause should return all records with the specified field
+    genericQuery = GenericQuery.create(DATABASE_CONNECTION1);
     results = genericQuery.from(User.class).select(User.ID).fetch();
     assertEquals(userRecordCount, results.size());
     assertEquals(1, results.get(0).fieldCount());
@@ -128,7 +131,6 @@ public class TestGenericQuery {
         .leftJoin(Post.class).on(Post.ID, Comment.COMMENTED_ON_ID)
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
-        .groupBy(User.HANDLE)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
         .fetch();
 

@@ -20,6 +20,14 @@ public class JoinCondition implements IQueryCondition {
     this.modelField2 = modelField2;
   }
 
+  Class<? extends ModelWithId> getModel() {
+    return model;
+  }
+
+  String getModelAlias() {
+    return modelAlias.isPresent() ? modelAlias.get() : null;
+  }
+
   @Override
   public String getSqlStatement() {
     String tableName = Utility.getTableName(model);

@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.sun.tools.javac.util.Pair;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.ModelField;
@@ -17,7 +18,7 @@ import com.rapleaf.jack.ModelWithId;
 public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
-  private Class<? extends ModelWithId> mainModel;
+  private final List<Pair<Class<? extends ModelWithId>, String>> queryModels;
   private final List<JoinCondition> joinConditions;
   private final List<WhereConstraint> whereConstraints;
   private final List<OrderCriterion> orderCriteria;
@@ -27,7 +28,7 @@ public class GenericQuery {
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
     this.dbConnection = dbConnection;
-    this.mainModel = null;
+    this.queryModels = Lists.newArrayList();
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
@@ -41,12 +42,13 @@ public class GenericQuery {
   }
 
   public GenericQueryBuilder from(Class<? extends ModelWithId> model) {
-    this.mainModel = model;
+    this.queryModels.add(Pair.<Class<? extends ModelWithId>, String>of(model, null));
     return new GenericQueryBuilder(dbConnection, this);
   }
 
-  List<WhereConstraint> getWhereConstraints() {
-    return whereConstraints;
+  void addSelectedModelField(ModelField modelField, ModelField... modelFields) {
+    this.selectedModelFields.add(modelField);
+    this.selectedModelFields.addAll(Arrays.asList(modelFields));
   }
 
   Set<ModelField> getSelectedModelFields() {
@@ -54,11 +56,16 @@ public class GenericQuery {
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
+    this.queryModels.add(Pair.<Class<? extends ModelWithId>, String>of(joinCondition.getModel(), joinCondition.getModelAlias()));
     this.joinConditions.add(joinCondition);
   }
 
   void addWhereCondition(WhereConstraint whereConstraint) {
     this.whereConstraints.add(whereConstraint);
+  }
+
+  List<WhereConstraint> getWhereConstraints() {
+    return whereConstraints;
   }
 
   void addOrderCondition(OrderCriterion orderCriterion) {
@@ -74,10 +81,6 @@ public class GenericQuery {
     this.groupByModelFields.addAll(Arrays.asList(modelFields));
   }
 
-  void addSelectedModelField(ModelField modelField) {
-    this.selectedModelFields.add(modelField);
-  }
-
   String getSqlStatement() {
     return getSelectClause()
         + getJoinClause()
@@ -88,21 +91,20 @@ public class GenericQuery {
   }
 
   private String getSelectClause() {
-    StringBuilder clause = new StringBuilder("SELECT ");
-
     if (selectedModelFields.isEmpty()) {
-      clause.append("*");
-    } else {
-      Iterator<ModelField> it = selectedModelFields.iterator();
-      while (it.hasNext()) {
-        clause.append(it.next().getSqlKeyword());
-        if (it.hasNext()) {
-          clause.append(", ");
-        }
+      selectAllModelFields();
+    }
+
+    StringBuilder clause = new StringBuilder("SELECT ");
+    Iterator<ModelField> it = selectedModelFields.iterator();
+    while (it.hasNext()) {
+      clause.append(it.next().getSqlKeyword());
+      if (it.hasNext()) {
+        clause.append(", ");
       }
     }
 
-    String tableName = Utility.getTableName(mainModel);
+    String tableName = Utility.getTableName(queryModels.get(0).fst);
     return clause.append(" FROM ").append(tableName).append(" ").toString();
   }
 
@@ -144,6 +146,24 @@ public class GenericQuery {
       return limitCriteria.get().getSqlStatement() + " ";
     } else {
       return "";
+    }
+  }
+
+  private void selectAllModelFields() {
+    for (Pair<Class<? extends ModelWithId>, String> modelAndAlias : queryModels) {
+      Class<? extends ModelWithId> model = modelAndAlias.fst;
+      String alias = modelAndAlias.snd;
+
+      Set<ModelField> modelFields;
+      try {
+        modelFields = (Set<ModelField>)model.getDeclaredField("_ALL_MODEL_FIELDS").get(null);
+      } catch (Exception e) {
+        throw new RuntimeException("Cannot get the static field _ALL_MODEL_FIELDS for " + model.getSimpleName());
+      }
+
+      for (ModelField modelField : modelFields) {
+        selectedModelFields.add(alias == null ? modelField : modelField.of(alias));
+      }
     }
   }
 

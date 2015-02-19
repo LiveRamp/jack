@@ -44,7 +44,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public static final ModelField SOME_DECIMAL = ModelField.field(User.class, _Fields.some_decimal, Double.class);
   public static final ModelField SOME_BOOLEAN = ModelField.field(User.class, _Fields.some_boolean, Boolean.class);
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
+  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
 
   private final Attributes attributes;
 

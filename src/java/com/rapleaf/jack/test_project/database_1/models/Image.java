@@ -35,7 +35,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public static final ModelField ID = ModelField.key(Image.class);
   public static final ModelField USER_ID = ModelField.field(Image.class, _Fields.user_id, Integer.class);
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(USER_ID);
+  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, USER_ID);
 
   private final Attributes attributes;
 

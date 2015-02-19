@@ -38,7 +38,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public static final ModelField COMMENTED_ON_ID = ModelField.field(Comment.class, _Fields.commented_on_id, Long.class);
   public static final ModelField CREATED_AT = ModelField.field(Comment.class, _Fields.created_at, Long.class);
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
+  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
 
   private final Attributes attributes;
 

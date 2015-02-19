@@ -83,10 +83,8 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder select(ModelField... modelFields) {
-    for (ModelField modelField : modelFields) {
-      genericQuery.addSelectedModelField(modelField);
-    }
+  public GenericQueryBuilder select(ModelField modelField, ModelField... modelFields) {
+    genericQuery.addSelectedModelField(modelField, modelFields);
     return this;
   }
 

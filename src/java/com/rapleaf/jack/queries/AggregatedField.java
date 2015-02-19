@@ -1,9 +1,11 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
+
+import com.rapleaf.jack.ModelField;
 
 public class AggregatedField extends ModelField {
 
   private enum Function {
-    COUNT, AVE, SUM, MAX, MIN
+    COUNT, AVG, SUM, MAX, MIN
   }
 
   private final Function function;
@@ -17,8 +19,8 @@ public class AggregatedField extends ModelField {
     return new AggregatedField(modelField, Function.COUNT);
   }
 
-  public static AggregatedField AVE(ModelField modelField) {
-    return new AggregatedField(modelField, Function.AVE);
+  public static AggregatedField AVG(ModelField modelField) {
+    return new AggregatedField(modelField, Function.AVG);
   }
 
   public static AggregatedField SUM(ModelField modelField) {

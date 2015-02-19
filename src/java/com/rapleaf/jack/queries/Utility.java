@@ -19,7 +19,7 @@ public class Utility {
       }
       return tableName;
     } catch (Exception e) {
-      throw new RuntimeException("Static field _TABLE_NAME is missing for " + model.getSimpleName());
+      throw new RuntimeException("Cannot get the static field _TABLE_NAME for " + model.getSimpleName());
     }
   }
 }

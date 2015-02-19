@@ -38,7 +38,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public static final ModelField USER_ID = ModelField.field(Post.class, _Fields.user_id, Integer.class);
   public static final ModelField UPDATED_AT = ModelField.field(Post.class, _Fields.updated_at, Long.class);
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
+  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
 
   private final Attributes attributes;
 

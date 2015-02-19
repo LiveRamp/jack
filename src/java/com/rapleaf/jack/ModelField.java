@@ -36,8 +36,7 @@ public class ModelField {
 
   public ModelField of(String modelAlias) {
     Preconditions.checkArgument(modelAlias != null && !modelAlias.isEmpty());
-    this.modelAlias = modelAlias;
-    return this;
+    return new ModelField(model, modelAlias, field, type);
   }
 
   public Enum getField() {
