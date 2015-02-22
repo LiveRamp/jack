@@ -81,12 +81,12 @@ public class TestGenericQuery {
     assertTrue(results1.isEmpty());
 
     // query with and clause
-    results1 = createGenericQuery().from(User.TABLE).where(User.BIO, equalTo("Trader")).and(User.HANDLE, equalTo("B")).fetch();
+    results1 = createGenericQuery().from(User.TABLE).where(User.BIO, equalTo("Trader")).andWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(1, results1.size());
     assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
 
     // query with or clause
-    results1 = createGenericQuery().from(User.TABLE).where(User.HANDLE, equalTo("A")).or(User.HANDLE, equalTo("B")).fetch();
+    results1 = createGenericQuery().from(User.TABLE).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(2, results1.size());
     for (QueryEntry entry : results1) {
       assertTrue(entry.getLong(User.ID) == userA.getId() || entry.getLong(User.ID) == userB.getId());
@@ -202,7 +202,7 @@ public class TestGenericQuery {
     results1 = createGenericQuery()
         .from(User.TABLE)
         .where(User.BIO, contains("f"))
-        .and(User.NUM_POSTS, in(1, 3, 5))
+        .andWhere(User.NUM_POSTS, in(1, 3, 5))
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("James", results1.get(0).getString(User.HANDLE));
@@ -211,7 +211,7 @@ public class TestGenericQuery {
     results1 = createGenericQuery()
         .from(User.TABLE)
         .where(User.HANDLE, notIn("Brad", "Brandon", "Jennifer", "John"))
-        .and(User.NUM_POSTS, notEqualTo(5))
+        .andWhere(User.NUM_POSTS, notEqualTo(5))
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("Casey", results1.get(0).getString(User.HANDLE));
@@ -257,7 +257,7 @@ public class TestGenericQuery {
     results1 = createGenericQuery()
         .from(User.TABLE)
         .where(User.NUM_POSTS, equalTo(3))
-        .and(User.BIO, equalTo("CEO"))
+        .andWhere(User.BIO, equalTo("CEO"))
         .orderBy(User.ID)
         .fetch();
     assertTrue(results1.isEmpty());
@@ -275,8 +275,8 @@ public class TestGenericQuery {
     results1 = createGenericQuery()
         .from(User.TABLE)
         .where(User.HANDLE, equalTo("A"))
-        .and(User.BIO, equalTo("CEO"))
-        .and(User.NUM_POSTS, equalTo(1))
+        .andWhere(User.BIO, equalTo("CEO"))
+        .andWhere(User.NUM_POSTS, equalTo(1))
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());

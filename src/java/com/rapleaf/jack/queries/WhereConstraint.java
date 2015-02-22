@@ -2,8 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
-
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
@@ -15,20 +13,20 @@ public class WhereConstraint<T> implements IQueryCondition {
 
   private final Column column;
   private final IWhereOperator<T> operator;
-  private final Optional<Logic> logic;
+  private final Logic logic;
 
   // constructor for model query
   public WhereConstraint(Enum field, IWhereOperator<T> operator) {
     this.column = Column.fromField(null, field, null);
     this.operator = operator;
-    this.logic = Optional.absent();
+    this.logic = null;
   }
 
   // constructor for generic query
   public WhereConstraint(Column column, IWhereOperator<T> operator, Logic logic) {
     this.column = column;
     this.operator = operator;
-    this.logic = Optional.fromNullable(logic);
+    this.logic = logic;
   }
 
   public Enum getField() {
@@ -45,6 +43,6 @@ public class WhereConstraint<T> implements IQueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return (logic.isPresent() ? logic.get().toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
+    return (logic != null ? logic.toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
   }
 }

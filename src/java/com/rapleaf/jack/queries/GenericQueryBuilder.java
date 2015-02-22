@@ -49,12 +49,12 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder and(Column column, IWhereOperator operator) {
+  public GenericQueryBuilder andWhere(Column column, IWhereOperator operator) {
     genericQuery.addWhereCondition(new WhereConstraint(column, operator, WhereConstraint.Logic.AND));
     return this;
   }
 
-  public GenericQueryBuilder or(Column column, IWhereOperator operator) {
+  public GenericQueryBuilder orWhere(Column column, IWhereOperator operator) {
     genericQuery.addWhereCondition(new WhereConstraint(column, operator, WhereConstraint.Logic.OR));
     return this;
   }

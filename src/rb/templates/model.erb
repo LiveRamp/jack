@@ -23,10 +23,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-
-import <%= root_package %>.I<%= db_name %>;
-
 import <%= JACK_NAMESPACE %>.AbstractModelTable;
 import <%= JACK_NAMESPACE %>.Column;
 import <%= JACK_NAMESPACE %>.ModelWithId;
@@ -64,12 +60,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     }
 
     public static Table as(String alias) {
-      Preconditions.checkArgument(alias != null && !alias.isEmpty(), "Table alias cannot be null or empty.");
       return new Table(alias);
     }
   }
 
-  public static final Table TABLE = new Table(null);
+  public static final Table TABLE = new Table("<%= model_defn.table_name %>");
   public static final Column ID = TABLE.ID;
   <% model_defn.fields.each do |field_defn| %>
   public static final Column <%= field_defn.name.upcase %> = TABLE.<%= field_defn.name.upcase %>;

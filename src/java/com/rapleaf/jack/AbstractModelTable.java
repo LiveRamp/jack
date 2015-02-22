@@ -2,6 +2,7 @@ package com.rapleaf.jack;
 
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 public class AbstractModelTable implements ModelTable {
@@ -10,6 +11,8 @@ public class AbstractModelTable implements ModelTable {
   protected final Set<Column> allColumns;
 
   protected AbstractModelTable(String table, String alias) {
+    Preconditions.checkArgument(table != null && !table.isEmpty(), "Table name cannot be null or empty.");
+    Preconditions.checkArgument(alias != null && !alias.isEmpty(), "Table alias cannot be null or empty.");
     this.table = table;
     this.alias = alias;
     this.allColumns = Sets.newHashSet();
@@ -22,6 +25,6 @@ public class AbstractModelTable implements ModelTable {
 
   @Override
   public String getSqlKeyword() {
-    return table + (alias != null ? " AS " + alias : "");
+    return table + " AS " + alias;
   }
 }
