@@ -7,21 +7,17 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
-import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -30,15 +26,34 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   
   public static final long serialVersionUID = 6213989608937906012L;
 
-  public static final String _TABLE_NAME = "comments";
+  public static class Table extends AbstractModelTable {
+    public final Column ID;
+    public final Column CONTENT;
+    public final Column COMMENTER_ID;
+    public final Column COMMENTED_ON_ID;
+    public final Column CREATED_AT;
 
-  public static final ModelField ID = ModelField.key(Comment.class);
-  public static final ModelField CONTENT = ModelField.field(Comment.class, _Fields.content, String.class);
-  public static final ModelField COMMENTER_ID = ModelField.field(Comment.class, _Fields.commenter_id, Integer.class);
-  public static final ModelField COMMENTED_ON_ID = ModelField.field(Comment.class, _Fields.commented_on_id, Long.class);
-  public static final ModelField CREATED_AT = ModelField.field(Comment.class, _Fields.created_at, Long.class);
+    private Table(String alias) {
+      super("comments", alias);
+      this.ID = Column.fromKey(alias);
+      this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
+      this.COMMENTER_ID = Column.fromField(alias, _Fields.commenter_id, Integer.class);
+      this.COMMENTED_ON_ID = Column.fromField(alias, _Fields.commented_on_id, Long.class);
+      this.CREATED_AT = Column.fromField(alias, _Fields.created_at, Long.class);
+      Collections.addAll(this.allColumns, ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
+    }
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
+    public static Table as(String alias) {
+      return new Table(alias);
+    }
+  }
+
+  public static final Table TABLE = new Table(null);
+  public static final Column ID = TABLE.ID;
+  public static final Column CONTENT = TABLE.CONTENT;
+  public static final Column COMMENTER_ID = TABLE.COMMENTER_ID;
+  public static final Column COMMENTED_ON_ID = TABLE.COMMENTED_ON_ID;
+  public static final Column CREATED_AT = TABLE.CREATED_AT;
 
   private final Attributes attributes;
 
@@ -334,7 +349,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       case commented_on_id:
         return null;
       case created_at:
-        return 28800000;
+        return -28800000;
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
@@ -479,7 +494,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
       long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
       Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-      long created_at = created_at_tmp == null ? 28800000 : created_at_tmp;
+      long created_at = created_at_tmp == null ? -28800000 : created_at_tmp;
       this.__content = content;
       this.__commenter_id = commenter_id;
       this.__commented_on_id = commented_on_id;
@@ -666,7 +681,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         case commented_on_id:
           return null;
         case created_at:
-          return 28800000;
+          return -28800000;
       }
       throw new IllegalStateException("Invalid field: " + field);
     }

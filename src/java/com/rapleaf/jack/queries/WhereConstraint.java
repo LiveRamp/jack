@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.base.Optional;
 
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class WhereConstraint<T> implements IQueryCondition {
@@ -13,26 +13,26 @@ public class WhereConstraint<T> implements IQueryCondition {
     AND, OR
   }
 
-  private final ModelField modelField;
+  private final Column column;
   private final IWhereOperator<T> operator;
   private final Optional<Logic> logic;
 
   // constructor for model query
   public WhereConstraint(Enum field, IWhereOperator<T> operator) {
-    this.modelField = ModelField.field(null, field, null);
+    this.column = Column.fromField(null, field, null);
     this.operator = operator;
     this.logic = Optional.absent();
   }
 
   // constructor for generic query
-  public WhereConstraint(ModelField modelField, IWhereOperator<T> operator, Logic logic) {
-    this.modelField = modelField;
+  public WhereConstraint(Column column, IWhereOperator<T> operator, Logic logic) {
+    this.column = column;
     this.operator = operator;
     this.logic = Optional.fromNullable(logic);
   }
 
   public Enum getField() {
-    return modelField.getField();
+    return column.getField();
   }
 
   public IWhereOperator<T> getOperator() {
@@ -45,6 +45,6 @@ public class WhereConstraint<T> implements IQueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return (logic.isPresent() ? logic.toString() + " " : "") + modelField.getSqlKeyword() + " " + operator.getSqlStatement();
+    return (logic.isPresent() ? logic.toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
   }
 }

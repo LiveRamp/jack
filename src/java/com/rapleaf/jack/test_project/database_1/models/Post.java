@@ -7,21 +7,18 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -30,15 +27,34 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   
   public static final long serialVersionUID = -399049548729901546L;
 
-  public static final String _TABLE_NAME = "posts";
+  public static class Table extends AbstractModelTable {
+    public final Column ID;
+    public final Column TITLE;
+    public final Column POSTED_AT_MILLIS;
+    public final Column USER_ID;
+    public final Column UPDATED_AT;
 
-  public static final ModelField ID = ModelField.key(Post.class);
-  public static final ModelField TITLE = ModelField.field(Post.class, _Fields.title, String.class);
-  public static final ModelField POSTED_AT_MILLIS = ModelField.field(Post.class, _Fields.posted_at_millis, Long.class);
-  public static final ModelField USER_ID = ModelField.field(Post.class, _Fields.user_id, Integer.class);
-  public static final ModelField UPDATED_AT = ModelField.field(Post.class, _Fields.updated_at, Long.class);
+    private Table(String alias) {
+      super("posts", alias);
+      this.ID = Column.fromKey(alias);
+      this.TITLE = Column.fromField(alias, _Fields.title, String.class);
+      this.POSTED_AT_MILLIS = Column.fromField(alias, _Fields.posted_at_millis, Long.class);
+      this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
+      this.UPDATED_AT = Column.fromField(alias, _Fields.updated_at, Long.class);
+      Collections.addAll(this.allColumns, ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
+    }
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
+    public static Table as(String alias) {
+      return new Table(alias);
+    }
+  }
+
+  public static final Table TABLE = Table.as("posts");
+  public static final Column ID = TABLE.ID;
+  public static final Column TITLE = TABLE.TITLE;
+  public static final Column POSTED_AT_MILLIS = TABLE.POSTED_AT_MILLIS;
+  public static final Column USER_ID = TABLE.USER_ID;
+  public static final Column UPDATED_AT = TABLE.UPDATED_AT;
 
   private final Attributes attributes;
 

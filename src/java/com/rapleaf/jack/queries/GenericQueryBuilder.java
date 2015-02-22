@@ -11,7 +11,8 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.Column;
+import com.rapleaf.jack.ModelTable;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
@@ -26,16 +27,16 @@ public class GenericQueryBuilder {
     this.genericQuery = genericQuery;
   }
 
-  public JoinConditionBuilder leftJoin(Class<? extends ModelWithId> model) {
-    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, model);
+  public JoinConditionBuilder leftJoin(ModelTable table) {
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
-  public JoinConditionBuilder rightJoin(Class<? extends ModelWithId> model) {
-    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, model);
+  public JoinConditionBuilder rightJoin(ModelTable table) {
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
-  public JoinConditionBuilder innerJoin(Class<? extends ModelWithId> model) {
-    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, model);
+  public JoinConditionBuilder innerJoin(ModelTable table) {
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 
   GenericQueryBuilder addJoinCondition(JoinCondition joinCondition) {
@@ -43,28 +44,28 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder where(ModelField modelField, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, null));
+  public GenericQueryBuilder where(Column column, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, null));
     return this;
   }
 
-  public GenericQueryBuilder and(ModelField modelField, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, WhereConstraint.Logic.AND));
+  public GenericQueryBuilder and(Column column, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, WhereConstraint.Logic.AND));
     return this;
   }
 
-  public GenericQueryBuilder or(ModelField modelField, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(modelField, operator, WhereConstraint.Logic.OR));
+  public GenericQueryBuilder or(Column column, IWhereOperator<Object> operator) {
+    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, WhereConstraint.Logic.OR));
     return this;
   }
 
-  public GenericQueryBuilder orderBy(ModelField modelField, QueryOrder queryOrder) {
-    genericQuery.addOrderCondition(new OrderCriterion(modelField, queryOrder));
+  public GenericQueryBuilder orderBy(Column column, QueryOrder queryOrder) {
+    genericQuery.addOrderCondition(new OrderCriterion(column, queryOrder));
     return this;
   }
 
-  public GenericQueryBuilder orderBy(ModelField modelField) {
-    genericQuery.addOrderCondition(new OrderCriterion(modelField, QueryOrder.ASC));
+  public GenericQueryBuilder orderBy(Column column) {
+    genericQuery.addOrderCondition(new OrderCriterion(column, QueryOrder.ASC));
     return this;
   }
 
@@ -78,13 +79,13 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder groupBy(ModelField modelField, ModelField... modelFields) {
-    genericQuery.addGroupByModelFields(modelField, modelFields);
+  public GenericQueryBuilder groupBy(Column column, Column... columns) {
+    genericQuery.addGroupByModelFields(column, columns);
     return this;
   }
 
-  public GenericQueryBuilder select(ModelField modelField, ModelField... modelFields) {
-    genericQuery.addSelectedModelField(modelField, modelFields);
+  public GenericQueryBuilder select(Column column, Column... columns) {
+    genericQuery.addSelectedModelField(column, columns);
     return this;
   }
 
@@ -142,17 +143,17 @@ public class GenericQueryBuilder {
   }
 
   private QueryEntry parseResultSet(ResultSet queryResultSet) throws SQLException{
-    Set<ModelField> selectedModelFields = genericQuery.getSelectedModelFields();
-    if (selectedModelFields.isEmpty()) {
+    Set<Column> selectedColumns = genericQuery.getSelectedColumns();
+    if (selectedColumns.isEmpty()) {
       return null;
     }
 
-    QueryEntry queryEntry = new QueryEntry(selectedModelFields.size());
-    for (ModelField modelField : selectedModelFields) {
-      String sqlKeyword = modelField.getSqlKeyword();
+    QueryEntry queryEntry = new QueryEntry(selectedColumns.size());
+    for (Column column : selectedColumns) {
+      String sqlKeyword = column.getSqlKeyword();
       Object value = queryResultSet.getObject(sqlKeyword);
       value = queryResultSet.wasNull() ? null : value;
-      queryEntry.addModelField(modelField, value);
+      queryEntry.addModelField(column, value);
     }
     return queryEntry;
   }

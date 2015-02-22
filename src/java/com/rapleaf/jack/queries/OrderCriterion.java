@@ -1,28 +1,28 @@
 package com.rapleaf.jack.queries;
 
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.Column;
 
 public class OrderCriterion implements IQueryCondition {
-  private ModelField modelField;
+  private Column column;
   private final QueryOrder order;
 
   public OrderCriterion(QueryOrder order) {
-    this.modelField = ModelField.field(null, null, null);
+    this.column = Column.fromField(null, null, null);
     this.order = order;
   }
 
   public OrderCriterion(Enum field, QueryOrder order) {
-    this.modelField = ModelField.field(null, field, null);
+    this.column = Column.fromField(null, field, null);
     this.order = order;
   }
 
-  public OrderCriterion(ModelField modelField, QueryOrder order) {
-    this.modelField = modelField;
+  public OrderCriterion(Column column, QueryOrder order) {
+    this.column = column;
     this.order = order;
   }
 
   public Enum getField() {
-    return modelField.getField();
+    return column.getField();
   }
 
   public QueryOrder getOrder() {
@@ -31,6 +31,6 @@ public class OrderCriterion implements IQueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return modelField.getSqlKeyword() + " " + order.getSqlKeyword();
+    return column.getSqlKeyword() + " " + order.getSqlKeyword();
   }
 }

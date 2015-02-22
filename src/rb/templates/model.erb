@@ -17,16 +17,16 @@
 package <%= root_package %>.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
 import <%= root_package %>.I<%= db_name %>;
 
-import <%= JACK_NAMESPACE %>.ModelField;
+import <%= JACK_NAMESPACE %>.AbstractModelTable;
+import <%= JACK_NAMESPACE %>.Column;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
 import <%= JACK_NAMESPACE %>.BelongsToAssociation;
@@ -46,14 +46,31 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
-  public static final String _TABLE_NAME = "<%= model_defn.table_name %>";
+  public static class Table extends AbstractModelTable {
+    public final Column ID;
+    <% model_defn.fields.each do |field_defn| %>
+    public final Column <%= field_defn.name.upcase %>;
+    <% end %>
 
-  public static final ModelField ID = ModelField.key(<%= model_defn.model_name %>.class);
+    private Table(String alias) {
+      super("<%= model_defn.table_name %>", alias);
+      this.ID = Column.key(alias);
+      <% model_defn.fields.each do |field_defn| %>
+      this.<%= field_defn.name.upcase %> = Column.field(alias, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
+      <% end %>
+      Collections.addAll(this.allColumns, ID, <% model_defn.fields.each_with_index do |field_defn, index| %><%= field_defn.name.upcase %><%= ", " if index < model_defn.fields.size - 1 %><% end %>);
+    }
+
+    public static Table as(String alias) {
+      return new Table(alias);
+    }
+  }
+
+  public static final Table TABLE = new Table(null);
+  public static final Column ID = TABLE.ID;
   <% model_defn.fields.each do |field_defn| %>
-  public static final ModelField <%= field_defn.name.upcase %> = ModelField.field(<%= model_defn.model_name %>.class, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
+  public static final Column <%= field_defn.name.upcase %> = TABLE.<%= field_defn.name.upcase %>;
   <% end %>
-
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, <% model_defn.fields.each_with_index do |field_defn, index| %><%= field_defn.name.upcase %><%= ", " if index < model_defn.fields.size - 1 %><% end %>);
 
   private final Attributes attributes;
 

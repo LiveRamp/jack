@@ -9,31 +9,30 @@ import java.util.Set;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.sun.tools.javac.util.Pair;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.ModelField;
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.Column;
+import com.rapleaf.jack.ModelTable;
 
 public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
-  private final List<Pair<Class<? extends ModelWithId>, String>> queryModels;
+  private final List<ModelTable> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<WhereConstraint> whereConstraints;
   private final List<OrderCriterion> orderCriteria;
-  private final Set<ModelField> selectedModelFields;
-  private final Set<ModelField> groupByModelFields;
+  private final Set<Column> selectedColumns;
+  private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
   private GenericQuery(BaseDatabaseConnection dbConnection) {
     this.dbConnection = dbConnection;
-    this.queryModels = Lists.newArrayList();
+    this.includedTables = Lists.newArrayList();
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
-    this.selectedModelFields = Sets.newHashSet();
-    this.groupByModelFields = Sets.newHashSet();
+    this.selectedColumns = Sets.newHashSet();
+    this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.absent();
   }
 
@@ -41,22 +40,22 @@ public class GenericQuery {
     return new GenericQuery(dbConnection);
   }
 
-  public GenericQueryBuilder from(Class<? extends ModelWithId> model) {
-    this.queryModels.add(Pair.<Class<? extends ModelWithId>, String>of(model, null));
+  public GenericQueryBuilder from(ModelTable table) {
+    this.includedTables.add(table);
     return new GenericQueryBuilder(dbConnection, this);
   }
 
-  void addSelectedModelField(ModelField modelField, ModelField... modelFields) {
-    this.selectedModelFields.add(modelField);
-    this.selectedModelFields.addAll(Arrays.asList(modelFields));
+  void addSelectedModelField(Column column, Column... columns) {
+    this.selectedColumns.add(column);
+    this.selectedColumns.addAll(Arrays.asList(columns));
   }
 
-  Set<ModelField> getSelectedModelFields() {
-    return selectedModelFields;
+  Set<Column> getSelectedColumns() {
+    return selectedColumns;
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    this.queryModels.add(Pair.<Class<? extends ModelWithId>, String>of(joinCondition.getModel(), joinCondition.getModelAlias()));
+    this.includedTables.add(joinCondition.getTable());
     this.joinConditions.add(joinCondition);
   }
 
@@ -76,9 +75,9 @@ public class GenericQuery {
     this.limitCriteria = Optional.of(limitCriterion);
   }
 
-  void addGroupByModelFields(ModelField modelField, ModelField... modelFields) {
-    this.groupByModelFields.add(modelField);
-    this.groupByModelFields.addAll(Arrays.asList(modelFields));
+  void addGroupByModelFields(Column column, Column... columns) {
+    this.groupByColumns.add(column);
+    this.groupByColumns.addAll(Arrays.asList(columns));
   }
 
   String getSqlStatement() {
@@ -91,12 +90,14 @@ public class GenericQuery {
   }
 
   private String getSelectClause() {
-    if (selectedModelFields.isEmpty()) {
-      selectAllModelFields();
+    if (selectedColumns.isEmpty()) {
+      for (ModelTable table : includedTables) {
+        selectedColumns.addAll(table.getAllColumns());
+      }
     }
 
     StringBuilder clause = new StringBuilder("SELECT ");
-    Iterator<ModelField> it = selectedModelFields.iterator();
+    Iterator<Column> it = selectedColumns.iterator();
     while (it.hasNext()) {
       clause.append(it.next().getSqlKeyword());
       if (it.hasNext()) {
@@ -104,8 +105,7 @@ public class GenericQuery {
       }
     }
 
-    String tableName = Utility.getTableName(queryModels.get(0).fst);
-    return clause.append(" FROM ").append(tableName).append(" ").toString();
+    return clause.append(" FROM ").append(includedTables.get(0).getSqlKeyword()).append(" ").toString();
   }
 
   private String getJoinClause() {
@@ -117,12 +117,12 @@ public class GenericQuery {
   }
 
   private String getGroupByClause() {
-    if (groupByModelFields.isEmpty()) {
+    if (groupByColumns.isEmpty()) {
       return "";
     }
 
     StringBuilder groupByClause = new StringBuilder("GROUP BY ");
-    Iterator<ModelField> it = groupByModelFields.iterator();
+    Iterator<Column> it = groupByColumns.iterator();
     while (it.hasNext()) {
       groupByClause.append(it.next().getSqlKeyword());
       if (it.hasNext()) {
@@ -146,24 +146,6 @@ public class GenericQuery {
       return limitCriteria.get().getSqlStatement() + " ";
     } else {
       return "";
-    }
-  }
-
-  private void selectAllModelFields() {
-    for (Pair<Class<? extends ModelWithId>, String> modelAndAlias : queryModels) {
-      Class<? extends ModelWithId> model = modelAndAlias.fst;
-      String alias = modelAndAlias.snd;
-
-      Set<ModelField> modelFields;
-      try {
-        modelFields = (Set<ModelField>)model.getDeclaredField("_ALL_MODEL_FIELDS").get(null);
-      } catch (Exception e) {
-        throw new RuntimeException("Cannot get the static field _ALL_MODEL_FIELDS for " + model.getSimpleName());
-      }
-
-      for (ModelField modelField : modelFields) {
-        selectedModelFields.add(alias == null ? modelField : modelField.of(alias));
-      }
     }
   }
 

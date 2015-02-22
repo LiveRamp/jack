@@ -7,19 +7,16 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
@@ -30,21 +27,52 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   
   public static final long serialVersionUID = -966057050205502149L;
 
-  public static final String _TABLE_NAME = "users";
+  public static class Table extends AbstractModelTable {
+    public final Column ID;
+    public final Column HANDLE;
+    public final Column CREATED_AT_MILLIS;
+    public final Column NUM_POSTS;
+    public final Column SOME_DATE;
+    public final Column SOME_DATETIME;
+    public final Column BIO;
+    public final Column SOME_BINARY;
+    public final Column SOME_FLOAT;
+    public final Column SOME_DECIMAL;
+    public final Column SOME_BOOLEAN;
 
-  public static final ModelField ID = ModelField.key(User.class);
-  public static final ModelField HANDLE = ModelField.field(User.class, _Fields.handle, String.class);
-  public static final ModelField CREATED_AT_MILLIS = ModelField.field(User.class, _Fields.created_at_millis, Long.class);
-  public static final ModelField NUM_POSTS = ModelField.field(User.class, _Fields.num_posts, Integer.class);
-  public static final ModelField SOME_DATE = ModelField.field(User.class, _Fields.some_date, Long.class);
-  public static final ModelField SOME_DATETIME = ModelField.field(User.class, _Fields.some_datetime, Long.class);
-  public static final ModelField BIO = ModelField.field(User.class, _Fields.bio, String.class);
-  public static final ModelField SOME_BINARY = ModelField.field(User.class, _Fields.some_binary, byte[].class);
-  public static final ModelField SOME_FLOAT = ModelField.field(User.class, _Fields.some_float, Double.class);
-  public static final ModelField SOME_DECIMAL = ModelField.field(User.class, _Fields.some_decimal, Double.class);
-  public static final ModelField SOME_BOOLEAN = ModelField.field(User.class, _Fields.some_boolean, Boolean.class);
+    private Table(String alias) {
+      super("users", alias);
+      this.ID = Column.fromKey(alias);
+      this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
+      this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
+      this.NUM_POSTS = Column.fromField(alias, _Fields.num_posts, Integer.class);
+      this.SOME_DATE = Column.fromField(alias, _Fields.some_date, Long.class);
+      this.SOME_DATETIME = Column.fromField(alias, _Fields.some_datetime, Long.class);
+      this.BIO = Column.fromField(alias, _Fields.bio, String.class);
+      this.SOME_BINARY = Column.fromField(alias, _Fields.some_binary, byte[].class);
+      this.SOME_FLOAT = Column.fromField(alias, _Fields.some_float, Double.class);
+      this.SOME_DECIMAL = Column.fromField(alias, _Fields.some_decimal, Double.class);
+      this.SOME_BOOLEAN = Column.fromField(alias, _Fields.some_boolean, Boolean.class);
+      Collections.addAll(this.allColumns, ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
+    }
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
+    public static Table as(String alias) {
+      return new Table(alias);
+    }
+  }
+
+  public static final Table TABLE = Table.as("users");
+  public static final Column ID = TABLE.ID;
+  public static final Column HANDLE = TABLE.HANDLE;
+  public static final Column CREATED_AT_MILLIS = TABLE.CREATED_AT_MILLIS;
+  public static final Column NUM_POSTS = TABLE.NUM_POSTS;
+  public static final Column SOME_DATE = TABLE.SOME_DATE;
+  public static final Column SOME_DATETIME = TABLE.SOME_DATETIME;
+  public static final Column BIO = TABLE.BIO;
+  public static final Column SOME_BINARY = TABLE.SOME_BINARY;
+  public static final Column SOME_FLOAT = TABLE.SOME_FLOAT;
+  public static final Column SOME_DECIMAL = TABLE.SOME_DECIMAL;
+  public static final Column SOME_BOOLEAN = TABLE.SOME_BOOLEAN;
 
   private final Attributes attributes;
 

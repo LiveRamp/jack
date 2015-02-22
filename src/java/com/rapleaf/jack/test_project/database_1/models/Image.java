@@ -7,21 +7,17 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
-import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -30,12 +26,25 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   
   public static final long serialVersionUID = -3351451520429699622L;
 
-  public static final String _TABLE_NAME = "images";
+  public static class Table extends AbstractModelTable {
+    public final Column ID;
+    public final Column USER_ID;
 
-  public static final ModelField ID = ModelField.key(Image.class);
-  public static final ModelField USER_ID = ModelField.field(Image.class, _Fields.user_id, Integer.class);
+    private Table(String alias) {
+      super("images", alias);
+      this.ID = Column.fromKey(alias);
+      this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
+      Collections.addAll(this.allColumns, ID, USER_ID);
+    }
 
-  public static final Set<ModelField> _ALL_MODEL_FIELDS = Sets.newHashSet(ID, USER_ID);
+    public static Table as(String alias) {
+      return new Table(alias);
+    }
+  }
+
+  public static final Table TABLE = Table.as("images");
+  public static final Column ID = TABLE.ID;
+  public static final Column USER_ID = TABLE.USER_ID;
 
   private final Attributes attributes;
 

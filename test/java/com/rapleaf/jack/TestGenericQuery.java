@@ -55,13 +55,13 @@ public class TestGenericQuery {
 
     // query with no select clause should return all the model fields
     genericQuery = GenericQuery.create(DATABASE_CONNECTION1);
-    results = genericQuery.from(User.class).fetch();
+    results = genericQuery.from(User.TABLE).fetch();
     assertFalse(results.isEmpty());
     assertEquals(11, results.get(0).fieldCount());
 
     // query with only select clause should return all records with the specified field
     genericQuery = GenericQuery.create(DATABASE_CONNECTION1);
-    results = genericQuery.from(User.class).select(User.ID).fetch();
+    results = genericQuery.from(User.TABLE).select(User.ID).fetch();
     assertEquals(userRecordCount, results.size());
     assertEquals(1, results.get(0).fieldCount());
   }
@@ -71,7 +71,7 @@ public class TestGenericQuery {
     userA = users.create("A", datetime, 15, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
 
     results = genericQuery
-        .from(User.class)
+        .from(User.TABLE)
         .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
         .fetch();
 
@@ -94,7 +94,7 @@ public class TestGenericQuery {
     userA = users.create("A", 15);
 
     results = genericQuery
-        .from(User.class)
+        .from(User.TABLE)
         .select(User.SOME_DECIMAL, User.SOME_DATETIME, User.SOME_BOOLEAN, User.SOME_BINARY)
         .fetch();
 
@@ -126,9 +126,9 @@ public class TestGenericQuery {
     commentD = comments.create("Comment D on Post E from User C", userC.getIntId(), postE.getIntId(), datetime);
 
     results = genericQuery
-        .from(Comment.class)
-        .leftJoin(User.class).on(User.ID, Comment.COMMENTER_ID)
-        .leftJoin(Post.class).on(Post.ID, Comment.COMMENTED_ON_ID)
+        .from(Comment.TABLE)
+        .leftJoin(User.TABLE).on(User.ID, Comment.COMMENTER_ID)
+        .leftJoin(Post.TABLE).on(Post.ID, Comment.COMMENTED_ON_ID)
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)

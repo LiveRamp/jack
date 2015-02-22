@@ -5,40 +5,40 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 
 public class QueryEntry {
-  private final Map<ModelField, Object> entry;
+  private final Map<Column, Object> entry;
 
   QueryEntry(int fieldCount) {
     this.entry = Maps.newHashMapWithExpectedSize(fieldCount);
   }
 
-  void addModelField(ModelField modelField, Object value) {
-    entry.put(modelField, value);
+  void addModelField(Column column, Object value) {
+    entry.put(column, value);
   }
 
-  public boolean contains(ModelField modelField) {
-    return entry.containsKey(modelField);
+  public boolean contains(Column column) {
+    return entry.containsKey(column);
   }
 
   public int fieldCount() {
     return entry.size();
   }
 
-  public Integer getInt(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, Integer.class);
+  public Integer getInt(Column column) {
+    Object value = checkTypeAndReturnObject(column, Integer.class);
     return value == null ? null : ((Number)value).intValue();
   }
 
-  public Integer getIntFromLong(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, Long.class);
-    return value == null ? null : ModelWithId.safeLongToInt(getLong(modelField));
+  public Integer getIntFromLong(Column column) {
+    Object value = checkTypeAndReturnObject(column, Long.class);
+    return value == null ? null : ModelWithId.safeLongToInt(getLong(column));
   }
 
-  public Long getLong(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, Long.class);
+  public Long getLong(Column column) {
+    Object value = checkTypeAndReturnObject(column, Long.class);
     if (value == null) {
       return null;
     } else if (value instanceof Timestamp) {
@@ -48,44 +48,44 @@ public class QueryEntry {
     }
   }
 
-  public String getString(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, String.class);
+  public String getString(Column column) {
+    Object value = checkTypeAndReturnObject(column, String.class);
     return value == null ? null : (String)value;
   }
 
-  public byte[] getByteArray(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, byte[].class);
+  public byte[] getByteArray(Column column) {
+    Object value = checkTypeAndReturnObject(column, byte[].class);
     return value == null ? null : (byte[])value;
   }
 
-  public Double getDouble(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, Double.class);
+  public Double getDouble(Column column) {
+    Object value = checkTypeAndReturnObject(column, Double.class);
     return value == null ? null : ((Number)value).doubleValue();
   }
 
-  public Boolean getBoolean(ModelField modelField) {
-    Object value = checkTypeAndReturnObject(modelField, Boolean.class);
+  public Boolean getBoolean(Column column) {
+    Object value = checkTypeAndReturnObject(column, Boolean.class);
     return value == null ? null : (Boolean)value;
   }
 
-  private Object checkTypeAndReturnObject(ModelField modelField, Class clazz) {
-    if (modelField.getType().equals(clazz)) {
-      return getObject(modelField);
+  private Object checkTypeAndReturnObject(Column column, Class clazz) {
+    if (column.getType().equals(clazz)) {
+      return getObject(column);
     } else {
-      throw new RuntimeException(getExceptionMessage(modelField, clazz));
+      throw new RuntimeException(getExceptionMessage(column, clazz));
     }
   }
 
-  private Object getObject(ModelField modelField) {
-    if (entry.containsKey(modelField)) {
-      return entry.get(modelField);
+  private Object getObject(Column column) {
+    if (entry.containsKey(column)) {
+      return entry.get(column);
     } else {
-      throw new RuntimeException("Field " + modelField.toString() + " is not included in the query");
+      throw new RuntimeException("Field " + column.toString() + " is not included in the query");
     }
   }
 
-  private String getExceptionMessage(ModelField modelField, Class clazz) throws RuntimeException {
-    return "Field " + modelField.toString() + " is not of type " + clazz.getSimpleName();
+  private String getExceptionMessage(Column column, Class clazz) throws RuntimeException {
+    return "Field " + column.toString() + " is not of type " + clazz.getSimpleName();
   }
 
   @Override

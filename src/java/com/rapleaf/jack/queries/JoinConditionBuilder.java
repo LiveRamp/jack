@@ -3,30 +3,23 @@ package com.rapleaf.jack.queries;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import com.rapleaf.jack.ModelField;
+import com.rapleaf.jack.Column;
+import com.rapleaf.jack.ModelTable;
 import com.rapleaf.jack.ModelWithId;
 
 public class JoinConditionBuilder {
   private final GenericQueryBuilder queryBuilder;
   private final JoinType joinType;
-  private final Class<? extends ModelWithId> model;
-  private Optional<String> modelAlias;
+  private final ModelTable table;
 
-  JoinConditionBuilder(GenericQueryBuilder queryBuilder, JoinType joinType, Class<? extends ModelWithId> model) {
+  JoinConditionBuilder(GenericQueryBuilder queryBuilder, JoinType joinType, ModelTable table) {
     this.queryBuilder = queryBuilder;
     this.joinType = joinType;
-    this.model = model;
-    this.modelAlias = Optional.absent();
+    this.table = table;
   }
 
-  public JoinConditionBuilder as(String modelAlias) {
-    Preconditions.checkArgument(modelAlias != null && !modelAlias.isEmpty());
-    this.modelAlias = Optional.of(modelAlias);
-    return this;
-  }
-
-  public GenericQueryBuilder on(ModelField modelField1, ModelField modelField2) {
-    queryBuilder.addJoinCondition(new JoinCondition(joinType, model, modelAlias, modelField1, modelField2));
+  public GenericQueryBuilder on(Column column1, Column column2) {
+    queryBuilder.addJoinCondition(new JoinCondition(joinType, table, column1, column2));
     return queryBuilder;
   }
 }
