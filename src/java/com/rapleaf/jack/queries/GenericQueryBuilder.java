@@ -44,18 +44,18 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public GenericQueryBuilder where(Column column, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, null));
+  public GenericQueryBuilder where(Column column, IWhereOperator operator) {
+    genericQuery.addWhereCondition(new WhereConstraint(column, operator, null));
     return this;
   }
 
-  public GenericQueryBuilder and(Column column, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, WhereConstraint.Logic.AND));
+  public GenericQueryBuilder and(Column column, IWhereOperator operator) {
+    genericQuery.addWhereCondition(new WhereConstraint(column, operator, WhereConstraint.Logic.AND));
     return this;
   }
 
-  public GenericQueryBuilder or(Column column, IWhereOperator<Object> operator) {
-    genericQuery.addWhereCondition(new WhereConstraint<Object>(column, operator, WhereConstraint.Logic.OR));
+  public GenericQueryBuilder or(Column column, IWhereOperator operator) {
+    genericQuery.addWhereCondition(new WhereConstraint(column, operator, WhereConstraint.Logic.OR));
     return this;
   }
 

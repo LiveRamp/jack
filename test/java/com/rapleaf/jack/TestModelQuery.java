@@ -184,7 +184,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.contains(brandon));
     assertTrue(result.contains(james));
 
-    // If a null parameter is passed, an exeception should be thrown
+    // If a null parameter is passed, an exception should be thrown
     try {
       users.query().whereHandle(in(null, "brandon")).find();
       fail("an In query with one null parameter should throw an exception");

@@ -9,7 +9,7 @@ public class Match extends WhereOperator<String> {
 
   @Override
   public String getSqlStatement() {
-    return "LIKE  ?";
+    return "LIKE ?";
   }
 
   @Override

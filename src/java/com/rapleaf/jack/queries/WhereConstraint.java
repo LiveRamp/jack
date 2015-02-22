@@ -45,6 +45,6 @@ public class WhereConstraint<T> implements IQueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return (logic.isPresent() ? logic.toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
+    return (logic.isPresent() ? logic.get().toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
   }
 }
