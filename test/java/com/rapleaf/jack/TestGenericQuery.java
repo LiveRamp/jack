@@ -549,6 +549,22 @@ public class TestGenericQuery {
     userG.save();
     userH.save();
 
+    // table alias cannot be null
+    try {
+      User.Table illegalTable = User.Table.as(null);
+      fail();
+    } catch (RuntimeException e) {
+      // exptected
+    }
+
+    // table alias cannot be empty
+    try {
+      User.Table illegalTable = User.Table.as("");
+      fail();
+    } catch (RuntimeException e) {
+      // exptected
+    }
+
     User.Table handlers = User.Table.as("handlers");
     User.Table bios = User.Table.as("bios");
 

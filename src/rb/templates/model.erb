@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+
 import <%= root_package %>.I<%= db_name %>;
 
 import <%= JACK_NAMESPACE %>.AbstractModelTable;
@@ -62,6 +64,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     }
 
     public static Table as(String alias) {
+      Preconditions.checkArgument(alias != null && !alias.isEmpty(), "Table alias cannot be null or empty.");
       return new Table(alias);
     }
   }

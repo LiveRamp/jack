@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.AbstractModelTable;
@@ -48,6 +50,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     }
 
     public static Table as(String alias) {
+      Preconditions.checkArgument(alias != null && !alias.isEmpty(), "Table alias cannot be null or empty.");
       return new Table(alias);
     }
   }
