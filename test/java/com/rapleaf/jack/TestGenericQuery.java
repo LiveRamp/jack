@@ -78,6 +78,18 @@ public class TestGenericQuery {
     // query with no result
     results1 = createGenericQuery().from(User.TABLE).where(User.ID, equalTo(999L)).fetch();
     assertTrue(results1.isEmpty());
+
+    // query with and clause
+    results1 = createGenericQuery().from(User.TABLE).where(User.BIO, equalTo("Trader")).and(User.HANDLE, equalTo("B")).fetch();
+    assertEquals(1, results1.size());
+    assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
+
+    // query with or clause
+    results1 = createGenericQuery().from(User.TABLE).where(User.HANDLE, equalTo("A")).or(User.HANDLE, equalTo("B")).fetch();
+    assertEquals(2, results1.size());
+    for (QueryEntry entry : results1) {
+      assertTrue(entry.getLong(User.ID) == userA.getId() || entry.getLong(User.ID) == userB.getId());
+    }
   }
 
   @Test
@@ -334,6 +346,55 @@ public class TestGenericQuery {
     assertEquals("E", results1.get(5).getString(User.HANDLE));
     assertEquals("G", results1.get(6).getString(User.HANDLE));
     assertEquals("B", results1.get(7).getString(User.HANDLE));
+  }
+
+  @Test
+  public void testLimitClause() throws Exception {
+    int nbUsers = 10;
+    User[] sampleUsers = new User[nbUsers];
+
+    for (int i = 0; i < 10; i++) {
+      sampleUsers[i] = users.createDefaultInstance().setNumPosts(i);
+      sampleUsers[i].save();
+    }
+
+    results1 = createGenericQuery()
+        .from(User.TABLE)
+        .where(User.NUM_POSTS, lessThan(5))
+        .orderBy(User.NUM_POSTS)
+        .limit(3)
+        .fetch();
+    assertEquals(3, results1.size());
+    for (int i = 0; i < results1.size(); i++) {
+      assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i);
+    }
+
+    results1 = createGenericQuery()
+        .from(User.TABLE)
+        .where(User.NUM_POSTS, greaterThan(3))
+        .orderBy(User.NUM_POSTS)
+        .limit(2, 3)
+        .fetch();
+    assertEquals(3, results1.size());
+    for (int i = 0; i < results1.size(); i++) {
+      assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i + 6);
+    }
+
+    results1 = createGenericQuery()
+        .from(User.TABLE)
+        .where(User.NUM_POSTS, lessThan(5))
+        .orderBy(User.NUM_POSTS)
+        .limit(3)
+        .fetch();
+    assertEquals(3, results1.size());
+
+    results1 = createGenericQuery()
+        .from(User.TABLE)
+        .where(User.NUM_POSTS, greaterThan(3))
+        .orderBy(User.NUM_POSTS)
+        .limit(2, 3)
+        .fetch();
+    assertEquals(3, results1.size());
   }
 
   @Test
