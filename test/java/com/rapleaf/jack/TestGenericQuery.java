@@ -23,6 +23,7 @@ import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
 import static org.junit.Assert.*;
 import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
+import static com.rapleaf.jack.queries.AggregatedColumn.*;
 
 public class TestGenericQuery {
 
@@ -395,6 +396,93 @@ public class TestGenericQuery {
         .limit(2, 3)
         .fetch();
     assertEquals(3, results1.size());
+  }
+
+  @Test
+  public void testGroupByClause() throws Exception {
+    for (int i = 0; i < 100; i++) {
+      User user = users.createDefaultInstance().setHandle(String.valueOf(i % 2)).setNumPosts(i);
+      user.save();
+    }
+
+    // The SELECT clause must be specified for any query with GROUP BY clause
+    try {
+      results2 = createGenericQuery()
+          .from(User.TABLE)
+          .groupBy(User.HANDLE)
+          .fetch();
+      fail();
+    } catch (RuntimeException e) {
+      // expected
+    }
+
+    // A query with GROUP BY clause cannot have a non-aggregated and non-grouped column in the SELECT list
+    try {
+      // users.bio is illegal
+      results2 = createGenericQuery()
+          .from(User.TABLE)
+          .select(User.HANDLE, User.BIO, MAX(User.NUM_POSTS))
+          .groupBy(User.HANDLE)
+          .fetch();
+      fail();
+    } catch (RuntimeException e) {
+      assertTrue(e.toString().contains("bio"));
+    }
+
+    // Test Max
+    results2 = createGenericQuery()
+        .from(User.TABLE)
+        .select(User.HANDLE, MAX(User.NUM_POSTS))
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertEquals(2, results2.size());
+    assertTrue(results2.get(0).getString(User.HANDLE).equals("0"));
+    assertTrue(results2.get(0).getInt(MAX(User.NUM_POSTS)) == 98);
+    assertTrue(results2.get(1).getString(User.HANDLE).equals("1"));
+    assertTrue(results2.get(1).getInt(MAX(User.NUM_POSTS)) == 99);
+
+    // Test Min
+    results2 = createGenericQuery()
+        .from(User.TABLE)
+        .select(User.HANDLE, MIN(User.NUM_POSTS))
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertTrue(results2.get(0).getInt(MIN(User.NUM_POSTS)) == 0);
+    assertTrue(results2.get(1).getInt(MIN(User.NUM_POSTS)) == 1);
+
+    // Test Count
+    results2 = createGenericQuery()
+        .from(User.TABLE)
+        .select(User.HANDLE, COUNT(User.NUM_POSTS))
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertTrue(results2.get(0).getInt(COUNT(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(1).getInt(COUNT(User.NUM_POSTS)) == 50);
+
+    // Test Sum
+    results2 = createGenericQuery()
+        .from(User.TABLE)
+        .select(User.HANDLE, SUM(User.NUM_POSTS))
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertEquals(2, results2.size());
+    assertTrue(results2.get(0).getInt(SUM(User.NUM_POSTS)) == 2450);
+    assertTrue(results2.get(1).getInt(SUM(User.NUM_POSTS)) == 2500);
+
+    // Test Avg
+    results2 = createGenericQuery()
+        .from(User.TABLE)
+        .select(User.HANDLE, AVG(User.NUM_POSTS))
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertEquals(2, results2.size());
+    assertTrue(results2.get(0).getInt(AVG(User.NUM_POSTS)) == 49);
+    assertTrue(results2.get(1).getInt(AVG(User.NUM_POSTS)) == 50);
   }
 
   @Test
