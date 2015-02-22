@@ -1,11 +1,7 @@
 package com.rapleaf.jack.queries;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelTable;
-import com.rapleaf.jack.ModelWithId;
 
 public class JoinConditionBuilder {
   private final GenericQueryBuilder queryBuilder;

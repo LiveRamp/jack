@@ -90,6 +90,19 @@ public class GenericQuery {
   }
 
   private String getSelectClause() {
+    if (!groupByColumns.isEmpty()) {
+      if (selectedColumns.isEmpty()) {
+        throw new RuntimeException("The SELECT list cannot be empty when the GROUP BY clause is specified.");
+      }
+
+      for (Column column : selectedColumns) {
+        if (!groupByColumns.contains(column) && !(column instanceof AggregatedColumn)) {
+          throw new RuntimeException("The non-aggregated column " + column.getSqlKeyword() +
+              " not named in the GROUP BY clause cannot be included in the SELECT list.");
+        }
+      }
+    }
+
     if (selectedColumns.isEmpty()) {
       for (ModelTable table : includedTables) {
         selectedColumns.addAll(table.getAllColumns());
