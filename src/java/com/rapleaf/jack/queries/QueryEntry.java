@@ -23,7 +23,7 @@ public class QueryEntry {
     return entry.containsKey(column);
   }
 
-  public int fieldCount() {
+  public int columnCount() {
     return entry.size();
   }
 

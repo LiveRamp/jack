@@ -69,12 +69,12 @@ public class TestGenericQuery {
     // query with no select clause should return all the model fields
     results1 = createGenericQuery().from(User.TABLE).fetch();
     assertFalse(results1.isEmpty());
-    assertEquals(11, results1.get(0).fieldCount());
+    assertEquals(11, results1.get(0).columnCount());
 
     // query with only select clause should return all records with the specified field
     results1 = createGenericQuery().from(User.TABLE).select(User.ID).fetch();
     assertEquals(4, results1.size());
-    assertEquals(1, results1.get(0).fieldCount());
+    assertEquals(1, results1.get(0).columnCount());
 
     // query with no result
     results1 = createGenericQuery().from(User.TABLE).where(User.ID, equalTo(999L)).fetch();
@@ -103,7 +103,7 @@ public class TestGenericQuery {
         .fetch();
 
     assertEquals(1, results1.size());
-    assertEquals(7, results1.get(0).fieldCount());
+    assertEquals(7, results1.get(0).columnCount());
 
     QueryEntry entry = results1.get(0);
     assertTrue(entry.getLong(User.ID).equals(userA.getId()));
@@ -126,7 +126,7 @@ public class TestGenericQuery {
         .fetch();
 
     assertEquals(1, results1.size());
-    assertEquals(4, results1.get(0).fieldCount());
+    assertEquals(4, results1.get(0).columnCount());
 
     QueryEntry entry = results1.get(0);
     assertNull(entry.getDouble(User.SOME_DECIMAL));
@@ -512,7 +512,7 @@ public class TestGenericQuery {
         .fetch();
 
     assertEquals(4, results1.size());
-    assertEquals(3, results1.get(0).fieldCount());
+    assertEquals(3, results1.get(0).columnCount());
 
     // the result is: comment A, C, B, D
     QueryEntry entryForCommentA = results1.get(0);
@@ -534,5 +534,50 @@ public class TestGenericQuery {
     assertEquals(commentD.getContent(), entryForCommentD.getString(Comment.CONTENT));
     assertEquals(userC.getHandle(), entryForCommentD.getString(User.HANDLE));
     assertEquals(postE.getTitle(), entryForCommentD.getString(Post.TITLE));
+  }
+
+  @Test
+  public void testTableAlias() throws Exception {
+    userD = users.createDefaultInstance().setHandle("D").setBio("F");
+    userE = users.createDefaultInstance().setHandle("E").setBio("G");
+    userF = users.createDefaultInstance().setHandle("F").setBio("H");
+    userG = users.createDefaultInstance().setHandle("G").setBio("D");
+    userH = users.createDefaultInstance().setHandle("H").setBio("E");
+    userD.save();
+    userE.save();
+    userF.save();
+    userG.save();
+    userH.save();
+
+    User.Table handlers = User.Table.as("handlers");
+    User.Table bios = User.Table.as("bios");
+
+    // test simple table alias
+    results1 = createGenericQuery()
+        .from(handlers)
+        .orderBy(handlers.HANDLE)
+        .fetch();
+    assertEquals(5, results1.size());
+    assertEquals(11, results1.get(0).columnCount());
+    assertTrue(results1.get(0).getLong(handlers.ID) == userD.getId());
+
+    // test self join with table alias
+    results1 = createGenericQuery()
+        .from(handlers)
+        .innerJoin(bios).on(handlers.BIO, bios.HANDLE)
+        .orderBy(bios.HANDLE)
+        .select(handlers.HANDLE, handlers.BIO, bios.HANDLE, bios.BIO)
+        .fetch();
+    assertEquals(5, results1.size());
+    assertTrue(results1.get(0).getString(bios.HANDLE).equals("D"));
+    assertTrue(results1.get(0).getString(bios.BIO).equals("F"));
+    assertTrue(results1.get(1).getString(bios.HANDLE).equals("E"));
+    assertTrue(results1.get(1).getString(bios.BIO).equals("G"));
+    assertTrue(results1.get(2).getString(bios.HANDLE).equals("F"));
+    assertTrue(results1.get(2).getString(bios.BIO).equals("H"));
+    assertTrue(results1.get(3).getString(bios.HANDLE).equals("G"));
+    assertTrue(results1.get(3).getString(bios.BIO).equals("D"));
+    assertTrue(results1.get(4).getString(bios.HANDLE).equals("H"));
+    assertTrue(results1.get(4).getString(bios.BIO).equals("E"));
   }
 }
