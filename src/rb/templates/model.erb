@@ -56,7 +56,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       <% model_defn.fields.each do |field_defn| %>
       this.<%= field_defn.name.upcase %> = Column.fromField(alias, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
       <% end %>
-      Collections.addAll(this.allColumns, ID, <% model_defn.fields.each_with_index do |field_defn, index| %><%= field_defn.name.upcase %><%= ", " if index < model_defn.fields.size - 1 %><% end %>);
+      Collections.addAll(this.allColumns, ID<% model_defn.fields.each_with_index do |field_defn, index| %>, <%= field_defn.name.upcase %><% end %>);
     }
 
     public static Table as(String alias) {
