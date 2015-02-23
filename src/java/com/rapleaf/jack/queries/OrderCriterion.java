@@ -2,7 +2,7 @@ package com.rapleaf.jack.queries;
 
 import com.rapleaf.jack.Column;
 
-public class OrderCriterion implements IQueryCondition {
+public class OrderCriterion implements QueryCondition {
   private Column column;
   private final QueryOrder order;
 

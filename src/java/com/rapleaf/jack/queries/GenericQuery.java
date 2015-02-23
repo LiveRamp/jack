@@ -60,6 +60,13 @@ public class GenericQuery {
   }
 
   void addWhereCondition(WhereConstraint whereConstraint) {
+    if (whereConstraints.isEmpty()) {
+      // the first WHERE constraint cannot specify a logic
+      whereConstraint.setLogic(null);
+    } else if (whereConstraint.getLogic() == null) {
+      // any non-first WHERE constraint without a logic will default to AND
+      whereConstraint.setLogic(WhereConstraint.Logic.AND);
+    }
     this.whereConstraints.add(whereConstraint);
   }
 
@@ -82,6 +89,7 @@ public class GenericQuery {
 
   String getSqlStatement() {
     return getSelectClause()
+        + getFromClause()
         + getJoinClause()
         + getWhereClause()
         + getGroupByClause()
@@ -108,49 +116,30 @@ public class GenericQuery {
         selectedColumns.addAll(table.getAllColumns());
       }
     }
+    return getClauseFromColumns(selectedColumns, "SELECT ", ", ");
+  }
 
-    StringBuilder clause = new StringBuilder("SELECT ");
-    Iterator<Column> it = selectedColumns.iterator();
-    while (it.hasNext()) {
-      clause.append(it.next().getSqlKeyword());
-      if (it.hasNext()) {
-        clause.append(", ");
-      }
-    }
-
-    return clause.append(" FROM ").append(includedTables.get(0).getSqlKeyword()).append(" ").toString();
+  private String getFromClause() {
+    return "FROM " + includedTables.get(0).getSqlKeyword() + " ";
   }
 
   private String getJoinClause() {
-    return getClause(joinConditions, "", " ");
+    return getClauseFromQueryConditions(joinConditions, "", " ");
   }
 
   private String getWhereClause() {
-    return getClause(whereConstraints, "WHERE ", " ");
+    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " ");
   }
 
   private String getGroupByClause() {
-    if (groupByColumns.isEmpty()) {
-      return "";
-    }
-
-    StringBuilder groupByClause = new StringBuilder("GROUP BY ");
-    Iterator<Column> it = groupByColumns.iterator();
-    while (it.hasNext()) {
-      groupByClause.append(it.next().getSqlKeyword());
-      if (it.hasNext()) {
-        groupByClause.append(", ");
-      }
-    }
-
-    return groupByClause.append(" ").toString();
+    return getClauseFromColumns(groupByColumns, "GROUP BY ", ", ");
   }
 
   private String getOrderClause() {
     if (orderCriteria.isEmpty()) {
       return "";
     } else {
-      return getClause(orderCriteria, "ORDER BY ", ", ");
+      return getClauseFromQueryConditions(orderCriteria, "ORDER BY ", ", ");
     }
   }
 
@@ -162,7 +151,24 @@ public class GenericQuery {
     }
   }
 
-  private <T extends IQueryCondition> String getClause(Collection<T> conditions, String initialKeyword, String separator) {
+  private String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator) {
+    if (columns.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder clause = new StringBuilder(initialKeyword);
+    Iterator<Column> it = columns.iterator();
+    while (it.hasNext()) {
+      clause.append(it.next().getSqlKeyword());
+      if (it.hasNext()) {
+        clause.append(separator);
+      }
+    }
+
+    return clause.append(" ").toString();
+  }
+
+  private <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator) {
     if (conditions.isEmpty()) {
       return "";
     }

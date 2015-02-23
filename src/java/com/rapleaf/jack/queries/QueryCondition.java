@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
 
-public interface IQueryCondition {
+public interface QueryCondition {
 
   public String getSqlStatement();
 

@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
     
-public class LimitCriterion implements IQueryCondition {
+public class LimitCriterion implements QueryCondition {
   private int offset;
   private int nResults;
 

@@ -3,7 +3,7 @@ package com.rapleaf.jack.queries;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelTable;
 
-public class JoinCondition implements IQueryCondition {
+public class JoinCondition implements QueryCondition {
   private final JoinType joinType;
   private final ModelTable table;
   private final Column column1;

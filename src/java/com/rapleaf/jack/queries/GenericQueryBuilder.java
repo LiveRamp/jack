@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelTable;
-import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericQueryBuilder {
@@ -89,10 +88,8 @@ public class GenericQueryBuilder {
     return this;
   }
 
-  public PreparedStatement getPreparedStatement() throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(genericQuery.getSqlStatement());
-    setStatementParameters(preparedStatement);
-    return preparedStatement;
+  public String getFullSqlStatement() throws IOException {
+    return getPreparedStatement().toString();
   }
 
   public List<QueryEntry> fetch() throws IOException {
@@ -108,6 +105,28 @@ public class GenericQueryBuilder {
         }
       } catch (SQLException e) {
         throw new IOException(e);
+      }
+    }
+  }
+
+  private PreparedStatement getPreparedStatement() throws IOException {
+    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(genericQuery.getSqlStatement());
+    setStatementParameters(preparedStatement);
+    return preparedStatement;
+  }
+
+  private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
+    int index = 0;
+    for (WhereConstraint constraint : genericQuery.getWhereConstraints()) {
+      for (Object parameter : constraint.getParameters()) {
+        if (parameter == null) {
+          continue;
+        }
+        try {
+          preparedStatement.setObject(++index, parameter);
+        } catch (SQLException e) {
+          throw new IOException(e);
+        }
       }
     }
   }
@@ -156,21 +175,5 @@ public class GenericQueryBuilder {
       queryEntry.addModelField(column, value);
     }
     return queryEntry;
-  }
-
-  private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
-    int index = 0;
-    for (WhereConstraint constraint : genericQuery.getWhereConstraints()) {
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-          continue;
-        }
-        try {
-          preparedStatement.setObject(++index, parameter);
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
-      }
-    }
   }
 }

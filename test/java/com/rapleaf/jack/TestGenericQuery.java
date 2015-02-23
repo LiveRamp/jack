@@ -57,10 +57,10 @@ public class TestGenericQuery {
 
   @Test
   public void testBasicQuery() throws Exception {
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
     userA.save();
     userB.save();
     userC.save();
@@ -79,6 +79,14 @@ public class TestGenericQuery {
     // query with no result
     results1 = createGenericQuery().from(User.TABLE).where(User.ID, equalTo(999L)).fetch();
     assertTrue(results1.isEmpty());
+
+    // the first WHERE clause will automatically drop the logic
+    results1 = createGenericQuery().from(User.TABLE).andWhere(User.ID, equalTo(userA.getId())).fetch();
+    assertEquals(1, results1.size());
+
+    // the non-first WHERE clause without a logic specification will default to AND
+    results1 = createGenericQuery().from(User.TABLE).where(User.ID, lessThan(999L)).where(User.BIO, equalTo("Janitor")).fetch();
+    assertEquals(1, results1.size());
 
     // query with and clause
     results1 = createGenericQuery().from(User.TABLE).where(User.BIO, equalTo("Trader")).andWhere(User.HANDLE, equalTo("B")).fetch();

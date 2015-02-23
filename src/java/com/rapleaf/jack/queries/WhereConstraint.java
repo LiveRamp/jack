@@ -5,7 +5,7 @@ import java.util.List;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
-public class WhereConstraint<T> implements IQueryCondition {
+public class WhereConstraint<T> implements QueryCondition {
 
   enum Logic {
     AND, OR
@@ -13,7 +13,7 @@ public class WhereConstraint<T> implements IQueryCondition {
 
   private final Column column;
   private final IWhereOperator<T> operator;
-  private final Logic logic;
+  private Logic logic;
 
   // constructor for model query
   public WhereConstraint(Enum field, IWhereOperator<T> operator) {
@@ -29,12 +29,20 @@ public class WhereConstraint<T> implements IQueryCondition {
     this.logic = logic;
   }
 
+  void setLogic(Logic logic) {
+    this.logic = logic;
+  }
+
   public Enum getField() {
     return column.getField();
   }
 
   public IWhereOperator<T> getOperator() {
     return operator;
+  }
+
+  public Logic getLogic() {
+    return logic;
   }
 
   public List<T> getParameters() {
