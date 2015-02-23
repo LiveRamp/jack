@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.queries.GenericQuery;
-import com.rapleaf.jack.queries.QueryEntry;
+import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
@@ -34,12 +34,11 @@ public class TestGenericQuery {
   private final ICommentPersistence comments = dbs.getDatabase1().comments();
   private final IPostPersistence posts = dbs.getDatabase1().posts();
 
-  private GenericQuery genericQuery;
   private User userA, userB, userC, userD, userE, userF, userG, userH;
   private Post postA, postB, postC, postD, postE;
   private Comment commentA, commentB, commentC, commentD;
   private long datetime;
-  private List<QueryEntry> results1, results2;
+  private List<Record> results1, results2;
 
   private GenericQuery createGenericQuery() {
     return GenericQuery.create(DATABASE_CONNECTION1);
@@ -96,8 +95,8 @@ public class TestGenericQuery {
     // query with or clause
     results1 = createGenericQuery().from(User.TABLE).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(2, results1.size());
-    for (QueryEntry entry : results1) {
-      assertTrue(entry.getLong(User.ID) == userA.getId() || entry.getLong(User.ID) == userB.getId());
+    for (Record record : results1) {
+      assertTrue(record.getLong(User.ID) == userA.getId() || record.getLong(User.ID) == userB.getId());
     }
   }
 
@@ -113,15 +112,15 @@ public class TestGenericQuery {
     assertEquals(1, results1.size());
     assertEquals(7, results1.get(0).columnCount());
 
-    QueryEntry entry = results1.get(0);
-    assertTrue(entry.getLong(User.ID).equals(userA.getId()));
-    assertTrue(entry.getIntFromLong(User.ID).equals(userA.getIntId()));
-    assertTrue(entry.getString(User.HANDLE).equals(userA.getHandle()));
-    assertTrue(entry.getDouble(User.SOME_DECIMAL).equals(userA.getSomeDecimal()));
-    assertTrue(entry.getLong(User.SOME_DATETIME).equals(userA.getSomeDatetime()));
-    assertTrue(entry.getInt(User.NUM_POSTS).equals(userA.getNumPosts()));
-    assertTrue(entry.getBoolean(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
-    assertTrue(Arrays.toString(entry.getByteArray(User.SOME_BINARY)).equals(Arrays.toString(userA.getSomeBinary())));
+    Record record = results1.get(0);
+    assertTrue(record.getLong(User.ID).equals(userA.getId()));
+    assertTrue(record.getIntFromLong(User.ID).equals(userA.getIntId()));
+    assertTrue(record.getString(User.HANDLE).equals(userA.getHandle()));
+    assertTrue(record.getDouble(User.SOME_DECIMAL).equals(userA.getSomeDecimal()));
+    assertTrue(record.getLong(User.SOME_DATETIME).equals(userA.getSomeDatetime()));
+    assertTrue(record.getInt(User.NUM_POSTS).equals(userA.getNumPosts()));
+    assertTrue(record.getBoolean(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
+    assertTrue(Arrays.toString(record.getByteArray(User.SOME_BINARY)).equals(Arrays.toString(userA.getSomeBinary())));
   }
 
   @Test
@@ -136,11 +135,11 @@ public class TestGenericQuery {
     assertEquals(1, results1.size());
     assertEquals(4, results1.get(0).columnCount());
 
-    QueryEntry entry = results1.get(0);
-    assertNull(entry.getDouble(User.SOME_DECIMAL));
-    assertNull(entry.getLong(User.SOME_DATETIME));
-    assertNull(entry.getBoolean(User.SOME_BOOLEAN));
-    assertNull(entry.getByteArray(User.SOME_BINARY));
+    Record record = results1.get(0);
+    assertNull(record.getDouble(User.SOME_DECIMAL));
+    assertNull(record.getLong(User.SOME_DATETIME));
+    assertNull(record.getBoolean(User.SOME_BOOLEAN));
+    assertNull(record.getByteArray(User.SOME_BINARY));
   }
 
   @Test
@@ -169,8 +168,8 @@ public class TestGenericQuery {
     // Less Than
     results1 = createGenericQuery().from(User.TABLE).where(User.CREATED_AT_MILLIS, lessThan(2L)).fetch();
     assertEquals(2, results1.size());
-    for (QueryEntry entry : results1) {
-      assertTrue(entry.getString(User.HANDLE).equals("Brandon") || entry.getString(User.HANDLE).equals("Brad"));
+    for (Record record : results1) {
+      assertTrue(record.getString(User.HANDLE).equals("Brandon") || record.getString(User.HANDLE).equals("Brad"));
     }
 
     // Greater Than
@@ -229,8 +228,8 @@ public class TestGenericQuery {
 
     results1 = createGenericQuery().from(User.TABLE).where(User.SOME_DATETIME, isNotNull()).fetch();
     assertEquals(2, results1.size());
-    for (QueryEntry entry : results1) {
-      assertTrue(entry.getString(User.HANDLE).equals("Brandon") || entry.getString(User.HANDLE).equals("James"));
+    for (Record record : results1) {
+      assertTrue(record.getString(User.HANDLE).equals("Brandon") || record.getString(User.HANDLE).equals("James"));
     }
 
     // If a null parameter is passed, an exception should be thrown
@@ -523,25 +522,25 @@ public class TestGenericQuery {
     assertEquals(3, results1.get(0).columnCount());
 
     // the result is: comment A, C, B, D
-    QueryEntry entryForCommentA = results1.get(0);
-    assertEquals(commentA.getContent(), entryForCommentA.getString(Comment.CONTENT));
-    assertEquals(userA.getHandle(), entryForCommentA.getString(User.HANDLE));
-    assertEquals(postB.getTitle(), entryForCommentA.getString(Post.TITLE));
+    Record recordForCommentA = results1.get(0);
+    assertEquals(commentA.getContent(), recordForCommentA.getString(Comment.CONTENT));
+    assertEquals(userA.getHandle(), recordForCommentA.getString(User.HANDLE));
+    assertEquals(postB.getTitle(), recordForCommentA.getString(Post.TITLE));
 
-    QueryEntry entryForCommentC = results1.get(1);
-    assertEquals(commentC.getContent(), entryForCommentC.getString(Comment.CONTENT));
-    assertEquals(userB.getHandle(), entryForCommentC.getString(User.HANDLE));
-    assertEquals(postC.getTitle(), entryForCommentC.getString(Post.TITLE));
+    Record recordForCommentC = results1.get(1);
+    assertEquals(commentC.getContent(), recordForCommentC.getString(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForCommentC.getString(User.HANDLE));
+    assertEquals(postC.getTitle(), recordForCommentC.getString(Post.TITLE));
 
-    QueryEntry entryForCommentB = results1.get(2);
-    assertEquals(commentB.getContent(), entryForCommentB.getString(Comment.CONTENT));
-    assertEquals(userB.getHandle(), entryForCommentB.getString(User.HANDLE));
-    assertEquals(postB.getTitle(), entryForCommentB.getString(Post.TITLE));
+    Record recordForCommentB = results1.get(2);
+    assertEquals(commentB.getContent(), recordForCommentB.getString(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForCommentB.getString(User.HANDLE));
+    assertEquals(postB.getTitle(), recordForCommentB.getString(Post.TITLE));
 
-    QueryEntry entryForCommentD = results1.get(3);
-    assertEquals(commentD.getContent(), entryForCommentD.getString(Comment.CONTENT));
-    assertEquals(userC.getHandle(), entryForCommentD.getString(User.HANDLE));
-    assertEquals(postE.getTitle(), entryForCommentD.getString(Post.TITLE));
+    Record recordForCommentD = results1.get(3);
+    assertEquals(commentD.getContent(), recordForCommentD.getString(Comment.CONTENT));
+    assertEquals(userC.getHandle(), recordForCommentD.getString(User.HANDLE));
+    assertEquals(postE.getTitle(), recordForCommentD.getString(Post.TITLE));
   }
 
   @Test

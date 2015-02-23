@@ -92,7 +92,7 @@ public class GenericQueryBuilder {
     return getPreparedStatement().toString();
   }
 
-  public List<QueryEntry> fetch() throws IOException {
+  public List<Record> fetch() throws IOException {
     int retryCount = 0;
     PreparedStatement preparedStatement = getPreparedStatement();
 
@@ -131,14 +131,14 @@ public class GenericQueryBuilder {
     }
   }
 
-  private List<QueryEntry> getQueryResults(PreparedStatement preparedStatement) throws SQLException {
+  private List<Record> getQueryResults(PreparedStatement preparedStatement) throws SQLException {
     ResultSet queryResultSet = null;
 
     try {
       queryResultSet = preparedStatement.executeQuery();
-      List<QueryEntry> results = Lists.newArrayList();
+      List<Record> results = Lists.newArrayList();
       while (queryResultSet.next()) {
-        QueryEntry fieldCollection = parseResultSet(queryResultSet);
+        Record fieldCollection = parseResultSet(queryResultSet);
         if (fieldCollection != null) {
           results.add(fieldCollection);
         }
@@ -161,19 +161,19 @@ public class GenericQueryBuilder {
     }
   }
 
-  private QueryEntry parseResultSet(ResultSet queryResultSet) throws SQLException{
+  private Record parseResultSet(ResultSet queryResultSet) throws SQLException{
     Set<Column> selectedColumns = genericQuery.getSelectedColumns();
     if (selectedColumns.isEmpty()) {
       return null;
     }
 
-    QueryEntry queryEntry = new QueryEntry(selectedColumns.size());
+    Record record = new Record(selectedColumns.size());
     for (Column column : selectedColumns) {
       String sqlKeyword = column.getSqlKeyword();
       Object value = queryResultSet.getObject(sqlKeyword);
       value = queryResultSet.wasNull() ? null : value;
-      queryEntry.addModelField(column, value);
+      record.addModelField(column, value);
     }
-    return queryEntry;
+    return record;
   }
 }

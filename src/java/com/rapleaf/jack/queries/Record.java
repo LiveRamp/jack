@@ -8,23 +8,23 @@ import com.google.common.collect.Maps;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 
-public class QueryEntry {
-  private final Map<Column, Object> entry;
+public class Record {
+  private final Map<Column, Object> columns;
 
-  QueryEntry(int fieldCount) {
-    this.entry = Maps.newHashMapWithExpectedSize(fieldCount);
+  Record(int columnCount) {
+    this.columns = Maps.newHashMapWithExpectedSize(columnCount);
   }
 
   void addModelField(Column column, Object value) {
-    entry.put(column, value);
+    columns.put(column, value);
   }
 
   public boolean contains(Column column) {
-    return entry.containsKey(column);
+    return columns.containsKey(column);
   }
 
   public int columnCount() {
-    return entry.size();
+    return columns.size();
   }
 
   public Integer getInt(Column column) {
@@ -77,8 +77,8 @@ public class QueryEntry {
   }
 
   private Object getObject(Column column) {
-    if (entry.containsKey(column)) {
-      return entry.get(column);
+    if (columns.containsKey(column)) {
+      return columns.get(column);
     } else {
       throw new RuntimeException("Field " + column.toString() + " is not included in the query");
     }
@@ -90,17 +90,17 @@ public class QueryEntry {
 
   @Override
   public String toString() {
-    return entry.toString();
+    return columns.toString();
   }
 
   @Override
   public int hashCode() {
-    return entry.hashCode();
+    return columns.hashCode();
   }
 
   @Override
   public boolean equals(Object that) {
-    return that instanceof QueryEntry && this.entry.equals(((QueryEntry)that).entry);
+    return that instanceof Record && this.columns.equals(((Record)that).columns);
   }
 
 }
