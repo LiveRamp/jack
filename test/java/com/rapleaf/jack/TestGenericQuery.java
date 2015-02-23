@@ -553,7 +553,7 @@ public class TestGenericQuery {
     try {
       User.Table illegalTable = User.Table.as(null);
       fail();
-    } catch (RuntimeException e) {
+    } catch (IllegalArgumentException e) {
       // exptected
     }
 
@@ -561,7 +561,7 @@ public class TestGenericQuery {
     try {
       User.Table illegalTable = User.Table.as("");
       fail();
-    } catch (RuntimeException e) {
+    } catch (IllegalArgumentException e) {
       // exptected
     }
 
