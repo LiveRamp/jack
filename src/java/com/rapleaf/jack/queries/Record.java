@@ -15,7 +15,7 @@ public class Record {
     this.columns = Maps.newHashMapWithExpectedSize(columnCount);
   }
 
-  void addModelField(Column column, Object value) {
+  void addColumn(Column column, Object value) {
     columns.put(column, value);
   }
 
@@ -80,12 +80,12 @@ public class Record {
     if (columns.containsKey(column)) {
       return columns.get(column);
     } else {
-      throw new RuntimeException("Field " + column.toString() + " is not included in the query");
+      throw new RuntimeException("Column " + column.toString() + " is not included in the query");
     }
   }
 
   private String getExceptionMessage(Column column, Class clazz) throws RuntimeException {
-    return "Field " + column.toString() + " is not of type " + clazz.getSimpleName();
+    return "Column " + column.toString() + " is not of type " + clazz.getSimpleName();
   }
 
   @Override
@@ -102,5 +102,4 @@ public class Record {
   public boolean equals(Object that) {
     return that instanceof Record && this.columns.equals(((Record)that).columns);
   }
-
 }

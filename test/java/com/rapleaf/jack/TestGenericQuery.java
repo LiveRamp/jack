@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -38,7 +41,7 @@ public class TestGenericQuery {
   private Post postA, postB, postC, postD, postE;
   private Comment commentA, commentB, commentC, commentD;
   private long datetime;
-  private List<Record> results1, results2;
+  private Records results1, results2;
 
   private GenericQuery createGenericQuery() {
     return GenericQuery.create(DATABASE_CONNECTION1);
@@ -65,12 +68,12 @@ public class TestGenericQuery {
     userC.save();
     userD.save();
 
-    // query with no select clause should return all the model fields
+    // query with no select clause should return all the columns
     results1 = createGenericQuery().from(User.TBL).fetch();
     assertFalse(results1.isEmpty());
     assertEquals(11, results1.get(0).columnCount());
 
-    // query with only select clause should return all records with the specified field
+    // query with only select clause should return all records with the specified columns
     results1 = createGenericQuery().from(User.TBL).select(User.ID).fetch();
     assertEquals(4, results1.size());
     assertEquals(1, results1.get(0).columnCount());
@@ -95,13 +98,11 @@ public class TestGenericQuery {
     // query with or clause
     results1 = createGenericQuery().from(User.TBL).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(2, results1.size());
-    for (Record record : results1) {
-      assertTrue(record.getLong(User.ID) == userA.getId() || record.getLong(User.ID) == userB.getId());
-    }
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
   }
 
   @Test
-  public void testGetMethodsForNotNullFields() throws Exception {
+  public void testGetMethodsForNotNullColumns() throws Exception {
     userA = users.create("A", datetime, 15, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
 
     results1 = createGenericQuery()
@@ -124,7 +125,7 @@ public class TestGenericQuery {
   }
 
   @Test
-  public void testGetMethodsForNullFields() throws Exception {
+  public void testGetMethodsForNullColumns() throws Exception {
     userA = users.create("A", 15);
 
     results1 = createGenericQuery()
@@ -140,6 +141,52 @@ public class TestGenericQuery {
     assertNull(record.getLong(User.SOME_DATETIME));
     assertNull(record.getBoolean(User.SOME_BOOLEAN));
     assertNull(record.getByteArray(User.SOME_BINARY));
+  }
+
+  @Test
+  public void testGetMethodsForRecordsWithNullValues() throws Exception {
+    userA = users.create("A", datetime, 1, 2L, null, null, new byte[]{(byte)3}, 1.1, null, true);
+    userB = users.create("B", datetime + 3, 2, 4L, null, null, new byte[]{(byte)4}, 1.2, null, false);
+    userC = users.create("C", datetime - 10, 3, 6L, null, null, new byte[]{(byte)5}, 1.3, null, true);
+    userA.save();
+    userB.save();
+    userC.save();
+
+    results1 = createGenericQuery()
+        .from(User.TBL)
+        .fetch();
+
+    assertEquals(
+        Lists.newArrayList(userA.getId(), userB.getId(), userC.getId()),
+        results1.getLongs(User.ID)
+    );
+
+    assertEquals(
+        Lists.newArrayList((int)userA.getId(), (int)userB.getId(), (int)userC.getId()),
+        results1.getIntsFromLongs(User.ID)
+    );
+
+    assertEquals(
+        Lists.newArrayList(1, 2, 3),
+        results1.getInts(User.NUM_POSTS)
+    );
+
+    assertEquals(
+        Lists.newArrayList("A", "B", "C"),
+        results1.getStrings(User.HANDLE)
+    );
+
+    List<byte[]> byteArrays = results1.getByteArrays(User.SOME_BINARY);
+    assertArrayEquals(new byte[]{(byte)3}, byteArrays.get(0));
+    assertArrayEquals(new byte[]{(byte)4}, byteArrays.get(1));
+    assertArrayEquals(new byte[]{(byte)5}, byteArrays.get(2));
+
+    List<Double> doubles = results1.getDoubles(User.SOME_FLOAT);
+    assertTrue(Math.abs(1.1 - doubles.get(0)) < 0.00001);
+    assertTrue(Math.abs(1.2 - doubles.get(1)) < 0.00001);
+    assertTrue(Math.abs(1.3 - doubles.get(2)) < 0.00001);
+
+    assertEquals(Lists.newArrayList(true, false, true), results1.getBooleans(User.SOME_BOOLEAN));
   }
 
   @Test
@@ -168,9 +215,7 @@ public class TestGenericQuery {
     // Less Than
     results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, lessThan(2L)).fetch();
     assertEquals(2, results1.size());
-    for (Record record : results1) {
-      assertTrue(record.getString(User.HANDLE).equals("Brandon") || record.getString(User.HANDLE).equals("Brad"));
-    }
+    assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Greater Than
     results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThan(1L)).fetch();
@@ -228,9 +273,7 @@ public class TestGenericQuery {
 
     results1 = createGenericQuery().from(User.TBL).where(User.SOME_DATETIME, isNotNull()).fetch();
     assertEquals(2, results1.size());
-    for (Record record : results1) {
-      assertTrue(record.getString(User.HANDLE).equals("Brandon") || record.getString(User.HANDLE).equals("James"));
-    }
+    assertEquals(Sets.newHashSet("James", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // If a null parameter is passed, an exception should be thrown
     try {

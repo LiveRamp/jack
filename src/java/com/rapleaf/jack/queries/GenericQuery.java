@@ -45,7 +45,7 @@ public class GenericQuery {
     return new GenericQueryBuilder(dbConnection, this);
   }
 
-  void addSelectedModelField(Column column, Column... columns) {
+  void addSelectedColumns(Column column, Column... columns) {
     this.selectedColumns.add(column);
     this.selectedColumns.addAll(Arrays.asList(columns));
   }
@@ -82,7 +82,7 @@ public class GenericQuery {
     this.limitCriteria = Optional.of(limitCriterion);
   }
 
-  void addGroupByModelFields(Column column, Column... columns) {
+  void addGroupByColumns(Column column, Column... columns) {
     this.groupByColumns.add(column);
     this.groupByColumns.addAll(Arrays.asList(columns));
   }

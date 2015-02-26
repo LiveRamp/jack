@@ -5,10 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.util.List;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.Column;
@@ -79,12 +76,12 @@ public class GenericQueryBuilder {
   }
 
   public GenericQueryBuilder groupBy(Column column, Column... columns) {
-    genericQuery.addGroupByModelFields(column, columns);
+    genericQuery.addGroupByColumns(column, columns);
     return this;
   }
 
   public GenericQueryBuilder select(Column column, Column... columns) {
-    genericQuery.addSelectedModelField(column, columns);
+    genericQuery.addSelectedColumns(column, columns);
     return this;
   }
 
@@ -92,7 +89,7 @@ public class GenericQueryBuilder {
     return getPreparedStatement().toString();
   }
 
-  public List<Record> fetch() throws IOException {
+  public Records fetch() throws IOException {
     int retryCount = 0;
     PreparedStatement preparedStatement = getPreparedStatement();
 
@@ -131,16 +128,16 @@ public class GenericQueryBuilder {
     }
   }
 
-  private List<Record> getQueryResults(PreparedStatement preparedStatement) throws SQLException {
+  private Records getQueryResults(PreparedStatement preparedStatement) throws SQLException {
     ResultSet queryResultSet = null;
 
     try {
       queryResultSet = preparedStatement.executeQuery();
-      List<Record> results = Lists.newArrayList();
+      Records results = new Records();
       while (queryResultSet.next()) {
-        Record fieldCollection = parseResultSet(queryResultSet);
-        if (fieldCollection != null) {
-          results.add(fieldCollection);
+        Record record = parseResultSet(queryResultSet);
+        if (record != null) {
+          results.addRecord(record);
         }
       }
       return results;
@@ -172,7 +169,7 @@ public class GenericQueryBuilder {
       String sqlKeyword = column.getSqlKeyword();
       Object value = queryResultSet.getObject(sqlKeyword);
       value = queryResultSet.wasNull() ? null : value;
-      record.addModelField(column, value);
+      record.addColumn(column, value);
     }
     return record;
   }
