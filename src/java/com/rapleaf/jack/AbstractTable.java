@@ -5,12 +5,12 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-public class AbstractModelTable implements ModelTable {
+public class AbstractTable implements Table {
   protected final String table;
   protected final String alias;
   protected final Set<Column> allColumns;
 
-  protected AbstractModelTable(String table, String alias) {
+  protected AbstractTable(String table, String alias) {
     Preconditions.checkArgument(table != null && !table.isEmpty(), "Table name cannot be null or empty.");
     Preconditions.checkArgument(alias != null && !alias.isEmpty(), "Table alias cannot be null or empty.");
     this.table = table;

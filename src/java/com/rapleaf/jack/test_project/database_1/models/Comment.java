@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.AbstractTable;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -28,14 +28,14 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   
   public static final long serialVersionUID = 6213989608937906012L;
 
-  public static class Table extends AbstractModelTable {
+  public static class Tbl extends AbstractTable {
     public final Column ID;
     public final Column CONTENT;
     public final Column COMMENTER_ID;
     public final Column COMMENTED_ON_ID;
     public final Column CREATED_AT;
 
-    private Table(String alias) {
+    private Tbl(String alias) {
       super("comments", alias);
       this.ID = Column.fromKey(alias);
       this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
@@ -45,17 +45,17 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       Collections.addAll(this.allColumns, ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
     }
 
-    public static Table as(String alias) {
-      return new Table(alias);
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
     }
   }
 
-  public static final Table TABLE = new Table("comments");
-  public static final Column ID = TABLE.ID;
-  public static final Column CONTENT = TABLE.CONTENT;
-  public static final Column COMMENTER_ID = TABLE.COMMENTER_ID;
-  public static final Column COMMENTED_ON_ID = TABLE.COMMENTED_ON_ID;
-  public static final Column CREATED_AT = TABLE.CREATED_AT;
+  public static final Tbl TBL = new Tbl("comments");
+  public static final Column ID = TBL.ID;
+  public static final Column CONTENT = TBL.CONTENT;
+  public static final Column COMMENTER_ID = TBL.COMMENTER_ID;
+  public static final Column COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
+  public static final Column CREATED_AT = TBL.CREATED_AT;
 
   private final Attributes attributes;
 

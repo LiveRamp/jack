@@ -12,12 +12,12 @@ import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.Column;
-import com.rapleaf.jack.ModelTable;
+import com.rapleaf.jack.Table;
 
 public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
-  private final List<ModelTable> includedTables;
+  private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<WhereConstraint> whereConstraints;
   private final List<OrderCriterion> orderCriteria;
@@ -40,7 +40,7 @@ public class GenericQuery {
     return new GenericQuery(dbConnection);
   }
 
-  public GenericQueryBuilder from(ModelTable table) {
+  public GenericQueryBuilder from(Table table) {
     this.includedTables.add(table);
     return new GenericQueryBuilder(dbConnection, this);
   }
@@ -112,7 +112,7 @@ public class GenericQuery {
     }
 
     if (selectedColumns.isEmpty()) {
-      for (ModelTable table : includedTables) {
+      for (Table table : includedTables) {
         selectedColumns.addAll(table.getAllColumns());
       }
     }

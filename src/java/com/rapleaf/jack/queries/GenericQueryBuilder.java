@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.Column;
-import com.rapleaf.jack.ModelTable;
+import com.rapleaf.jack.Table;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericQueryBuilder {
@@ -26,15 +26,15 @@ public class GenericQueryBuilder {
     this.genericQuery = genericQuery;
   }
 
-  public JoinConditionBuilder leftJoin(ModelTable table) {
+  public JoinConditionBuilder leftJoin(Table table) {
     return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
-  public JoinConditionBuilder rightJoin(ModelTable table) {
+  public JoinConditionBuilder rightJoin(Table table) {
     return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
-  public JoinConditionBuilder innerJoin(ModelTable table) {
+  public JoinConditionBuilder innerJoin(Table table) {
     return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 

@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.AbstractTable;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -28,14 +28,14 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   
   public static final long serialVersionUID = -399049548729901546L;
 
-  public static class Table extends AbstractModelTable {
+  public static class Tbl extends AbstractTable {
     public final Column ID;
     public final Column TITLE;
     public final Column POSTED_AT_MILLIS;
     public final Column USER_ID;
     public final Column UPDATED_AT;
 
-    private Table(String alias) {
+    private Tbl(String alias) {
       super("posts", alias);
       this.ID = Column.fromKey(alias);
       this.TITLE = Column.fromField(alias, _Fields.title, String.class);
@@ -45,17 +45,17 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
       Collections.addAll(this.allColumns, ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
     }
 
-    public static Table as(String alias) {
-      return new Table(alias);
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
     }
   }
 
-  public static final Table TABLE = new Table("posts");
-  public static final Column ID = TABLE.ID;
-  public static final Column TITLE = TABLE.TITLE;
-  public static final Column POSTED_AT_MILLIS = TABLE.POSTED_AT_MILLIS;
-  public static final Column USER_ID = TABLE.USER_ID;
-  public static final Column UPDATED_AT = TABLE.UPDATED_AT;
+  public static final Tbl TBL = new Tbl("posts");
+  public static final Column ID = TBL.ID;
+  public static final Column TITLE = TBL.TITLE;
+  public static final Column POSTED_AT_MILLIS = TBL.POSTED_AT_MILLIS;
+  public static final Column USER_ID = TBL.USER_ID;
+  public static final Column UPDATED_AT = TBL.UPDATED_AT;
 
   private final Attributes attributes;
 

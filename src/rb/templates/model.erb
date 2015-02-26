@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import <%= JACK_NAMESPACE %>.AbstractModelTable;
+import <%= JACK_NAMESPACE %>.AbstractTable;
 import <%= JACK_NAMESPACE %>.Column;
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
@@ -44,13 +44,13 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
-  public static class Table extends AbstractModelTable {
+  public static class Tbl extends AbstractTable {
     public final Column ID;
     <% model_defn.fields.each do |field_defn| %>
     public final Column <%= field_defn.name.upcase %>;
     <% end %>
 
-    private Table(String alias) {
+    private Tbl(String alias) {
       super("<%= model_defn.table_name %>", alias);
       this.ID = Column.fromKey(alias);
       <% model_defn.fields.each do |field_defn| %>
@@ -59,15 +59,15 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       Collections.addAll(this.allColumns, ID<% model_defn.fields.each_with_index do |field_defn, index| %>, <%= field_defn.name.upcase %><% end %>);
     }
 
-    public static Table as(String alias) {
-      return new Table(alias);
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
     }
   }
 
-  public static final Table TABLE = new Table("<%= model_defn.table_name %>");
-  public static final Column ID = TABLE.ID;
+  public static final Tbl TBL = new Tbl("<%= model_defn.table_name %>");
+  public static final Column ID = TBL.ID;
   <% model_defn.fields.each do |field_defn| %>
-  public static final Column <%= field_defn.name.upcase %> = TABLE.<%= field_defn.name.upcase %>;
+  public static final Column <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
   <% end %>
 
   private final Attributes attributes;

@@ -1,14 +1,14 @@
 package com.rapleaf.jack.queries;
 
 import com.rapleaf.jack.Column;
-import com.rapleaf.jack.ModelTable;
+import com.rapleaf.jack.Table;
 
 public class JoinConditionBuilder {
   private final GenericQueryBuilder queryBuilder;
   private final JoinType joinType;
-  private final ModelTable table;
+  private final Table table;
 
-  JoinConditionBuilder(GenericQueryBuilder queryBuilder, JoinType joinType, ModelTable table) {
+  JoinConditionBuilder(GenericQueryBuilder queryBuilder, JoinType joinType, Table table) {
     this.queryBuilder = queryBuilder;
     this.joinType = joinType;
     this.table = table;

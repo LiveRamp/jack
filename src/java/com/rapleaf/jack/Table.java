@@ -2,7 +2,7 @@ package com.rapleaf.jack;
 
 import java.util.Set;
 
-public interface ModelTable {
+public interface Table {
 
   public Set<Column> getAllColumns();
 

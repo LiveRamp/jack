@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.AbstractTable;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -28,7 +28,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   
   public static final long serialVersionUID = -966057050205502149L;
 
-  public static class Table extends AbstractModelTable {
+  public static class Tbl extends AbstractTable {
     public final Column ID;
     public final Column HANDLE;
     public final Column CREATED_AT_MILLIS;
@@ -41,7 +41,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     public final Column SOME_DECIMAL;
     public final Column SOME_BOOLEAN;
 
-    private Table(String alias) {
+    private Tbl(String alias) {
       super("users", alias);
       this.ID = Column.fromKey(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
@@ -57,23 +57,23 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       Collections.addAll(this.allColumns, ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
     }
 
-    public static Table as(String alias) {
-      return new Table(alias);
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
     }
   }
 
-  public static final Table TABLE = new Table("users");
-  public static final Column ID = TABLE.ID;
-  public static final Column HANDLE = TABLE.HANDLE;
-  public static final Column CREATED_AT_MILLIS = TABLE.CREATED_AT_MILLIS;
-  public static final Column NUM_POSTS = TABLE.NUM_POSTS;
-  public static final Column SOME_DATE = TABLE.SOME_DATE;
-  public static final Column SOME_DATETIME = TABLE.SOME_DATETIME;
-  public static final Column BIO = TABLE.BIO;
-  public static final Column SOME_BINARY = TABLE.SOME_BINARY;
-  public static final Column SOME_FLOAT = TABLE.SOME_FLOAT;
-  public static final Column SOME_DECIMAL = TABLE.SOME_DECIMAL;
-  public static final Column SOME_BOOLEAN = TABLE.SOME_BOOLEAN;
+  public static final Tbl TBL = new Tbl("users");
+  public static final Column ID = TBL.ID;
+  public static final Column HANDLE = TBL.HANDLE;
+  public static final Column CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
+  public static final Column NUM_POSTS = TBL.NUM_POSTS;
+  public static final Column SOME_DATE = TBL.SOME_DATE;
+  public static final Column SOME_DATETIME = TBL.SOME_DATETIME;
+  public static final Column BIO = TBL.BIO;
+  public static final Column SOME_BINARY = TBL.SOME_BINARY;
+  public static final Column SOME_FLOAT = TBL.SOME_FLOAT;
+  public static final Column SOME_DECIMAL = TBL.SOME_DECIMAL;
+  public static final Column SOME_BOOLEAN = TBL.SOME_BOOLEAN;
 
   private final Attributes attributes;
 

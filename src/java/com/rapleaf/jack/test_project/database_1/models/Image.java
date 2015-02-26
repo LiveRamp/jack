@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.AbstractModelTable;
+import com.rapleaf.jack.AbstractTable;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -28,25 +28,25 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   
   public static final long serialVersionUID = -3351451520429699622L;
 
-  public static class Table extends AbstractModelTable {
+  public static class Tbl extends AbstractTable {
     public final Column ID;
     public final Column USER_ID;
 
-    private Table(String alias) {
+    private Tbl(String alias) {
       super("images", alias);
       this.ID = Column.fromKey(alias);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
       Collections.addAll(this.allColumns, ID, USER_ID);
     }
 
-    public static Table as(String alias) {
-      return new Table(alias);
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
     }
   }
 
-  public static final Table TABLE = new Table("images");
-  public static final Column ID = TABLE.ID;
-  public static final Column USER_ID = TABLE.USER_ID;
+  public static final Tbl TBL = new Tbl("images");
+  public static final Column ID = TBL.ID;
+  public static final Column USER_ID = TBL.USER_ID;
 
   private final Attributes attributes;
 
