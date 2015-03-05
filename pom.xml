@@ -5,6 +5,11 @@
     <artifactId>jack</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <db.user>root</db.user>
+        <db.pass></db.pass>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -103,6 +108,43 @@
                             <arguments>
                                 <argument>-c</argument>
                                 <argument>test/regen_code.sh</argument>
+                            </arguments>
+                        </configuration>
+
+                    </execution>
+                    <execution>
+                    <id>configure-db</id>
+                    <phase>generate-test-sources</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>/bin/sh</executable>
+                        <arguments>
+                            <argument>test/update_database_yml.sh</argument>
+                            <argument>test/test_project/database_1/config/database.yml</argument>
+                            <commandLineArgs>
+                                ${db.user}
+                                ${db.pass}
+                            </commandLineArgs>
+                        </arguments>
+                    </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>create-db</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>test/create_databases.sh</argument>
+                                <commandLineArgs>
+                                    ${db.user}
+                                    ${db.pass}
+                                </commandLineArgs>
                             </arguments>
                         </configuration>
 
