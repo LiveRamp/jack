@@ -113,20 +113,20 @@
 
                     </execution>
                     <execution>
-                        <id>configure-db</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>/bin/sh</executable>
-                            <arguments>
-                                <argument>test/update_database_yml.sh</argument>
-                                <argument>test/test_project/database_1/config/database.yml</argument>
-                                <argument>${db.user}</argument>
-                                <argument>${db.pass}</argument>
-                            </arguments>
-                        </configuration>
+                    <id>configure-db</id>
+                    <phase>generate-test-sources</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>/bin/sh</executable>
+                        <arguments>
+                            <argument>test/update_database_yml.sh</argument>
+                            <argument>test/test_project/database_1/config/database.yml</argument>
+                            <argument>${db.user}</argument>
+                            <argument>${db.pass}</argument>
+                        </arguments>
+                    </configuration>
                     </execution>
 
                     <execution>
@@ -188,8 +188,8 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <property environment="env"/>
-                                        <echoproperties/>
+                                        <property environment="env" />
+                                        <echoproperties />
                                     </target>
                                 </configuration>
                             </execution>
@@ -227,14 +227,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>jenkins</id>
-            <properties>
-                <db.user>${env.HUDSON_DB_USER}</db.user>
-                <db.pass>${env.HUDSON_DB_PASS}</db.pass>
-            </properties>
-
         </profile>
     </profiles>
 
