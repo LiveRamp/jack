@@ -7,7 +7,7 @@
 
     <properties>
         <db.user>root</db.user>
-        <db.pass></db.pass>
+        <db.pass>" "</db.pass>
     </properties>
 
     <dependencies>
@@ -123,10 +123,8 @@
                         <arguments>
                             <argument>test/update_database_yml.sh</argument>
                             <argument>test/test_project/database_1/config/database.yml</argument>
-                            <commandLineArgs>
-                                ${db.user}
-                                ${db.pass}
-                            </commandLineArgs>
+                            <argument>${db.user}</argument>
+                            <argument>${db.pass}</argument>
                         </arguments>
                     </configuration>
                     </execution>
@@ -141,10 +139,8 @@
                             <executable>/bin/sh</executable>
                             <arguments>
                                 <argument>test/create_databases.sh</argument>
-                                <commandLineArgs>
-                                    ${db.user}
-                                    ${db.pass}
-                                </commandLineArgs>
+                                <argument>${db.user}</argument>
+                                <argument>${db.pass}</argument>
                             </arguments>
                         </configuration>
 
@@ -181,6 +177,24 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property environment="env" />
+                                        <echoproperties />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
                 </plugins>
             </build>
@@ -211,7 +225,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
