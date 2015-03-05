@@ -1,77 +1,178 @@
 <project>
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.liveramp</groupId>
-  <artifactId>jack</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>com.liveramp</groupId>
+    <artifactId>jack</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.5</version>
-    </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
 
-    <dependency>
-      <groupId>net.java.dev</groupId>
-      <artifactId>jvyaml</artifactId>
-      <version>0.2.1</version>
-    </dependency>
+        <dependency>
+            <groupId>net.java.dev</groupId>
+            <artifactId>jvyaml</artifactId>
+            <version>0.2.1</version>
+        </dependency>
 
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.22</version>
-    </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.22</version>
+        </dependency>
 
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.1-901.jdbc4</version>
-    </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>13.0.1</version>
-    </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>13.0.1</version>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <distributionManagement>
+    <distributionManagement>
 
-    <snapshotRepository>
-      <id>repository.liveramp.com</id>
-      <name>repository.liveramp.com-snapshots</name>
-      <url>http://repository.liveramp.com/artifactory/libs-snapshot-local</url>
-    </snapshotRepository>
+        <snapshotRepository>
+            <id>repository.liveramp.com</id>
+            <name>repository.liveramp.com-snapshots</name>
+            <url>http://repository.liveramp.com/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
 
-  </distributionManagement>
+    </distributionManagement>
 
-  <build>
-    <directory>${basedir}/build</directory>
-    <sourceDirectory>${basedir}/src/java</sourceDirectory>
-    <testSourceDirectory>${basedir}/test/java</testSourceDirectory>
+    <build>
+        <directory>${basedir}/build</directory>
+        <sourceDirectory>${basedir}/src/java</sourceDirectory>
+        <testSourceDirectory>${basedir}/test/java</testSourceDirectory>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <!--run method+interface patcher-->
+                    <execution>
+                        <id>bundle-install</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>bundle</argument>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+
+                    </execution>
+                    <execution>
+                        <id>generate-jack-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>test/regen_code.sh</argument>
+                            </arguments>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>mysql</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <executions>
+                            <!--run method+interface patcher-->
+                            <execution>
+                                <id>use-mysql</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>/bin/sh</executable>
+                                    <arguments>
+                                        <argument>test/select-dbms.sh</argument>
+                                        <argument>mysql</argument>
+                                    </arguments>
+                                </configuration>
+
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>postgres</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <executions>
+                            <!--run method+interface patcher-->
+                            <execution>
+                                <id>use-postgres</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>/bin/sh</executable>
+                                    <arguments>
+                                        <argument>test/select-dbms.sh</argument>
+                                        <argument>postgres</argument>
+                                    </arguments>
+                                </configuration>
+
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
