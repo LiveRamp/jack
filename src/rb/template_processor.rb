@@ -39,22 +39,18 @@ EOF
 
   DB_INTERFACE_TEMPLATE = load_template("templates/db_interface.erb")
   DB_IMPL_TEMPLATE = load_template("templates/db_impl.erb")
-  MOCK_DB_IMPL_TEMPLATE = load_template("templates/mock_db_impl.erb")
   DB_FIXTURES_TEMPLATE = load_template("templates/db_fixtures.erb")
   PERSISTENCE_INTERFACE_TEMPLATE = load_template("templates/persistence_interface.erb")
-  MOCK_PERSISTENCE_IMPL_TEMPLATE = load_template("templates/mock_persistence_impl.erb")
   MODEL_TEMPLATE = load_template("templates/model.erb")
   PERSISTENCE_IMPL_TEMPLATE = load_template("templates/persistence_impl.erb")
 
   DATABASES_IFACE_TEMPLATE = load_template("templates/databases_iface.erb")
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
-  MOCK_DATABASES_IMPL_TEMPLATE = load_template("templates/mock_databases_impl.erb")
 
   QUERY_BUILDER_TEMPLATE = load_template("templates/query_builder_impl.erb")
 
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
-  MOCK_CREATE_METHOD_TEMPLATE = load_template("templates/mock_create_method.erb")
-  
+
   MIGRATION_TXT_TEMPLATE = load_template("templates/migration.erb");
 
   public
@@ -74,10 +70,6 @@ EOF
     file = File.new("#{output_dir}/DatabasesImpl.java", "w")
     file.puts(DATABASES_IMPL_TEMPLATE.result(binding))
     file.close
-
-    file = File.new("#{output_dir}/MockDatabasesImpl.java", "w")
-    file.puts(MOCK_DATABASES_IMPL_TEMPLATE.result(binding))
-    file.close
     
     file = File.new("#{output_dir}/migration-version.txt", "w")
     file.puts(MIGRATION_TXT_TEMPLATE.result(binding))
@@ -91,7 +83,6 @@ EOF
     FileUtils.mkdir_p("#{output_dir}/models/")
     FileUtils.mkdir_p("#{output_dir}/iface/")
     FileUtils.mkdir_p("#{output_dir}/impl/")
-    FileUtils.mkdir_p("#{output_dir}/mock_impl/")
     FileUtils.mkdir_p("#{output_dir}/query/")
 
 
@@ -115,10 +106,6 @@ EOF
       file.puts(PERSISTENCE_IMPL_TEMPLATE.result(binding));
       file.close
 
-      file = File.new("#{output_dir}/mock_impl/#{model_defn.mock_impl_name}.java", "w")
-      file.puts(MOCK_PERSISTENCE_IMPL_TEMPLATE.result(binding));
-      file.close
-
       file = File.new("#{output_dir}/query/#{model_defn.query_builder_name}.java", "w")
       file.puts(QUERY_BUILDER_TEMPLATE.result(binding));
       file.close
@@ -132,11 +119,7 @@ EOF
     file = File.new("#{output_dir}/impl/#{db_name}Impl.java", "w")
     file.puts(DB_IMPL_TEMPLATE.result(binding))
     file.close
-    
-    file = File.new("#{output_dir}/mock_impl/Mock#{db_name}Impl.java", "w")
-    file.puts(MOCK_DB_IMPL_TEMPLATE.result(binding))
-    file.close
-    
+
     file = File.new("#{output_dir}/Base#{db_name}Fixtures.java", "w")
     file.puts(DB_FIXTURES_TEMPLATE.result(binding))
     file.close
@@ -147,7 +130,4 @@ EOF
     CREATE_METHOD_TEMPLATE.result(binding)
   end
 
-  def self.render_mock_create_method(model_defn, signature, only_not_null = false)
-    MOCK_CREATE_METHOD_TEMPLATE.result(binding)
-  end
 end
