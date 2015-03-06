@@ -7,7 +7,7 @@
 
     <properties>
         <db.user>root</db.user>
-        <db.pass>" "</db.pass>
+        <db.pass>""</db.pass>
     </properties>
 
     <dependencies>
@@ -79,6 +79,7 @@
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
+                <version>1.3.2</version>
                 <executions>
                     <!--run method+interface patcher-->
                     <execution>
@@ -113,7 +114,7 @@
 
                     </execution>
                     <execution>
-                    <id>configure-db</id>
+                    <id>configure-ruby-db</id>
                     <phase>generate-test-sources</phase>
                     <goals>
                         <goal>exec</goal>
@@ -128,6 +129,22 @@
                         </arguments>
                     </configuration>
                     </execution>
+                    <execution>
+                        <id>configure-java-db</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>test/update_database_yml.sh</argument>
+                                <argument>config/database.yml</argument>
+                                <argument>${db.user}</argument>
+                                <argument>${db.pass}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>create-db</id>
@@ -141,6 +158,22 @@
                                 <argument>test/create_databases.sh</argument>
                                 <argument>${db.user}</argument>
                                 <argument>${db.pass}</argument>
+                            </arguments>
+                        </configuration>
+
+                    </execution>
+
+                    <execution>
+                        <id>migrate-db</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>test/migrate_project.sh</argument>
+                                <argument>test/test_project/database_1</argument>
                             </arguments>
                         </configuration>
 
