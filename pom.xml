@@ -195,7 +195,7 @@
                             <!--run method+interface patcher-->
                             <execution>
                                 <id>use-mysql</id>
-                                <phase>generate-test-sources</phase>
+                                <phase>initialize</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -210,25 +210,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <property environment="env" />
-                                        <echoproperties />
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                 </plugins>
             </build>
         </profile>
@@ -243,7 +224,7 @@
                             <!--run method+interface patcher-->
                             <execution>
                                 <id>use-postgres</id>
-                                <phase>generate-test-sources</phase>
+                                <phase>initialize</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
