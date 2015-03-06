@@ -114,7 +114,7 @@
 
                     </execution>
                     <execution>
-                    <id>configure-ruby-db</id>
+                    <id>configure-ruby-db1</id>
                     <phase>generate-test-sources</phase>
                     <goals>
                         <goal>exec</goal>
@@ -128,6 +128,22 @@
                             <argument>${db.pass}</argument>
                         </arguments>
                     </configuration>
+                    </execution>
+                    <execution>
+                        <id>configure-ruby-db2</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>test/update_database_yml.sh</argument>
+                                <argument>test/test_project/database_2/config/database.yml</argument>
+                                <argument>${db.user}</argument>
+                                <argument>${db.pass}</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>configure-java-db</id>
