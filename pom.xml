@@ -83,7 +83,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>test</directory>
+                <directory>test/java</directory>
                 <includes>
                     <include>**/*.java</include>
                     <include>**/*.yaml</include>
@@ -92,8 +92,20 @@
                     <include>**/*.rb</include>
                     <include>**/*.erb</include>
                     <include>**/Gemfile</include>
-
                 </includes>
+            </resource>
+            <resource>
+                <directory>test/rb</directory>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.yaml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.rb</include>
+                    <include>**/*.erb</include>
+                    <include>**/Gemfile</include>
+                </includes>
+
             </resource>
             <resource>
                 <directory>./</directory>
