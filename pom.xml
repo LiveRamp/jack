@@ -62,9 +62,46 @@
     </distributionManagement>
 
     <build>
+
+
         <directory>${basedir}/build</directory>
         <sourceDirectory>${basedir}/src/java</sourceDirectory>
         <testSourceDirectory>${basedir}/test/java</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.yaml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.rb</include>
+                    <include>**/*.erb</include>
+                    <include>**/Gemfile</include>
+
+                </includes>
+            </resource>
+            <resource>
+                <directory>test</directory>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.yaml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.rb</include>
+                    <include>**/*.erb</include>
+                    <include>**/Gemfile</include>
+
+                </includes>
+            </resource>
+            <resource>
+                <directory>./</directory>
+                <includes>
+                    <include>Gemfile</include>
+                </includes>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
@@ -114,20 +151,20 @@
 
                     </execution>
                     <execution>
-                    <id>configure-ruby-db1</id>
-                    <phase>generate-test-sources</phase>
-                    <goals>
-                        <goal>exec</goal>
-                    </goals>
-                    <configuration>
-                        <executable>/bin/sh</executable>
-                        <arguments>
-                            <argument>test/update_database_yml.sh</argument>
-                            <argument>test/test_project/database_1/config/database.yml</argument>
-                            <argument>${db.user}</argument>
-                            <argument>${db.pass}</argument>
-                        </arguments>
-                    </configuration>
+                        <id>configure-ruby-db1</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/sh</executable>
+                            <arguments>
+                                <argument>test/update_database_yml.sh</argument>
+                                <argument>test/test_project/database_1/config/database.yml</argument>
+                                <argument>${db.user}</argument>
+                                <argument>${db.pass}</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>configure-ruby-db2</id>
