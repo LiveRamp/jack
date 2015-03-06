@@ -156,8 +156,6 @@
                             <executable>/bin/sh</executable>
                             <arguments>
                                 <argument>test/create_databases.sh</argument>
-                                <argument>${db.user}</argument>
-                                <argument>${db.pass}</argument>
                             </arguments>
                         </configuration>
 
