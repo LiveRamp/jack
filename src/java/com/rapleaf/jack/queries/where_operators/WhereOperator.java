@@ -39,14 +39,6 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
   }
 
   /*
-  Return the first parameter.
-  Useful for operators with only one parameter.
-   */
-  public V getSingleParameter() {
-    return parameters.get(0);
-  }
-
-  /*
   Check that none of the parameters is null.
   Throw an IllegalArgumentException if a null parameter is found.
    */
