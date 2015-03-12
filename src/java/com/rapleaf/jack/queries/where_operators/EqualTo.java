@@ -16,9 +16,4 @@ public class EqualTo<V> extends WhereOperator<V> {
   public String getSqlStatement() {
     return "= ?";
   }
-
-  @Override
-  public boolean apply(V value) {
-    return getSingleParameter().equals(value);
-  }
 }

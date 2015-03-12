@@ -8,5 +8,4 @@ public interface IWhereOperator<T> {
 
   public List<T> getParameters();
 
-  public boolean apply(T value);
 }

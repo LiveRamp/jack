@@ -12,11 +12,6 @@ public class LessThanOrEqualTo<V extends Comparable<V>> extends WhereOperator<V>
     return "<= ?";
   }
 
-  @Override
-  public boolean apply(V value) {
-    return value.compareTo(getParameter()) <= 0;
-  }
-
   public V getParameter() {
     return getParameters().get(0);
   }

@@ -11,9 +11,4 @@ public class Match extends WhereOperator<String> {
   public String getSqlStatement() {
     return "LIKE  ?";
   }
-
-  @Override
-  public boolean apply(String value) {
-    return value.matches(getSingleParameter().replace("%", "(.*)"));
-  }
 }

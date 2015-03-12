@@ -11,9 +11,4 @@ public class GreaterThan<V extends Comparable<V>> extends WhereOperator<V> {
   public String getSqlStatement() {
     return "> ?";
   }
-
-  @Override
-  public boolean apply(V value) {
-    return value.compareTo(getSingleParameter()) > 0;
-  }
 }
