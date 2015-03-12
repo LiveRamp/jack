@@ -18,7 +18,6 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 
 public class DatabasesImpl implements IDatabases {
-  private static final IDatabases mockDatabases = new MockDatabasesImpl();
   private final IDatabase1 database1;
 
   public DatabasesImpl(BaseDatabaseConnection database1_connection) {
@@ -33,12 +32,8 @@ public class DatabasesImpl implements IDatabases {
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
-    Boolean use_mock = (Boolean)env_info.get("use_mock_db");
-    if (use_mock != null && use_mock) {
-      this.database1 = mockDatabases.getDatabase1();
-    } else {
       this.database1 = new Database1Impl(new DatabaseConnection("database1"), this);
-    }
+
   }
 
   public IDatabase1 getDatabase1() {

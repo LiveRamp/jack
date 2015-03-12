@@ -30,7 +30,6 @@ import <%= db.namespace %>.impl.<%= db.name %>Impl;
 <% end %>
 
 public class DatabasesImpl implements IDatabases {
-  private static final IDatabases mockDatabases = new MockDatabasesImpl();
   <% project_defn.databases.each do |db| %>
   private final I<%= db.name %> <%= db.name.underscore %>;
   <% end %>
@@ -49,16 +48,10 @@ public class DatabasesImpl implements IDatabases {
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
-    Boolean use_mock = (Boolean)env_info.get("use_mock_db");
-    if (use_mock != null && use_mock) {
-    <% project_defn.databases.each do |db| %>
-      this.<%= db.name.underscore %> = mockDatabases.get<%= db.name %>();
-    <% end %>
-    } else {
     <% project_defn.databases.each do |db| %>
       this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this);
     <% end %>
-    }
+
   }
 
   <% project_defn.databases.each do |db| %>

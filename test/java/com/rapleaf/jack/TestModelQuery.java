@@ -14,7 +14,6 @@ import com.rapleaf.jack.queries.AggregatorFunctions;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
-import com.rapleaf.jack.test_project.MockDatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
@@ -34,7 +33,7 @@ public class TestModelQuery extends TestCase {
   }
 
   public void testMockDbQueries() throws IOException, SQLException {
-    IDatabases dbs = new MockDatabasesImpl();
+    IDatabases dbs = new DatabasesImpl();
     testBasicQuery(dbs);
     testQueryOperators(dbs);
     testQueryById(dbs);
