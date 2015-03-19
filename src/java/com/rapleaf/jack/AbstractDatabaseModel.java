@@ -140,7 +140,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         long newId = generatedKeys.getLong(1);
         return newId;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -155,7 +155,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
             stmt.close();
           }
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
         } catch (SQLException e) {
         }
       }
@@ -199,7 +199,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         break;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -214,7 +214,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
             stmt.close();
           }
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
         } catch (SQLException e) {
         }
       }
@@ -384,7 +384,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
     } catch (SQLRecoverableException e) {
-      conn.resetConnection();
+      conn.resetConnection(e);
       throw e;
     } finally {
       try {
@@ -393,7 +393,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         stmt.close();
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
       } catch (SQLException e) {
       }
     }
@@ -526,7 +526,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         return ret;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -541,7 +541,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
             stmt.close();
           }
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
         } catch (SQLException e) {
         }
       }
@@ -605,7 +605,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           }
           break;
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
           if (++retryCount > MAX_CONNECTION_RETRIES) {
             throw new IOException(e);
           }
@@ -620,7 +620,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
               stmt.close();
             }
           } catch (SQLRecoverableException e) {
-            conn.resetConnection();
+            conn.resetConnection(e);
           } catch (SQLException e) {
           }
         }
@@ -758,7 +758,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         return results;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -773,7 +773,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
             stmt.close();
           }
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
         } catch (SQLException e) {
         }
       }

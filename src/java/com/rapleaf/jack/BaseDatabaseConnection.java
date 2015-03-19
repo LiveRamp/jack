@@ -17,14 +17,24 @@ public abstract class BaseDatabaseConnection implements Serializable {
   public abstract Connection getConnection();
 
   /**
-   * Re-establish the connection in case it has been sitting idle for too 
+   * Re-establish the connection in case it has been sitting idle for too
    * long and has been claimed by the server
    */
   public Connection resetConnection() {
+    return resetConnection(null);
+  }
+
+  /**
+   * Re-establish the connection in case it has been sitting idle for too
+   * long and has been claimed by the server
+   * This version specifies a cause and can be used when the reset is
+   * performed as an attempt to recover from an exception
+   */
+  public Connection resetConnection(Throwable cause) {
     if (conn != null) {
       try {
         if (!conn.getAutoCommit()) {
-          throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.");
+          throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.", cause);
         }
         conn.close();
       } catch (SQLException e) {
