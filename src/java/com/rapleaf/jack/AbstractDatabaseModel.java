@@ -152,17 +152,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (generatedKeys != null) {
-            generatedKeys.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection(e);
-        } catch (SQLException e) {
-        }
+        closeQuery(generatedKeys, stmt);
       }
     }
   }
@@ -211,17 +201,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection(e);
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
     if (useCache) {
@@ -394,15 +374,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       conn.resetConnection(e);
       throw e;
     } finally {
-      try {
-        if (rs != null) {
-          rs.close();
-        }
-        stmt.close();
-      } catch (SQLRecoverableException e) {
-        conn.resetConnection(e);
-      } catch (SQLException e) {
-      }
+      closeQuery(rs, stmt);
     }
   }
 
@@ -541,17 +513,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection(e);
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -620,17 +582,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         } catch (SQLException e) {
           throw new IOException(e);
         } finally {
-          try {
-            if (rs != null) {
-              rs.close();
-            }
-            if (stmt != null) {
-              stmt.close();
-            }
-          } catch (SQLRecoverableException e) {
-            conn.resetConnection(e);
-          } catch (SQLException e) {
-          }
+          closeQuery(rs, stmt);
         }
       }
     }
@@ -773,17 +725,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection(e);
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -835,5 +777,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   private void logRetryAttempt(String statementString, Throwable cause) {
     LOG.warn("Query failed: " + statementString + "\n" + ExceptionUtils.getFullStackTrace(cause) + "\n" + "Retrying.");
+  }
+
+  private void closeQuery(ResultSet resultSet, PreparedStatement statement) {
+    try {
+      if (resultSet != null) {
+        resultSet.close();
+      }
+      if (statement != null) {
+        statement.close();
+      }
+    } catch (SQLRecoverableException e) {
+      conn.resetConnection(e);
+    } catch (SQLException e) {
+      LOG.warn(ExceptionUtils.getFullStackTrace(e));
+    }
   }
 }
