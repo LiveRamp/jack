@@ -152,7 +152,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        closePreparedStatementAndResultSet(generatedKeys, stmt);
+        closeQuery(generatedKeys, stmt);
       }
     }
   }
@@ -201,7 +201,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        closePreparedStatementAndResultSet(rs, stmt);
+        closeQuery(rs, stmt);
       }
     }
     if (useCache) {
@@ -374,7 +374,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       conn.resetConnection(e);
       throw e;
     } finally {
-      closePreparedStatementAndResultSet(rs, stmt);
+      closeQuery(rs, stmt);
     }
   }
 
@@ -513,7 +513,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        closePreparedStatementAndResultSet(rs, stmt);
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -582,7 +582,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         } catch (SQLException e) {
           throw new IOException(e);
         } finally {
-          closePreparedStatementAndResultSet(rs, stmt);
+          closeQuery(rs, stmt);
         }
       }
     }
@@ -725,7 +725,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        closePreparedStatementAndResultSet(rs, stmt);
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -779,7 +779,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     LOG.warn("Query failed: " + statementString + "\n" + ExceptionUtils.getFullStackTrace(cause) + "\n" + "Retrying.");
   }
 
-  private void closePreparedStatementAndResultSet(ResultSet resultSet, PreparedStatement statement) {
+  private void closeQuery(ResultSet resultSet, PreparedStatement statement) {
     try {
       if (resultSet != null) {
         resultSet.close();
