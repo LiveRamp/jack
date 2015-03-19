@@ -32,12 +32,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.ModelQuery;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
+
+  private static Logger LOG = LoggerFactory.getLogger(AbstractDatabaseModel.class);
 
   protected static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
@@ -290,6 +295,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -324,6 +330,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -399,19 +406,20 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
-  protected void executeQuery(Collection<T> foundSet, String statemenString) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, String statementString) throws IOException {
     int retryCount = 0;
     PreparedStatement stmt;
 
     while (true) {
       try {
-        stmt = conn.getPreparedStatement(statemenString);
+        stmt = conn.getPreparedStatement(statementString);
         executeQuery(foundSet, stmt);
         break;
       } catch (SQLRecoverableException e) {
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -823,5 +831,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     if (updatedAtCanBeHandled(model)) {
       model.setField("updated_at", oldUpdatedAt);
     }
+  }
+
+  private void logRetryAttempt(String statementString, Throwable cause) {
+    LOG.warn("Query failed: " + statementString + "\n" + ExceptionUtils.getFullStackTrace(cause) + "\n" + "Retrying.");
   }
 }
