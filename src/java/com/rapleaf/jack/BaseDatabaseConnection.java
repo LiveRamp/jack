@@ -6,7 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class BaseDatabaseConnection implements Serializable {
+
+  private static Logger LOG = LoggerFactory.getLogger(BaseDatabaseConnection.class);
 
   protected transient Connection conn = null;
   
@@ -31,6 +37,7 @@ public abstract class BaseDatabaseConnection implements Serializable {
    * performed as an attempt to recover from an exception
    */
   public Connection resetConnection(Throwable cause) {
+    LOG.warn("Resetting database connection to attempt to recover from: " + ExceptionUtils.getFullStackTrace(cause));
     if (conn != null) {
       try {
         if (!conn.getAutoCommit()) {
@@ -38,6 +45,7 @@ public abstract class BaseDatabaseConnection implements Serializable {
         }
         conn.close();
       } catch (SQLException e) {
+        LOG.warn("Failed to reset database connection: " + ExceptionUtils.getFullStackTrace(e));
       }
     }
     conn = null;
