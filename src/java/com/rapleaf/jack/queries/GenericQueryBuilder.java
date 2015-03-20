@@ -7,12 +7,17 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.Column;
 import com.rapleaf.jack.Table;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericQueryBuilder {
+  private static final Logger LOG = LoggerFactory.getLogger(GenericQueryBuilder.class);
+
   private static int MAX_CONNECTION_RETRIES = 1;
 
   private final GenericQuery genericQuery;
@@ -92,11 +97,13 @@ public class GenericQueryBuilder {
   public Records fetch() throws IOException {
     int retryCount = 0;
     PreparedStatement preparedStatement = getPreparedStatement();
+    LOG.debug("query: {}", preparedStatement.toString());
 
     while (true) {
       try {
         return getQueryResults(preparedStatement);
       } catch (SQLRecoverableException e) {
+        LOG.error(e.toString());
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
@@ -151,9 +158,10 @@ public class GenericQueryBuilder {
         }
         preparedStatement.close();
       } catch (SQLRecoverableException e) {
+        LOG.error(e.toString());
         dbConnection.resetConnection();
       } catch (SQLException e) {
-        // ignore
+        LOG.error(e.toString());
       }
     }
   }
