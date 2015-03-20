@@ -32,12 +32,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.ModelQuery;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
+
+  private static Logger LOG = LoggerFactory.getLogger(AbstractDatabaseModel.class);
 
   protected static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
@@ -140,24 +145,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         long newId = generatedKeys.getLong(1);
         return newId;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (generatedKeys != null) {
-            generatedKeys.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-        } catch (SQLException e) {
-        }
+        closeQuery(generatedKeys, stmt);
       }
     }
   }
@@ -199,24 +194,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         break;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
     if (useCache) {
@@ -290,6 +275,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -324,6 +310,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -384,34 +371,27 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
       }
     } catch (SQLRecoverableException e) {
-      conn.resetConnection();
+      conn.resetConnection(e);
       throw e;
     } finally {
-      try {
-        if (rs != null) {
-          rs.close();
-        }
-        stmt.close();
-      } catch (SQLRecoverableException e) {
-        conn.resetConnection();
-      } catch (SQLException e) {
-      }
+      closeQuery(rs, stmt);
     }
   }
 
-  protected void executeQuery(Collection<T> foundSet, String statemenString) throws IOException {
+  protected void executeQuery(Collection<T> foundSet, String statementString) throws IOException {
     int retryCount = 0;
     PreparedStatement stmt;
 
     while (true) {
       try {
-        stmt = conn.getPreparedStatement(statemenString);
+        stmt = conn.getPreparedStatement(statementString);
         executeQuery(foundSet, stmt);
         break;
       } catch (SQLRecoverableException e) {
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
+        logRetryAttempt(statementString, e);
       } catch (SQLException e) {
         throw new IOException(e);
       }
@@ -526,24 +506,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         return ret;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -605,24 +575,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
           }
           break;
         } catch (SQLRecoverableException e) {
-          conn.resetConnection();
+          conn.resetConnection(e);
           if (++retryCount > MAX_CONNECTION_RETRIES) {
             throw new IOException(e);
           }
         } catch (SQLException e) {
           throw new IOException(e);
         } finally {
-          try {
-            if (rs != null) {
-              rs.close();
-            }
-            if (stmt != null) {
-              stmt.close();
-            }
-          } catch (SQLRecoverableException e) {
-            conn.resetConnection();
-          } catch (SQLException e) {
-          }
+          closeQuery(rs, stmt);
         }
       }
     }
@@ -758,24 +718,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         }
         return results;
       } catch (SQLRecoverableException e) {
-        conn.resetConnection();
+        conn.resetConnection(e);
         if (++retryCount > MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
         }
       } catch (SQLException e) {
         throw new IOException(e);
       } finally {
-        try {
-          if (rs != null) {
-            rs.close();
-          }
-          if (stmt != null) {
-            stmt.close();
-          }
-        } catch (SQLRecoverableException e) {
-          conn.resetConnection();
-        } catch (SQLException e) {
-        }
+        closeQuery(rs, stmt);
       }
     }
   }
@@ -822,6 +772,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   private void revertRailsUpdatedAt(T model, long oldUpdatedAt) {
     if (updatedAtCanBeHandled(model)) {
       model.setField("updated_at", oldUpdatedAt);
+    }
+  }
+
+  private void logRetryAttempt(String statementString, Throwable cause) {
+    LOG.warn("Query failed: " + statementString + "\n" + ExceptionUtils.getFullStackTrace(cause) + "\n" + "Retrying.");
+  }
+
+  private void closeQuery(ResultSet resultSet, PreparedStatement statement) {
+    try {
+      if (resultSet != null) {
+        resultSet.close();
+      }
+      if (statement != null) {
+        statement.close();
+      }
+    } catch (SQLRecoverableException e) {
+      conn.resetConnection(e);
+    } catch (SQLException e) {
+      LOG.warn(ExceptionUtils.getFullStackTrace(e));
     }
   }
 }

@@ -6,7 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class BaseDatabaseConnection implements Serializable {
+
+  private static Logger LOG = LoggerFactory.getLogger(BaseDatabaseConnection.class);
 
   protected transient Connection conn = null;
   
@@ -17,17 +23,29 @@ public abstract class BaseDatabaseConnection implements Serializable {
   public abstract Connection getConnection();
 
   /**
-   * Re-establish the connection in case it has been sitting idle for too 
+   * Re-establish the connection in case it has been sitting idle for too
    * long and has been claimed by the server
    */
   public Connection resetConnection() {
+    return resetConnection(null);
+  }
+
+  /**
+   * Re-establish the connection in case it has been sitting idle for too
+   * long and has been claimed by the server
+   * This version specifies a cause and can be used when the reset is
+   * performed as an attempt to recover from an exception
+   */
+  public Connection resetConnection(Throwable cause) {
+    LOG.warn("Resetting database connection to attempt to recover from: " + ExceptionUtils.getFullStackTrace(cause));
     if (conn != null) {
       try {
         if (!conn.getAutoCommit()) {
-          throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.");
+          throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.", cause);
         }
         conn.close();
       } catch (SQLException e) {
+        LOG.warn("Failed to reset database connection: " + ExceptionUtils.getFullStackTrace(e));
       }
     }
     conn = null;
