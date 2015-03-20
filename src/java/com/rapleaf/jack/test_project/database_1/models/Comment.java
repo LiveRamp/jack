@@ -37,7 +37,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     private Tbl(String alias) {
       super("comments", alias);
-      this.ID = Column.fromKey(alias);
+      this.ID = Column.fromId(alias);
       this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
       this.COMMENTER_ID = Column.fromField(alias, _Fields.commenter_id, Integer.class);
       this.COMMENTED_ON_ID = Column.fromField(alias, _Fields.commented_on_id, Long.class);

@@ -19,7 +19,7 @@ public class Column {
     this.type = that.type;
   }
 
-  public static Column fromKey(String table) {
+  public static Column fromId(String table) {
     return new Column(table, null, Long.class);
   }
 

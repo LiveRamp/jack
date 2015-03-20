@@ -14,14 +14,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.rapleaf.jack.AbstractTable;
-import com.rapleaf.jack.Column;
-import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
-import com.rapleaf.jack.HasManyAssociation;
-import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelIdWrapper;
-
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
@@ -34,7 +31,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     private Tbl(String alias) {
       super("images", alias);
-      this.ID = Column.fromKey(alias);
+      this.ID = Column.fromId(alias);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
       Collections.addAll(this.allColumns, ID, USER_ID);
     }

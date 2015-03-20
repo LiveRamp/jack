@@ -43,7 +43,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     private Tbl(String alias) {
       super("users", alias);
-      this.ID = Column.fromKey(alias);
+      this.ID = Column.fromId(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
       this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
       this.NUM_POSTS = Column.fromField(alias, _Fields.num_posts, Integer.class);
