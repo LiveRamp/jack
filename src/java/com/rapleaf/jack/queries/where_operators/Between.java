@@ -12,11 +12,6 @@ public class Between<V extends Comparable<V>> extends WhereOperator<V> {
     return "BETWEEN ? AND ?";
   }
 
-  @Override
-  public boolean apply(V value) {
-    return value.compareTo(getMin()) >= 0 && value.compareTo(getMax()) <= 0;
-  }
-
   public V getMin() {
     return getParameters().get(0);
   }
