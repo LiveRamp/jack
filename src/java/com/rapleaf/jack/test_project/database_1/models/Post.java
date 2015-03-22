@@ -13,13 +13,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.rapleaf.jack.queries.AbstractTable;
-import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
+import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.queries.AbstractTable;
+import com.rapleaf.jack.queries.Column;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
