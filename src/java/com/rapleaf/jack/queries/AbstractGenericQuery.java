@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
-public abstract class GenericQuery {
-  private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
+public abstract class AbstractGenericQuery {
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractGenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final BaseDatabaseConnection dbConnection;
@@ -33,7 +33,7 @@ public abstract class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  protected GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
+  protected AbstractGenericQuery(BaseDatabaseConnection dbConnection, Table table) {
     this.dbConnection = dbConnection;
     this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
@@ -61,17 +61,17 @@ public abstract class GenericQuery {
     this.joinConditions.add(joinCondition);
   }
 
-  public <T> GenericQuery where(Column column, IWhereOperator<T> operator) {
+  public <T> AbstractGenericQuery where(Column column, IWhereOperator<T> operator) {
     addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.AND));
     return this;
   }
 
-  public <T> GenericQuery andWhere(Column column, IWhereOperator<T> operator) {
+  public <T> AbstractGenericQuery andWhere(Column column, IWhereOperator<T> operator) {
     addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.AND));
     return this;
   }
 
-  public <T> GenericQuery orWhere(Column column, IWhereOperator<T> operator) {
+  public <T> AbstractGenericQuery orWhere(Column column, IWhereOperator<T> operator) {
     addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.OR));
     return this;
   }
@@ -87,33 +87,33 @@ public abstract class GenericQuery {
     this.whereConstraints.add(whereConstraint);
   }
 
-  public GenericQuery orderBy(Column column, QueryOrder queryOrder) {
+  public AbstractGenericQuery orderBy(Column column, QueryOrder queryOrder) {
     this.orderCriteria.add(new OrderCriterion(column, queryOrder));
     return this;
   }
 
-  public GenericQuery orderBy(Column column) {
+  public AbstractGenericQuery orderBy(Column column) {
     this.orderCriteria.add(new OrderCriterion(column, QueryOrder.ASC));
     return this;
   }
 
-  public GenericQuery limit(int offset, int limit) {
+  public AbstractGenericQuery limit(int offset, int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(offset, limit));
     return this;
   }
 
-  public GenericQuery limit(int limit) {
+  public AbstractGenericQuery limit(int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(limit));
     return this;
   }
 
-  public GenericQuery groupBy(Column column, Column... columns) {
+  public AbstractGenericQuery groupBy(Column column, Column... columns) {
     this.groupByColumns.add(column);
     this.groupByColumns.addAll(Arrays.asList(columns));
     return this;
   }
 
-  public GenericQuery select(Column column, Column... columns) {
+  public AbstractGenericQuery select(Column column, Column... columns) {
     this.selectedColumns.add(column);
     this.selectedColumns.addAll(Arrays.asList(columns));
     return this;
