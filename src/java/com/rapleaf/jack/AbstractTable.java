@@ -12,8 +12,8 @@ public class AbstractTable implements Table {
   protected final Set<Column> allColumns;
 
   protected AbstractTable(String table, String alias) {
-    Preconditions.checkArgument(Strings.isNullOrEmpty(table), "Table name cannot be null or empty.");
-    Preconditions.checkArgument(Strings.isNullOrEmpty(alias), "Table alias cannot be null or empty.");
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(table), "Table name cannot be null or empty.");
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(alias), "Table alias cannot be null or empty.");
     this.table = table;
     this.alias = alias;
     this.allColumns = Sets.newHashSet();
