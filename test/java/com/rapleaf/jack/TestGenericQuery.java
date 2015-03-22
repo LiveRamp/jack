@@ -9,12 +9,12 @@ import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rapleaf.jack.queries.GenericQuery;
-import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.Database1Query;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -22,11 +22,33 @@ import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
+import static com.rapleaf.jack.queries.AggregatedColumn.AVG;
+import static com.rapleaf.jack.queries.AggregatedColumn.COUNT;
+import static com.rapleaf.jack.queries.AggregatedColumn.MAX;
+import static com.rapleaf.jack.queries.AggregatedColumn.MIN;
+import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
-import static org.junit.Assert.*;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
-import static com.rapleaf.jack.queries.AggregatedColumn.*;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.between;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.contains;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.endsWith;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.equalTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThan;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThanOrEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.in;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.isNotNull;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.isNull;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThan;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThanOrEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.notEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.notIn;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.startsWith;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestGenericQuery {
 
@@ -42,10 +64,6 @@ public class TestGenericQuery {
   private Comment commentA, commentB, commentC, commentD;
   private long datetime;
   private Records results1, results2;
-
-  private GenericQuery createGenericQuery() {
-    return GenericQuery.create(DATABASE_CONNECTION1);
-  }
 
   @Before
   public void prepare() throws Exception {
@@ -69,34 +87,34 @@ public class TestGenericQuery {
     userD.save();
 
     // query with no select clause should return all the columns
-    results1 = createGenericQuery().from(User.TBL).fetch();
+    results1 = Database1Query.from(User.TBL).fetch();
     assertFalse(results1.isEmpty());
     assertEquals(11, results1.get(0).columnCount());
 
     // query with only select clause should return all records with the specified columns
-    results1 = createGenericQuery().from(User.TBL).select(User.ID).fetch();
+    results1 = Database1Query.from(User.TBL).select(User.ID).fetch();
     assertEquals(4, results1.size());
     assertEquals(1, results1.get(0).columnCount());
 
     // query with no result
-    results1 = createGenericQuery().from(User.TBL).where(User.ID, equalTo(999L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.ID, equalTo(999L)).fetch();
     assertTrue(results1.isEmpty());
 
     // the first WHERE clause will automatically drop the logic
-    results1 = createGenericQuery().from(User.TBL).andWhere(User.ID, equalTo(userA.getId())).fetch();
+    results1 = Database1Query.from(User.TBL).andWhere(User.ID, equalTo(userA.getId())).fetch();
     assertEquals(1, results1.size());
 
     // the non-first WHERE clause without a logic specification will default to AND
-    results1 = createGenericQuery().from(User.TBL).where(User.ID, lessThan(999L)).where(User.BIO, equalTo("Janitor")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.ID, lessThan(999L)).where(User.BIO, equalTo("Janitor")).fetch();
     assertEquals(1, results1.size());
 
     // query with and clause
-    results1 = createGenericQuery().from(User.TBL).where(User.BIO, equalTo("Trader")).andWhere(User.HANDLE, equalTo("B")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.BIO, equalTo("Trader")).andWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(1, results1.size());
     assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
 
     // query with or clause
-    results1 = createGenericQuery().from(User.TBL).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
   }
@@ -105,7 +123,7 @@ public class TestGenericQuery {
   public void testGetMethodsForNotNullColumns() throws Exception {
     userA = users.create("A", datetime, 15, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
         .fetch();
@@ -128,7 +146,7 @@ public class TestGenericQuery {
   public void testGetMethodsForNullColumns() throws Exception {
     userA = users.create("A", 15);
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .select(User.SOME_DECIMAL, User.SOME_DATETIME, User.SOME_BOOLEAN, User.SOME_BINARY)
         .fetch();
@@ -152,7 +170,7 @@ public class TestGenericQuery {
     userB.save();
     userC.save();
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .fetch();
 
@@ -203,55 +221,55 @@ public class TestGenericQuery {
     james.save();
 
     // Equal To
-    results1 = createGenericQuery().from(User.TBL).where(User.HANDLE, equalTo("Brad")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.HANDLE, equalTo("Brad")).fetch();
     assertEquals(1, results1.size());
     assertEquals("Brad", results1.get(0).getString(User.HANDLE));
 
     // Between
-    results1 = createGenericQuery().from(User.TBL).where(User.NUM_POSTS, between(4, 8)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.NUM_POSTS, between(4, 8)).fetch();
     assertEquals(1, results1.size());
     assertEquals("James", results1.get(0).getString(User.HANDLE));
 
     // Less Than
-    results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, lessThan(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, lessThan(2L)).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Greater Than
-    results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThan(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThan(1L)).fetch();
     assertEquals(3, results1.size());
 
     // Less Than Or Equal To
-    results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, lessThanOrEqualTo(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, lessThanOrEqualTo(2L)).fetch();
     assertEquals(4, results1.size());
 
     // Greater Than Or Equal To
-    results1 = createGenericQuery().from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThanOrEqualTo(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThanOrEqualTo(1L)).fetch();
     assertEquals(5, results1.size());
 
     // Ends With
-    results1 = createGenericQuery().from(User.TBL).where(User.BIO, endsWith("er")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.BIO, endsWith("er")).fetch();
     assertEquals(5, results1.size());
 
     // StartsWith
-    results1 = createGenericQuery().from(User.TBL).where(User.BIO, startsWith("er")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.BIO, startsWith("er")).fetch();
     assertTrue(results1.isEmpty());
 
     // In with empty collection
-    results1 = createGenericQuery().from(User.TBL).where(User.SOME_DATETIME, in(Collections.<Long>emptySet()))
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, in(Collections.<Long>emptySet()))
         .fetch();
     assertTrue(results1.isEmpty());
 
     // NotIn with empty collection
     try {
-      createGenericQuery().from(User.TBL).where(User.SOME_DATETIME, notIn(Collections.<Long>emptySet())).fetch();
+      Database1Query.from(User.TBL).where(User.SOME_DATETIME, notIn(Collections.<Long>emptySet())).fetch();
       fail("Using a NotIn operator with an empty collection should throw an exception.");
     } catch (IllegalArgumentException e) {
       //This is expected
     }
 
     // Contains and In
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.BIO, contains("f"))
         .andWhere(User.NUM_POSTS, in(1, 3, 5))
@@ -260,7 +278,7 @@ public class TestGenericQuery {
     assertEquals("James", results1.get(0).getString(User.HANDLE));
 
     // Not In and Not Equal To
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.HANDLE, notIn("Brad", "Brandon", "Jennifer", "John"))
         .andWhere(User.NUM_POSTS, notEqualTo(5))
@@ -268,16 +286,16 @@ public class TestGenericQuery {
     assertEquals(1, results1.size());
     assertEquals("Casey", results1.get(0).getString(User.HANDLE));
     
-    results1 = createGenericQuery().from(User.TBL).where(User.SOME_DATETIME, isNull()).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, isNull()).fetch();
     assertEquals(3, results1.size());
 
-    results1 = createGenericQuery().from(User.TBL).where(User.SOME_DATETIME, isNotNull()).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, isNotNull()).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("James", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // If a null parameter is passed, an exception should be thrown
     try {
-      createGenericQuery().from(User.TBL).where(User.HANDLE, in(null, "brandon")).fetch();
+      Database1Query.from(User.TBL).where(User.HANDLE, in(null, "brandon")).fetch();
       fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
       // This exception is expected
@@ -304,7 +322,7 @@ public class TestGenericQuery {
     userH.save();
 
     // A query with no results should return an empty list.
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, equalTo(3))
         .andWhere(User.BIO, equalTo("CEO"))
@@ -313,7 +331,7 @@ public class TestGenericQuery {
     assertTrue(results1.isEmpty());
 
     // A simple query with single result should return a list with one element.
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.BIO, equalTo("Analyst"))
         .orderBy(User.ID)
@@ -322,7 +340,7 @@ public class TestGenericQuery {
     assertEquals("C", results1.get(0).getString(User.HANDLE));
 
     // A chained query with single result should return a list with one element.
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.HANDLE, equalTo("A"))
         .andWhere(User.BIO, equalTo("CEO"))
@@ -334,12 +352,12 @@ public class TestGenericQuery {
 
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, equalTo(3))
         .orderBy(User.BIO)
         .fetch();
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, equalTo(3))
         .orderBy(User.BIO, ASC)
@@ -352,7 +370,7 @@ public class TestGenericQuery {
 
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, equalTo(3))
         .orderBy(User.BIO, DESC)
@@ -364,7 +382,7 @@ public class TestGenericQuery {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, greaterThan(0))
         .orderBy(User.NUM_POSTS, ASC)
@@ -382,7 +400,7 @@ public class TestGenericQuery {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, greaterThan(0))
         .orderBy(User.SOME_DECIMAL)
@@ -409,7 +427,7 @@ public class TestGenericQuery {
       sampleUsers[i].save();
     }
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, lessThan(5))
         .orderBy(User.NUM_POSTS)
@@ -420,7 +438,7 @@ public class TestGenericQuery {
       assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i);
     }
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, greaterThan(3))
         .orderBy(User.NUM_POSTS)
@@ -431,7 +449,7 @@ public class TestGenericQuery {
       assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i + 6);
     }
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, lessThan(5))
         .orderBy(User.NUM_POSTS)
@@ -439,7 +457,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(User.TBL)
         .where(User.NUM_POSTS, greaterThan(3))
         .orderBy(User.NUM_POSTS)
@@ -457,7 +475,7 @@ public class TestGenericQuery {
 
     // The SELECT clause must be specified for any query with GROUP BY clause
     try {
-      results2 = createGenericQuery()
+      results2 = Database1Query
           .from(User.TBL)
           .groupBy(User.HANDLE)
           .fetch();
@@ -469,7 +487,7 @@ public class TestGenericQuery {
     // A query with GROUP BY clause cannot have a non-aggregated and non-grouped column in the SELECT list
     try {
       // users.bio is illegal
-      results2 = createGenericQuery()
+      results2 = Database1Query
           .from(User.TBL)
           .select(User.HANDLE, User.BIO, MAX(User.NUM_POSTS))
           .groupBy(User.HANDLE)
@@ -480,7 +498,7 @@ public class TestGenericQuery {
     }
 
     // Test Max
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .select(User.HANDLE, MAX(User.NUM_POSTS))
         .groupBy(User.HANDLE)
@@ -493,7 +511,7 @@ public class TestGenericQuery {
     assertTrue(results2.get(1).getInt(MAX(User.NUM_POSTS)) == 99);
 
     // Test Min
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .select(User.HANDLE, MIN(User.NUM_POSTS))
         .groupBy(User.HANDLE)
@@ -503,7 +521,7 @@ public class TestGenericQuery {
     assertTrue(results2.get(1).getInt(MIN(User.NUM_POSTS)) == 1);
 
     // Test Count
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .select(User.HANDLE, COUNT(User.NUM_POSTS))
         .groupBy(User.HANDLE)
@@ -513,7 +531,7 @@ public class TestGenericQuery {
     assertTrue(results2.get(1).getInt(COUNT(User.NUM_POSTS)) == 50);
 
     // Test Sum
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .select(User.HANDLE, SUM(User.NUM_POSTS))
         .groupBy(User.HANDLE)
@@ -524,7 +542,7 @@ public class TestGenericQuery {
     assertTrue(results2.get(1).getInt(SUM(User.NUM_POSTS)) == 2500);
 
     // Test Avg
-    results2 = createGenericQuery()
+    results2 = Database1Query
         .from(User.TBL)
         .select(User.HANDLE, AVG(User.NUM_POSTS))
         .groupBy(User.HANDLE)
@@ -552,7 +570,7 @@ public class TestGenericQuery {
     commentC = comments.create("Comment C on Post C from User B", userB.getIntId(), postC.getIntId(), datetime);
     commentD = comments.create("Comment D on Post E from User C", userC.getIntId(), postE.getIntId(), datetime);
 
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(Comment.TBL)
         .leftJoin(User.TBL).on(User.ID, Comment.COMMENTER_ID)
         .leftJoin(Post.TBL).on(Post.ID, Comment.COMMENTED_ON_ID)
@@ -619,7 +637,7 @@ public class TestGenericQuery {
     User.Tbl bios = User.Tbl.as("bios");
 
     // test simple table alias
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(handlers)
         .orderBy(handlers.HANDLE)
         .fetch();
@@ -628,7 +646,7 @@ public class TestGenericQuery {
     assertTrue(results1.get(0).getLong(handlers.ID) == userD.getId());
 
     // test self join with table alias
-    results1 = createGenericQuery()
+    results1 = Database1Query
         .from(handlers)
         .innerJoin(bios).on(handlers.BIO, bios.HANDLE)
         .orderBy(bios.HANDLE)
