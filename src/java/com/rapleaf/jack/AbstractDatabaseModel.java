@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -776,7 +775,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   private void logRetryAttempt(String statementString, Throwable cause) {
-    LOG.warn("Query failed: " + statementString + "\n" + ExceptionUtils.getFullStackTrace(cause) + "\n" + "Retrying.");
+    LOG.warn("Query failed: " + statementString + "\n" + "Retrying...", cause);
   }
 
   private void closeQuery(ResultSet resultSet, PreparedStatement statement) {
@@ -790,7 +789,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     } catch (SQLRecoverableException e) {
       conn.resetConnection(e);
     } catch (SQLException e) {
-      LOG.warn(ExceptionUtils.getFullStackTrace(e));
+      LOG.warn("Failed to close query", e);
     }
   }
 }

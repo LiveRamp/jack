@@ -10,9 +10,4 @@ public class IsNull<V> extends WhereOperator<V> {
   public String getSqlStatement() {
     return "IS NULL";
   }
-
-  @Override
-  public boolean apply(V value) {
-    return value == null;
-  }
 }

@@ -30,14 +30,4 @@ public class NotIn<V> extends WhereOperator<V> {
     sb.append(")");
     return sb.toString();
   }
-
-  @Override
-  public boolean apply(V value) {
-    for (V param : getParameters()) {
-      if (param.equals(value)) {
-        return false;
-      }
-    }
-    return true;
-  }
 }
