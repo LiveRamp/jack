@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.Column;
-import com.rapleaf.jack.Table;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public abstract class GenericQuery {

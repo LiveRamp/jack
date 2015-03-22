@@ -1,7 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import com.rapleaf.jack.Column;
-
 public class AggregatedColumn extends Column {
 
   private enum Function {

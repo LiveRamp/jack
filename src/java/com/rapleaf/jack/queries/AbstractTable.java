@@ -1,10 +1,13 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
+import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.Table;
 
 public class AbstractTable implements Table {
   protected final String table;

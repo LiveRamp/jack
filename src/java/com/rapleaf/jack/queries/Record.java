@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.rapleaf.jack.Column;
 import com.rapleaf.jack.ModelWithId;
 
 public class Record {

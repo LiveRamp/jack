@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.rapleaf.jack.Column;
-
 public class Records implements Iterable<Record> {
   private final List<Record> records;
 

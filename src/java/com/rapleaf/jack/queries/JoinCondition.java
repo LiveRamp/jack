@@ -1,8 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import com.rapleaf.jack.Column;
-import com.rapleaf.jack.Table;
-
 public class JoinCondition implements QueryCondition {
   private final JoinType joinType;
   private final Table table;

@@ -1,8 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import com.rapleaf.jack.Column;
-import com.rapleaf.jack.Table;
-
 public class JoinConditionBuilder {
   private final GenericQuery genericQuery;
   private final JoinType joinType;

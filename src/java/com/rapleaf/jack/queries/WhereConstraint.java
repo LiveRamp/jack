@@ -2,7 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.util.List;
 
-import com.rapleaf.jack.Column;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class WhereConstraint<T> implements QueryCondition {

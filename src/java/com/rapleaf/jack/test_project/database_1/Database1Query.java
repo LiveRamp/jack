@@ -1,7 +1,7 @@
 package com.rapleaf.jack.test_project.database_1;
 
 import com.rapleaf.jack.DatabaseConnection;
-import com.rapleaf.jack.Table;
+import com.rapleaf.jack.queries.Table;
 import com.rapleaf.jack.queries.GenericQuery;
 
 public class Database1Query extends GenericQuery {
