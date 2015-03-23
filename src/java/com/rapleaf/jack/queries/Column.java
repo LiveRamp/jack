@@ -1,5 +1,18 @@
 package com.rapleaf.jack.queries;
 
+import com.rapleaf.jack.queries.where_operators.Between;
+import com.rapleaf.jack.queries.where_operators.EqualTo;
+import com.rapleaf.jack.queries.where_operators.GreaterThan;
+import com.rapleaf.jack.queries.where_operators.GreaterThanOrEqualTo;
+import com.rapleaf.jack.queries.where_operators.In;
+import com.rapleaf.jack.queries.where_operators.IsNotNull;
+import com.rapleaf.jack.queries.where_operators.IsNull;
+import com.rapleaf.jack.queries.where_operators.LessThan;
+import com.rapleaf.jack.queries.where_operators.LessThanOrEqualTo;
+import com.rapleaf.jack.queries.where_operators.Match;
+import com.rapleaf.jack.queries.where_operators.NotEqualTo;
+import com.rapleaf.jack.queries.where_operators.NotIn;
+
 public class Column {
   private static String DEFAULT_ID_FIELD = "id";
 
@@ -53,6 +66,54 @@ public class Column {
     }
 
     return sqlKeyword.toString();
+  }
+
+  public <T> GenericConstraint<T> isNotNull() {
+    return new GenericConstraint<T>(this, new IsNotNull<T>());
+  }
+
+  public <T> GenericConstraint<T> isNull() {
+    return new GenericConstraint<T>(this, new IsNull<T>());
+  }
+
+  public <T> GenericConstraint<T> equalTo(T value) {
+    return new GenericConstraint<T>(this, new EqualTo<T>(value));
+  }
+
+  public <T> GenericConstraint<T> notEqualTo(T value) {
+    return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
+  }
+
+  public <T extends Comparable<T>> GenericConstraint<T> greaterThan(T value) {
+    return new GenericConstraint<T>(this, new GreaterThan<T>(value));
+  }
+
+  public <T extends Comparable<T>> GenericConstraint<T> greaterThanOrEqualTo(T value) {
+    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
+  }
+
+  public <T extends Comparable<T>> GenericConstraint<T> lessThan(T value) {
+    return new GenericConstraint<T>(this, new LessThan<T>(value));
+  }
+
+  public <T extends Comparable<T>> GenericConstraint<T> lessThanOrEqualTo(T value) {
+    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
+  }
+
+  public <T extends Comparable<T>> GenericConstraint<T> between (T min, T max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> in(T value, T... otherValues) {
+    return new GenericConstraint<T>(this, new In<T>(value, otherValues));
+  }
+
+  public <T> GenericConstraint<T> notIn(T value, T... otherValues) {
+    return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
+  }
+
+  public GenericConstraint<String> match(String pattern) {
+    return new GenericConstraint<String>(this, new Match(pattern));
   }
 
   @Override
