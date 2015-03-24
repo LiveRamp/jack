@@ -110,6 +110,44 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    // query with various where logic
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.BIO.equalTo("Trader"),
+               User.NUM_POSTS.equalTo(1).or(User.NUM_POSTS.equalTo(2)).or(User.NUM_POSTS.equalTo(3)))
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.NUM_POSTS.between(1, 2),
+               User.BIO.equalTo("CEO")
+                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B")))
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.NUM_POSTS.between(1, 2),
+               User.BIO.equalTo("CEO")
+                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B"))
+                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.NUM_POSTS.between(1, 2))
+        .where(User.BIO.equalTo("CEO")
+            .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B"))
+            .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
   }
 
   @Test
@@ -198,6 +236,21 @@ public class TestGenericQuery {
     assertTrue(Math.abs(1.3 - doubles.get(2)) < 0.00001);
 
     assertEquals(Lists.newArrayList(true, false, true), results1.getBooleans(User.SOME_BOOLEAN));
+
+    assertEquals(
+        Lists.newArrayList((Long)null, (Long)null, (Long)null),
+        results1.getLongs(User.SOME_DATETIME)
+    );
+
+    assertEquals(
+        Lists.newArrayList((String)null, (String)null, (String)null),
+        results1.getStrings(User.BIO)
+    );
+
+    assertEquals(
+        Lists.newArrayList((Double)null, (Double)null, (Double)null),
+        results1.getDoubles(User.SOME_DECIMAL)
+    );
   }
 
   @Test

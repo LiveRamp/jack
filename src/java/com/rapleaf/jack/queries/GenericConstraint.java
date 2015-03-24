@@ -11,18 +11,18 @@ import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 public class GenericConstraint<T> implements QueryCondition {
   private final Column column;
   private final IWhereOperator<T> operator;
-  private final List<List<GenericConstraint>> orConstraints;
+  private final List<List<GenericConstraint>> chainedOrConstraints;
 
   GenericConstraint(Column column, IWhereOperator<T> operator) {
     this.column = column;
     this.operator = operator;
-    this.orConstraints = Lists.newArrayList();
+    this.chainedOrConstraints = Lists.newArrayList();
   }
 
   public GenericConstraint or(GenericConstraint constraint, GenericConstraint... constraints) {
-    List<GenericConstraint> andConstraints = Lists.newArrayList(constraint);
-    andConstraints.addAll(Arrays.asList(constraints));
-    this.orConstraints.add(andConstraints);
+    List<GenericConstraint> chainedAndConstraints = Lists.newArrayList(constraint);
+    chainedAndConstraints.addAll(Arrays.asList(constraints));
+    this.chainedOrConstraints.add(chainedAndConstraints);
     return this;
   }
 
@@ -30,7 +30,7 @@ public class GenericConstraint<T> implements QueryCondition {
   public List getParameters() {
     List parameters = Lists.newArrayList();
     parameters.addAll(operator.getParameters());
-    for (List<GenericConstraint> orConstraint : orConstraints) {
+    for (List<GenericConstraint> orConstraint : chainedOrConstraints) {
       for (GenericConstraint andConstraint : orConstraint) {
         parameters.addAll(andConstraint.getParameters());
       }
@@ -44,10 +44,10 @@ public class GenericConstraint<T> implements QueryCondition {
         .append(column.getSqlKeyword()).append(" ")
         .append(operator.getSqlStatement());
 
-    for (List<GenericConstraint> orConstraint : orConstraints) {
+    for (List<GenericConstraint> orConstraints : chainedOrConstraints) {
       statement.append(" OR ");
 
-      Iterator<GenericConstraint> it = orConstraint.iterator();
+      Iterator<GenericConstraint> it = orConstraints.iterator();
       while (it.hasNext()) {
         statement.append(it.next().getSqlStatement());
         if (it.hasNext()) {
