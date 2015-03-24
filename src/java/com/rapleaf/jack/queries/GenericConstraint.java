@@ -26,6 +26,18 @@ public class GenericConstraint<T> implements QueryCondition {
     return this;
   }
 
+  @SuppressWarnings("unchecked")
+  public List getParameters() {
+    List parameters = Lists.newArrayList();
+    parameters.addAll(operator.getParameters());
+    for (List<GenericConstraint> orConstraint : orConstraints) {
+      for (GenericConstraint andConstraint : orConstraint) {
+        parameters.addAll(andConstraint.getParameters());
+      }
+    }
+    return parameters;
+  }
+
   @Override
   public String getSqlStatement() {
     StringBuilder statement = new StringBuilder("(")

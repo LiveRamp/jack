@@ -29,20 +29,6 @@ import static com.rapleaf.jack.queries.AggregatedColumn.MIN;
 import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.between;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.contains;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.endsWith;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.equalTo;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThan;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThanOrEqualTo;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.in;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.isNotNull;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.isNull;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThan;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThanOrEqualTo;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.notEqualTo;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.notIn;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.startsWith;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,7 +37,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestGenericQuery {
-
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
   private static final IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
 
@@ -87,34 +72,42 @@ public class TestGenericQuery {
     userD.save();
 
     // query with no select clause should return all the columns
-    results1 = Database1Query.from(User.TBL).fetch();
+    results1 = Database1Query
+        .from(User.TBL)
+        .fetch();
     assertFalse(results1.isEmpty());
     assertEquals(11, results1.get(0).columnCount());
 
     // query with only select clause should return all records with the specified columns
-    results1 = Database1Query.from(User.TBL).select(User.ID).fetch();
+    results1 = Database1Query
+        .from(User.TBL)
+        .select(User.ID)
+        .fetch();
     assertEquals(4, results1.size());
     assertEquals(1, results1.get(0).columnCount());
 
     // query with no result
-    results1 = Database1Query.from(User.TBL).where(User.ID, equalTo(999L)).fetch();
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.ID.equalTo(999L))
+        .fetch();
     assertTrue(results1.isEmpty());
 
-    // the first WHERE clause will automatically drop the logic
-    results1 = Database1Query.from(User.TBL).andWhere(User.ID, equalTo(userA.getId())).fetch();
-    assertEquals(1, results1.size());
-
-    // the non-first WHERE clause without a logic specification will default to AND
-    results1 = Database1Query.from(User.TBL).where(User.ID, lessThan(999L)).where(User.BIO, equalTo("Janitor")).fetch();
-    assertEquals(1, results1.size());
-
     // query with and clause
-    results1 = Database1Query.from(User.TBL).where(User.BIO, equalTo("Trader")).andWhere(User.HANDLE, equalTo("B")).fetch();
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.BIO.equalTo("Trader"),
+               User.HANDLE.equalTo("B"))
+        .fetch();
     assertEquals(1, results1.size());
     assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
 
     // query with or clause
-    results1 = Database1Query.from(User.TBL).where(User.HANDLE, equalTo("A")).orWhere(User.HANDLE, equalTo("B")).fetch();
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.HANDLE.equalTo("A")
+            .or(User.HANDLE.equalTo("B")))
+        .fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
   }
@@ -221,48 +214,48 @@ public class TestGenericQuery {
     james.save();
 
     // Equal To
-    results1 = Database1Query.from(User.TBL).where(User.HANDLE, equalTo("Brad")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.HANDLE.equalTo("Brad")).fetch();
     assertEquals(1, results1.size());
     assertEquals("Brad", results1.get(0).getString(User.HANDLE));
 
     // Between
-    results1 = Database1Query.from(User.TBL).where(User.NUM_POSTS, between(4, 8)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.NUM_POSTS.between(4, 8)).fetch();
     assertEquals(1, results1.size());
     assertEquals("James", results1.get(0).getString(User.HANDLE));
 
     // Less Than
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, lessThan(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThan(2L)).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Greater Than
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThan(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThan(1L)).fetch();
     assertEquals(3, results1.size());
 
     // Less Than Or Equal To
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, lessThanOrEqualTo(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThanOrEqualTo(2L)).fetch();
     assertEquals(4, results1.size());
 
     // Greater Than Or Equal To
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS, greaterThanOrEqualTo(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThanOrEqualTo(1L)).fetch();
     assertEquals(5, results1.size());
 
     // Ends With
-    results1 = Database1Query.from(User.TBL).where(User.BIO, endsWith("er")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.BIO.endsWith("er")).fetch();
     assertEquals(5, results1.size());
 
     // StartsWith
-    results1 = Database1Query.from(User.TBL).where(User.BIO, startsWith("er")).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.BIO.startsWith("er")).fetch();
     assertTrue(results1.isEmpty());
 
     // In with empty collection
-    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, in(Collections.<Long>emptySet()))
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME.in(Collections.<Long>emptySet()))
         .fetch();
     assertTrue(results1.isEmpty());
 
     // NotIn with empty collection
     try {
-      Database1Query.from(User.TBL).where(User.SOME_DATETIME, notIn(Collections.<Long>emptySet())).fetch();
+      Database1Query.from(User.TBL).where(User.SOME_DATETIME.notIn(Collections.<Long>emptySet())).fetch();
       fail("Using a NotIn operator with an empty collection should throw an exception.");
     } catch (IllegalArgumentException e) {
       //This is expected
@@ -271,8 +264,8 @@ public class TestGenericQuery {
     // Contains and In
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.BIO, contains("f"))
-        .andWhere(User.NUM_POSTS, in(1, 3, 5))
+        .where(User.BIO.contains("f"),
+            User.NUM_POSTS.in(1, 3, 5))
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("James", results1.get(0).getString(User.HANDLE));
@@ -280,22 +273,22 @@ public class TestGenericQuery {
     // Not In and Not Equal To
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.HANDLE, notIn("Brad", "Brandon", "Jennifer", "John"))
-        .andWhere(User.NUM_POSTS, notEqualTo(5))
+        .where(User.HANDLE.notIn("Brad", "Brandon", "Jennifer", "John"),
+               User.NUM_POSTS.notEqualTo(5))
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("Casey", results1.get(0).getString(User.HANDLE));
     
-    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, isNull()).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME.isNull()).fetch();
     assertEquals(3, results1.size());
 
-    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME, isNotNull()).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.SOME_DATETIME.isNotNull()).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("James", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // If a null parameter is passed, an exception should be thrown
     try {
-      Database1Query.from(User.TBL).where(User.HANDLE, in(null, "brandon")).fetch();
+      Database1Query.from(User.TBL).where(User.HANDLE.in(null, "brandon")).fetch();
       fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
       // This exception is expected
@@ -324,8 +317,8 @@ public class TestGenericQuery {
     // A query with no results should return an empty list.
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, equalTo(3))
-        .andWhere(User.BIO, equalTo("CEO"))
+        .where(User.NUM_POSTS.equalTo(3),
+            User.BIO.equalTo("CEO"))
         .orderBy(User.ID)
         .fetch();
     assertTrue(results1.isEmpty());
@@ -333,7 +326,7 @@ public class TestGenericQuery {
     // A simple query with single result should return a list with one element.
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.BIO, equalTo("Analyst"))
+        .where(User.BIO.equalTo("Analyst"))
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());
@@ -342,9 +335,9 @@ public class TestGenericQuery {
     // A chained query with single result should return a list with one element.
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.HANDLE, equalTo("A"))
-        .andWhere(User.BIO, equalTo("CEO"))
-        .andWhere(User.NUM_POSTS, equalTo(1))
+        .where(User.HANDLE.equalTo("A"),
+               User.BIO.equalTo("CEO"),
+               User.NUM_POSTS.equalTo(1))
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());
@@ -354,12 +347,12 @@ public class TestGenericQuery {
     // expected result: [userC, userE, userD]
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, equalTo(3))
+        .where(User.NUM_POSTS.equalTo(3))
         .orderBy(User.BIO)
         .fetch();
     results2 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, equalTo(3))
+        .where(User.NUM_POSTS.equalTo(3))
         .orderBy(User.BIO, ASC)
         .fetch();
     assertEquals(3, results1.size());
@@ -372,7 +365,7 @@ public class TestGenericQuery {
     // expected result: [userD, userE, userC]
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, equalTo(3))
+        .where(User.NUM_POSTS.equalTo(3))
         .orderBy(User.BIO, DESC)
         .fetch();
     assertEquals(3, results1.size());
@@ -384,7 +377,7 @@ public class TestGenericQuery {
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, greaterThan(0))
+        .where(User.NUM_POSTS.greaterThan(0))
         .orderBy(User.NUM_POSTS, ASC)
         .orderBy(User.BIO, ASC)
         .fetch();
@@ -402,7 +395,7 @@ public class TestGenericQuery {
     // expected result: [C, H, D, A, F, E, G, B]
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, greaterThan(0))
+        .where(User.NUM_POSTS.greaterThan(0))
         .orderBy(User.SOME_DECIMAL)
         .orderBy(User.BIO, DESC)
         .fetch();
@@ -429,7 +422,7 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, lessThan(5))
+        .where(User.NUM_POSTS.lessThan(5))
         .orderBy(User.NUM_POSTS)
         .limit(3)
         .fetch();
@@ -440,7 +433,7 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, greaterThan(3))
+        .where(User.NUM_POSTS.greaterThan(3))
         .orderBy(User.NUM_POSTS)
         .limit(2, 3)
         .fetch();
@@ -451,7 +444,7 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, lessThan(5))
+        .where(User.NUM_POSTS.lessThan(5))
         .orderBy(User.NUM_POSTS)
         .limit(3)
         .fetch();
@@ -459,7 +452,7 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.NUM_POSTS, greaterThan(3))
+        .where(User.NUM_POSTS.greaterThan(3))
         .orderBy(User.NUM_POSTS)
         .limit(2, 3)
         .fetch();
@@ -622,7 +615,7 @@ public class TestGenericQuery {
       User.Tbl illegalTable = User.Tbl.as(null);
       fail();
     } catch (IllegalArgumentException e) {
-      // exptected
+      // expected
     }
 
     // table alias cannot be empty
@@ -630,7 +623,7 @@ public class TestGenericQuery {
       User.Tbl illegalTable = User.Tbl.as("");
       fail();
     } catch (IllegalArgumentException e) {
-      // exptected
+      // expected
     }
 
     User.Tbl handlers = User.Tbl.as("handlers");

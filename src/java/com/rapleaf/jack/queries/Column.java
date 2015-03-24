@@ -1,5 +1,7 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Collection;
+
 import com.rapleaf.jack.queries.where_operators.Between;
 import com.rapleaf.jack.queries.where_operators.EqualTo;
 import com.rapleaf.jack.queries.where_operators.GreaterThan;
@@ -77,11 +79,19 @@ public class Column {
   }
 
   public <T> GenericConstraint<T> equalTo(T value) {
-    return new GenericConstraint<T>(this, new EqualTo<T>(value));
+    if (value != null) {
+      return new GenericConstraint<T>(this, new EqualTo<T>(value));
+    } else {
+      return new GenericConstraint<T>(this, new IsNull<T>());
+    }
   }
 
   public <T> GenericConstraint<T> notEqualTo(T value) {
-    return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
+    if (value != null) {
+      return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
+    } else {
+      return new GenericConstraint<T>(this, new IsNotNull<T>());
+    }
   }
 
   public <T extends Comparable<T>> GenericConstraint<T> greaterThan(T value) {
@@ -100,7 +110,7 @@ public class Column {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> between (T min, T max) {
+  public <T extends Comparable<T>> GenericConstraint<T> between(T min, T max) {
     return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
@@ -108,12 +118,32 @@ public class Column {
     return new GenericConstraint<T>(this, new In<T>(value, otherValues));
   }
 
+  public <T> GenericConstraint<T> in(Collection<T> values) {
+    return new GenericConstraint<T>(this, new In<T>(values));
+  }
+
   public <T> GenericConstraint<T> notIn(T value, T... otherValues) {
     return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
   }
 
-  public GenericConstraint<String> match(String pattern) {
+  public <T> GenericConstraint<T> notIn(Collection<T> values) {
+    return new GenericConstraint<T>(this, new NotIn<T>(values));
+  }
+
+  public GenericConstraint<String> matches(String pattern) {
     return new GenericConstraint<String>(this, new Match(pattern));
+  }
+
+  public GenericConstraint<String> contains(String string) {
+    return new GenericConstraint<String>(this, new Match("%" + string + "%"));
+  }
+
+  public GenericConstraint<String> startsWith(String start) {
+    return new GenericConstraint<String>(this, new Match(start + "%"));
+  }
+
+  public GenericConstraint<String> endsWith(String end) {
+    return new GenericConstraint<String>(this, new Match("%" + end));
   }
 
   @Override

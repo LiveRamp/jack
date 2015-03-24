@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public abstract class GenericQuery {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
@@ -27,7 +26,7 @@ public abstract class GenericQuery {
   private final BaseDatabaseConnection dbConnection;
   private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
-  private final List<WhereConstraint> whereConstraints;
+  private final List<GenericConstraint> whereConstraints;
   private final List<OrderCriterion> orderCriteria;
   private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
@@ -61,30 +60,10 @@ public abstract class GenericQuery {
     this.joinConditions.add(joinCondition);
   }
 
-  public <T> GenericQuery where(Column column, IWhereOperator<T> operator) {
-    addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.AND));
+  public GenericQuery where(GenericConstraint constraint, GenericConstraint... constraints) {
+    this.whereConstraints.add(constraint);
+    this.whereConstraints.addAll(Arrays.asList(constraints));
     return this;
-  }
-
-  public <T> GenericQuery andWhere(Column column, IWhereOperator<T> operator) {
-    addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.AND));
-    return this;
-  }
-
-  public <T> GenericQuery orWhere(Column column, IWhereOperator<T> operator) {
-    addWhereCondition(new WhereConstraint<T>(column, operator, WhereConstraint.Logic.OR));
-    return this;
-  }
-
-  private void addWhereCondition(WhereConstraint whereConstraint) {
-    if (whereConstraints.isEmpty()) {
-      // the first WHERE constraint cannot specify a logic
-      whereConstraint.setLogic(null);
-    } else if (whereConstraint.getLogic() == null) {
-      // any non-first WHERE constraint without a logic will default to AND
-      whereConstraint.setLogic(WhereConstraint.Logic.AND);
-    }
-    this.whereConstraints.add(whereConstraint);
   }
 
   public GenericQuery orderBy(Column column, QueryOrder queryOrder) {
@@ -149,7 +128,7 @@ public abstract class GenericQuery {
 
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : whereConstraints) {
+    for (GenericConstraint constraint : whereConstraints) {
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
@@ -250,7 +229,7 @@ public abstract class GenericQuery {
   }
 
   private String getWhereClause() {
-    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " ");
+    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " AND ");
   }
 
   private String getGroupByClause() {
