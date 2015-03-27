@@ -58,22 +58,22 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   }
 
   public <%= model_defn.query_builder_name %> order() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> order(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> orderById() {
-    this.addOrder(new OrderCriterion(null, QueryOrder.ASC));
+    this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
   public <%= model_defn.query_builder_name %> orderById(QueryOrder queryOrder) {    
-    this.addOrder(new OrderCriterion(null, queryOrder));
+    this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
 

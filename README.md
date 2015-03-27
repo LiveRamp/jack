@@ -7,7 +7,7 @@ To that end, we've created Jack (**J**ava **AC**tive record (+**K**)). The proje
 
 - a scheme for defining and managing multiple Rails projects that contribute models
 - a Ruby parser for schema.rb and ActiveRecord models that generates Java code
-- a Java library that provides model-oriented database access on top of standard database connections
+- a Java library that provides model-oriented database access and database-wide query on top of standard database connections
 
 Project Organization
 ====
@@ -99,7 +99,7 @@ while there is a unique, per-model interface and implementation that additionall
 
 ### Databases ###
 
-You get one Database per database entry in your project.yml. Their main purpose is to provide a collection of all the individual model persistences.
+You get one Database per database entry in your project.yml. Their main purpose is to provide a collection of all the individual model persistences. You can also execute queries across all models within each database.
 
 ### All Databases ###
 
@@ -135,6 +135,3 @@ Copyright 2014 LiveRamp
 Licensed under the Apache License, Version 2.0
 
 http://www.apache.org/licenses/LICENSE-2.0
-
-
-

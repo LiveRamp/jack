@@ -7,12 +7,11 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -20,13 +19,43 @@ import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.queries.AbstractTable;
+import com.rapleaf.jack.queries.Column;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   
   public static final long serialVersionUID = 6213989608937906012L;
+
+  public static class Tbl extends AbstractTable {
+    public final Column ID;
+    public final Column CONTENT;
+    public final Column COMMENTER_ID;
+    public final Column COMMENTED_ON_ID;
+    public final Column CREATED_AT;
+
+    private Tbl(String alias) {
+      super("comments", alias);
+      this.ID = Column.fromId(alias);
+      this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
+      this.COMMENTER_ID = Column.fromField(alias, _Fields.commenter_id, Integer.class);
+      this.COMMENTED_ON_ID = Column.fromField(alias, _Fields.commented_on_id, Long.class);
+      this.CREATED_AT = Column.fromField(alias, _Fields.created_at, Long.class);
+      Collections.addAll(this.allColumns, ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
+    }
+
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
+    }
+  }
+
+  public static final Tbl TBL = new Tbl("comments");
+  public static final Column ID = TBL.ID;
+  public static final Column CONTENT = TBL.CONTENT;
+  public static final Column COMMENTER_ID = TBL.COMMENTER_ID;
+  public static final Column COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
+  public static final Column CREATED_AT = TBL.CREATED_AT;
 
   private final Attributes attributes;
 

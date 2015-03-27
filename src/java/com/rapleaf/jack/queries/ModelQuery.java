@@ -192,7 +192,7 @@ public class ModelQuery {
 
   public String getLimitClause() {
     if (limitCriterion.isPresent()) {
-      return limitCriterion.get().getSqlClause();
+      return limitCriterion.get().getSqlStatement();
     }
     return "";
   }

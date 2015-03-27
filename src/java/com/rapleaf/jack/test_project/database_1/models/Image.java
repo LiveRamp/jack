@@ -7,12 +7,11 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -20,13 +19,34 @@ import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.queries.AbstractTable;
+import com.rapleaf.jack.queries.Column;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   
   public static final long serialVersionUID = -3351451520429699622L;
+
+  public static class Tbl extends AbstractTable {
+    public final Column ID;
+    public final Column USER_ID;
+
+    private Tbl(String alias) {
+      super("images", alias);
+      this.ID = Column.fromId(alias);
+      this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
+      Collections.addAll(this.allColumns, ID, USER_ID);
+    }
+
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
+    }
+  }
+
+  public static final Tbl TBL = new Tbl("images");
+  public static final Column ID = TBL.ID;
+  public static final Column USER_ID = TBL.USER_ID;
 
   private final Attributes attributes;
 

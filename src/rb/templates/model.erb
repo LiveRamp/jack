@@ -17,12 +17,11 @@
 package <%= root_package %>.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import <%= root_package %>.I<%= db_name %>;
 
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
@@ -30,20 +29,46 @@ import <%= JACK_NAMESPACE %>.BelongsToAssociation;
 import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
 import <%= JACK_NAMESPACE %>.ModelIdWrapper;
+import <%= JACK_NAMESPACE %>.queries.AbstractTable;
+import <%= JACK_NAMESPACE %>.queries.Column;
 
 import <%= project_defn.databases_namespace %>.IDatabases;
-import <%= project_defn.databases_namespace %>.IDatabases;
-
 
 <% model_defn.associations.each do |a| %>
 <% if a.assoc_model.database_defn != model_defn.database_defn %>
-<%= a.assoc_model.import %> 
+<%= a.assoc_model.import %>
 <% end %>
 <% end %>
 
 public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model_name %>, IDatabases> implements Comparable<<%=model_defn.model_name%>>{
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
+
+  public static class Tbl extends AbstractTable {
+    public final Column ID;
+    <% model_defn.fields.each do |field_defn| %>
+    public final Column <%= field_defn.name.upcase %>;
+    <% end %>
+
+    private Tbl(String alias) {
+      super("<%= model_defn.table_name %>", alias);
+      this.ID = Column.fromId(alias);
+      <% model_defn.fields.each do |field_defn| %>
+      this.<%= field_defn.name.upcase %> = Column.fromField(alias, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
+      <% end %>
+      Collections.addAll(this.allColumns, ID<% model_defn.fields.each_with_index do |field_defn, index| %>, <%= field_defn.name.upcase %><% end %>);
+    }
+
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
+    }
+  }
+
+  public static final Tbl TBL = new Tbl("<%= model_defn.table_name %>");
+  public static final Column ID = TBL.ID;
+  <% model_defn.fields.each do |field_defn| %>
+  public static final Column <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
+  <% end %>
 
   private final Attributes attributes;
 

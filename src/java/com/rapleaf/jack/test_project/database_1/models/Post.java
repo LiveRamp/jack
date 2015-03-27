@@ -7,12 +7,11 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -20,13 +19,43 @@ import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.queries.AbstractTable;
+import com.rapleaf.jack.queries.Column;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
   public static final long serialVersionUID = -399049548729901546L;
+
+  public static class Tbl extends AbstractTable {
+    public final Column ID;
+    public final Column TITLE;
+    public final Column POSTED_AT_MILLIS;
+    public final Column USER_ID;
+    public final Column UPDATED_AT;
+
+    private Tbl(String alias) {
+      super("posts", alias);
+      this.ID = Column.fromId(alias);
+      this.TITLE = Column.fromField(alias, _Fields.title, String.class);
+      this.POSTED_AT_MILLIS = Column.fromField(alias, _Fields.posted_at_millis, Long.class);
+      this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
+      this.UPDATED_AT = Column.fromField(alias, _Fields.updated_at, Long.class);
+      Collections.addAll(this.allColumns, ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
+    }
+
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
+    }
+  }
+
+  public static final Tbl TBL = new Tbl("posts");
+  public static final Column ID = TBL.ID;
+  public static final Column TITLE = TBL.TITLE;
+  public static final Column POSTED_AT_MILLIS = TBL.POSTED_AT_MILLIS;
+  public static final Column USER_ID = TBL.USER_ID;
+  public static final Column UPDATED_AT = TBL.UPDATED_AT;
 
   private final Attributes attributes;
 

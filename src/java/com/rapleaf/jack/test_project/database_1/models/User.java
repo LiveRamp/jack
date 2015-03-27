@@ -7,12 +7,11 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -20,13 +19,61 @@ import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.queries.AbstractTable;
+import com.rapleaf.jack.queries.Column;
 
-import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
   public static final long serialVersionUID = -966057050205502149L;
+
+  public static class Tbl extends AbstractTable {
+    public final Column ID;
+    public final Column HANDLE;
+    public final Column CREATED_AT_MILLIS;
+    public final Column NUM_POSTS;
+    public final Column SOME_DATE;
+    public final Column SOME_DATETIME;
+    public final Column BIO;
+    public final Column SOME_BINARY;
+    public final Column SOME_FLOAT;
+    public final Column SOME_DECIMAL;
+    public final Column SOME_BOOLEAN;
+
+    private Tbl(String alias) {
+      super("users", alias);
+      this.ID = Column.fromId(alias);
+      this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
+      this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
+      this.NUM_POSTS = Column.fromField(alias, _Fields.num_posts, Integer.class);
+      this.SOME_DATE = Column.fromField(alias, _Fields.some_date, Long.class);
+      this.SOME_DATETIME = Column.fromField(alias, _Fields.some_datetime, Long.class);
+      this.BIO = Column.fromField(alias, _Fields.bio, String.class);
+      this.SOME_BINARY = Column.fromField(alias, _Fields.some_binary, byte[].class);
+      this.SOME_FLOAT = Column.fromField(alias, _Fields.some_float, Double.class);
+      this.SOME_DECIMAL = Column.fromField(alias, _Fields.some_decimal, Double.class);
+      this.SOME_BOOLEAN = Column.fromField(alias, _Fields.some_boolean, Boolean.class);
+      Collections.addAll(this.allColumns, ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
+    }
+
+    public static Tbl as(String alias) {
+      return new Tbl(alias);
+    }
+  }
+
+  public static final Tbl TBL = new Tbl("users");
+  public static final Column ID = TBL.ID;
+  public static final Column HANDLE = TBL.HANDLE;
+  public static final Column CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
+  public static final Column NUM_POSTS = TBL.NUM_POSTS;
+  public static final Column SOME_DATE = TBL.SOME_DATE;
+  public static final Column SOME_DATETIME = TBL.SOME_DATETIME;
+  public static final Column BIO = TBL.BIO;
+  public static final Column SOME_BINARY = TBL.SOME_BINARY;
+  public static final Column SOME_FLOAT = TBL.SOME_FLOAT;
+  public static final Column SOME_DECIMAL = TBL.SOME_DECIMAL;
+  public static final Column SOME_BOOLEAN = TBL.SOME_BOOLEAN;
 
   private final Attributes attributes;
 

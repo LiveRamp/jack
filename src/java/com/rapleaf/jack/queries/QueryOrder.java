@@ -1,14 +1,9 @@
 package com.rapleaf.jack.queries;
 
 public enum QueryOrder {
-  ASC("ASC"), DESC("DESC");
-  private String queryOrder;
-
-  private QueryOrder(String order) {
-    this.queryOrder = order;
-  }
+  ASC, DESC;
   
   public String getSqlKeyword() {
-    return this.queryOrder;
+    return this.toString();
   }
 }
