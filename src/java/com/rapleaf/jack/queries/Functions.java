@@ -1,15 +1,15 @@
 package com.rapleaf.jack.queries;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.Format;
 import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.time.FastDateFormat;
 
 public class Functions {
-
-  private static final DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+  private static final Format datetimeFormat = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss");
+  private static final Format dateFormat = FastDateFormat.getInstance("yyyy-MM-dd");
 
   public static String DATETIME(long datetime) {
     return datetimeFormat.format(new java.util.Date(datetime));
@@ -32,7 +32,7 @@ public class Functions {
   }
 
   public static String DATE(long date) {
-    return new java.sql.Date(date).toString();
+    return dateFormat.format(date);
   }
 
   public static Collection<String> DATES(long firstDate, long... otherDates) {
