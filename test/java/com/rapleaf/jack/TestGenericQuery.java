@@ -409,11 +409,11 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.SOME_DATETIME.in(DATETIMES(timestampB, timestampC)))
+        .where(User.SOME_DATETIME.in(DATETIMES(timestampB, timestampC, timestampD)))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
-    assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
 
     results1 = Database1Query
         .from(User.TBL)
@@ -469,11 +469,11 @@ public class TestGenericQuery {
 
     results1 = Database1Query
         .from(User.TBL)
-        .where(User.SOME_DATE.in(DATES(timestampB, timestampC)))
+        .where(User.SOME_DATE.in(DATES(timestampB, timestampC, timestampD)))
         .select(User.ID, User.SOME_DATE)
         .fetch();
-    assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
 
     results1 = Database1Query
         .from(User.TBL)
