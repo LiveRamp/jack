@@ -92,6 +92,11 @@ public abstract class GenericQuery {
     return this;
   }
 
+  public GenericQuery select(Collection<Column> columns) {
+    this.selectedColumns.addAll(columns);
+    return this;
+  }
+
   public GenericQuery select(Column column, Column... columns) {
     this.selectedColumns.add(column);
     this.selectedColumns.addAll(Arrays.asList(columns));
@@ -173,7 +178,7 @@ public abstract class GenericQuery {
     }
   }
 
-  private Record parseResultSet(ResultSet queryResultSet) throws SQLException{
+  private Record parseResultSet(ResultSet queryResultSet) throws SQLException {
     if (selectedColumns.isEmpty()) {
       return null;
     }

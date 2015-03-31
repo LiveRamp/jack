@@ -26,6 +26,10 @@ public class Record {
     return columns.size();
   }
 
+  public Map<Column, Object> getColumns() {
+    return columns;
+  }
+
   public Integer getInt(Column column) {
     Object value = checkTypeAndReturnObject(column, Integer.class);
     return value == null ? null : ((Number)value).intValue();
