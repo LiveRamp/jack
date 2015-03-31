@@ -1,5 +1,6 @@
 package com.rapleaf.jack;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,10 @@ import static com.rapleaf.jack.queries.AggregatedColumn.COUNT;
 import static com.rapleaf.jack.queries.AggregatedColumn.MAX;
 import static com.rapleaf.jack.queries.AggregatedColumn.MIN;
 import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
+import static com.rapleaf.jack.queries.Functions.DATE;
+import static com.rapleaf.jack.queries.Functions.DATES;
+import static com.rapleaf.jack.queries.Functions.DATETIME;
+import static com.rapleaf.jack.queries.Functions.DATETIMES;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
 import static org.junit.Assert.assertArrayEquals;
@@ -57,7 +62,7 @@ public class TestGenericQuery {
     posts.deleteAll();
     results1 = null;
     results2 = null;
-    datetime = System.currentTimeMillis() % 1000 * 1000;  // sql timestamp does not support nano resolution
+    datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
   }
 
   @Test
@@ -255,11 +260,11 @@ public class TestGenericQuery {
 
   @Test
   public void testQueryOperators() throws Exception {
-    User brad = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(1L);
-    User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(1L).setSomeDatetime(0L);
-    User casey = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(2L);
-    User john = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(2L);
-    User james = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(3L).setSomeDatetime(1000000L);
+    User brad = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(datetime - 1L);
+    User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(datetime - 1L).setSomeDatetime(datetime);
+    User casey = users.createDefaultInstance().setHandle("Casey").setBio("Singer").setNumPosts(2).setCreatedAtMillis(datetime);
+    User john = users.createDefaultInstance().setHandle("John").setBio("Ice skater").setNumPosts(3).setCreatedAtMillis(datetime);
+    User james = users.createDefaultInstance().setHandle("James").setBio("Surfer").setNumPosts(5).setCreatedAtMillis(datetime + 1L).setSomeDatetime(datetime);
     brad.save();
     brandon.save();
     casey.save();
@@ -277,20 +282,22 @@ public class TestGenericQuery {
     assertEquals("James", results1.get(0).getString(User.HANDLE));
 
     // Less Than
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThan(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThan(datetime)).fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Greater Than
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThan(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThan(datetime - 1)).fetch();
     assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet("Casey", "John", "James"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Less Than Or Equal To
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThanOrEqualTo(2L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.lessThanOrEqualTo(datetime)).fetch();
     assertEquals(4, results1.size());
+    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
 
     // Greater Than Or Equal To
-    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThanOrEqualTo(1L)).fetch();
+    results1 = Database1Query.from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThanOrEqualTo(datetime - 1)).fetch();
     assertEquals(5, results1.size());
 
     // Ends With
@@ -346,6 +353,135 @@ public class TestGenericQuery {
     } catch (IllegalArgumentException e) {
       // This exception is expected
     }
+  }
+
+  @Test
+  public void testFunctions() throws Exception {
+    long timestampA = Timestamp.valueOf("2015-03-01 03:10:01").getTime();
+    long timestampB = Timestamp.valueOf("2015-03-02 04:09:03").getTime();
+    long timestampC = Timestamp.valueOf("2015-03-03 05:08:05").getTime();
+    long timestampD = Timestamp.valueOf("2015-03-04 06:07:07").getTime();
+    long timestampE = Timestamp.valueOf("2015-03-05 07:06:09").getTime();
+
+    // DATETIME
+    userA = users.createDefaultInstance().setSomeDatetime(timestampA);
+    userB = users.createDefaultInstance().setSomeDatetime(timestampB);
+    userC = users.createDefaultInstance().setSomeDatetime(timestampC);
+    userD = users.createDefaultInstance().setSomeDatetime(timestampD);
+    userE = users.createDefaultInstance().setSomeDatetime(timestampE);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+    userE.save();
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.equalTo(DATETIME(timestampA)))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(1, results1.size());
+    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.lessThan(DATETIME(timestampB)))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(1, results1.size());
+    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.lessThanOrEqualTo(DATETIME(timestampB)))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.between(DATETIME(timestampB), DATETIME(timestampD)))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.in(DATETIMES(timestampB, timestampC, timestampD)))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATETIME.in(DATETIMES(Sets.newHashSet(timestampB, timestampC))))
+        .select(User.ID, User.SOME_DATETIME)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    // DATE
+    userA = users.createDefaultInstance().setSomeDate(timestampA);
+    userB = users.createDefaultInstance().setSomeDate(timestampB);
+    userC = users.createDefaultInstance().setSomeDate(timestampC);
+    userD = users.createDefaultInstance().setSomeDate(timestampD);
+    userE = users.createDefaultInstance().setSomeDate(timestampE);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+    userE.save();
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.equalTo(DATE(timestampA)))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(1, results1.size());
+    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.lessThan(DATE(timestampB)))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(1, results1.size());
+    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.lessThanOrEqualTo(DATE(timestampB)))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.between(DATE(timestampB), DATE(timestampD)))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.in(DATES(timestampB, timestampC, timestampD)))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+
+    results1 = Database1Query
+        .from(User.TBL)
+        .where(User.SOME_DATE.in(DATES(Sets.newHashSet(timestampB, timestampC))))
+        .select(User.ID, User.SOME_DATE)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
   }
 
   @Test
