@@ -6,12 +6,6 @@
  */
 package com.rapleaf.jack.test_project;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Map;
-
-import org.jvyaml.YAML;
-
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.DatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -25,19 +19,10 @@ public class DatabasesImpl implements IDatabases {
   }
 
   public DatabasesImpl() {
-    // load database info from config folder
-    Map env_info;
-    try {
-      env_info  = (Map)YAML.load(new FileReader("config/environment.yml"));
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-      this.database1 = new Database1Impl(new DatabaseConnection("database1"), this);
-
+    this.database1 = new Database1Impl(new DatabaseConnection("database1"), this);
   }
 
   public IDatabase1 getDatabase1() {
     return database1;
   }
 }
-
