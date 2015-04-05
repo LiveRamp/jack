@@ -1,14 +1,8 @@
 package com.rapleaf.jack.queries.where_operators;
 
-import com.rapleaf.jack.queries.Column;
-
 public class GreaterThan<V> extends WhereOperator<V> {
 
   public GreaterThan(V value) {
     super("> ?", value);
-  }
-
-  public GreaterThan(Column column) {
-    super("> " + column.getSqlKeyword());
   }
 }

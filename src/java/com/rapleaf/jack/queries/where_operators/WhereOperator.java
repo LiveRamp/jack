@@ -5,10 +5,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.rapleaf.jack.queries.Column;
+
 public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
   private final List<V> parameters;
-  private String sqlStatement;
+  protected String sqlStatement;
 
   protected WhereOperator(String sqlStatement) {
     this.sqlStatement = sqlStatement;
@@ -18,15 +22,23 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
   public WhereOperator(String sqlStatement, V parameter) {
     this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
-    this.parameters.add(parameter);
+    if (!(parameter instanceof Column)) {
+      this.parameters.add(parameter);
+    } else {
+      this.sqlStatement = StringUtils.replaceOnce(this.sqlStatement, "?", ((Column)parameter).getSqlKeyword());
+    }
     ensureNoNullParameter();
   }
 
   public WhereOperator(String sqlStatement, V param1, V param2) {
     this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
-    this.parameters.add(param1);
-    this.parameters.add(param2);
+    if (!(param1 instanceof Column)) {
+      this.parameters.add(param1);
+    }
+    if (!(param2 instanceof Column)) {
+      this.parameters.add(param2);
+    }
     ensureNoNullParameter();
   }
 
