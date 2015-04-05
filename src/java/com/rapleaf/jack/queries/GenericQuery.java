@@ -27,6 +27,7 @@ public class GenericQuery {
   private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
+  private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
   private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
@@ -37,6 +38,7 @@ public class GenericQuery {
     this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
+    this.parameters = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
@@ -101,9 +103,17 @@ public class GenericQuery {
     this.joinConditions.add(joinCondition);
   }
 
+  void addParameters(List parameters) {
+    this.parameters.addAll(parameters);
+  }
+
   public GenericQuery where(GenericConstraint constraint, GenericConstraint... constraints) {
     this.whereConstraints.add(constraint);
-    this.whereConstraints.addAll(Arrays.asList(constraints));
+    this.parameters.addAll(constraint.getParameters());
+    for (GenericConstraint genericConstraint : constraints) {
+      this.whereConstraints.add(genericConstraint);
+      this.parameters.addAll(genericConstraint.getParameters());
+    }
     return this;
   }
 
@@ -174,16 +184,14 @@ public class GenericQuery {
 
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
     int index = 0;
-    for (GenericConstraint constraint : whereConstraints) {
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-          continue;
-        }
-        try {
-          preparedStatement.setObject(++index, parameter);
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
+    for (Object parameter : parameters) {
+      if (parameter == null) {
+        continue;
+      }
+      try {
+        preparedStatement.setObject(++index, parameter);
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
   }
@@ -263,7 +271,7 @@ public class GenericQuery {
         selectedColumns.addAll(table.getAllColumns());
       }
     }
-    return getClauseFromColumns(selectedColumns, "SELECT ", ", ");
+    return getClauseFromColumns(selectedColumns, "SELECT ", ", ", " ");
   }
 
   private String getFromClause() {
@@ -271,22 +279,22 @@ public class GenericQuery {
   }
 
   private String getJoinClause() {
-    return getClauseFromQueryConditions(joinConditions, "", " ");
+    return getClauseFromQueryConditions(joinConditions, "", "", " ");
   }
 
   private String getWhereClause() {
-    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " AND ");
+    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " AND ", " ");
   }
 
   private String getGroupByClause() {
-    return getClauseFromColumns(groupByColumns, "GROUP BY ", ", ");
+    return getClauseFromColumns(groupByColumns, "GROUP BY ", ", ", " ");
   }
 
   private String getOrderClause() {
     if (orderCriteria.isEmpty()) {
       return "";
     } else {
-      return getClauseFromQueryConditions(orderCriteria, "ORDER BY ", ", ");
+      return getClauseFromQueryConditions(orderCriteria, "ORDER BY ", ", ", " ");
     }
   }
 
@@ -298,7 +306,7 @@ public class GenericQuery {
     }
   }
 
-  private String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator) {
+  static String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator, String terminalKeyword) {
     if (columns.isEmpty()) {
       return "";
     }
@@ -312,10 +320,10 @@ public class GenericQuery {
       }
     }
 
-    return clause.append(" ").toString();
+    return clause.append(terminalKeyword).toString();
   }
 
-  private <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator) {
+  static <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator, String terminalKeyword) {
     if (conditions.isEmpty()) {
       return "";
     }
@@ -329,6 +337,6 @@ public class GenericQuery {
       }
     }
 
-    return clause.append(" ").toString();
+    return clause.append(terminalKeyword).toString();
   }
 }

@@ -757,8 +757,8 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(Comment.TBL)
-        .leftJoin(User.TBL).on(User.ID, Comment.COMMENTER_ID)
-        .leftJoin(Post.TBL).on(Post.ID, Comment.COMMENTED_ON_ID)
+        .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID))
+        .leftJoin(Post.TBL).on(Post.ID.equalTo(Comment.COMMENTED_ON_ID))
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
@@ -833,7 +833,7 @@ public class TestGenericQuery {
     // test self join with table alias
     results1 = db.createQuery()
         .from(handlers)
-        .innerJoin(bios).on(handlers.BIO, bios.HANDLE)
+        .innerJoin(bios).on(handlers.BIO.equalTo(bios.HANDLE))
         .orderBy(bios.HANDLE)
         .select(handlers.HANDLE, handlers.BIO, bios.HANDLE, bios.BIO)
         .fetch();
