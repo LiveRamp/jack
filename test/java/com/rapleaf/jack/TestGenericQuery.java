@@ -844,4 +844,43 @@ public class TestGenericQuery {
     assertTrue(results1.get(4).getString(bios.HANDLE).equals("H"));
     assertTrue(results1.get(4).getString(bios.BIO).equals("E"));
   }
+
+  @Test
+  public void testColumnConstraint() throws Exception {
+    userD = users.createDefaultInstance().setHandle("D").setBio("D").setSomeDecimal(0.0).setNumPosts(2).setSomeFloat(3.0);
+    userE = users.createDefaultInstance().setHandle("E").setBio("G").setSomeDecimal(1.0).setNumPosts(9).setSomeFloat(2.0);
+    userF = users.createDefaultInstance().setHandle("F").setBio("F").setSomeDecimal(2.0).setNumPosts(5).setSomeFloat(1.0);
+    userG = users.createDefaultInstance().setHandle("G").setBio("D").setSomeDecimal(3.0).setNumPosts(4).setSomeFloat(5.0);
+    userH = users.createDefaultInstance().setHandle("H").setBio("E").setSomeDecimal(4.0).setNumPosts(6).setSomeFloat(7.0);
+    userD.save();
+    userE.save();
+    userF.save();
+    userG.save();
+    userH.save();
+
+    // test query with column in the constraint
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.HANDLE.equalTo(User.BIO))
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet("D", "F"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL),
+               User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT))
+        .select(User.HANDLE, User.SOME_DECIMAL, User.NUM_POSTS, User.SOME_FLOAT)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.between(User.SOME_DECIMAL, User.SOME_FLOAT))
+        .select(User.NUM_POSTS)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+  }
 }

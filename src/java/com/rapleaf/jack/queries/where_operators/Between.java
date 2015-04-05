@@ -13,7 +13,7 @@ public class Between<V> extends WhereOperator<V> {
     if (!(value1 instanceof Column)) {
       this.parameters.add(value1);
     } else {
-      this.sqlStatement = StringUtils.replaceOnce(this.sqlStatement, "?", ((Column)value2).getSqlKeyword());
+      this.sqlStatement = StringUtils.replaceOnce(this.sqlStatement, "?", ((Column)value1).getSqlKeyword());
     }
 
     if (!(value2 instanceof Column)) {
