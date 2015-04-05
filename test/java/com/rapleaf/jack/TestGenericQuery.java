@@ -10,7 +10,6 @@ import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
