@@ -337,7 +337,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.HANDLE.notIn("Brad", "Brandon", "Jennifer", "John"),
-               User.NUM_POSTS.notEqualTo(5))
+            User.NUM_POSTS.notEqualTo(5))
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("Casey", results1.get(0).getString(User.HANDLE));
@@ -739,7 +739,7 @@ public class TestGenericQuery {
   }
 
   @Test
-  public void testJoinQuery() throws Exception {
+  public void testSimpleJoinQuery() throws Exception {
     userA = users.create("A", datetime, 0, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
     userB = users.create("B", datetime, 0, 1L, datetime, "Byline Editor", new byte[]{(byte)1}, 2.2, 2.02, true);
     userC = users.create("C", datetime, 0, 4L, datetime, "Code Refactor", new byte[]{(byte)2}, 2.2, 2.02, false);
@@ -791,11 +791,11 @@ public class TestGenericQuery {
 
   @Test
   public void testTableAlias() throws Exception {
-    userD = users.createDefaultInstance().setHandle("D").setBio("F");
-    userE = users.createDefaultInstance().setHandle("E").setBio("G");
-    userF = users.createDefaultInstance().setHandle("F").setBio("H");
-    userG = users.createDefaultInstance().setHandle("G").setBio("D");
-    userH = users.createDefaultInstance().setHandle("H").setBio("E");
+    userD = users.createDefaultInstance().setHandle("D").setBio("F").setSomeBoolean(true).setNumPosts(5);
+    userE = users.createDefaultInstance().setHandle("E").setBio("G").setSomeBoolean(true).setNumPosts(4);
+    userF = users.createDefaultInstance().setHandle("F").setBio("H").setSomeBoolean(true).setNumPosts(3);
+    userG = users.createDefaultInstance().setHandle("G").setBio("D").setSomeBoolean(false).setNumPosts(7);
+    userH = users.createDefaultInstance().setHandle("H").setBio("E").setSomeBoolean(false).setNumPosts(5);
     userD.save();
     userE.save();
     userF.save();
@@ -839,15 +839,37 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(5, results1.size());
     assertTrue(results1.get(0).getString(bios.HANDLE).equals("D"));
-    assertTrue(results1.get(0).getString(bios.BIO).equals("F"));
+    assertTrue(results1.get(0).getString(handlers.HANDLE).equals("G"));
     assertTrue(results1.get(1).getString(bios.HANDLE).equals("E"));
-    assertTrue(results1.get(1).getString(bios.BIO).equals("G"));
+    assertTrue(results1.get(1).getString(handlers.HANDLE).equals("H"));
     assertTrue(results1.get(2).getString(bios.HANDLE).equals("F"));
-    assertTrue(results1.get(2).getString(bios.BIO).equals("H"));
+    assertTrue(results1.get(2).getString(handlers.HANDLE).equals("D"));
     assertTrue(results1.get(3).getString(bios.HANDLE).equals("G"));
-    assertTrue(results1.get(3).getString(bios.BIO).equals("D"));
+    assertTrue(results1.get(3).getString(handlers.HANDLE).equals("E"));
     assertTrue(results1.get(4).getString(bios.HANDLE).equals("H"));
-    assertTrue(results1.get(4).getString(bios.BIO).equals("E"));
+    assertTrue(results1.get(4).getString(handlers.HANDLE).equals("F"));
+
+    // test self join with complex conditions
+    // select the entry with the largest num_posts group by some_boolean
+    User.Tbl temp = User.Tbl.as("temp");
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .leftJoin(temp)
+        .on(User.SOME_BOOLEAN.equalTo(temp.SOME_BOOLEAN),
+            User.NUM_POSTS.lessThan(temp.NUM_POSTS))
+        .where(temp.NUM_POSTS.isNull())
+        .orderBy(User.HANDLE)
+        .select(User.HANDLE, User.SOME_BOOLEAN, User.BIO, User.NUM_POSTS)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertTrue(results1.get(0).getString(User.HANDLE).equals("D"));
+    assertTrue(results1.get(0).getString(User.BIO).equals("F"));
+    assertTrue(results1.get(0).getBoolean(User.SOME_BOOLEAN).equals(true));
+    assertTrue(results1.get(0).getInt(User.NUM_POSTS).equals(5));
+    assertTrue(results1.get(1).getString(User.HANDLE).equals("G"));
+    assertTrue(results1.get(1).getString(User.BIO).equals("D"));
+    assertTrue(results1.get(1).getBoolean(User.SOME_BOOLEAN).equals(false));
+    assertTrue(results1.get(1).getInt(User.NUM_POSTS).equals(7));
   }
 
   @Test
