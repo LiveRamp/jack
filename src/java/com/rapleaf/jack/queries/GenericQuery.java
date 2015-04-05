@@ -43,6 +43,26 @@ public abstract class GenericQuery {
     this.limitCriteria = Optional.absent();
   }
 
+  public void setAutoCommit(boolean autoCommit) {
+    this.dbConnection.setAutoCommit(autoCommit);
+  }
+
+  public boolean getAutoCommit() {
+    return this.dbConnection.getAutoCommit();
+  }
+
+  public void commit() {
+    this.dbConnection.commit();
+  }
+
+  public void rollback() {
+    this.dbConnection.rollback();
+  }
+
+  public void resetConnection() {
+    this.dbConnection.resetConnection();
+  }
+
   public JoinConditionBuilder leftJoin(Table table) {
     return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
