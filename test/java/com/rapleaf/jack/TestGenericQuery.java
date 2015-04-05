@@ -279,6 +279,11 @@ public class TestGenericQuery {
     assertEquals(1, results1.size());
     assertEquals("James", results1.get(0).getString(User.HANDLE));
 
+    // Not Between
+    results1 = db.createQuery().from(User.TBL).where(User.NUM_POSTS.notBetween(4, 8)).fetch();
+    assertEquals(4, results1.size());
+    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+
     // Less Than
     results1 = db.createQuery().from(User.TBL).where(User.CREATED_AT_MILLIS.lessThan(datetime)).fetch();
     assertEquals(2, results1.size());
@@ -878,7 +883,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.NUM_POSTS.between(User.SOME_DECIMAL, User.SOME_FLOAT))
-        .select(User.NUM_POSTS)
+        .select(User.HANDLE)
         .fetch();
     assertEquals(3, results1.size());
     assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));

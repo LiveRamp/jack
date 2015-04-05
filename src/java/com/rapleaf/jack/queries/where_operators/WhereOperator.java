@@ -16,7 +16,7 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
   protected WhereOperator(String sqlStatement) {
     this.sqlStatement = sqlStatement;
-    this.parameters = Collections.emptyList();
+    this.parameters = new ArrayList<V>();
   }
 
   protected WhereOperator(String sqlStatement, V parameter) {

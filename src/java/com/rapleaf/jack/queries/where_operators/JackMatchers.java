@@ -62,6 +62,10 @@ public class JackMatchers {
     return new Between<T>(min, max);
   }
 
+  public static <T extends Comparable<T>> NotBetween<T> notBetween(T min, T max) {
+    return new NotBetween<T>(min, max);
+  }
+
   public static Match match(String pattern) {
     return new Match(pattern);
   }

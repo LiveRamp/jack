@@ -2,18 +2,7 @@ package com.rapleaf.jack.queries;
 
 import java.util.Collection;
 
-import com.rapleaf.jack.queries.where_operators.Between;
-import com.rapleaf.jack.queries.where_operators.EqualTo;
-import com.rapleaf.jack.queries.where_operators.GreaterThan;
-import com.rapleaf.jack.queries.where_operators.GreaterThanOrEqualTo;
-import com.rapleaf.jack.queries.where_operators.In;
-import com.rapleaf.jack.queries.where_operators.IsNotNull;
-import com.rapleaf.jack.queries.where_operators.IsNull;
-import com.rapleaf.jack.queries.where_operators.LessThan;
-import com.rapleaf.jack.queries.where_operators.LessThanOrEqualTo;
-import com.rapleaf.jack.queries.where_operators.Match;
-import com.rapleaf.jack.queries.where_operators.NotEqualTo;
-import com.rapleaf.jack.queries.where_operators.NotIn;
+import com.rapleaf.jack.queries.where_operators.*;
 
 public class Column {
   private static String DEFAULT_ID_FIELD = "id";
@@ -112,6 +101,10 @@ public class Column {
 
   public <T> GenericConstraint<T> between(T value1, T value2) {
     return new GenericConstraint<T>(this, new Between<T>(value1, value2));
+  }
+
+  public <T> GenericConstraint<T> notBetween(T value1, T value2) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(value1, value2));
   }
 
   public <T> GenericConstraint<T> in(T value, T... otherValues) {

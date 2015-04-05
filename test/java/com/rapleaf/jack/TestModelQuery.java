@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import junit.framework.TestCase;
 
 import com.rapleaf.jack.queries.AggregatorFunctions;
@@ -93,6 +94,11 @@ public class TestModelQuery extends TestCase {
     result = users.query().whereNumPosts(between(4, 8)).find();
     assertEquals(1, result.size());
     assertTrue(result.contains(james));
+
+    // Not Between
+    result = users.query().whereNumPosts(notBetween(4, 8)).find();
+    assertEquals(4, result.size());
+    assertTrue(result.containsAll(Sets.newHashSet(brad, brandon, casey, john)));
 
     // Less Than
     result = users.query().whereCreatedAtMillis(lessThan(2l)).find();
