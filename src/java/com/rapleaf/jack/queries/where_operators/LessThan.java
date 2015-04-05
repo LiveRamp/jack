@@ -1,18 +1,14 @@
 package com.rapleaf.jack.queries.where_operators;
 
-public class LessThan<V extends Comparable<V>> extends WhereOperator<V> {
+import com.rapleaf.jack.queries.Column;
+
+public class LessThan<V> extends WhereOperator<V> {
 
   public LessThan(V value) {
-    super(value);
-    ensureNoNullParameter();
+    super("< ?", value);
   }
 
-  @Override
-  public String getSqlStatement() {
-    return "< ?";
-  }
-
-  public V getParameter() {
-    return getParameters().get(0);
+  public LessThan(Column column) {
+    super("< " + column.getSqlKeyword());
   }
 }

@@ -94,24 +94,24 @@ public class Column {
     }
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> greaterThan(T value) {
+  public <T> GenericConstraint<T> greaterThan(T value) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(value));
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> greaterThanOrEqualTo(T value) {
+  public <T> GenericConstraint<T> greaterThanOrEqualTo(T value) {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> lessThan(T value) {
+  public <T> GenericConstraint<T> lessThan(T value) {
     return new GenericConstraint<T>(this, new LessThan<T>(value));
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> lessThanOrEqualTo(T value) {
+  public <T> GenericConstraint<T> lessThanOrEqualTo(T value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T extends Comparable<T>> GenericConstraint<T> between(T min, T max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  public <T> GenericConstraint<T> between(T value1, T value2) {
+    return new GenericConstraint<T>(this, new Between<T>(value1, value2));
   }
 
   public <T> GenericConstraint<T> in(T value, T... otherValues) {

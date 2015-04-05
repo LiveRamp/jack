@@ -5,13 +5,11 @@ import java.util.Collection;
 public class NotIn<V> extends WhereOperator<V> {
 
   public NotIn(V value1, V... otherValues) {
-    super(value1, otherValues);
-    ensureNoNullParameter();
+    super(null, value1, otherValues);
   }
 
   public NotIn(Collection<V> values) {
-    super(values);
-    ensureNoNullParameter();
+    super(null, values);
     if (getParameters().isEmpty()) {
       throw new IllegalArgumentException("SQL does not accept an empty list as a parameter of NOT IN().");
     }

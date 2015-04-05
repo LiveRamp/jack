@@ -5,13 +5,11 @@ import java.util.Collection;
 public class In<V> extends WhereOperator<V> {
 
   public In(V value1, V... otherValues) {
-    super(value1, otherValues);
-    ensureNoNullParameter();
+    super(null, value1, otherValues);
   }
 
   public In(Collection<V> collection) {
-    super(collection);
-    ensureNoNullParameter();
+    super(null, collection);
   }
 
   @Override

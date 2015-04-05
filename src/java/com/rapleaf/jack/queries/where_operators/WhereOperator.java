@@ -8,41 +8,52 @@ import java.util.List;
 public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
   private final List<V> parameters;
+  private String sqlStatement;
 
-  protected WhereOperator() {
-    parameters = Collections.emptyList();
+  protected WhereOperator(String sqlStatement) {
+    this.sqlStatement = sqlStatement;
+    this.parameters = Collections.emptyList();
   }
 
-  public WhereOperator(V parameter) {
+  public WhereOperator(String sqlStatement, V parameter) {
+    this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
     this.parameters.add(parameter);
+    ensureNoNullParameter();
   }
 
-  public WhereOperator(V param1, V param2) {
+  public WhereOperator(String sqlStatement, V param1, V param2) {
+    this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     this.parameters.add(param2);
+    ensureNoNullParameter();
   }
 
-  public WhereOperator(V param1, V... otherParam) {
+  public WhereOperator(String sqlStatement, V param1, V... otherParam) {
+    this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     Collections.addAll(this.parameters, otherParam);
+    ensureNoNullParameter();
   }
 
-  public WhereOperator(Collection<V> collection) {
+  public WhereOperator(String sqlStatement, Collection<V> collection) {
+    this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>(collection);
+    ensureNoNullParameter();
   }
 
   public List<V> getParameters() {
     return parameters;
   }
 
-  /*
-  Check that none of the parameters is null.
-  Throw an IllegalArgumentException if a null parameter is found.
-   */
-  public void ensureNoNullParameter() {
+  @Override
+  public String getSqlStatement() {
+    return sqlStatement;
+  }
+
+  void ensureNoNullParameter() {
     for (V parameter : parameters) {
       if (parameter == null) {
         throw new IllegalArgumentException("You cannot pass null parameters.");
