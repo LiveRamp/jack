@@ -11,12 +11,4 @@ public class Between<V extends Comparable<V>> extends WhereOperator<V> {
   public String getSqlStatement() {
     return "BETWEEN ? AND ?";
   }
-
-  public V getMin() {
-    return getParameters().get(0);
-  }
-
-  public V getMax() {
-    return getParameters().get(1);
-  }
 }
