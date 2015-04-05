@@ -40,7 +40,6 @@ EOF
   DB_INTERFACE_TEMPLATE = load_template("templates/db_interface.erb")
   DB_IMPL_TEMPLATE = load_template("templates/db_impl.erb")
   DB_FIXTURES_TEMPLATE = load_template("templates/db_fixtures.erb")
-  DB_QUERY_TEMPLATE = load_template("templates/db_query.erb")
   PERSISTENCE_INTERFACE_TEMPLATE = load_template("templates/persistence_interface.erb")
   MODEL_TEMPLATE = load_template("templates/model.erb")
   PERSISTENCE_IMPL_TEMPLATE = load_template("templates/persistence_impl.erb")
@@ -124,11 +123,6 @@ EOF
     file = File.new("#{output_dir}/Base#{db_name}Fixtures.java", "w")
     file.puts(DB_FIXTURES_TEMPLATE.result(binding))
     file.close
-
-    file = File.new("#{output_dir}/#{db_name}Query.java", "w")
-    file.puts(DB_QUERY_TEMPLATE.result(binding))
-    file.close
-
   end
 
   def self.render_create_method(model_defn, signature, only_not_null = false)

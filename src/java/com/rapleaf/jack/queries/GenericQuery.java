@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
-public abstract class GenericQuery {
+public class GenericQuery {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
@@ -32,7 +32,7 @@ public abstract class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  protected GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
     this.dbConnection = dbConnection;
     this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
@@ -41,6 +41,27 @@ public abstract class GenericQuery {
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.absent();
+  }
+
+  public static Builder create(BaseDatabaseConnection dbConnection) {
+    return new Builder(dbConnection);
+  }
+
+  public static class Builder {
+    private BaseDatabaseConnection dbConnection;
+
+    public Builder(BaseDatabaseConnection dbConnection) {
+      this.dbConnection = dbConnection;
+    }
+
+    public Builder setConnection(BaseDatabaseConnection dbConnection) {
+      this.dbConnection = dbConnection;
+      return this;
+    }
+
+    public GenericQuery from(Table table) {
+      return new GenericQuery(dbConnection, table);
+    }
   }
 
   public void setAutoCommit(boolean autoCommit) {
