@@ -17,6 +17,7 @@
 package <%= root_package %>;
 
 import <%= JACK_NAMESPACE %>.IDb;
+import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 
 <% model_defns.each do |model_defn| %>
 import <%= "#{root_package}.iface.#{model_defn.iface_name};" %>

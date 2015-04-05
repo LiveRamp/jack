@@ -15,7 +15,6 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
 public interface IDatabase1 extends IDb {
   public GenericQuery.Builder createQuery();
-
   public ICommentPersistence comments();
   public IImagePersistence images();
   public IPostPersistence posts();

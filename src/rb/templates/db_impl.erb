@@ -17,9 +17,9 @@
 package <%= root_package %>.impl;
 
 import java.io.IOException;
-import java.sql.Connection;
 
 import <%= root_package %>.I<%=db_name%>;
+import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 
 <% model_defns.each do |model_defn| %>
