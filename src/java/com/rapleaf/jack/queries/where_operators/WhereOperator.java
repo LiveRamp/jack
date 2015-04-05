@@ -11,7 +11,7 @@ import com.rapleaf.jack.queries.Column;
 
 public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
-  private final List<V> parameters;
+  protected final List<V> parameters;
   protected String sqlStatement;
 
   protected WhereOperator(String sqlStatement) {
@@ -19,7 +19,7 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
     this.parameters = Collections.emptyList();
   }
 
-  public WhereOperator(String sqlStatement, V parameter) {
+  protected WhereOperator(String sqlStatement, V parameter) {
     this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
     if (!(parameter instanceof Column)) {
@@ -30,19 +30,7 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
     ensureNoNullParameter();
   }
 
-  public WhereOperator(String sqlStatement, V param1, V param2) {
-    this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>();
-    if (!(param1 instanceof Column)) {
-      this.parameters.add(param1);
-    }
-    if (!(param2 instanceof Column)) {
-      this.parameters.add(param2);
-    }
-    ensureNoNullParameter();
-  }
-
-  public WhereOperator(String sqlStatement, V param1, V... otherParam) {
+  protected WhereOperator(String sqlStatement, V param1, V... otherParam) {
     this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
@@ -50,12 +38,13 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
     ensureNoNullParameter();
   }
 
-  public WhereOperator(String sqlStatement, Collection<V> collection) {
+  protected WhereOperator(String sqlStatement, Collection<V> collection) {
     this.sqlStatement = sqlStatement;
     this.parameters = new ArrayList<V>(collection);
     ensureNoNullParameter();
   }
 
+  @Override
   public List<V> getParameters() {
     return parameters;
   }
