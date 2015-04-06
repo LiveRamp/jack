@@ -1,5 +1,9 @@
 package com.rapleaf.jack.queries;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 public class JoinConditionBuilder {
   private final GenericQuery genericQuery;
   private final JoinType joinType;
@@ -11,8 +15,14 @@ public class JoinConditionBuilder {
     this.table = table;
   }
 
-  public GenericQuery on(Column column1, Column column2) {
-    genericQuery.addJoinCondition(new JoinCondition(joinType, table, column1, column2));
+  public GenericQuery on(GenericConstraint constraint, GenericConstraint... constraints) {
+    List<GenericConstraint> joinConstraints = Lists.newArrayList(constraint);
+    genericQuery.addParameters(constraint.getParameters());
+    for (GenericConstraint genericConstraint : constraints) {
+      joinConstraints.add(genericConstraint);
+      genericQuery.addParameters(genericConstraint.getParameters());
+    }
+    genericQuery.addJoinCondition(new JoinCondition(joinType, table, joinConstraints));
     return genericQuery;
   }
 }

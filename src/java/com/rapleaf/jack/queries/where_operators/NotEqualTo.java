@@ -1,9 +1,13 @@
 package com.rapleaf.jack.queries.where_operators;
 
+import com.google.common.base.Preconditions;
+
+import com.rapleaf.jack.queries.Column;
+
 public class NotEqualTo<V> extends WhereOperator<V> {
 
   public NotEqualTo(V value) {
-    super(value);
+    super("<> ?", value);
     try {
       ensureNoNullParameter();
     } catch (IllegalArgumentException e) {
@@ -12,8 +16,8 @@ public class NotEqualTo<V> extends WhereOperator<V> {
     }
   }
 
-  @Override
-  public String getSqlStatement() {
-    return "<> ?";
+  public NotEqualTo(Column column) {
+    super("<> " + column.getSqlKeyword());
+    Preconditions.checkNotNull(column);
   }
 }

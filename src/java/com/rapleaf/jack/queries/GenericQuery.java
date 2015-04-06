@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
-public abstract class GenericQuery {
+public class GenericQuery {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
@@ -27,20 +27,63 @@ public abstract class GenericQuery {
   private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
+  private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
   private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  protected GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
     this.dbConnection = dbConnection;
     this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
+    this.parameters = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.absent();
+  }
+
+  public static Builder create(BaseDatabaseConnection dbConnection) {
+    return new Builder(dbConnection);
+  }
+
+  public static class Builder {
+    private BaseDatabaseConnection dbConnection;
+
+    public Builder(BaseDatabaseConnection dbConnection) {
+      this.dbConnection = dbConnection;
+    }
+
+    public Builder setConnection(BaseDatabaseConnection dbConnection) {
+      this.dbConnection = dbConnection;
+      return this;
+    }
+
+    public GenericQuery from(Table table) {
+      return new GenericQuery(dbConnection, table);
+    }
+  }
+
+  public void setAutoCommit(boolean autoCommit) {
+    this.dbConnection.setAutoCommit(autoCommit);
+  }
+
+  public boolean getAutoCommit() {
+    return this.dbConnection.getAutoCommit();
+  }
+
+  public void commit() {
+    this.dbConnection.commit();
+  }
+
+  public void rollback() {
+    this.dbConnection.rollback();
+  }
+
+  public void resetConnection() {
+    this.dbConnection.resetConnection();
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
@@ -60,9 +103,17 @@ public abstract class GenericQuery {
     this.joinConditions.add(joinCondition);
   }
 
+  void addParameters(List parameters) {
+    this.parameters.addAll(parameters);
+  }
+
   public GenericQuery where(GenericConstraint constraint, GenericConstraint... constraints) {
     this.whereConstraints.add(constraint);
-    this.whereConstraints.addAll(Arrays.asList(constraints));
+    this.parameters.addAll(constraint.getParameters());
+    for (GenericConstraint genericConstraint : constraints) {
+      this.whereConstraints.add(genericConstraint);
+      this.parameters.addAll(genericConstraint.getParameters());
+    }
     return this;
   }
 
@@ -133,16 +184,14 @@ public abstract class GenericQuery {
 
   private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
     int index = 0;
-    for (GenericConstraint constraint : whereConstraints) {
-      for (Object parameter : constraint.getParameters()) {
-        if (parameter == null) {
-          continue;
-        }
-        try {
-          preparedStatement.setObject(++index, parameter);
-        } catch (SQLException e) {
-          throw new IOException(e);
-        }
+    for (Object parameter : parameters) {
+      if (parameter == null) {
+        continue;
+      }
+      try {
+        preparedStatement.setObject(++index, parameter);
+      } catch (SQLException e) {
+        throw new IOException(e);
       }
     }
   }
@@ -222,7 +271,7 @@ public abstract class GenericQuery {
         selectedColumns.addAll(table.getAllColumns());
       }
     }
-    return getClauseFromColumns(selectedColumns, "SELECT ", ", ");
+    return getClauseFromColumns(selectedColumns, "SELECT ", ", ", " ");
   }
 
   private String getFromClause() {
@@ -230,22 +279,22 @@ public abstract class GenericQuery {
   }
 
   private String getJoinClause() {
-    return getClauseFromQueryConditions(joinConditions, "", " ");
+    return getClauseFromQueryConditions(joinConditions, "", "", " ");
   }
 
   private String getWhereClause() {
-    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " AND ");
+    return getClauseFromQueryConditions(whereConstraints, "WHERE ", " AND ", " ");
   }
 
   private String getGroupByClause() {
-    return getClauseFromColumns(groupByColumns, "GROUP BY ", ", ");
+    return getClauseFromColumns(groupByColumns, "GROUP BY ", ", ", " ");
   }
 
   private String getOrderClause() {
     if (orderCriteria.isEmpty()) {
       return "";
     } else {
-      return getClauseFromQueryConditions(orderCriteria, "ORDER BY ", ", ");
+      return getClauseFromQueryConditions(orderCriteria, "ORDER BY ", ", ", " ");
     }
   }
 
@@ -257,7 +306,7 @@ public abstract class GenericQuery {
     }
   }
 
-  private String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator) {
+  static String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator, String terminalKeyword) {
     if (columns.isEmpty()) {
       return "";
     }
@@ -271,10 +320,10 @@ public abstract class GenericQuery {
       }
     }
 
-    return clause.append(" ").toString();
+    return clause.append(terminalKeyword).toString();
   }
 
-  private <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator) {
+  static <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator, String terminalKeyword) {
     if (conditions.isEmpty()) {
       return "";
     }
@@ -288,6 +337,6 @@ public abstract class GenericQuery {
       }
     }
 
-    return clause.append(" ").toString();
+    return clause.append(terminalKeyword).toString();
   }
 }

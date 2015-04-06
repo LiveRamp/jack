@@ -1,9 +1,13 @@
 package com.rapleaf.jack.queries.where_operators;
 
+import com.google.common.base.Preconditions;
+
+import com.rapleaf.jack.queries.Column;
+
 public class EqualTo<V> extends WhereOperator<V> {
 
   public EqualTo(V value) {
-    super(value);
+    super("= ?", value);
     try {
       ensureNoNullParameter();
     } catch (IllegalArgumentException e) {
@@ -12,8 +16,8 @@ public class EqualTo<V> extends WhereOperator<V> {
     }
   }
 
-  @Override
-  public String getSqlStatement() {
-    return "= ?";
+  public EqualTo(Column column) {
+    super("= " + column.getSqlKeyword());
+    Preconditions.checkNotNull(column);
   }
 }

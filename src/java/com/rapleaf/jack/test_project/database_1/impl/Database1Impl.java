@@ -7,9 +7,9 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.io.IOException;
-import java.sql.Connection;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
@@ -32,6 +32,10 @@ public class Database1Impl implements IDatabase1 {
     this.images = new BaseImagePersistenceImpl(conn, databases);
     this.posts = new BasePostPersistenceImpl(conn, databases);
     this.users = new BaseUserPersistenceImpl(conn, databases);
+  }
+
+  public GenericQuery.Builder createQuery() {
+    return GenericQuery.create(conn);
   }
 
   public ICommentPersistence comments(){

@@ -1,22 +1,28 @@
 package com.rapleaf.jack.queries.where_operators;
 
-public class Between<V extends Comparable<V>> extends WhereOperator<V> {
+import com.google.common.base.Preconditions;
+
+import com.rapleaf.jack.queries.Column;
+
+public class Between<V> extends WhereOperator<V> {
 
   public Between(V min, V max) {
-    super(min, max);
-    ensureNoNullParameter();
+    super("BETWEEN ? AND ?", min, max);
   }
 
-  @Override
-  public String getSqlStatement() {
-    return "BETWEEN ? AND ?";
+  public Between(Column min, V max) {
+    super("BETWEEN " + min.getSqlKeyword() + " AND ?", max);
+    Preconditions.checkNotNull(min);
   }
 
-  public V getMin() {
-    return getParameters().get(0);
+  public Between(V min, Column max) {
+    super("BETWEEN ? AND " + max.getSqlKeyword(), min);
+    Preconditions.checkNotNull(max);
   }
 
-  public V getMax() {
-    return getParameters().get(1);
+  public Between(Column min, Column max) {
+    super("BETWEEN " + min.getSqlKeyword() + " AND " + max.getSqlKeyword());
+    Preconditions.checkNotNull(min);
+    Preconditions.checkNotNull(max);
   }
 }

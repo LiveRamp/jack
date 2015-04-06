@@ -1,14 +1,14 @@
 package com.rapleaf.jack.queries.where_operators;
 
-public class GreaterThanOrEqualTo<V extends Comparable<V>> extends WhereOperator<V> {
+import com.rapleaf.jack.queries.Column;
+
+public class GreaterThanOrEqualTo<V> extends WhereOperator<V> {
 
   public GreaterThanOrEqualTo(V value) {
-    super(value);
-    ensureNoNullParameter();
+    super(">= ?", value);
   }
 
-  @Override
-  public String getSqlStatement() {
-    return ">= ?";
+  public GreaterThanOrEqualTo(Column column) {
+    super(">= " + column.getSqlKeyword());
   }
 }
