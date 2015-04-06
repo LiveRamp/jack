@@ -917,5 +917,13 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet("G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.notBetween(4, User.SOME_FLOAT))
+        .select(User.HANDLE)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Sets.newHashSet("D", "E", "F"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
   }
 }

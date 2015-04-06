@@ -147,16 +147,16 @@ public class Column {
     return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> notBetween(T min, T max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  public <T> GenericConstraint<T> notBetween(Comparable min, Comparable max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>((T)min, (T)max));
   }
 
-  public <T> GenericConstraint<T> notBetween(Column min, T max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  public <T> GenericConstraint<T> notBetween(Column min, Comparable max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, (T)max));
   }
 
-  public <T> GenericConstraint<T> notBetween(T min, Column max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  public <T> GenericConstraint<T> notBetween(Comparable min, Column max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>((T)min, max));
   }
 
   public <T> GenericConstraint<T> notBetween(Column min, Column max) {
