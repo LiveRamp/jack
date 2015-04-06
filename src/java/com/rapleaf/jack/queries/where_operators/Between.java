@@ -1,27 +1,28 @@
 package com.rapleaf.jack.queries.where_operators;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.queries.Column;
 
 public class Between<V> extends WhereOperator<V> {
 
-  public Between(V value1, V value2) {
-    super("BETWEEN ? AND ?");
+  public Between(V min, V max) {
+    super("BETWEEN ? AND ?", min, max);
+  }
 
-    // this operator takes care of its own construction
-    if (!(value1 instanceof Column)) {
-      this.parameters.add(value1);
-    } else {
-      this.sqlStatement = StringUtils.replaceOnce(this.sqlStatement, "?", ((Column)value1).getSqlKeyword());
-    }
+  public Between(Column min, V max) {
+    super("BETWEEN " + min.getSqlKeyword() + " AND ?", max);
+    Preconditions.checkNotNull(min);
+  }
 
-    if (!(value2 instanceof Column)) {
-      this.parameters.add(value2);
-    } else {
-      this.sqlStatement = StringUtils.replaceOnce(this.sqlStatement, " AND ?", " AND " + ((Column)value2).getSqlKeyword());
-    }
+  public Between(V min, Column max) {
+    super("BETWEEN ? AND " + max.getSqlKeyword(), min);
+    Preconditions.checkNotNull(max);
+  }
 
-    ensureNoNullParameter();
+  public Between(Column min, Column max) {
+    super("BETWEEN " + min.getSqlKeyword() + " AND " + max.getSqlKeyword());
+    Preconditions.checkNotNull(min);
+    Preconditions.checkNotNull(max);
   }
 }

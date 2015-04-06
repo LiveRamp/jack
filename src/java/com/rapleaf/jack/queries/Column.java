@@ -75,9 +75,25 @@ public class Column {
     }
   }
 
+  public <T> GenericConstraint<T> equalTo(Column column) {
+    if (column != null) {
+      return new GenericConstraint<T>(this, new EqualTo<T>(column));
+    } else {
+      return new GenericConstraint<T>(this, new IsNull<T>());
+    }
+  }
+
   public <T> GenericConstraint<T> notEqualTo(T value) {
     if (value != null) {
       return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
+    } else {
+      return new GenericConstraint<T>(this, new IsNotNull<T>());
+    }
+  }
+
+  public <T> GenericConstraint<T> notEqualTo(Column column) {
+    if (column != null) {
+      return new GenericConstraint<T>(this, new NotEqualTo<T>(column));
     } else {
       return new GenericConstraint<T>(this, new IsNotNull<T>());
     }
@@ -87,7 +103,15 @@ public class Column {
     return new GenericConstraint<T>(this, new GreaterThan<T>(value));
   }
 
+  public <T> GenericConstraint<T> greaterThan(Column column) {
+    return new GenericConstraint<T>(this, new GreaterThan<T>(column));
+  }
+
   public <T> GenericConstraint<T> greaterThanOrEqualTo(T value) {
+    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
+  }
+
+  public <T> GenericConstraint<T> greaterThanOrEqualTo(Column value) {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
@@ -95,16 +119,49 @@ public class Column {
     return new GenericConstraint<T>(this, new LessThan<T>(value));
   }
 
+  public <T> GenericConstraint<T> lessThan(Column column) {
+    return new GenericConstraint<T>(this, new LessThan<T>(column));
+  }
+
   public <T> GenericConstraint<T> lessThanOrEqualTo(T value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> between(T value1, T value2) {
-    return new GenericConstraint<T>(this, new Between<T>(value1, value2));
+  public <T> GenericConstraint<T> lessThanOrEqualTo(Column value) {
+    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> notBetween(T value1, T value2) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(value1, value2));
+  public <T> GenericConstraint<T> between(T min, T max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> between(Column min, T max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> between(T min, Column max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> between(Column min, Column max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  }
+
+
+  public <T> GenericConstraint<T> notBetween(T min, T max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> notBetween(Column min, T max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> notBetween(T min, Column max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public <T> GenericConstraint<T> notBetween(Column min, Column max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
   }
 
   public <T> GenericConstraint<T> in(T value, T... otherValues) {
