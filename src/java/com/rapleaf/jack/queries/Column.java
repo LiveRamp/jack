@@ -131,22 +131,21 @@ public class Column {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> between(T min, T max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  public <T> GenericConstraint<T> between(Comparable min, Comparable max) {
+    return new GenericConstraint<T>(this, new Between<T>((T)min, (T)max));
   }
 
-  public <T> GenericConstraint<T> between(Column min, T max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  public <T> GenericConstraint<T> between(Column min, Comparable max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, (T)max));
   }
 
-  public <T> GenericConstraint<T> between(T min, Column max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, max));
+  public <T> GenericConstraint<T> between(Comparable min, Column max) {
+    return new GenericConstraint<T>(this, new Between<T>((T)min, max));
   }
 
   public <T> GenericConstraint<T> between(Column min, Column max) {
     return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
-
 
   public <T> GenericConstraint<T> notBetween(T min, T max) {
     return new GenericConstraint<T>(this, new NotBetween<T>(min, max));

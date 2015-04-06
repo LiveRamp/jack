@@ -896,7 +896,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL),
-               User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT))
+            User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT))
         .select(User.HANDLE, User.SOME_DECIMAL, User.NUM_POSTS, User.SOME_FLOAT)
         .fetch();
     assertEquals(3, results1.size());
@@ -909,5 +909,13 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
     assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.between(4, User.SOME_FLOAT))
+        .select(User.HANDLE)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Sets.newHashSet("G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
   }
 }
