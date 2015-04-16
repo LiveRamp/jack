@@ -1,0 +1,8 @@
+package <%= root_package %>.query;
+
+import <%= JACK_NAMESPACE %>.queries.IOrderedQueryBuilder;
+import <%= root_package %>.models.<%= model_defn.model_name %>;
+
+public interface <%= model_defn.i_ordered_query_builder_name %> extends <%= model_defn.i_query_builder_name %>, IOrderedQueryBuilder<<%= model_defn.model_name %>> {
+
+}

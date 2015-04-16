@@ -84,6 +84,14 @@ class ModelDefn
     "#{model_name}QueryBuilder"
   end
 
+  def i_query_builder_name
+    "#I{model_name}QueryBuilder"
+  end
+
+  def i_ordered_query_builder_name
+    "#IOrdered{model_name}QueryBuilder"
+  end
+
   def id_wrapper_name
       "#{model_name}.Id"
    end
