@@ -13,8 +13,7 @@ import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 
-
-public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implements #I{model_name}QueryBuilder {
+public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implements ICommentQueryBuilder {
 
   public CommentQueryBuilder(ICommentPersistence caller) {
     super(caller);
@@ -57,24 +56,24 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implement
     return this;
   }
 
-  public #IOrdered{model_name}QueryBuilder order() {
+  public IOrderedCommentQueryBuilder order() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
-    return this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder order(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
-    return this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderById() {
+  public IOrderedCommentQueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
-    return this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderById(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
-    return this;
+    return (IOrderedCommentQueryBuilder)this;
   }
 
   public CommentQueryBuilder content(String value) {
@@ -87,14 +86,14 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implement
     return this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByContent() {
+  public IOrderedCommentQueryBuilder orderByContent() {
     this.addOrder(new OrderCriterion(Comment._Fields.content, QueryOrder.ASC));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByContent(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder orderByContent(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.content, queryOrder));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
 
   public CommentQueryBuilder commenterId(Integer value) {
@@ -107,14 +106,14 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implement
     return this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCommenterId() {
+  public IOrderedCommentQueryBuilder orderByCommenterId() {
     this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, QueryOrder.ASC));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCommenterId(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder orderByCommenterId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, queryOrder));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
 
   public CommentQueryBuilder commentedOnId(Long value) {
@@ -127,14 +126,14 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implement
     return this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCommentedOnId() {
+  public IOrderedCommentQueryBuilder orderByCommentedOnId() {
     this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, QueryOrder.ASC));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCommentedOnId(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder orderByCommentedOnId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, queryOrder));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
 
   public CommentQueryBuilder createdAt(Long value) {
@@ -147,13 +146,13 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> implement
     return this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCreatedAt() {
+  public IOrderedCommentQueryBuilder orderByCreatedAt() {
     this.addOrder(new OrderCriterion(Comment._Fields.created_at, QueryOrder.ASC));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
   
-  public #IOrdered{model_name}QueryBuilder orderByCreatedAt(QueryOrder queryOrder) {
+  public IOrderedCommentQueryBuilder orderByCreatedAt(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.created_at, queryOrder));
-    return (#IOrdered{model_name}QueryBuilder)this;
+    return (IOrderedCommentQueryBuilder)this;
   }
 }

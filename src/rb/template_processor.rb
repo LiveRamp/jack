@@ -48,6 +48,8 @@ EOF
   DATABASES_IMPL_TEMPLATE = load_template("templates/databases_impl.erb")
 
   QUERY_BUILDER_TEMPLATE = load_template("templates/query_builder_impl.erb")
+  I_QUERY_BUILDER_TEMPLATE = load_template("templates/i_query_builder.erb")
+  I_ORDERED_QUERY_BUILDER_TEMPLATE = load_template("templates/i_ordered_query_builder.erb")
 
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
 
@@ -108,6 +110,14 @@ EOF
 
       file = File.new("#{output_dir}/query/#{model_defn.query_builder_name}.java", "w")
       file.puts(QUERY_BUILDER_TEMPLATE.result(binding));
+      file.close
+
+      file = File.new("#{output_dir}/query/#{model_defn.i_query_builder_name}.java", "w")
+      file.puts(I_QUERY_BUILDER_TEMPLATE.result(binding));
+      file.close
+
+      file = File.new("#{output_dir}/query/#{model_defn.i_ordered_query_builder_name}.java", "w")
+      file.puts(I_ORDERED_QUERY_BUILDER_TEMPLATE.result(binding));
       file.close
 
     end
