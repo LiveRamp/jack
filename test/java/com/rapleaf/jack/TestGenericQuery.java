@@ -61,6 +61,7 @@ public class TestGenericQuery {
     posts.deleteAll();
     results1 = null;
     results2 = null;
+    // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
     date = DateTime.parse("2015-04-16").getMillis();
   }
