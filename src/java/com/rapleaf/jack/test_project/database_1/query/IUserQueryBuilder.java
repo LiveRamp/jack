@@ -15,19 +15,19 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 
 public interface IUserQueryBuilder {
 
-  UserQueryBuilder select(User._Fields... fields);
+  IUserQueryBuilder select(User._Fields... fields);
 
-  UserQueryBuilder selectAgg(FieldSelector... aggregatedFields);
+  IUserQueryBuilder selectAgg(FieldSelector... aggregatedFields);
 
-  UserQueryBuilder id(Long value);
+  IUserQueryBuilder id(Long value);
 
-  UserQueryBuilder idIn(Set<Long> values);
+  IUserQueryBuilder idIn(Set<Long> values);
 
-  UserQueryBuilder limit(int offset, int nResults);
+  IUserQueryBuilder limit(int offset, int nResults);
 
-  UserQueryBuilder limit(int nResults);
+  IUserQueryBuilder limit(int nResults);
 
-  UserQueryBuilder groupBy(User._Fields... fields);
+  IUserQueryBuilder groupBy(User._Fields... fields);
 
   IOrderedUserQueryBuilder order();
 
@@ -37,81 +37,81 @@ public interface IUserQueryBuilder {
 
   IOrderedUserQueryBuilder orderById(QueryOrder queryOrder);
 
-  UserQueryBuilder handle(String value);
+  IUserQueryBuilder handle(String value);
 
-  UserQueryBuilder whereHandle(IWhereOperator<String> operator);
+  IUserQueryBuilder whereHandle(IWhereOperator<String> operator);
 
   IOrderedUserQueryBuilder orderByHandle();
 
   IOrderedUserQueryBuilder orderByHandle(QueryOrder queryOrder);
 
-  UserQueryBuilder createdAtMillis(Long value);
+  IUserQueryBuilder createdAtMillis(Long value);
 
-  UserQueryBuilder whereCreatedAtMillis(IWhereOperator<Long> operator);
+  IUserQueryBuilder whereCreatedAtMillis(IWhereOperator<Long> operator);
 
   IOrderedUserQueryBuilder orderByCreatedAtMillis();
 
   IOrderedUserQueryBuilder orderByCreatedAtMillis(QueryOrder queryOrder);
 
-  UserQueryBuilder numPosts(Integer value);
+  IUserQueryBuilder numPosts(Integer value);
 
-  UserQueryBuilder whereNumPosts(IWhereOperator<Integer> operator);
+  IUserQueryBuilder whereNumPosts(IWhereOperator<Integer> operator);
 
   IOrderedUserQueryBuilder orderByNumPosts();
 
   IOrderedUserQueryBuilder orderByNumPosts(QueryOrder queryOrder);
 
-  UserQueryBuilder someDate(Long value);
+  IUserQueryBuilder someDate(Long value);
 
-  UserQueryBuilder whereSomeDate(IWhereOperator<Long> operator);
+  IUserQueryBuilder whereSomeDate(IWhereOperator<Long> operator);
 
   IOrderedUserQueryBuilder orderBySomeDate();
 
   IOrderedUserQueryBuilder orderBySomeDate(QueryOrder queryOrder);
 
-  UserQueryBuilder someDatetime(Long value);
+  IUserQueryBuilder someDatetime(Long value);
 
-  UserQueryBuilder whereSomeDatetime(IWhereOperator<Long> operator);
+  IUserQueryBuilder whereSomeDatetime(IWhereOperator<Long> operator);
 
   IOrderedUserQueryBuilder orderBySomeDatetime();
 
   IOrderedUserQueryBuilder orderBySomeDatetime(QueryOrder queryOrder);
 
-  UserQueryBuilder bio(String value);
+  IUserQueryBuilder bio(String value);
 
-  UserQueryBuilder whereBio(IWhereOperator<String> operator);
+  IUserQueryBuilder whereBio(IWhereOperator<String> operator);
 
   IOrderedUserQueryBuilder orderByBio();
 
   IOrderedUserQueryBuilder orderByBio(QueryOrder queryOrder);
 
-  UserQueryBuilder someBinary(byte[] value);
+  IUserQueryBuilder someBinary(byte[] value);
 
-  UserQueryBuilder whereSomeBinary(IWhereOperator<byte[]> operator);
+  IUserQueryBuilder whereSomeBinary(IWhereOperator<byte[]> operator);
 
   IOrderedUserQueryBuilder orderBySomeBinary();
 
   IOrderedUserQueryBuilder orderBySomeBinary(QueryOrder queryOrder);
 
-  UserQueryBuilder someFloat(Double value);
+  IUserQueryBuilder someFloat(Double value);
 
-  UserQueryBuilder whereSomeFloat(IWhereOperator<Double> operator);
+  IUserQueryBuilder whereSomeFloat(IWhereOperator<Double> operator);
 
   IOrderedUserQueryBuilder orderBySomeFloat();
 
   IOrderedUserQueryBuilder orderBySomeFloat(QueryOrder queryOrder);
 
-  UserQueryBuilder someDecimal(Double value);
+  IUserQueryBuilder someDecimal(Double value);
 
-  UserQueryBuilder whereSomeDecimal(IWhereOperator<Double> operator);
+  IUserQueryBuilder whereSomeDecimal(IWhereOperator<Double> operator);
 
   IOrderedUserQueryBuilder orderBySomeDecimal();
 
   IOrderedUserQueryBuilder orderBySomeDecimal(QueryOrder queryOrder);
 
-  UserQueryBuilder someBoolean(Boolean value);
+  IUserQueryBuilder someBoolean(Boolean value);
 
-  UserQueryBuilder whereSomeBoolean(IWhereOperator<Boolean> operator);
+  IUserQueryBuilder whereSomeBoolean(IWhereOperator<Boolean> operator);
 
   IOrderedUserQueryBuilder orderBySomeBoolean();
 

@@ -15,19 +15,19 @@ import com.rapleaf.jack.test_project.database_1.models.Post;
 
 public interface IPostQueryBuilder {
 
-  PostQueryBuilder select(Post._Fields... fields);
+  IPostQueryBuilder select(Post._Fields... fields);
 
-  PostQueryBuilder selectAgg(FieldSelector... aggregatedFields);
+  IPostQueryBuilder selectAgg(FieldSelector... aggregatedFields);
 
-  PostQueryBuilder id(Long value);
+  IPostQueryBuilder id(Long value);
 
-  PostQueryBuilder idIn(Set<Long> values);
+  IPostQueryBuilder idIn(Set<Long> values);
 
-  PostQueryBuilder limit(int offset, int nResults);
+  IPostQueryBuilder limit(int offset, int nResults);
 
-  PostQueryBuilder limit(int nResults);
+  IPostQueryBuilder limit(int nResults);
 
-  PostQueryBuilder groupBy(Post._Fields... fields);
+  IPostQueryBuilder groupBy(Post._Fields... fields);
 
   IOrderedPostQueryBuilder order();
 
@@ -37,33 +37,33 @@ public interface IPostQueryBuilder {
 
   IOrderedPostQueryBuilder orderById(QueryOrder queryOrder);
 
-  PostQueryBuilder title(String value);
+  IPostQueryBuilder title(String value);
 
-  PostQueryBuilder whereTitle(IWhereOperator<String> operator);
+  IPostQueryBuilder whereTitle(IWhereOperator<String> operator);
 
   IOrderedPostQueryBuilder orderByTitle();
 
   IOrderedPostQueryBuilder orderByTitle(QueryOrder queryOrder);
 
-  PostQueryBuilder postedAtMillis(Long value);
+  IPostQueryBuilder postedAtMillis(Long value);
 
-  PostQueryBuilder wherePostedAtMillis(IWhereOperator<Long> operator);
+  IPostQueryBuilder wherePostedAtMillis(IWhereOperator<Long> operator);
 
   IOrderedPostQueryBuilder orderByPostedAtMillis();
 
   IOrderedPostQueryBuilder orderByPostedAtMillis(QueryOrder queryOrder);
 
-  PostQueryBuilder userId(Integer value);
+  IPostQueryBuilder userId(Integer value);
 
-  PostQueryBuilder whereUserId(IWhereOperator<Integer> operator);
+  IPostQueryBuilder whereUserId(IWhereOperator<Integer> operator);
 
   IOrderedPostQueryBuilder orderByUserId();
 
   IOrderedPostQueryBuilder orderByUserId(QueryOrder queryOrder);
 
-  PostQueryBuilder updatedAt(Long value);
+  IPostQueryBuilder updatedAt(Long value);
 
-  PostQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator);
+  IPostQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator);
 
   IOrderedPostQueryBuilder orderByUpdatedAt();
 

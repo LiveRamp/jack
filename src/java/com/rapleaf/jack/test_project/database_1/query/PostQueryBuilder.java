@@ -19,39 +19,39 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements IPos
     super(caller);
   }
 
-  public PostQueryBuilder select(Post._Fields... fields) {
+  public IPostQueryBuilder select(Post._Fields... fields) {
     for (Post._Fields field : fields){
       addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
-  public PostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+  public IPostQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
     addSelectedFields(aggregatedFields);
     return this;
   }
 
-  public PostQueryBuilder id(Long value) {
+  public IPostQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public PostQueryBuilder idIn(Set<Long> values) {
+  public IPostQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
 
-  public PostQueryBuilder limit(int offset, int nResults) {
+  public IPostQueryBuilder limit(int offset, int nResults) {
     setLimit(new LimitCriterion(offset, nResults));
     return this;
   }
 
-  public PostQueryBuilder limit(int nResults) {
+  public IPostQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
     return this;
   }
 
-  public PostQueryBuilder groupBy(Post._Fields... fields) {
+  public IPostQueryBuilder groupBy(Post._Fields... fields) {
     addGroupByFields(fields);
     return this;
   }
@@ -76,12 +76,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements IPos
     return (IOrderedPostQueryBuilder)this;
   }
 
-  public PostQueryBuilder title(String value) {
+  public IPostQueryBuilder title(String value) {
     addWhereConstraint(new WhereConstraint<String>(Post._Fields.title, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public PostQueryBuilder whereTitle(IWhereOperator<String> operator) {
+  public IPostQueryBuilder whereTitle(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(Post._Fields.title, operator));
     return this;
   }
@@ -96,12 +96,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements IPos
     return (IOrderedPostQueryBuilder)this;
   }
 
-  public PostQueryBuilder postedAtMillis(Long value) {
+  public IPostQueryBuilder postedAtMillis(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public PostQueryBuilder wherePostedAtMillis(IWhereOperator<Long> operator) {
+  public IPostQueryBuilder wherePostedAtMillis(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Post._Fields.posted_at_millis, operator));
     return this;
   }
@@ -116,12 +116,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements IPos
     return (IOrderedPostQueryBuilder)this;
   }
 
-  public PostQueryBuilder userId(Integer value) {
+  public IPostQueryBuilder userId(Integer value) {
     addWhereConstraint(new WhereConstraint<Integer>(Post._Fields.user_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public PostQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
+  public IPostQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Post._Fields.user_id, operator));
     return this;
   }
@@ -136,12 +136,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements IPos
     return (IOrderedPostQueryBuilder)this;
   }
 
-  public PostQueryBuilder updatedAt(Long value) {
+  public IPostQueryBuilder updatedAt(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(Post._Fields.updated_at, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public PostQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator) {
+  public IPostQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(Post._Fields.updated_at, operator));
     return this;
   }
