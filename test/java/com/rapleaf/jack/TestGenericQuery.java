@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +51,7 @@ public class TestGenericQuery {
   private User userA, userB, userC, userD, userE, userF, userG, userH;
   private Post postA, postB, postC, postD, postE;
   private Comment commentA, commentB, commentC, commentD;
-  private long datetime;
+  private long date, datetime;
   private Records results1, results2;
 
   @Before
@@ -60,7 +61,9 @@ public class TestGenericQuery {
     posts.deleteAll();
     results1 = null;
     results2 = null;
+    // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
+    date = DateTime.parse("2015-04-16").getMillis();
   }
 
   @Test
@@ -155,21 +158,22 @@ public class TestGenericQuery {
 
   @Test
   public void testGetMethodsForNotNullColumns() throws Exception {
-    userA = users.create("A", datetime, 15, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
+    userA = users.create("A", datetime, 15, date, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
+        .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATE, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
         .fetch();
 
     assertEquals(1, results1.size());
-    assertEquals(7, results1.get(0).columnCount());
+    assertEquals(8, results1.get(0).columnCount());
 
     Record record = results1.get(0);
     assertTrue(record.getLong(User.ID).equals(userA.getId()));
     assertTrue(record.getIntFromLong(User.ID).equals(userA.getIntId()));
     assertTrue(record.getString(User.HANDLE).equals(userA.getHandle()));
     assertTrue(record.getDouble(User.SOME_DECIMAL).equals(userA.getSomeDecimal()));
+    assertTrue(record.getLong(User.SOME_DATE).equals(userA.getSomeDate()));
     assertTrue(record.getLong(User.SOME_DATETIME).equals(userA.getSomeDatetime()));
     assertTrue(record.getInt(User.NUM_POSTS).equals(userA.getNumPosts()));
     assertTrue(record.getBoolean(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
@@ -740,9 +744,9 @@ public class TestGenericQuery {
 
   @Test
   public void testSimpleJoinQuery() throws Exception {
-    userA = users.create("A", datetime, 0, 2L, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
-    userB = users.create("B", datetime, 0, 1L, datetime, "Byline Editor", new byte[]{(byte)1}, 2.2, 2.02, true);
-    userC = users.create("C", datetime, 0, 4L, datetime, "Code Refactor", new byte[]{(byte)2}, 2.2, 2.02, false);
+    userA = users.create("A", datetime, 0, date + 1, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
+    userB = users.create("B", datetime, 0, date - 1, datetime, "Byline Editor", new byte[]{(byte)1}, 2.2, 2.02, true);
+    userC = users.create("C", datetime, 0, date + 2, datetime, "Code Refactor", new byte[]{(byte)2}, 2.2, 2.02, false);
 
     postA = posts.create("Post A from User A", datetime, userA.getIntId(), datetime);
     postB = posts.create("Post B from User B", datetime, userB.getIntId(), datetime);

@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -44,8 +44,8 @@ public class Record {
     Object value = checkTypeAndReturnObject(column, Long.class);
     if (value == null) {
       return null;
-    } else if (value instanceof Timestamp) {
-      return ((Timestamp)value).getTime();
+    } else if (value instanceof Date) {
+      return ((Date)value).getTime();
     } else {
       return ((Number)value).longValue();
     }
