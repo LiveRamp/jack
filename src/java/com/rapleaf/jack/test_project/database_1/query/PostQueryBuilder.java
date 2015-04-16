@@ -14,7 +14,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 
 
-public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
+public class PostQueryBuilder extends AbstractQueryBuilder<Post> implements #I{model_name}QueryBuilder {
 
   public PostQueryBuilder(IPostPersistence caller) {
     super(caller);
@@ -57,22 +57,22 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder order() {
+  public #IOrdered{model_name}QueryBuilder order() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public PostQueryBuilder order(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
-  public PostQueryBuilder orderById() {
+  public #IOrdered{model_name}QueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public PostQueryBuilder orderById(QueryOrder queryOrder) {    
+  public #IOrdered{model_name}QueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
@@ -87,14 +87,14 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
   
-  public PostQueryBuilder orderByTitle() {
+  public #IOrdered{model_name}QueryBuilder orderByTitle() {
     this.addOrder(new OrderCriterion(Post._Fields.title, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public PostQueryBuilder orderByTitle(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByTitle(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Post._Fields.title, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public PostQueryBuilder postedAtMillis(Long value) {
@@ -107,14 +107,14 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
   
-  public PostQueryBuilder orderByPostedAtMillis() {
+  public #IOrdered{model_name}QueryBuilder orderByPostedAtMillis() {
     this.addOrder(new OrderCriterion(Post._Fields.posted_at_millis, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public PostQueryBuilder orderByPostedAtMillis(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByPostedAtMillis(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Post._Fields.posted_at_millis, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public PostQueryBuilder userId(Integer value) {
@@ -127,14 +127,14 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
   
-  public PostQueryBuilder orderByUserId() {
+  public #IOrdered{model_name}QueryBuilder orderByUserId() {
     this.addOrder(new OrderCriterion(Post._Fields.user_id, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public PostQueryBuilder orderByUserId(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByUserId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Post._Fields.user_id, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public PostQueryBuilder updatedAt(Long value) {
@@ -147,13 +147,13 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
   
-  public PostQueryBuilder orderByUpdatedAt() {
+  public #IOrdered{model_name}QueryBuilder orderByUpdatedAt() {
     this.addOrder(new OrderCriterion(Post._Fields.updated_at, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public PostQueryBuilder orderByUpdatedAt(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByUpdatedAt(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Post._Fields.updated_at, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 }

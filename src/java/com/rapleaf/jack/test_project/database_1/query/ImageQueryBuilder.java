@@ -14,7 +14,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 
 
-public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
+public class ImageQueryBuilder extends AbstractQueryBuilder<Image> implements #I{model_name}QueryBuilder {
 
   public ImageQueryBuilder(IImagePersistence caller) {
     super(caller);
@@ -57,22 +57,22 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
 
-  public ImageQueryBuilder order() {
+  public #IOrdered{model_name}QueryBuilder order() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public ImageQueryBuilder order(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
-  public ImageQueryBuilder orderById() {
+  public #IOrdered{model_name}QueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
+  public #IOrdered{model_name}QueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
@@ -87,13 +87,13 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
   
-  public ImageQueryBuilder orderByUserId() {
+  public #IOrdered{model_name}QueryBuilder orderByUserId() {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public ImageQueryBuilder orderByUserId(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByUserId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 }

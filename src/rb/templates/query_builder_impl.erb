@@ -13,8 +13,8 @@ import <%= JACK_NAMESPACE %>.queries.LimitCriterion;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 
-
-public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<%=model_defn.model_name%>> implements <%= model_defn.i_query_builder_name %> {
+public class ImageQueryBuilder extends AbstractQueryBuilder<Image> implements IImageQueryBuilder
+public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<%= model_defn.model_name %>> implements <%= model_defn.i_query_builder_name %> {
 
   public <%= model_defn.query_builder_name %>(<%= model_defn.iface_name %> caller) {
     super(caller);

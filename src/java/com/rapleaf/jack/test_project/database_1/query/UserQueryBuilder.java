@@ -14,7 +14,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 
-public class UserQueryBuilder extends AbstractQueryBuilder<User> {
+public class UserQueryBuilder extends AbstractQueryBuilder<User> implements #I{model_name}QueryBuilder {
 
   public UserQueryBuilder(IUserPersistence caller) {
     super(caller);
@@ -57,22 +57,22 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder order() {
+  public #IOrdered{model_name}QueryBuilder order() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public UserQueryBuilder order(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
   
-  public UserQueryBuilder orderById() {
+  public #IOrdered{model_name}QueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
   
-  public UserQueryBuilder orderById(QueryOrder queryOrder) {    
+  public #IOrdered{model_name}QueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
@@ -87,14 +87,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderByHandle() {
+  public #IOrdered{model_name}QueryBuilder orderByHandle() {
     this.addOrder(new OrderCriterion(User._Fields.handle, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderByHandle(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByHandle(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.handle, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder createdAtMillis(Long value) {
@@ -107,14 +107,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderByCreatedAtMillis() {
+  public #IOrdered{model_name}QueryBuilder orderByCreatedAtMillis() {
     this.addOrder(new OrderCriterion(User._Fields.created_at_millis, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderByCreatedAtMillis(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByCreatedAtMillis(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.created_at_millis, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder numPosts(Integer value) {
@@ -127,14 +127,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderByNumPosts() {
+  public #IOrdered{model_name}QueryBuilder orderByNumPosts() {
     this.addOrder(new OrderCriterion(User._Fields.num_posts, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderByNumPosts(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByNumPosts(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.num_posts, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someDate(Long value) {
@@ -147,14 +147,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeDate() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDate() {
     this.addOrder(new OrderCriterion(User._Fields.some_date, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeDate(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDate(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_date, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someDatetime(Long value) {
@@ -167,14 +167,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeDatetime() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDatetime() {
     this.addOrder(new OrderCriterion(User._Fields.some_datetime, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeDatetime(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDatetime(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_datetime, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder bio(String value) {
@@ -187,14 +187,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderByBio() {
+  public #IOrdered{model_name}QueryBuilder orderByBio() {
     this.addOrder(new OrderCriterion(User._Fields.bio, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderByBio(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderByBio(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.bio, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someBinary(byte[] value) {
@@ -207,14 +207,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeBinary() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeBinary() {
     this.addOrder(new OrderCriterion(User._Fields.some_binary, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeBinary(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeBinary(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_binary, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someFloat(Double value) {
@@ -227,14 +227,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeFloat() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeFloat() {
     this.addOrder(new OrderCriterion(User._Fields.some_float, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeFloat(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeFloat(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_float, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someDecimal(Double value) {
@@ -247,14 +247,14 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeDecimal() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDecimal() {
     this.addOrder(new OrderCriterion(User._Fields.some_decimal, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeDecimal(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeDecimal(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_decimal, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 
   public UserQueryBuilder someBoolean(Boolean value) {
@@ -267,13 +267,13 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
   
-  public UserQueryBuilder orderBySomeBoolean() {
+  public #IOrdered{model_name}QueryBuilder orderBySomeBoolean() {
     this.addOrder(new OrderCriterion(User._Fields.some_boolean, QueryOrder.ASC));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
   
-  public UserQueryBuilder orderBySomeBoolean(QueryOrder queryOrder) {
+  public #IOrdered{model_name}QueryBuilder orderBySomeBoolean(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(User._Fields.some_boolean, queryOrder));
-    return this;
+    return (#IOrdered{model_name}QueryBuilder)this;
   }
 }
