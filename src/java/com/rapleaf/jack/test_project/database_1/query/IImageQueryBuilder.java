@@ -2,26 +2,32 @@ package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Set;
 
+import com.rapleaf.jack.queries.AbstractQueryBuilder;
 import com.rapleaf.jack.queries.FieldSelector;
-import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.QueryOrder;
+import com.rapleaf.jack.queries.OrderCriterion;
+import com.rapleaf.jack.queries.LimitCriterion;
+import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 
 public interface IImageQueryBuilder {
 
-  IImageQueryBuilder select(Image._Fields... fields);
+  ImageQueryBuilder select(Image._Fields... fields);
 
-  IImageQueryBuilder selectAgg(FieldSelector... aggregatedFields);
+  ImageQueryBuilder selectAgg(FieldSelector... aggregatedFields);
 
-  IImageQueryBuilder id(Long value);
+  ImageQueryBuilder id(Long value);
 
-  IImageQueryBuilder idIn(Set<Long> values);
+  ImageQueryBuilder idIn(Set<Long> values);
 
-  IImageQueryBuilder limit(int offset, int nResults);
+  ImageQueryBuilder limit(int offset, int nResults);
 
-  IImageQueryBuilder limit(int nResults);
+  ImageQueryBuilder limit(int nResults);
 
-  IImageQueryBuilder groupBy(Image._Fields... fields);
+  ImageQueryBuilder groupBy(Image._Fields... fields);
 
   IOrderedImageQueryBuilder order();
 
@@ -31,9 +37,9 @@ public interface IImageQueryBuilder {
 
   IOrderedImageQueryBuilder orderById(QueryOrder queryOrder);
 
-  IImageQueryBuilder userId(Integer value);
+  ImageQueryBuilder userId(Integer value);
 
-  IImageQueryBuilder whereUserId(IWhereOperator<Integer> operator);
+  ImageQueryBuilder whereUserId(IWhereOperator<Integer> operator);
 
   IOrderedImageQueryBuilder orderByUserId();
 

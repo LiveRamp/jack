@@ -19,39 +19,39 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> implements II
     super(caller);
   }
 
-  public IImageQueryBuilder select(Image._Fields... fields) {
+  public ImageQueryBuilder select(Image._Fields... fields) {
     for (Image._Fields field : fields){
       addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
-  public IImageQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+  public ImageQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
     addSelectedFields(aggregatedFields);
     return this;
   }
 
-  public IImageQueryBuilder id(Long value) {
+  public ImageQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public IImageQueryBuilder idIn(Set<Long> values) {
+  public ImageQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
 
-  public IImageQueryBuilder limit(int offset, int nResults) {
+  public ImageQueryBuilder limit(int offset, int nResults) {
     setLimit(new LimitCriterion(offset, nResults));
     return this;
   }
 
-  public IImageQueryBuilder limit(int nResults) {
+  public ImageQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
     return this;
   }
 
-  public IImageQueryBuilder groupBy(Image._Fields... fields) {
+  public ImageQueryBuilder groupBy(Image._Fields... fields) {
     addGroupByFields(fields);
     return this;
   }
@@ -76,12 +76,12 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> implements II
     return (IOrderedImageQueryBuilder)this;
   }
 
-  public IImageQueryBuilder userId(Integer value) {
+  public ImageQueryBuilder userId(Integer value) {
     addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IImageQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
+  public ImageQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
     return this;
   }

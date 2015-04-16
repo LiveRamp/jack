@@ -19,39 +19,39 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     super(caller);
   }
 
-  public IUserQueryBuilder select(User._Fields... fields) {
+  public UserQueryBuilder select(User._Fields... fields) {
     for (User._Fields field : fields){
       addSelectedField(new FieldSelector(field));
     }
     return this;
   }
 
-  public IUserQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
+  public UserQueryBuilder selectAgg(FieldSelector... aggregatedFields) {
     addSelectedFields(aggregatedFields);
     return this;
   }
 
-  public IUserQueryBuilder id(Long value) {
+  public UserQueryBuilder id(Long value) {
     addId(value);
     return this;
   }
 
-  public IUserQueryBuilder idIn(Set<Long> values) {
+  public UserQueryBuilder idIn(Set<Long> values) {
     addIds(values);
     return this;
   }
 
-  public IUserQueryBuilder limit(int offset, int nResults) {
+  public UserQueryBuilder limit(int offset, int nResults) {
     setLimit(new LimitCriterion(offset, nResults));
     return this;
   }
 
-  public IUserQueryBuilder limit(int nResults) {
+  public UserQueryBuilder limit(int nResults) {
     setLimit(new LimitCriterion(nResults));
     return this;
   }
 
-  public IUserQueryBuilder groupBy(User._Fields... fields) {
+  public UserQueryBuilder groupBy(User._Fields... fields) {
     addGroupByFields(fields);
     return this;
   }
@@ -76,12 +76,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder handle(String value) {
+  public UserQueryBuilder handle(String value) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereHandle(IWhereOperator<String> operator) {
+  public UserQueryBuilder whereHandle(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.handle, operator));
     return this;
   }
@@ -96,12 +96,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder createdAtMillis(Long value) {
+  public UserQueryBuilder createdAtMillis(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereCreatedAtMillis(IWhereOperator<Long> operator) {
+  public UserQueryBuilder whereCreatedAtMillis(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.created_at_millis, operator));
     return this;
   }
@@ -116,12 +116,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder numPosts(Integer value) {
+  public UserQueryBuilder numPosts(Integer value) {
     addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereNumPosts(IWhereOperator<Integer> operator) {
+  public UserQueryBuilder whereNumPosts(IWhereOperator<Integer> operator) {
     addWhereConstraint(new WhereConstraint<Integer>(User._Fields.num_posts, operator));
     return this;
   }
@@ -136,12 +136,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someDate(Long value) {
+  public UserQueryBuilder someDate(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeDate(IWhereOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDate(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_date, operator));
     return this;
   }
@@ -156,12 +156,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someDatetime(Long value) {
+  public UserQueryBuilder someDatetime(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeDatetime(IWhereOperator<Long> operator) {
+  public UserQueryBuilder whereSomeDatetime(IWhereOperator<Long> operator) {
     addWhereConstraint(new WhereConstraint<Long>(User._Fields.some_datetime, operator));
     return this;
   }
@@ -176,12 +176,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder bio(String value) {
+  public UserQueryBuilder bio(String value) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereBio(IWhereOperator<String> operator) {
+  public UserQueryBuilder whereBio(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(User._Fields.bio, operator));
     return this;
   }
@@ -196,12 +196,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someBinary(byte[] value) {
+  public UserQueryBuilder someBinary(byte[] value) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeBinary(IWhereOperator<byte[]> operator) {
+  public UserQueryBuilder whereSomeBinary(IWhereOperator<byte[]> operator) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, operator));
     return this;
   }
@@ -216,12 +216,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someFloat(Double value) {
+  public UserQueryBuilder someFloat(Double value) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeFloat(IWhereOperator<Double> operator) {
+  public UserQueryBuilder whereSomeFloat(IWhereOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_float, operator));
     return this;
   }
@@ -236,12 +236,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someDecimal(Double value) {
+  public UserQueryBuilder someDecimal(Double value) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeDecimal(IWhereOperator<Double> operator) {
+  public UserQueryBuilder whereSomeDecimal(IWhereOperator<Double> operator) {
     addWhereConstraint(new WhereConstraint<Double>(User._Fields.some_decimal, operator));
     return this;
   }
@@ -256,12 +256,12 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements IUse
     return (IOrderedUserQueryBuilder)this;
   }
 
-  public IUserQueryBuilder someBoolean(Boolean value) {
+  public UserQueryBuilder someBoolean(Boolean value) {
     addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public IUserQueryBuilder whereSomeBoolean(IWhereOperator<Boolean> operator) {
+  public UserQueryBuilder whereSomeBoolean(IWhereOperator<Boolean> operator) {
     addWhereConstraint(new WhereConstraint<Boolean>(User._Fields.some_boolean, operator));
     return this;
   }

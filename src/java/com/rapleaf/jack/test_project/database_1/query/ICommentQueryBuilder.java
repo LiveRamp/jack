@@ -9,19 +9,19 @@ import com.rapleaf.jack.test_project.database_1.models.Comment;
 
 public interface ICommentQueryBuilder {
 
-  ICommentQueryBuilder select(Comment._Fields... fields);
+  CommentQueryBuilder select(Comment._Fields... fields);
 
-  ICommentQueryBuilder selectAgg(FieldSelector... aggregatedFields);
+  CommentQueryBuilder selectAgg(FieldSelector... aggregatedFields);
 
-  ICommentQueryBuilder id(Long value);
+  CommentQueryBuilder id(Long value);
 
-  ICommentQueryBuilder idIn(Set<Long> values);
+  CommentQueryBuilder idIn(Set<Long> values);
 
-  ICommentQueryBuilder limit(int offset, int nResults);
+  CommentQueryBuilder limit(int offset, int nResults);
 
-  ICommentQueryBuilder limit(int nResults);
+  CommentQueryBuilder limit(int nResults);
 
-  ICommentQueryBuilder groupBy(Comment._Fields... fields);
+  CommentQueryBuilder groupBy(Comment._Fields... fields);
 
   IOrderedCommentQueryBuilder order();
 
@@ -31,33 +31,33 @@ public interface ICommentQueryBuilder {
 
   IOrderedCommentQueryBuilder orderById(QueryOrder queryOrder);
 
-  ICommentQueryBuilder content(String value);
+  CommentQueryBuilder content(String value);
 
-  ICommentQueryBuilder whereContent(IWhereOperator<String> operator);
+  CommentQueryBuilder whereContent(IWhereOperator<String> operator);
 
   IOrderedCommentQueryBuilder orderByContent();
 
   IOrderedCommentQueryBuilder orderByContent(QueryOrder queryOrder);
 
-  ICommentQueryBuilder commenterId(Integer value);
+  CommentQueryBuilder commenterId(Integer value);
 
-  ICommentQueryBuilder whereCommenterId(IWhereOperator<Integer> operator);
+  CommentQueryBuilder whereCommenterId(IWhereOperator<Integer> operator);
 
   IOrderedCommentQueryBuilder orderByCommenterId();
 
   IOrderedCommentQueryBuilder orderByCommenterId(QueryOrder queryOrder);
 
-  ICommentQueryBuilder commentedOnId(Long value);
+  CommentQueryBuilder commentedOnId(Long value);
 
-  ICommentQueryBuilder whereCommentedOnId(IWhereOperator<Long> operator);
+  CommentQueryBuilder whereCommentedOnId(IWhereOperator<Long> operator);
 
   IOrderedCommentQueryBuilder orderByCommentedOnId();
 
   IOrderedCommentQueryBuilder orderByCommentedOnId(QueryOrder queryOrder);
 
-  ICommentQueryBuilder createdAt(Long value);
+  CommentQueryBuilder createdAt(Long value);
 
-  ICommentQueryBuilder whereCreatedAt(IWhereOperator<Long> operator);
+  CommentQueryBuilder whereCreatedAt(IWhereOperator<Long> operator);
 
   IOrderedCommentQueryBuilder orderByCreatedAt();
 
