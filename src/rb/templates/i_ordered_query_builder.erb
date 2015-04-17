@@ -1,5 +1,10 @@
 package <%= root_package %>.query;
 
+import java.util.Set;
+
+import <%= JACK_NAMESPACE %>.queries.FieldSelector;
+import <%= JACK_NAMESPACE %>.queries.where_operators.IWhereOperator;
+import <%= JACK_NAMESPACE %>.queries.QueryOrder;
 import <%= JACK_NAMESPACE %>.queries.IOrderedQueryBuilder;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 

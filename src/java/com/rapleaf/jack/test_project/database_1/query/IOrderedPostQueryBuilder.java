@@ -1,5 +1,10 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Set;
+
+import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
+import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.IOrderedQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 
