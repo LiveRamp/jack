@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -501,7 +502,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     User u2 = users.create("another_handle", 2);
 
-    Set<User> found = users.find(new HashMap<Enum, Object>() {
+    List<User> found = users.find(new HashMap<Enum, Object>() {
       {
         put(User._Fields.handle, "a_handle");
         put(User._Fields.some_float, null);

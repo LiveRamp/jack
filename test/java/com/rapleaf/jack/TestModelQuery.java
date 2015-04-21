@@ -41,7 +41,7 @@ public class TestModelQuery extends TestCase {
     userC.save();
     userD.save();
 
-    Set<User> result;
+    List<User> result;
 
     // an empty query should return an empty set
     result = users.query().find();
