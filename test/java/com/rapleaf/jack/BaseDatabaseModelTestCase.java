@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -134,7 +133,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   public void testFindEmptySet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    Set<User> foundValues = users.find(new HashSet<Long>());
+    List<User> foundValues = users.find(new HashSet<Long>());
     assertEquals(0, foundValues.size());
   }
 
@@ -153,7 +152,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Set<Long> keysToSearch = new HashSet<Long>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
-    Set<User> foundValues = users.find(keysToSearch);
+    List<User> foundValues = users.find(keysToSearch);
 
     assertEquals(2, foundValues.size());
     Iterator<User> iter = foundValues.iterator();
@@ -214,7 +213,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Set<Long> keysToSearch = new HashSet<Long>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
-    Set<User> foundValues = users.find(keysToSearch);
+    List<User> foundValues = users.find(keysToSearch);
 
     assertEquals(2, foundValues.size());
     Iterator<User> iter = foundValues.iterator();
@@ -248,7 +247,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Comment c2 = comments.create("comment2", userId, 1L, 1);
     Comment c3 = comments.create("comment3", userId, 1L, 1);
 
-    Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
+    List<Comment> userComments = comments.findAllByForeignKey("commenter_id", userId);
     assertEquals(3, userComments.size());
     assertTrue(userComments.contains(c1));
     assertTrue(userComments.contains(c2));
@@ -266,7 +265,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u2_1 = users.find(u2.getId());
     User u3_1 = users.find(u3.getId());
 
-    Set<User> allUsers = users.findAll();
+    List<User> allUsers = users.findAll();
     assertTrue(allUsers.contains(u1));
     assertTrue(allUsers.contains(u2));
     assertTrue(allUsers.contains(u3));
@@ -291,7 +290,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     User u2 = users.create("thomask", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
     User u3 = users.create("emilyl", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
 
-    Set<User> allUsers = users.findAll();
+    List<User> allUsers = users.findAll();
     assertTrue(allUsers.contains(u1));
     assertTrue(allUsers.contains(u2));
     assertTrue(allUsers.contains(u3));
@@ -322,7 +321,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Set<Long> commenterIds = new HashSet<Long>();
     commenterIds.add(userId);
     commenterIds.add(otherUserId);
-    Set<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
+    List<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
     assertEquals(4, userComments.size());
     assertTrue(userComments.contains(c1));
     assertTrue(userComments.contains(c2));
@@ -330,7 +329,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(userComments.contains(c4));
     assertFalse(userComments.contains(c5));
 
-    Set<Comment> userCommentsSecondQuery = comments.findAllByForeignKey("commenter_id", commenterIds);
+    List<Comment> userCommentsSecondQuery = comments.findAllByForeignKey("commenter_id", commenterIds);
     assertEquals(4, userCommentsSecondQuery.size());
     assertTrue(userCommentsSecondQuery.contains(c1));
     assertTrue(userCommentsSecondQuery.contains(c2));
@@ -438,7 +437,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     Post p2 = posts.create("title2", System.currentTimeMillis(), (int)u1.getId(), 0l);
     Post p3 = posts.create("title3", System.currentTimeMillis(), (int)u1.getId(), 0l);
 
-    assertEquals(new HashSet<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
+    assertEquals(new ArrayList<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
   public void testFindByForeignKey() throws Exception {
@@ -533,7 +532,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
     User u2 = users.create("another_handle", 2);
 
-    Set<User> found = users.findByHandle("a_handle");
+    List<User> found = users.findByHandle("a_handle");
     assertEquals(1, found.size());
     assertTrue(found.contains(u1));
 

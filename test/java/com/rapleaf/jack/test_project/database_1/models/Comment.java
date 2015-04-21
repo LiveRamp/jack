@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
