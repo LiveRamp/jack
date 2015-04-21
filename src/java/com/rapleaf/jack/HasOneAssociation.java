@@ -16,7 +16,7 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 public class HasOneAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
@@ -34,9 +34,9 @@ public class HasOneAssociation<T extends ModelWithId> implements Serializable {
 
   public T get() throws IOException {
     if (!cached) {
-      Set<T> all = persistence.findAllByForeignKey(foreignKey, id);
+      List<T> all = persistence.findAllByForeignKey(foreignKey, id);
       if (all != null && !all.isEmpty()) {
-        inst = (T) all.toArray()[0];
+        inst = (T) all.get(0);
       }
       cached = true;
     }

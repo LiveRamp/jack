@@ -125,7 +125,7 @@ class AssociationDefn
   def assoc_getter_type
     case @type
       when "has_many"
-        "Set<#{@assoc_model.model_name}>"
+        "List<#{@assoc_model.model_name}>"
       else
         @assoc_model.model_name
     end
