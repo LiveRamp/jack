@@ -195,7 +195,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     );
   }
 
-  public Set<Image> findByUserId(final Integer value) throws IOException {
+  public List<Image> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Image._Fields.user_id, value);}});
   }
 

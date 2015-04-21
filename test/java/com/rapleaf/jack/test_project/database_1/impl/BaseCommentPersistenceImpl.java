@@ -238,19 +238,19 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     );
   }
 
-  public Set<Comment> findByContent(final String value) throws IOException {
+  public List<Comment> findByContent(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }
 
-  public Set<Comment> findByCommenterId(final int value) throws IOException {
+  public List<Comment> findByCommenterId(final int value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
   }
 
-  public Set<Comment> findByCommentedOnId(final long value) throws IOException {
+  public List<Comment> findByCommentedOnId(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
   }
 
-  public Set<Comment> findByCreatedAt(final long value) throws IOException {
+  public List<Comment> findByCreatedAt(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 
