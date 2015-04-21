@@ -13,8 +13,7 @@ import com.rapleaf.jack.queries.LimitCriterion;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 
-
-public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
+public class ImageQueryBuilder extends AbstractQueryBuilder<Image> implements IImageQueryBuilder {
 
   public ImageQueryBuilder(IImagePersistence caller) {
     super(caller);
@@ -57,24 +56,24 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
 
-  public ImageQueryBuilder order() {
+  public IOrderedImageQueryBuilder order() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
   
-  public ImageQueryBuilder order(QueryOrder queryOrder) {
+  public IOrderedImageQueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
   
-  public ImageQueryBuilder orderById() {
+  public IOrderedImageQueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
   
-  public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
+  public IOrderedImageQueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
 
   public ImageQueryBuilder userId(Integer value) {
@@ -87,13 +86,13 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
   
-  public ImageQueryBuilder orderByUserId() {
+  public IOrderedImageQueryBuilder orderByUserId() {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, QueryOrder.ASC));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
   
-  public ImageQueryBuilder orderByUserId(QueryOrder queryOrder) {
+  public IOrderedImageQueryBuilder orderByUserId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, queryOrder));
-    return this;
+    return (IOrderedImageQueryBuilder)this;
   }
 }

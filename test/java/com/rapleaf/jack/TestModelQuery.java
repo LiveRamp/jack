@@ -406,24 +406,6 @@ public class TestModelQuery extends TestCase {
     for (int i = 0; i < resultList.size(); i++) {
       assertEquals(i + 6, resultList.get(i).getNumPosts());
     }
-
-    Set<User> resultSet;
-
-    resultSet = users.query()
-        .whereNumPosts(lessThan(5))
-        .orderByNumPosts()
-        .limit(3)
-        .find();
-
-    assertEquals(3, resultSet.size());
-
-    resultSet = users.query()
-        .whereNumPosts(greaterThan(3))
-        .orderByNumPosts()
-        .limit(2, 3)
-        .find();
-
-    assertEquals(3, resultSet.size());
   }
 
   public void testQueryWithSelect() throws IOException, SQLException {

@@ -7,10 +7,10 @@ import java.util.Set;
 import com.rapleaf.jack.IModelPersistence;
 import com.rapleaf.jack.ModelWithId;
 
-public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQueryBuilder<M> {
+public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IOrderedQueryBuilder<M>, IUnorderedQueryBuilder<M> {
 
-  private ModelQuery query;
-  private IModelPersistence<M> caller;
+  protected ModelQuery query;
+  protected IModelPersistence<M> caller;
 
   public AbstractQueryBuilder(IModelPersistence<M> caller) {
     this.caller = caller;
