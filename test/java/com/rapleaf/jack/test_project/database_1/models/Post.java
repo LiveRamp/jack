@@ -258,7 +258,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     return __assoc_user.get();
   }
 
-  public Set<Comment> getComments() throws IOException {
+  public List<Comment> getComments() throws IOException {
     return __assoc_comments.get();
   }
 

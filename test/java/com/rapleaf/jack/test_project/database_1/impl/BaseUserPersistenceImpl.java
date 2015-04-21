@@ -134,15 +134,15 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return create("", 0);
   }
 
-  public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<User> foundSet = new HashSet<User>();
+  public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<User> foundList = new ArrayList<User>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -217,8 +217,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);

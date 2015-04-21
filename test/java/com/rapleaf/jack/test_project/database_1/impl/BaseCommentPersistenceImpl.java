@@ -99,15 +99,15 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return create(0, 0L, 0L);
   }
 
-  public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<Comment> foundSet = new HashSet<Comment>();
+  public List<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<Comment> foundList = new ArrayList<Comment>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -164,8 +164,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);

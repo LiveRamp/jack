@@ -11,7 +11,7 @@ import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.IModelPersistence;
 
@@ -20,10 +20,10 @@ public interface ICommentPersistence extends IModelPersistence<Comment> {
   public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
 
   public Comment createDefaultInstance() throws IOException;
-  public Set<Comment> findByContent(String value)  throws IOException;
-  public Set<Comment> findByCommenterId(int value)  throws IOException;
-  public Set<Comment> findByCommentedOnId(long value)  throws IOException;
-  public Set<Comment> findByCreatedAt(long value)  throws IOException;
+  public List<Comment> findByContent(String value)  throws IOException;
+  public List<Comment> findByCommenterId(int value)  throws IOException;
+  public List<Comment> findByCommentedOnId(long value)  throws IOException;
+  public List<Comment> findByCreatedAt(long value)  throws IOException;
 
   public CommentQueryBuilder query();
 }

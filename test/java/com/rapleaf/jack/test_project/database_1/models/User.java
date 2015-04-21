@@ -411,11 +411,11 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
 
-  public Set<Post> getPosts() throws IOException {
+  public List<Post> getPosts() throws IOException {
     return __assoc_posts.get();
   }
 
-  public Set<Comment> getComments() throws IOException {
+  public List<Comment> getComments() throws IOException {
     return __assoc_comments.get();
   }
 

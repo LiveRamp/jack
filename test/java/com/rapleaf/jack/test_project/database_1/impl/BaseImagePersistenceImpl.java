@@ -86,15 +86,15 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return create();
   }
 
-  public Set<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Image> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<Image> foundSet = new HashSet<Image>();
+  public List<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<Image> foundList = new ArrayList<Image>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -142,8 +142,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);

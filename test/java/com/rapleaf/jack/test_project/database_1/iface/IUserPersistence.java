@@ -11,7 +11,7 @@ import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.IModelPersistence;
 
@@ -20,16 +20,16 @@ public interface IUserPersistence extends IModelPersistence<User> {
   public User create(final String handle, final int num_posts) throws IOException;
 
   public User createDefaultInstance() throws IOException;
-  public Set<User> findByHandle(String value)  throws IOException;
-  public Set<User> findByCreatedAtMillis(Long value)  throws IOException;
-  public Set<User> findByNumPosts(int value)  throws IOException;
-  public Set<User> findBySomeDate(Long value)  throws IOException;
-  public Set<User> findBySomeDatetime(Long value)  throws IOException;
-  public Set<User> findByBio(String value)  throws IOException;
-  public Set<User> findBySomeBinary(byte[] value)  throws IOException;
-  public Set<User> findBySomeFloat(Double value)  throws IOException;
-  public Set<User> findBySomeDecimal(Double value)  throws IOException;
-  public Set<User> findBySomeBoolean(Boolean value)  throws IOException;
+  public List<User> findByHandle(String value)  throws IOException;
+  public List<User> findByCreatedAtMillis(Long value)  throws IOException;
+  public List<User> findByNumPosts(int value)  throws IOException;
+  public List<User> findBySomeDate(Long value)  throws IOException;
+  public List<User> findBySomeDatetime(Long value)  throws IOException;
+  public List<User> findByBio(String value)  throws IOException;
+  public List<User> findBySomeBinary(byte[] value)  throws IOException;
+  public List<User> findBySomeFloat(Double value)  throws IOException;
+  public List<User> findBySomeDecimal(Double value)  throws IOException;
+  public List<User> findBySomeBoolean(Boolean value)  throws IOException;
 
   public UserQueryBuilder query();
 }
