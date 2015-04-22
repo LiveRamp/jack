@@ -449,4 +449,12 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return attributes;
   }
 
+  public static Set<Attributes> convertToAttributesSet(List<Image> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (Image model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
 }

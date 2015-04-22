@@ -751,4 +751,12 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     return attributes;
   }
 
+  public static Set<Attributes> convertToAttributesSet(List<Comment> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (Comment model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
 }

@@ -1118,4 +1118,12 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     return attributes;
   }
 
+  public static Set<Attributes> convertToAttributesSet(List<User> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (User model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
 }

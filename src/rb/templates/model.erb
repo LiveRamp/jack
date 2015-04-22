@@ -652,4 +652,12 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     return attributes;
   }
 
+  public static Set<Attributes> convertToAttributesSet(List<<%= model_defn.model_name%>> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (<%= model_defn.model_name %> model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
 }
