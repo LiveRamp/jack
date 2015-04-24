@@ -77,15 +77,15 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return create(<%= create_argument_defaults %>);
   }
 
-  public Set<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<<%= model_defn.model_name %>> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<<%= model_defn.model_name %>> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<<%= model_defn.model_name %>> foundSet = new HashSet<<%= model_defn.model_name %>>();
+  public List<<%= model_defn.model_name %>> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -138,8 +138,8 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
       <% end %>
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -209,7 +209,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   <% model_defn.fields.each do |field_defn| %>
 
-  public Set<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
+  public List<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);}});
   }
   <% end %>

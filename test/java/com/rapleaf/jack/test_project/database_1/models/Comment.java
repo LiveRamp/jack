@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -743,6 +744,14 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public static Set<Attributes> convertToAttributesSet(Set<Comment> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (Comment model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
+  public static Set<Attributes> convertToAttributesSet(List<Comment> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
     for (Comment model : models) {
       attributes.add(model.getAttributes());

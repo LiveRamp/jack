@@ -22,6 +22,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
@@ -644,6 +645,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public static Set<Attributes> convertToAttributesSet(Set<<%= model_defn.model_name%>> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (<%= model_defn.model_name %> model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
+  public static Set<Attributes> convertToAttributesSet(List<<%= model_defn.model_name%>> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
     for (<%= model_defn.model_name %> model : models) {
       attributes.add(model.getAttributes());

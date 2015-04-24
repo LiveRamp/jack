@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -24,19 +25,25 @@ import com.rapleaf.jack.queries.Column;
 
 import com.rapleaf.jack.test_project.IDatabases;
 
-public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
+public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
-  public static final long serialVersionUID = -3351451520429699622L;
+  public static final long serialVersionUID = -399049548729901546L;
 
   public static class Tbl extends AbstractTable {
     public final Column ID;
+    public final Column TITLE;
+    public final Column POSTED_AT_MILLIS;
     public final Column USER_ID;
+    public final Column UPDATED_AT;
 
     private Tbl(String alias) {
-      super("images", alias);
+      super("posts", alias);
       this.ID = Column.fromId(alias);
+      this.TITLE = Column.fromField(alias, _Fields.title, String.class);
+      this.POSTED_AT_MILLIS = Column.fromField(alias, _Fields.posted_at_millis, Long.class);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
-      Collections.addAll(this.allColumns, ID, USER_ID);
+      this.UPDATED_AT = Column.fromField(alias, _Fields.updated_at, Long.class);
+      Collections.addAll(this.allColumns, ID, TITLE, POSTED_AT_MILLIS, USER_ID, UPDATED_AT);
     }
 
     public static Tbl as(String alias) {
@@ -44,80 +51,90 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     }
   }
 
-  public static final Tbl TBL = new Tbl("images");
+  public static final Tbl TBL = new Tbl("posts");
   public static final Column ID = TBL.ID;
+  public static final Column TITLE = TBL.TITLE;
+  public static final Column POSTED_AT_MILLIS = TBL.POSTED_AT_MILLIS;
   public static final Column USER_ID = TBL.USER_ID;
+  public static final Column UPDATED_AT = TBL.UPDATED_AT;
 
   private final Attributes attributes;
 
-  private transient Image.Id cachedTypedId;
+  private transient Post.Id cachedTypedId;
 
   // Associations
   private BelongsToAssociation<User> __assoc_user;
+  private HasManyAssociation<Comment> __assoc_comments;
 
   public enum _Fields {
+    title,
+    posted_at_millis,
     user_id,
+    updated_at,
   }
 
   @Override
-  public Image.Id getTypedId() {
+  public Post.Id getTypedId() {
     if (cachedTypedId == null) {
-      cachedTypedId = new Image.Id(this.getId());
+      cachedTypedId = new Post.Id(this.getId());
     }
     return cachedTypedId;
   }
 
-  public Image(long id, final Integer user_id, IDatabases databases) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id, user_id);
+    attributes = new Attributes(id, title, posted_at_millis, user_id, updated_at);
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
-  public Image(long id, final Integer user_id) {
+  public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
     super(null);
-    attributes = new Attributes(id, user_id);
+    attributes = new Attributes(id, title, posted_at_millis, user_id, updated_at);
   }
   
-  public Image(long id, IDatabases databases) {
+  public Post(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
     this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
-  public Image(long id) {
+  public Post(long id) {
     super(null);
     attributes = new Attributes(id);
   }
 
-  public static Image newDefaultInstance(long id) {
-    return new Image(id);
+  public static Post newDefaultInstance(long id) {
+    return new Post(id);
   }
 
-  public Image(Attributes attributes, IDatabases databases) {
+  public Post(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
   }
 
-  public Image(Attributes attributes) {
+  public Post(Attributes attributes) {
     super(null);
     this.attributes = attributes;
   }
 
-  public Image(long id, Map<Enum, Object> fieldsMap) {
+  public Post(long id, Map<Enum, Object> fieldsMap) {
     super(null);
     attributes = new Attributes(id, fieldsMap);
   }
 
-  public Image (Image other) {
+  public Post (Post other) {
     this(other, (IDatabases)null);
   }
 
-  public Image (Image other, IDatabases databases) {
+  public Post (Post other, IDatabases databases) {
     super(databases);
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
       this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
   
@@ -125,11 +142,31 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return attributes;
   }
 
+  public String getTitle(){
+    return attributes.getTitle();
+  }
+
+  public Post setTitle(String newval){
+    attributes.setTitle(newval);
+    cachedHashCode = 0;
+    return this;
+  }
+
+  public Long getPostedAtMillis(){
+    return attributes.getPostedAtMillis();
+  }
+
+  public Post setPostedAtMillis(Long newval){
+    attributes.setPostedAtMillis(newval);
+    cachedHashCode = 0;
+    return this;
+  }
+
   public Integer getUserId(){
     return attributes.getUserId();
   }
 
-  public Image setUserId(Integer newval){
+  public Post setUserId(Integer newval){
     attributes.setUserId(newval);
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
@@ -138,10 +175,29 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return this;
   }
 
+  public Long getUpdatedAt(){
+    return attributes.getUpdatedAt();
+  }
+
+  public Post setUpdatedAt(Long newval){
+    attributes.setUpdatedAt(newval);
+    cachedHashCode = 0;
+    return this;
+  }
+
   public void setField(_Fields field, Object value) {
     switch (field) {
+      case title:
+        setTitle((String) value);
+        break;
+      case posted_at_millis:
+        setPostedAtMillis((Long) value);
+        break;
       case user_id:
         setUserId((Integer) value);
+        break;
+      case updated_at:
+        setUpdatedAt((Long) value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -149,8 +205,20 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
   
   public void setField(String fieldName, Object value) {
+    if (fieldName.equals("title")) {
+      setTitle((String)  value);
+      return;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      setPostedAtMillis((Long)  value);
+      return;
+    }
     if (fieldName.equals("user_id")) {
       setUserId((Integer)  value);
+      return;
+    }
+    if (fieldName.equals("updated_at")) {
+      setUpdatedAt((Long)  value);
       return;
     }
     throw new IllegalStateException("Invalid field: " + fieldName);
@@ -158,16 +226,31 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
+      case title:
+        return String.class;
+      case posted_at_millis:
+        return Long.class;
       case user_id:
         return Integer.class;
+      case updated_at:
+        return Long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
     }    
   }
 
   public static Class getFieldType(String fieldName) {    
+    if (fieldName.equals("title")) {
+      return String.class;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return Long.class;
+    }
     if (fieldName.equals("user_id")) {
       return Integer.class;
+    }
+    if (fieldName.equals("updated_at")) {
+      return Long.class;
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
@@ -176,21 +259,40 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return __assoc_user.get();
   }
 
+  public List<Comment> getComments() throws IOException {
+    return __assoc_comments.get();
+  }
+
   @Override
   public Object getField(String fieldName) {
     if (fieldName.equals("id")) {
       return getId();
     }
+    if (fieldName.equals("title")) {
+      return getTitle();
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return getPostedAtMillis();
+    }
     if (fieldName.equals("user_id")) {
       return getUserId();
+    }
+    if (fieldName.equals("updated_at")) {
+      return getUpdatedAt();
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
 
   public Object getField(_Fields field) {
     switch (field) {
+      case title:
+        return getTitle();
+      case posted_at_millis:
+        return getPostedAtMillis();
       case user_id:
         return getUserId();
+      case updated_at:
+        return getUpdatedAt();
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
@@ -199,7 +301,16 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     if (fieldName.equals("id")) {
       return true;
     }
+    if (fieldName.equals("title")) {
+      return true;
+    }
+    if (fieldName.equals("posted_at_millis")) {
+      return true;
+    }
     if (fieldName.equals("user_id")) {
+      return true;
+    }
+    if (fieldName.equals("updated_at")) {
       return true;
     }
     return false;
@@ -207,7 +318,13 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public static Object getDefaultValue(_Fields field) {
     switch (field) {
+      case title:
+        return null;
+      case posted_at_millis:
+        return null;
       case user_id:
+        return null;
+      case updated_at:
         return null;
     }
     throw new IllegalStateException("Invalid field: " + field);
@@ -220,18 +337,18 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   @Override
-  public Image getCopy() {
+  public Post getCopy() {
     return getCopy(databases);
   }
 
   @Override
-  public Image getCopy(IDatabases databases) {
-    return new Image(this, databases);
+  public Post getCopy(IDatabases databases) {
+    return new Post(this, databases);
   }
 
   @Override
   public boolean save() throws IOException {
-    return databases.getDatabase1().images().save(this);
+    return databases.getDatabase1().posts().save(this);
   }
 
   public User createUser(final String handle, final int num_posts) throws IOException {
@@ -262,35 +379,45 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public String toString() {
-    return "<Image"
+    return "<Post"
+      + " title: " + getTitle()
+      + " posted_at_millis: " + getPostedAtMillis()
       + " user_id: " + getUserId()
+      + " updated_at: " + getUpdatedAt()
       + ">";
   }
 
   public void unsetAssociations() {
     unsetDatabaseReference();
     __assoc_user = null;
+    __assoc_comments = null;
   }
 
-  public int compareTo(Image that){
+  public int compareTo(Post that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 5384617403533794948L;
+    public static final long serialVersionUID = -452436965662476312L;
 
     // Fields
+    private String __title;
+    private Long __posted_at_millis;
     private Integer __user_id;
+    private Long __updated_at;
 
     public Attributes(long id) {
       super(id);
     }
 
-    public Attributes(long id, final Integer user_id) {
+    public Attributes(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
       super(id);
+      this.__title = title;
+      this.__posted_at_millis = posted_at_millis;
       this.__user_id = user_id;
+      this.__updated_at = updated_at;
     }
 
     public static Attributes newDefaultInstance(long id) {
@@ -299,13 +426,42 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
+      String title = (String) fieldsMap.get(Post._Fields.title);
+      Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
+      Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
+      Long updated_at = (Long) fieldsMap.get(Post._Fields.updated_at);
+      this.__title = title;
+      this.__posted_at_millis = posted_at_millis;
       this.__user_id = user_id;
+      this.__updated_at = updated_at;
     }
 
     public Attributes(Attributes other) {
       super(other.getId());
+      this.__title = other.getTitle();
+      this.__posted_at_millis = other.getPostedAtMillis();
       this.__user_id = other.getUserId();
+      this.__updated_at = other.getUpdatedAt();
+    }
+
+    public String getTitle(){
+      return __title;
+    }
+
+    public Attributes setTitle(String newval){
+      this.__title = newval;
+      cachedHashCode = 0;
+      return this;
+    }
+
+    public Long getPostedAtMillis(){
+      return __posted_at_millis;
+    }
+
+    public Attributes setPostedAtMillis(Long newval){
+      this.__posted_at_millis = newval;
+      cachedHashCode = 0;
+      return this;
     }
 
     public Integer getUserId(){
@@ -318,10 +474,29 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       return this;
     }
 
+    public Long getUpdatedAt(){
+      return __updated_at;
+    }
+
+    public Attributes setUpdatedAt(Long newval){
+      this.__updated_at = newval;
+      cachedHashCode = 0;
+      return this;
+    }
+
     public void setField(_Fields field, Object value) {
       switch (field) {
+        case title:
+          setTitle((String) value);
+          break;
+        case posted_at_millis:
+          setPostedAtMillis((Long) value);
+          break;
         case user_id:
           setUserId((Integer) value);
+          break;
+        case updated_at:
+          setUpdatedAt((Long) value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -329,8 +504,20 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     }
 
     public void setField(String fieldName, Object value) {
+      if (fieldName.equals("title")) {
+        setTitle((String)  value);
+        return;
+      }
+      if (fieldName.equals("posted_at_millis")) {
+        setPostedAtMillis((Long)  value);
+        return;
+      }
       if (fieldName.equals("user_id")) {
         setUserId((Integer)  value);
+        return;
+      }
+      if (fieldName.equals("updated_at")) {
+        setUpdatedAt((Long)  value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -338,16 +525,31 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     public static Class getFieldType(_Fields field) {
       switch (field) {
+        case title:
+          return String.class;
+        case posted_at_millis:
+          return Long.class;
         case user_id:
           return Integer.class;
+        case updated_at:
+          return Long.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
       }    
     }
 
     public static Class getFieldType(String fieldName) {    
+      if (fieldName.equals("title")) {
+        return String.class;
+      }
+      if (fieldName.equals("posted_at_millis")) {
+        return Long.class;
+      }
       if (fieldName.equals("user_id")) {
         return Integer.class;
+      }
+      if (fieldName.equals("updated_at")) {
+        return Long.class;
       }
       throw new IllegalStateException("Invalid field name: " + fieldName);
     }
@@ -357,16 +559,31 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       if (fieldName.equals("id")) {
         return getId();
       }
+      if (fieldName.equals("title")) {
+        return getTitle();
+      }
+      if (fieldName.equals("posted_at_millis")) {
+        return getPostedAtMillis();
+      }
       if (fieldName.equals("user_id")) {
         return getUserId();
+      }
+      if (fieldName.equals("updated_at")) {
+        return getUpdatedAt();
       }
       throw new IllegalStateException("Invalid field name: " + fieldName);
     }
 
     public Object getField(_Fields field) {
       switch (field) {
+        case title:
+          return getTitle();
+        case posted_at_millis:
+          return getPostedAtMillis();
         case user_id:
           return getUserId();
+        case updated_at:
+          return getUpdatedAt();
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
@@ -375,7 +592,16 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       if (fieldName.equals("id")) {
         return true;
       }
+      if (fieldName.equals("title")) {
+        return true;
+      }
+      if (fieldName.equals("posted_at_millis")) {
+        return true;
+      }
       if (fieldName.equals("user_id")) {
+        return true;
+      }
+      if (fieldName.equals("updated_at")) {
         return true;
       }
       return false;
@@ -383,7 +609,13 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     public static Object getDefaultValue(_Fields field) {
       switch (field) {
+        case title:
+          return null;
+        case posted_at_millis:
+          return null;
         case user_id:
+          return null;
+        case updated_at:
           return null;
       }
       throw new IllegalStateException("Invalid field: " + field);
@@ -396,13 +628,16 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     }
     
     public String toString() {
-      return "<Image.Attributes"
+      return "<Post.Attributes"
+        + " title: " + getTitle()
+        + " posted_at_millis: " + getPostedAtMillis()
         + " user_id: " + getUserId()
+        + " updated_at: " + getUpdatedAt()
         + ">";
     }
   }
 
-  public static class Id implements ModelIdWrapper<Image.Id> {
+  public static class Id implements ModelIdWrapper<Post.Id> {
     public static final long serialVersionUID = 1L;
 
     private final long id;
@@ -436,13 +671,21 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     @Override
     public String toString() {
-      return "<Image.Id: "+this.getId()+">";
+      return "<Post.Id: "+this.getId()+">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<Image> models) {
+  public static Set<Attributes> convertToAttributesSet(Set<Post> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Image model : models) {
+    for (Post model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
+  public static Set<Attributes> convertToAttributesSet(List<Post> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (Post model : models) {
       attributes.add(model.getAttributes());
     }
     return attributes;

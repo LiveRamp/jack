@@ -1,7 +1,7 @@
 package com.rapleaf.jack;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
@@ -27,8 +27,8 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     comments.create("comment2", userId, 1, 1);
     comments.create("comment3", userId, 1, 1);
 
-    Set<Comment> c1 = comments.findAllByForeignKey("commenter_id", userId);
-    Set<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
+    List<Comment> c1 = comments.findAllByForeignKey("commenter_id", userId);
+    List<Comment> c2 = comments.findAllByForeignKey("commenter_id", userId);
     assertTrue(c1 == c2);
   }
   

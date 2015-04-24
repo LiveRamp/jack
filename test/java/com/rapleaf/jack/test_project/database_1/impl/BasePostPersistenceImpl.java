@@ -104,15 +104,15 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return create();
   }
 
-  public Set<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Post> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<Post> foundSet = new HashSet<Post>();
+  public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<Post> foundList = new ArrayList<Post>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -169,8 +169,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -249,19 +249,19 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     );
   }
 
-  public Set<Post> findByTitle(final String value) throws IOException {
+  public List<Post> findByTitle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
   }
 
-  public Set<Post> findByPostedAtMillis(final Long value) throws IOException {
+  public List<Post> findByPostedAtMillis(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.posted_at_millis, value);}});
   }
 
-  public Set<Post> findByUserId(final Integer value) throws IOException {
+  public List<Post> findByUserId(final Integer value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
   }
 
-  public Set<Post> findByUpdatedAt(final Long value) throws IOException {
+  public List<Post> findByUpdatedAt(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
   }
 

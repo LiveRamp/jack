@@ -41,7 +41,7 @@ public class TestModelQuery extends TestCase {
     userC.save();
     userD.save();
 
-    Set<User> result;
+    List<User> result;
 
     // an empty query should return an empty set
     result = users.query().find();
@@ -83,7 +83,7 @@ public class TestModelQuery extends TestCase {
     john.save();
     james.save();
 
-    Set<User> result;
+    List<User> result;
 
     // Equal To
     result = users.query().whereHandle(equalTo("Brad")).find();
@@ -181,7 +181,7 @@ public class TestModelQuery extends TestCase {
       sampleUsers[i].save();
     }
 
-    Set<User> result;
+    List<User> result;
 
     // Query by one id
     result = users.query().id(sampleUsers[0].getId()).find();
@@ -238,27 +238,27 @@ public class TestModelQuery extends TestCase {
     List<User> orderedResult2;
 
     // An empty query should return an empty list.
-    orderedResult1 = users.query().findWithOrder();
+    orderedResult1 = users.query().find();
     assertTrue(orderedResult1.isEmpty());
 
     // A query with no results should return an empty list.
-    orderedResult1 = users.query().numPosts(3).bio("CEO").order().findWithOrder();
+    orderedResult1 = users.query().numPosts(3).bio("CEO").order().find();
     assertTrue(orderedResult1.isEmpty());
 
     // A simple query with single result should return a list with one element.
-    orderedResult1 = users.query().bio("Analyst").order().findWithOrder();
+    orderedResult1 = users.query().bio("Analyst").order().find();
     assertEquals(1, orderedResult1.size());
     assertTrue(orderedResult1.contains(userC));
 
     // A chained query with single result should return a list with one element.
-    orderedResult1 = users.query().handle("A").bio("CEO").numPosts(1).order().findWithOrder();
+    orderedResult1 = users.query().handle("A").bio("CEO").numPosts(1).order().find();
     assertEquals(1, orderedResult1.size());
     assertTrue(orderedResult1.contains(userA));
 
     // A chained query ordered by default should be ordered by id in an ascending manner.
     // expected result: [userC, userD, userE]
-    orderedResult1 = users.query().numPosts(3).order().findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderById(ASC).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).order().find();
+    orderedResult2 = users.query().numPosts(3).orderById(ASC).find();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userD));
@@ -267,8 +267,8 @@ public class TestModelQuery extends TestCase {
 
     // A chained query ordered by default in a descending manner should be ordered by id in an descending manner.
     // expected result: [userE, userD, userC]
-    orderedResult1 = users.query().numPosts(3).order(DESC).findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderById(DESC).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).order(DESC).find();
+    orderedResult2 = users.query().numPosts(3).orderById(DESC).find();
     assertEquals(3, orderedResult1.size());
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userD));
@@ -277,8 +277,8 @@ public class TestModelQuery extends TestCase {
 
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
-    orderedResult1 = users.query().numPosts(3).orderByBio().findWithOrder();
-    orderedResult2 = users.query().numPosts(3).orderByBio(ASC).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).orderByBio().find();
+    orderedResult2 = users.query().numPosts(3).orderByBio(ASC).find();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
@@ -287,7 +287,7 @@ public class TestModelQuery extends TestCase {
 
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
-    orderedResult1 = users.query().numPosts(3).orderByBio(DESC).findWithOrder();
+    orderedResult1 = users.query().numPosts(3).orderByBio(DESC).find();
     assertEquals(3, orderedResult1.size());
     assertEquals(2, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userE));
@@ -295,7 +295,7 @@ public class TestModelQuery extends TestCase {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
-    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderByNumPosts(ASC).orderByBio(ASC).find();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userA));
     assertEquals(1, orderedResult1.indexOf(userB));
@@ -308,7 +308,7 @@ public class TestModelQuery extends TestCase {
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
-    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).findWithOrder();
+    orderedResult1 = users.query().whereNumPosts(greaterThan(0)).orderBySomeDecimal().orderByBio(DESC).find();
     assertEquals(8, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(userC));
     assertEquals(1, orderedResult1.indexOf(userH));
@@ -334,7 +334,7 @@ public class TestModelQuery extends TestCase {
     List<User> orderedResult2;
 
     // A query by one id should return a list with one element.
-    orderedResult1 = users.query().id(sampleUsers[0].getId()).order().findWithOrder();
+    orderedResult1 = users.query().id(sampleUsers[0].getId()).order().find();
     assertEquals(1, orderedResult1.size());
     assertTrue(orderedResult1.contains(sampleUsers[0]));
 
@@ -343,7 +343,7 @@ public class TestModelQuery extends TestCase {
         .idIn(Collections.<Long>emptySet())
         .orderByNumPosts()
         .limit(1)
-        .findWithOrder();
+        .find();
     assertTrue(orderedResult1.isEmpty());
 
     // A query by several ids ordered by default should return a list ordered by id in an ascending manner.
@@ -351,8 +351,8 @@ public class TestModelQuery extends TestCase {
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[1].getId());
     sampleIds.add(sampleUsers[2].getId());
-    orderedResult1 = users.query().idIn(sampleIds).order().findWithOrder();
-    orderedResult2 = users.query().idIn(sampleIds).orderById(ASC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).order().find();
+    orderedResult2 = users.query().idIn(sampleIds).orderById(ASC).find();
     assertEquals(3, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[0]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
@@ -362,7 +362,7 @@ public class TestModelQuery extends TestCase {
     // A query by several ids ordered by a specific field should return a list ordered accordingly.
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
-    orderedResult1 = users.query().idIn(sampleIds).orderByNumPosts(DESC).orderById(DESC).findWithOrder();
+    orderedResult1 = users.query().idIn(sampleIds).orderByNumPosts(DESC).orderById(DESC).find();
     assertEquals(5, orderedResult1.size());
     assertEquals(0, orderedResult1.indexOf(sampleUsers[3]));
     assertEquals(1, orderedResult1.indexOf(sampleUsers[1]));
@@ -389,7 +389,7 @@ public class TestModelQuery extends TestCase {
         .whereNumPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
-        .findWithOrder();
+        .find();
 
     assertEquals(3, resultList.size());
     for (int i = 0; i < resultList.size(); i++) {
@@ -400,30 +400,30 @@ public class TestModelQuery extends TestCase {
         .whereNumPosts(greaterThan(3))
         .orderByNumPosts()
         .limit(2, 3)
-        .findWithOrder();
+        .find();
 
     assertEquals(3, resultList.size());
     for (int i = 0; i < resultList.size(); i++) {
       assertEquals(i + 6, resultList.get(i).getNumPosts());
     }
 
-    Set<User> resultSet;
+    List<User> result;
 
-    resultSet = users.query()
+    result = users.query()
         .whereNumPosts(lessThan(5))
         .orderByNumPosts()
         .limit(3)
         .find();
 
-    assertEquals(3, resultSet.size());
+    assertEquals(3, result.size());
 
-    resultSet = users.query()
+    result = users.query()
         .whereNumPosts(greaterThan(3))
         .orderByNumPosts()
         .limit(2, 3)
         .find();
 
-    assertEquals(3, resultSet.size());
+    assertEquals(3, result.size());
   }
 
   public void testQueryWithSelect() throws IOException, SQLException {
@@ -452,7 +452,7 @@ public class TestModelQuery extends TestCase {
 
     result = users.query().select(User._Fields.handle, User._Fields.created_at_millis)
         .whereBio(endsWith("man"))
-        .findWithOrder();
+        .find();
 
     for (User user : result) {
       assertTrue(user.getHandle() != null);
@@ -462,7 +462,7 @@ public class TestModelQuery extends TestCase {
 
     result = users.query().select(User._Fields.created_at_millis)
         .whereBio(endsWith("man"))
-        .findWithOrder();
+        .find();
 
     for (User user : result) {
       assertTrue(user.getHandle().equals(""));
@@ -488,7 +488,7 @@ public class TestModelQuery extends TestCase {
         .selectAgg(max(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
-        .findWithOrder();
+        .find();
 
     assertEquals(2, result.size());
     assertEquals("0", result.get(0).getHandle());
@@ -502,7 +502,7 @@ public class TestModelQuery extends TestCase {
         .selectAgg(AggregatorFunctions.min(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
-        .findWithOrder();
+        .find();
 
     assertEquals(0, result.get(0).getNumPosts());
     assertEquals(1, result.get(1).getNumPosts());
@@ -514,7 +514,7 @@ public class TestModelQuery extends TestCase {
         .selectAgg(AggregatorFunctions.count(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
-        .findWithOrder();
+        .find();
 
     assertEquals(50, result.get(0).getNumPosts());
     assertEquals(50, result.get(1).getNumPosts());
@@ -525,7 +525,7 @@ public class TestModelQuery extends TestCase {
         .selectAgg(AggregatorFunctions.sum(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
-        .findWithOrder();
+        .find();
 
     assertEquals(2, result.size());
     assertEquals(2450, result.get(0).getNumPosts());
@@ -537,7 +537,7 @@ public class TestModelQuery extends TestCase {
         .selectAgg(AggregatorFunctions.avg(User._Fields.num_posts))
         .groupBy(User._Fields.handle)
         .orderByHandle()
-        .findWithOrder();
+        .find();
 
     assertEquals(2, result.size());
     assertEquals(49, result.get(0).getNumPosts());

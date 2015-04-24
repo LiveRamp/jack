@@ -99,15 +99,15 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return create(0, 0L, 0L);
   }
 
-  public Set<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Comment> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<Comment> foundSet = new HashSet<Comment>();
+  public List<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<Comment> foundList = new ArrayList<Comment>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -164,8 +164,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -238,19 +238,19 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     );
   }
 
-  public Set<Comment> findByContent(final String value) throws IOException {
+  public List<Comment> findByContent(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
   }
 
-  public Set<Comment> findByCommenterId(final int value) throws IOException {
+  public List<Comment> findByCommenterId(final int value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
   }
 
-  public Set<Comment> findByCommentedOnId(final long value) throws IOException {
+  public List<Comment> findByCommentedOnId(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
   }
 
-  public Set<Comment> findByCreatedAt(final long value) throws IOException {
+  public List<Comment> findByCreatedAt(final long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
   }
 

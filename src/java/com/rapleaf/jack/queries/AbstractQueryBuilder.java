@@ -50,12 +50,7 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
   }
 
   @Override
-  public Set<M> find() throws IOException {
-    return caller.find(query);
-  }
-
-  @Override
-  public List<M> findWithOrder() throws IOException {
+  public List<M> find() throws IOException {
     return caller.findWithOrder(query);
   }
 }

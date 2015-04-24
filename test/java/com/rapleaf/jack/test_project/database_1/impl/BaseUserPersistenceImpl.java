@@ -134,15 +134,15 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return create("", 0);
   }
 
-  public Set<User> find(Map<Enum, Object> fieldsMap) throws IOException {
+  public List<User> find(Map<Enum, Object> fieldsMap) throws IOException {
     return find(null, fieldsMap);
   }
 
-  public Set<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    Set<User> foundSet = new HashSet<User>();
+  public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+    List<User> foundList = new ArrayList<User>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {
-      return foundSet;
+      return foundList;
     }
 
     StringBuilder statementString = new StringBuilder();
@@ -217,8 +217,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       }
 
       try {
-        executeQuery(foundSet, preparedStatement);
-        return foundSet;
+        executeQuery(foundList, preparedStatement);
+        return foundList;
       } catch (SQLRecoverableException e) {
         if (++retryCount > AbstractDatabaseModel.MAX_CONNECTION_RETRIES) {
           throw new IOException(e);
@@ -347,43 +347,43 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     );
   }
 
-  public Set<User> findByHandle(final String value) throws IOException {
+  public List<User> findByHandle(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
   }
 
-  public Set<User> findByCreatedAtMillis(final Long value) throws IOException {
+  public List<User> findByCreatedAtMillis(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.created_at_millis, value);}});
   }
 
-  public Set<User> findByNumPosts(final int value) throws IOException {
+  public List<User> findByNumPosts(final int value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, value);}});
   }
 
-  public Set<User> findBySomeDate(final Long value) throws IOException {
+  public List<User> findBySomeDate(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_date, value);}});
   }
 
-  public Set<User> findBySomeDatetime(final Long value) throws IOException {
+  public List<User> findBySomeDatetime(final Long value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_datetime, value);}});
   }
 
-  public Set<User> findByBio(final String value) throws IOException {
+  public List<User> findByBio(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.bio, value);}});
   }
 
-  public Set<User> findBySomeBinary(final byte[] value) throws IOException {
+  public List<User> findBySomeBinary(final byte[] value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_binary, value);}});
   }
 
-  public Set<User> findBySomeFloat(final Double value) throws IOException {
+  public List<User> findBySomeFloat(final Double value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_float, value);}});
   }
 
-  public Set<User> findBySomeDecimal(final Double value) throws IOException {
+  public List<User> findBySomeDecimal(final Double value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_decimal, value);}});
   }
 
-  public Set<User> findBySomeBoolean(final Boolean value) throws IOException {
+  public List<User> findBySomeBoolean(final Boolean value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
   }
 

@@ -16,10 +16,9 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
 
 import com.rapleaf.jack.queries.ModelQuery;
 
@@ -49,21 +48,21 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    */
   public T find(long id) throws IOException;
 
-  public Set<T> find(Set<Long> ids) throws IOException;
+  public List<T> find(Set<Long> ids) throws IOException;
 
-  public Set<T> find(Map<Enum, Object> fieldsMap) throws IOException;
+  public List<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
-  public Set<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
+  public List<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
-  public Set<T> find(ModelQuery query) throws IOException;
+  public List<T> find(ModelQuery query) throws IOException;
   
   public List<T> findWithOrder(ModelQuery query) throws IOException;
 
   public void clearCacheById(long id) throws IOException;
 
-  public Set<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
+  public List<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
 
-  public Set<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
+  public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
 
   public void clearCacheByForeignKey(String foreignKey, long id);
 
@@ -95,11 +94,11 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    */
   public boolean deleteAll() throws IOException;
 
-  public Set<T> findAll() throws IOException;
+  public List<T> findAll() throws IOException;
 
-  public Set<T> findAll(String conditions) throws IOException;
+  public List<T> findAll(String conditions) throws IOException;
 
-  public Set<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
+  public List<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
 
   /**
    * Caching is on by default, and is toggled with enableCaching() and disableCaching().

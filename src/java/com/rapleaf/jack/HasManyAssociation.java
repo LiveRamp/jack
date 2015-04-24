@@ -16,13 +16,13 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 public class HasManyAssociation<T extends ModelWithId> implements Serializable {
   private final IModelPersistence<T> persistence;
   private final String foreignKey;
   private final long id;
-  private Set<T> cachedList;
+  private List<T> cachedList;
 
   public HasManyAssociation(IModelPersistence<T> persistence,
       String foreignKey, long id) {
@@ -31,7 +31,7 @@ public class HasManyAssociation<T extends ModelWithId> implements Serializable {
     this.id = id;
   }
 
-  public Set<T> get() throws IOException {
+  public List<T> get() throws IOException {
     if (cachedList == null) {
       cachedList = persistence.findAllByForeignKey(foreignKey, id);
     }

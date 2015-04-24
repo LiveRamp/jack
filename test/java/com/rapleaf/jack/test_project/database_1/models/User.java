@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -411,11 +412,11 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
 
-  public Set<Post> getPosts() throws IOException {
+  public List<Post> getPosts() throws IOException {
     return __assoc_posts.get();
   }
 
-  public Set<Comment> getComments() throws IOException {
+  public List<Comment> getComments() throws IOException {
     return __assoc_comments.get();
   }
 
@@ -1110,6 +1111,14 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   }
 
   public static Set<Attributes> convertToAttributesSet(Set<User> models) {
+    Set<Attributes> attributes = new HashSet<Attributes>();
+    for (User model : models) {
+      attributes.add(model.getAttributes());
+    }
+    return attributes;
+  }
+
+  public static Set<Attributes> convertToAttributesSet(List<User> models) {
     Set<Attributes> attributes = new HashSet<Attributes>();
     for (User model : models) {
       attributes.add(model.getAttributes());

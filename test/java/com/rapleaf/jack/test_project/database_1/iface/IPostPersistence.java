@@ -11,7 +11,7 @@ import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.IModelPersistence;
 
@@ -20,10 +20,10 @@ public interface IPostPersistence extends IModelPersistence<Post> {
   public Post create() throws IOException;
 
   public Post createDefaultInstance() throws IOException;
-  public Set<Post> findByTitle(String value)  throws IOException;
-  public Set<Post> findByPostedAtMillis(Long value)  throws IOException;
-  public Set<Post> findByUserId(Integer value)  throws IOException;
-  public Set<Post> findByUpdatedAt(Long value)  throws IOException;
+  public List<Post> findByTitle(String value)  throws IOException;
+  public List<Post> findByPostedAtMillis(Long value)  throws IOException;
+  public List<Post> findByUserId(Integer value)  throws IOException;
+  public List<Post> findByUpdatedAt(Long value)  throws IOException;
 
   public PostQueryBuilder query();
 }
