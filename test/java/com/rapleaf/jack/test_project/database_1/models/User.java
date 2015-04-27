@@ -139,11 +139,16 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public User(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
+
+    if (databases != null) {
+      this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
+      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
+      this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+    }
   }
 
   public User(Attributes attributes) {
-    super(null);
-    this.attributes = attributes;
+    this(attributes, (IDatabases) null);
   }
 
   public User(long id, Map<Enum, Object> fieldsMap) {
