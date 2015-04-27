@@ -112,11 +112,15 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public Post(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    }
   }
 
   public Post(Attributes attributes) {
-    super(null);
-    this.attributes = attributes;
+    this(attributes, (IDatabases) null);
   }
 
   public Post(long id, Map<Enum, Object> fieldsMap) {

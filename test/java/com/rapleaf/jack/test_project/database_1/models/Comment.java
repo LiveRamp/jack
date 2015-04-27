@@ -136,11 +136,15 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
+      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    }
   }
 
   public Comment(Attributes attributes) {
-    super(null);
-    this.attributes = attributes;
+    this(attributes, (IDatabases) null);
   }
 
   public Comment(long id, Map<Enum, Object> fieldsMap) {
