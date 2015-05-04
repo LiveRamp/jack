@@ -97,11 +97,14 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public Image(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
+
+    if (databases != null) {
+      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    }
   }
 
   public Image(Attributes attributes) {
-    super(null);
-    this.attributes = attributes;
+    this(attributes, (IDatabases) null);
   }
 
   public Image(long id, Map<Enum, Object> fieldsMap) {

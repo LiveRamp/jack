@@ -170,11 +170,16 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public <%= model_defn.model_name %>(Attributes attributes, IDatabases databases) {
     super(databases);
     this.attributes = attributes;
+
+    if (databases != null) {
+    <% model_defn.associations.each do |assoc| %>
+      this.<%= assoc.field_name %> = <%= assoc.constructor_call %>;
+    <% end %>
+    }
   }
 
   public <%= model_defn.model_name %>(Attributes attributes) {
-    super(null);
-    this.attributes = attributes;
+    this(attributes, (IDatabases) null);
   }
 
   public <%= model_defn.model_name %>(long id, Map<Enum, Object> fieldsMap) {

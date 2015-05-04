@@ -31,6 +31,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 public class <%=db_name%>Impl implements I<%=db_name%> {
   
   private final BaseDatabaseConnection conn;
+  private final IDatabases databases;
 
 <% model_defns.each do |model_defn| %>
   private final <%= model_defn.iface_name %> <%= model_defn.table_name %>;
@@ -38,6 +39,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
+    this.databases = databases;
   <% model_defns.each do |model_defn| %>
     this.<%= model_defn.table_name %> = new <%= model_defn.impl_name %>(conn, databases);
   <% end %>
@@ -90,6 +92,10 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public void resetConnection() {
     conn.resetConnection();
+  }
+
+  public IDatabases getDatabases() {
+    return databases;
   }
 
 }

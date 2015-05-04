@@ -21,6 +21,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
+  private final IDatabases databases;
   private final ICommentPersistence comments;
   private final IImagePersistence images;
   private final IPostPersistence posts;
@@ -28,6 +29,7 @@ public class Database1Impl implements IDatabase1 {
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
+    this.databases = databases;
     this.comments = new BaseCommentPersistenceImpl(conn, databases);
     this.images = new BaseImagePersistenceImpl(conn, databases);
     this.posts = new BasePostPersistenceImpl(conn, databases);
@@ -92,6 +94,10 @@ public class Database1Impl implements IDatabase1 {
 
   public void resetConnection() {
     conn.resetConnection();
+  }
+
+  public IDatabases getDatabases() {
+    return databases;
   }
 
 }
