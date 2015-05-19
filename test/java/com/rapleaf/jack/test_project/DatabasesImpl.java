@@ -23,7 +23,7 @@ public class DatabasesImpl implements IDatabases {
 
   public IDatabase1 getDatabase1() {
     if (database1 == null) {
-      this.database1 = new Database1Impl(new DatabaseConnection("database1_connection"), this);
+      this.database1 = new Database1Impl(new DatabaseConnection("database1"), this);
     }
     return database1;
   }

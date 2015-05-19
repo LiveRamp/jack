@@ -42,7 +42,7 @@ public class DatabasesImpl implements IDatabases {
 
   public I<%= db.name %> <%= db.getter %> {
     if (<%= db.name.underscore %> == null) {
-      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.connection_name %>"), this);
+      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this);
     }
     return <%= db.name.underscore %>;
   }
