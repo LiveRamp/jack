@@ -12,20 +12,18 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 
 public class DatabasesImpl implements IDatabases {
-  private final BaseDatabaseConnection database1_connection;
   private IDatabase1 database1;
 
-  public DatabasesImpl(BaseDatabaseConnection database1_connection) {
-    this.database1_connection = database1_connection;
+  public DatabasesImpl() {
   }
 
-  public DatabasesImpl() {
-    this(new DatabaseConnection("database1"));
+  public DatabasesImpl(BaseDatabaseConnection database1_connection) {
+    this.database1 = new Database1Impl(database1_connection, this);
   }
 
   public IDatabase1 getDatabase1() {
     if (database1 == null) {
-      this.database1 = new Database1Impl(database1_connection, this);
+      this.database1 = new Database1Impl(new DatabaseConnection("database1_connection"), this);
     }
     return database1;
   }

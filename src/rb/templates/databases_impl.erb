@@ -26,28 +26,23 @@ import <%= db.namespace %>.impl.<%= db.name %>Impl;
 public class DatabasesImpl implements IDatabases {
 
   <% project_defn.databases.each do |db| %>
-  private final BaseDatabaseConnection <%= db.connection_name %>;
-  <% end %>
-
-  <% project_defn.databases.each do |db| %>
   private I<%= db.name %> <%= db.name.underscore %>;
   <% end %>
 
-  public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
-    <% project_defn.databases.each do |db| %>
-    this.<%= db.connection_name %> = <%= db.connection_name %>;
-    <% end %>
+  public DatabasesImpl() {
   }
 
-  public DatabasesImpl() {
-    this(<%= project_defn.databases.map{|db| ["new DatabaseConnection(\"", db.name.underscore, "\")"].join("")}.join(", ") %>);
+  public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
+    <% project_defn.databases.each do |db| %>
+    this.<%= db.name.underscore %> = new <%= db.name %>Impl(<%= db.connection_name %>, this);
+    <% end %>
   }
 
   <% project_defn.databases.each do |db| %>
 
   public I<%= db.name %> <%= db.getter %> {
     if (<%= db.name.underscore %> == null) {
-      this.<%= db.name.underscore %> = new <%= db.name %>Impl(<%= db.connection_name %>, this);
+      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.connection_name %>"), this);
     }
     return <%= db.name.underscore %>;
   }
