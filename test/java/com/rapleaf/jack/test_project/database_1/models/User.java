@@ -28,8 +28,6 @@ import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
-
-
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
