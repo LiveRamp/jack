@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.ArrayList;
 
 import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
@@ -30,8 +31,14 @@ import <%= JACK_NAMESPACE %>.BelongsToAssociation;
 import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
 import <%= JACK_NAMESPACE %>.ModelIdWrapper;
+import <%= JACK_NAMESPACE %>.IAssociationMetadata;
+import <%= JACK_NAMESPACE %>.IModelAssociationMetadata;
+import <%= JACK_NAMESPACE %>.DefaultAssociationMetadata;
+import <%= JACK_NAMESPACE %>.AssociationType;
 import <%= JACK_NAMESPACE %>.queries.AbstractTable;
 import <%= JACK_NAMESPACE %>.queries.Column;
+
+
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 
@@ -663,6 +670,22 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       attributes.add(model.getAttributes());
     }
     return attributes;
+  }
+
+  public static class AssociationMetadata implements IModelAssociationMetadata {
+
+    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+
+    public AssociationMetadata(){
+    <% model_defn.associations.each do |assoc| %>
+      meta.add(new DefaultAssociationMetadata(AssociationType.<%= assoc.type.upcase %>, <%= model_defn.model_name %>.class, <%= assoc.assoc_model.model_name %>.class, "<%= assoc.foreign_key %>"));
+    <% end %>
+    }
+
+    @Override
+    public List<IAssociationMetadata> getAssociationMetadata() {
+      return meta;
+    }
   }
 
 }

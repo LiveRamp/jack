@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.ArrayList;
 
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
@@ -20,8 +21,14 @@ import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
 import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.IAssociationMetadata;
+import com.rapleaf.jack.IModelAssociationMetadata;
+import com.rapleaf.jack.DefaultAssociationMetadata;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
+
+
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -761,6 +768,21 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       attributes.add(model.getAttributes());
     }
     return attributes;
+  }
+
+  public static class AssociationMetadata implements IModelAssociationMetadata {
+
+    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+
+    public AssociationMetadata(){
+      meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Comment.class, User.class, "commenter_id"));
+      meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Comment.class, Post.class, "commented_on_id"));
+    }
+
+    @Override
+    public List<IAssociationMetadata> getAssociationMetadata() {
+      return meta;
+    }
   }
 
 }
