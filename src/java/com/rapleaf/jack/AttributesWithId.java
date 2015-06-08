@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Set;
 
+import com.rapleaf.jack.util.JackUtility;
+
 /**
  * Created with IntelliJ IDEA.
  * User: sean
@@ -23,6 +25,10 @@ public abstract class AttributesWithId implements Serializable {
 
   public long getId() {
     return id;
+  }
+
+  public int getIntId() {
+    return JackUtility.safeLongToInt(id);
   }
 
   @Override
