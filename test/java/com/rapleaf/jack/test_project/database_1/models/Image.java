@@ -29,6 +29,7 @@ import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.util.JackUtility;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   
@@ -246,7 +247,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public User createUser(final String handle, final int num_posts) throws IOException {
  
     User newUser = databases.getDatabase1().users().create(handle, num_posts);
-    setUserId(safeLongToInt(newUser.getId()));
+    setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
     return newUser;
@@ -255,7 +256,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
  
     User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
-    setUserId(safeLongToInt(newUser.getId()));
+    setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
     return newUser;
@@ -264,7 +265,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public User createUser() throws IOException {
  
     User newUser = databases.getDatabase1().users().create("", 0);
-    setUserId(safeLongToInt(newUser.getId()));
+    setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
     return newUser;

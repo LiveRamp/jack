@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 
 public class Record {
   private final Map<Column, Object> columns;
@@ -37,7 +38,7 @@ public class Record {
 
   public Integer getIntFromLong(Column column) {
     Object value = checkTypeAndReturnObject(column, Long.class);
-    return value == null ? null : ModelWithId.safeLongToInt(getLong(column));
+    return value == null ? null : JackUtility.safeLongToInt(getLong(column));
   }
 
   public Long getLong(Column column) {

@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.rapleaf.jack.util.JackUtility;
+
 public abstract class ModelWithId<T extends ModelWithId, D extends GenericDatabases> implements Serializable {
   protected D databases;
   transient protected int cachedHashCode = 0;
@@ -35,17 +37,10 @@ public abstract class ModelWithId<T extends ModelWithId, D extends GenericDataba
   }
 
   public int getIntId() {
-    return safeLongToInt(getId());
+    return JackUtility.safeLongToInt(getId());
   }
 
   public abstract ModelIdWrapper getTypedId();
-
-  public static int safeLongToInt(long l) {
-    if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-      throw new IllegalArgumentException(l + " cannot be cast to int without changing its value.");
-    }
-    return (int) l;
-  }
 
   @Override
   public int hashCode() {
