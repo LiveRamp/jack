@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class Functions {
-  private static final DateTimeFormatter datetimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd hh:mm:ss");
+  private static final DateTimeFormatter datetimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
   private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd");
 
   public static String DATETIME(long datetime) {
