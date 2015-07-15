@@ -28,6 +28,7 @@ import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
@@ -155,9 +156,9 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   @Override
-  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+  protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : query.getWhereConstraints()) {
+    for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
       Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {

@@ -97,8 +97,8 @@ public class ModelQuery {
     return sqlClause.toString();
   }
 
-  public String getWhereClause() {
-    return whereClause.getWhereClause();
+  public WhereClause getWhereClause() {
+    return whereClause;
   }
 
   public String getGroupByClause() {

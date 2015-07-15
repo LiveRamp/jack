@@ -37,7 +37,7 @@ public class WhereClause {
     addIds(Collections.singleton(id));
   }
 
-  public String getWhereClause() {
+  public String getSQLString() {
     StringBuilder statementBuilder = new StringBuilder();
     if (selectedIds.isPresent() || !whereConstraints.isEmpty()) {
       statementBuilder.append("WHERE (");
@@ -92,5 +92,10 @@ public class WhereClause {
 
   public boolean hasIdsOnly() {
     return this.whereConstraints.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return this.getSQLString();
   }
 }
