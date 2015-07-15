@@ -2,30 +2,26 @@ package com.rapleaf.jack.queries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 public class ModelQuery {
 
-  private List<WhereConstraint> whereConstraints;
+  private WhereClause whereClause;
   private List<OrderCriterion> orderCriteria;
   private List<FieldSelector> selectedFields;
   private List<Enum> groupByFields;
   private Optional<LimitCriterion> limitCriterion;
-  private Optional<Set<Long>> selectedIds;
 
   public ModelQuery() {
-    this.whereConstraints = new ArrayList<WhereConstraint>();
+    this.whereClause = new WhereClause();
     this.orderCriteria = new ArrayList<OrderCriterion>();
     this.selectedFields = new ArrayList<FieldSelector>();
     this.groupByFields = new ArrayList<Enum>();
-    //By default, no id selection and limit criteria
-    this.selectedIds = Optional.absent();
+    //By default, no limit criteria
     this.limitCriterion = Optional.absent();
   }
 
@@ -34,11 +30,11 @@ public class ModelQuery {
   }
 
   public List<WhereConstraint> getWhereConstraints() {
-    return whereConstraints;
+    return whereClause.getWhereConstraints();
   }
 
   public Optional<Set<Long>> getIdSet() {
-    return selectedIds;
+    return whereClause.getIdSet();
   }
 
   public List<OrderCriterion> getOrderCriteria() {
@@ -54,18 +50,15 @@ public class ModelQuery {
   }
 
   public void addConstraint(WhereConstraint constraint) {
-    whereConstraints.add(constraint);
+    whereClause.addConstraint(constraint);
   }
 
   public void addIds(Set<Long> ids) {
-    if (!selectedIds.isPresent()) {
-      selectedIds = Optional.<Set<Long>>of(Sets.<Long>newHashSet());
-    }
-    this.selectedIds.get().addAll(ids);
+    whereClause.addIds(ids);
   }
 
   public void addId(Long id) {
-    addIds(Collections.singleton(id));
+    whereClause.addId(id);
   }
 
   public void addOrder(OrderCriterion orderCriterion) {
@@ -105,56 +98,7 @@ public class ModelQuery {
   }
 
   public String getWhereClause() {
-    StringBuilder statementBuilder = new StringBuilder();
-    if (selectedIds.isPresent() || !whereConstraints.isEmpty()) {
-      statementBuilder.append("WHERE (");
-
-      statementBuilder.append(getIdSetSqlCondition());
-      if (selectedIds.isPresent() && !whereConstraints.isEmpty()) {
-        statementBuilder.append(" AND ");
-      }
-      statementBuilder.append(getWhereSqlCriteria());
-      statementBuilder.append(") ");
-    }
-    return statementBuilder.toString();
-  }
-
-  private String getIdSetSqlCondition() {
-    if (!selectedIds.isPresent()) {
-      return "";
-    }
-
-    Set<Long> ids = selectedIds.get();
-
-    StringBuilder sb = new StringBuilder("id in (");
-    if (ids.isEmpty()) {
-      sb.append("null");
-    } else {
-      Iterator<Long> idIterator = selectedIds.get().iterator();
-      while (idIterator.hasNext()) {
-        Long id = idIterator.next();
-        sb.append(id);
-        if (idIterator.hasNext()) {
-          sb.append(",");
-        }
-      }
-    }
-    sb.append(")");
-    return sb.toString();
-  }
-
-  private String getWhereSqlCriteria() {
-    StringBuilder sb = new StringBuilder();
-    Iterator<WhereConstraint> it = whereConstraints.iterator();
-    while (it.hasNext()) {
-      WhereConstraint constraint = it.next();
-      sb.append(constraint.getSqlStatement());
-
-      if (it.hasNext()) {
-        sb.append(" AND ");
-      }
-    }
-    return sb.toString();
+    return whereClause.getWhereClause();
   }
 
   public String getGroupByClause() {
@@ -198,7 +142,7 @@ public class ModelQuery {
   }
 
   public boolean isOnlyIdQuery() {
-    return whereConstraints.isEmpty()
+    return whereClause.hasIdsOnly()
         && selectedFields.isEmpty()
         && orderCriteria.isEmpty()
         && !limitCriterion.isPresent();
