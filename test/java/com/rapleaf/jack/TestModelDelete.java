@@ -2,7 +2,6 @@ package com.rapleaf.jack;
 
 import com.google.common.collect.Sets;
 import com.rapleaf.jack.queries.ModelDelete;
-import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.where_operators.*;
 import com.rapleaf.jack.test_project.DatabasesImpl;
@@ -21,6 +20,7 @@ import java.util.Set;
 public class TestModelDelete extends TestCase {
 
   private static final IDatabases dbs = new DatabasesImpl();
+  private IUserPersistence users;
 
   public void testDeleteStatement() {
     String tableName = "posts";
@@ -57,17 +57,7 @@ public class TestModelDelete extends TestCase {
   }
 
   public void testDeleteWithDeleteStatement() throws IOException {
-    IUserPersistence users = dbs.getDatabase1().users();
-    users.deleteAll();
-
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
-    userA.save();
-    userB.save();
-    userC.save();
-    userD.save();
+    IUserPersistence users = populateDatabase();
 
     ModelDelete delete = new ModelDelete();
     delete.addConstraint(new WhereConstraint<>(User._Fields.handle, JackMatchers.equalTo("B")));
@@ -77,17 +67,7 @@ public class TestModelDelete extends TestCase {
   }
 
   public void testDeleteAll() throws IOException, SQLException {
-    IUserPersistence users = dbs.getDatabase1().users();
-    users.deleteAll();
-
-    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
-    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
-    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
-    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
-    userA.save();
-    userB.save();
-    userC.save();
-    userD.save();
+    populateDatabase();
 
     assertEquals(4, users.findAll().size());
     // an empty query will delete everything
@@ -113,12 +93,43 @@ public class TestModelDelete extends TestCase {
     idsToDelete.add(userA.getId());
     idsToDelete.add(userC.getId());
     // Delete two users by ID
-    users.delete().idIn(idsToDelete).execute();
-    assertEquals(2, users.findAll().size());
+    users.delete().idIn(idsToDelete).id(userD.getId()).execute();
+    assertEquals(1, users.findAll().size());
   }
 
   public void testDeleteByCondition() throws IOException, SQLException {
+    populateDatabase();
+
+    // Delete two users by number of posts
+    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
+    assertEquals(2, users.findAll().size());
+  }
+
+  public void testModelDeleteClearsCache() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    users.enableCaching();
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
+    assertEquals(2, users.findAll().size());
+
+    assertNull(users.find(userB.getId()));
+    assertNull(users.find(userC.getId()));
+    assertNotNull(users.find(userA.getId()));
+    assertNotNull(users.find(userD.getId()));
+  }
+
+  private IUserPersistence populateDatabase() throws IOException {
+    users = dbs.getDatabase1().users();
     users.deleteAll();
 
     User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
@@ -129,10 +140,7 @@ public class TestModelDelete extends TestCase {
     userB.save();
     userC.save();
     userD.save();
-
-    // Delete two users by number of posts
-    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
-    assertEquals(2, users.findAll().size());
+    return users;
   }
 
 }

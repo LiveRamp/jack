@@ -320,9 +320,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
   public boolean delete(ModelDelete delete) throws IOException {
     String statementString = delete.getStatement(this.getTableName());
-    PreparedStatement statement = getPreparedStatement(statementString);
-    setStatementParameters(statement, delete.getWhereClause());
-    try {
+    try (PreparedStatement statement = getPreparedStatement(statementString)) {
+      setStatementParameters(statement, delete.getWhereClause());
       statement.executeUpdate();
     } catch (SQLException e) {
       throw new IOException(e);
@@ -330,11 +329,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       // Delete by query may invalidate the cache
       this.cachedById.clear();
       this.cachedByForeignKey.clear();
-      try {
-        if (statement != null) statement.close();
-      } catch (SQLException e) {
-        // Do nothing
-      }
     }
     return true;
   }
@@ -342,7 +336,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   private String getPreparedStatementString(ModelQuery query, boolean order) throws IOException {
     String statement = query.getSelectClause();
     statement += " FROM " + getTableName() + " ";
-    statement += query.getWhereClause().getSQLString();
+    statement += query.getWhereClause().getSqlString();
     statement += query.getGroupByClause();
     statement += order ? query.getOrderByClause() : "";
     statement += query.getLimitClause();

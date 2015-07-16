@@ -1,8 +1,5 @@
 package com.rapleaf.jack.queries;
 
-
-import com.google.common.base.Optional;
-
 import java.util.Set;
 
 /**
@@ -33,7 +30,7 @@ public class ModelDelete {
 
   public String getStatement(String tableName) {
     String statement = "DELETE FROM " + tableName + " ";
-    statement += whereClause.getSQLString();
+    statement += whereClause.getSqlString();
     return statement;
   }
 }
