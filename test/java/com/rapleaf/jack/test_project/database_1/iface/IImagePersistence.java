@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.ImageDeleteBuilder;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,4 +24,6 @@ public interface IImagePersistence extends IModelPersistence<Image> {
   public List<Image> findByUserId(Integer value)  throws IOException;
 
   public ImageQueryBuilder query();
+
+  public ImageDeleteBuilder delete();
 }

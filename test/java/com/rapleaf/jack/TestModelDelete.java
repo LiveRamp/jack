@@ -4,9 +4,7 @@ import com.google.common.collect.Sets;
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.WhereConstraint;
-import com.rapleaf.jack.queries.where_operators.EqualTo;
-import com.rapleaf.jack.queries.where_operators.In;
-import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.queries.where_operators.*;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -15,7 +13,10 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 import junit.framework.TestCase;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TestModelDelete extends TestCase {
 
@@ -73,6 +74,65 @@ public class TestModelDelete extends TestCase {
     users.delete(delete);
     List<User> allUsers = users.findAll();
     assertEquals(3, allUsers.size());
+  }
+
+  public void testDeleteAll() throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    assertEquals(4, users.findAll().size());
+    // an empty query will delete everything
+    users.delete().execute();
+    assertEquals(0, users.findAll().size());
+  }
+
+  public void testDeleteById() throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    // Query by several ids
+    Set<Long> idsToDelete = new HashSet<Long>();
+    idsToDelete.add(userA.getId());
+    idsToDelete.add(userC.getId());
+    // Delete two users by ID
+    users.delete().idIn(idsToDelete).execute();
+    assertEquals(2, users.findAll().size());
+  }
+
+  public void testDeleteByCondition() throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    User userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    User userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    User userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    // Delete two users by number of posts
+    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
+    assertEquals(2, users.findAll().size());
   }
 
 }

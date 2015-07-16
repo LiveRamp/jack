@@ -49,6 +49,8 @@ EOF
 
   QUERY_BUILDER_TEMPLATE = load_template("templates/query_builder_impl.erb")
 
+  DELETE_BUILDER_TEMPLATE = load_template("templates/delete_builder_impl.erb")
+
   CREATE_METHOD_TEMPLATE = load_template("templates/create_method.erb")
 
   MIGRATION_TXT_TEMPLATE = load_template("templates/migration.erb");
@@ -109,6 +111,11 @@ EOF
       file = File.new("#{output_dir}/query/#{model_defn.query_builder_name}.java", "w")
       file.puts(QUERY_BUILDER_TEMPLATE.result(binding));
       file.close
+
+      file = File.new("#{output_dir}/query/#{model_defn.delete_builder_name}.java", "w")
+      file.puts(DELETE_BUILDER_TEMPLATE.result(binding));
+      file.close
+
 
     end
 

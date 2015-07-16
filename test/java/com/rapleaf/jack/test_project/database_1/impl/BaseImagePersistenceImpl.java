@@ -34,6 +34,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.ImageDeleteBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -202,5 +203,9 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   public ImageQueryBuilder query() {
     return new ImageQueryBuilder(this);
+  }
+
+  public ImageDeleteBuilder delete() {
+    return new ImageDeleteBuilder(this);
   }
 }

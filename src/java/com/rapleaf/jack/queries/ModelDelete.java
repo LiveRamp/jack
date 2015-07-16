@@ -1,6 +1,8 @@
 package com.rapleaf.jack.queries;
 
 
+import com.google.common.base.Optional;
+
 import java.util.Set;
 
 /**

@@ -34,6 +34,7 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.PostDeleteBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -268,5 +269,9 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public PostQueryBuilder query() {
     return new PostQueryBuilder(this);
+  }
+
+  public PostDeleteBuilder delete() {
+    return new PostDeleteBuilder(this);
   }
 }

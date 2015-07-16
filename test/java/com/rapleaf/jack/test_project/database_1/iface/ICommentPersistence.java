@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,4 +27,6 @@ public interface ICommentPersistence extends IModelPersistence<Comment> {
   public List<Comment> findByCreatedAt(long value)  throws IOException;
 
   public CommentQueryBuilder query();
+
+  public CommentDeleteBuilder delete();
 }
