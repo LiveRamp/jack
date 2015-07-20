@@ -3,7 +3,6 @@ package com.rapleaf.jack;
 import com.google.common.collect.Sets;
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.WhereConstraint;
-import com.rapleaf.jack.queries.where_operators.*;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
@@ -17,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
+
 public class TestModelDelete extends TestCase {
 
   private static final IDatabases dbs = new DatabasesImpl();
@@ -27,8 +28,8 @@ public class TestModelDelete extends TestCase {
 
     ModelDelete deleteStatement = new ModelDelete();
     deleteStatement.addIds(Sets.newHashSet(1L, 50L, 3L, 10L));
-    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, new EqualTo<>("Obama")));
-    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, new EqualTo<>(5)));
+    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
+    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, equalTo(5)));
 
     String expectedStatement = "DELETE FROM posts WHERE (id in (1,50,3,10) AND title = ? AND user_id = ?)".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
@@ -49,8 +50,8 @@ public class TestModelDelete extends TestCase {
     String tableName = "posts";
 
     ModelDelete deleteStatement = new ModelDelete();
-    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, new EqualTo<>("Obama")));
-    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, new In<>(5, 10)));
+    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
+    deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, in(5, 10)));
 
     String expectedStatement = "DELETE FROM posts WHERE (title = ? AND user_id IN (?, ?))".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
@@ -60,7 +61,7 @@ public class TestModelDelete extends TestCase {
     IUserPersistence users = populateDatabase();
 
     ModelDelete delete = new ModelDelete();
-    delete.addConstraint(new WhereConstraint<>(User._Fields.handle, JackMatchers.equalTo("B")));
+    delete.addConstraint(new WhereConstraint<>(User._Fields.handle, equalTo("B")));
     users.delete(delete);
     List<User> allUsers = users.findAll();
     assertEquals(3, allUsers.size());
@@ -101,7 +102,7 @@ public class TestModelDelete extends TestCase {
     populateDatabase();
 
     // Delete two users by number of posts
-    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
+    users.delete().whereNumPosts(greaterThan(1)).whereNumPosts(lessThan(3)).execute();
     assertEquals(2, users.findAll().size());
   }
 
@@ -119,7 +120,7 @@ public class TestModelDelete extends TestCase {
     userC.save();
     userD.save();
 
-    users.delete().whereNumPosts(new GreaterThan<>(1)).whereNumPosts(new LessThan<>(3)).execute();
+    users.delete().whereNumPosts(greaterThan(1)).whereNumPosts(lessThan(3)).execute();
     assertEquals(2, users.findAll().size());
 
     assertNull(users.find(userB.getId()));
