@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;
 
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
@@ -57,6 +58,8 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public List<T> find(ModelQuery query) throws IOException;
   
   public List<T> findWithOrder(ModelQuery query) throws IOException;
+
+  public boolean delete(ModelDelete delete) throws IOException;
 
   public void clearCacheById(long id) throws IOException;
 

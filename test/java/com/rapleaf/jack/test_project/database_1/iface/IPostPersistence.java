@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.PostDeleteBuilder;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,4 +27,6 @@ public interface IPostPersistence extends IModelPersistence<Post> {
   public List<Post> findByUpdatedAt(Long value)  throws IOException;
 
   public PostQueryBuilder query();
+
+  public PostDeleteBuilder delete();
 }

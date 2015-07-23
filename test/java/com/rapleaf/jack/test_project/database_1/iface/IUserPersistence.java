@@ -8,6 +8,7 @@ package com.rapleaf.jack.test_project.database_1.iface;
 
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.UserDeleteBuilder;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,4 +33,6 @@ public interface IUserPersistence extends IModelPersistence<User> {
   public List<User> findBySomeBoolean(Boolean value)  throws IOException;
 
   public UserQueryBuilder query();
+
+  public UserDeleteBuilder delete();
 }

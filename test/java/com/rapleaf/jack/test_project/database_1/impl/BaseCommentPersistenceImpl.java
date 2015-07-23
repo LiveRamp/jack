@@ -28,11 +28,13 @@ import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -177,9 +179,9 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+  protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : query.getWhereConstraints()) {
+    for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
       Comment._Fields field = (Comment._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
@@ -256,5 +258,9 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   public CommentQueryBuilder query() {
     return new CommentQueryBuilder(this);
+  }
+
+  public CommentDeleteBuilder delete() {
+    return new CommentDeleteBuilder(this);
   }
 }

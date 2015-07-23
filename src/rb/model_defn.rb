@@ -84,6 +84,10 @@ class ModelDefn
     "#{model_name}QueryBuilder"
   end
 
+  def delete_builder_name
+    "#{model_name}DeleteBuilder"
+  end
+
   def id_wrapper_name
       "#{model_name}.Id"
    end

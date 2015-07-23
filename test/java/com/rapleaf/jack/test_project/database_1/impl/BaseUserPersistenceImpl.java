@@ -28,11 +28,13 @@ import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.UserDeleteBuilder;
 
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -230,9 +232,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected void setStatementParameters(PreparedStatement preparedStatement, ModelQuery query) throws IOException {
+  protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
-    for (WhereConstraint constraint : query.getWhereConstraints()) {
+    for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
       User._Fields field = (User._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
@@ -389,5 +391,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   public UserQueryBuilder query() {
     return new UserQueryBuilder(this);
+  }
+
+  public UserDeleteBuilder delete() {
+    return new UserDeleteBuilder(this);
   }
 }

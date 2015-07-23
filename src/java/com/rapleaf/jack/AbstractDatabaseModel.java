@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
+import com.rapleaf.jack.queries.ModelDelete;
+import com.rapleaf.jack.queries.WhereClause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -264,7 +266,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString);
-      setStatementParameters(preparedStatement, query);
+      setStatementParameters(preparedStatement, query.getWhereClause());
       Set<Enum> selectedFields = getSelectedFields(query);
 
       try {
@@ -299,7 +301,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
 
     while (true) {
       preparedStatement = getPreparedStatement(statementString);
-      setStatementParameters(preparedStatement, query);
+      setStatementParameters(preparedStatement, query.getWhereClause());
       Set<Enum> selectedFields = getSelectedFields(query);
 
       try {
@@ -316,10 +318,25 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
+  public boolean delete(ModelDelete delete) throws IOException {
+    String statementString = delete.getStatement(this.getTableName());
+    try (PreparedStatement statement = getPreparedStatement(statementString)) {
+      setStatementParameters(statement, delete.getWhereClause());
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    } finally {
+      // Delete by query may invalidate the cache
+      this.cachedById.clear();
+      this.cachedByForeignKey.clear();
+    }
+    return true;
+  }
+
   private String getPreparedStatementString(ModelQuery query, boolean order) throws IOException {
     String statement = query.getSelectClause();
     statement += " FROM " + getTableName() + " ";
-    statement += query.getWhereClause();
+    statement += query.getWhereClause().getSqlString();
     statement += query.getGroupByClause();
     statement += order ? query.getOrderByClause() : "";
     statement += query.getLimitClause();
@@ -350,7 +367,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return sb.toString();
   }
 
-  protected abstract void setStatementParameters(PreparedStatement statement, ModelQuery query) throws IOException;
+  protected abstract void setStatementParameters(PreparedStatement statement, WhereClause whereClause) throws IOException;
 
   protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt) throws SQLException {
     executeQuery(foundSet, stmt, null);
@@ -397,8 +414,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     }
   }
 
-  protected PreparedStatement getPreparedStatement(String statemenString) {
-    return conn.getPreparedStatement(statemenString);
+  protected PreparedStatement getPreparedStatement(String statementString) {
+    return conn.getPreparedStatement(statementString);
   }
 
   protected PreparedStatement getSaveStmt() {
