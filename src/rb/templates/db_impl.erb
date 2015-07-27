@@ -34,15 +34,12 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   private final IDatabases databases;
 
 <% model_defns.each do |model_defn| %>
-  private final <%= model_defn.iface_name %> <%= model_defn.table_name %>;
+  private <%= model_defn.iface_name %> <%= model_defn.table_name %>;
 <% end %>
 
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-  <% model_defns.each do |model_defn| %>
-    this.<%= model_defn.table_name %> = new <%= model_defn.impl_name %>(conn, databases);
-  <% end %>
   }
 
   public GenericQuery.Builder createQuery() {
@@ -52,6 +49,9 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   <% model_defns.each do |model_defn| %>
 
   public <%= model_defn.iface_name %> <%= model_defn.persistence_getter %>{
+    if (<%= model_defn.table_name %> == null) {
+      <%= model_defn.table_name %> = new <%= model_defn.impl_name %>(conn, databases);
+    }
     return <%= model_defn.table_name %>;
   }
   <% end %>
@@ -60,7 +60,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     boolean success = true;
     try {
   <% model_defns.each do |model_defn| %>
-    success &= <%= model_defn.table_name %>.deleteAll();
+    success &= <%= model_defn.persistence_getter %>.deleteAll();
   <% end %>
     } catch (IOException e) {
       throw e;
@@ -70,7 +70,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public void disableCaching() {
   <% model_defns.each do |model_defn| %>
-    <%= model_defn.table_name %>.disableCaching();
+    <%= model_defn.persistence_getter %>.disableCaching();
   <% end %>
   }
 

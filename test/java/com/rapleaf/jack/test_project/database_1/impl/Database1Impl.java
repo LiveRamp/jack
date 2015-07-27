@@ -22,18 +22,14 @@ public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
-  private final ICommentPersistence comments;
-  private final IImagePersistence images;
-  private final IPostPersistence posts;
-  private final IUserPersistence users;
+  private ICommentPersistence comments;
+  private IImagePersistence images;
+  private IPostPersistence posts;
+  private IUserPersistence users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.comments = new BaseCommentPersistenceImpl(conn, databases);
-    this.images = new BaseImagePersistenceImpl(conn, databases);
-    this.posts = new BasePostPersistenceImpl(conn, databases);
-    this.users = new BaseUserPersistenceImpl(conn, databases);
   }
 
   public GenericQuery.Builder createQuery() {
@@ -41,28 +37,40 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public ICommentPersistence comments(){
+    if (comments == null) {
+      comments = new BaseCommentPersistenceImpl(conn, databases);
+    }
     return comments;
   }
 
   public IImagePersistence images(){
+    if (images == null) {
+      images = new BaseImagePersistenceImpl(conn, databases);
+    }
     return images;
   }
 
   public IPostPersistence posts(){
+    if (posts == null) {
+      posts = new BasePostPersistenceImpl(conn, databases);
+    }
     return posts;
   }
 
   public IUserPersistence users(){
+    if (users == null) {
+      users = new BaseUserPersistenceImpl(conn, databases);
+    }
     return users;
   }
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
     try {
-    success &= comments.deleteAll();
-    success &= images.deleteAll();
-    success &= posts.deleteAll();
-    success &= users.deleteAll();
+    success &= comments().deleteAll();
+    success &= images().deleteAll();
+    success &= posts().deleteAll();
+    success &= users().deleteAll();
     } catch (IOException e) {
       throw e;
     }
@@ -70,10 +78,10 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public void disableCaching() {
-    comments.disableCaching();
-    images.disableCaching();
-    posts.disableCaching();
-    users.disableCaching();
+    comments().disableCaching();
+    images().disableCaching();
+    posts().disableCaching();
+    users().disableCaching();
   }
 
   public void setAutoCommit(boolean autoCommit) {
