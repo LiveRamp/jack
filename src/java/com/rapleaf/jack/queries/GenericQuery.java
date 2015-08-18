@@ -232,7 +232,7 @@ public class GenericQuery {
       return null;
     }
 
-    Record record = new Record(selectedColumns.size());
+    Record record = new Record(includedTables, selectedColumns.size());
     for (Column column : selectedColumns) {
       String sqlKeyword = column.getSqlKeyword();
       Object value = queryResultSet.getObject(sqlKeyword);

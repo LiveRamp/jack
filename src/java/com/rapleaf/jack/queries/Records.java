@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.ModelWithId;
+
 public class Records implements Iterable<Record> {
   private final List<Record> records;
 
@@ -81,6 +84,21 @@ public class Records implements Iterable<Record> {
     for (Record record : records) {
       results.add(record.getBoolean(column));
     }
+    return results;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends AttributesWithId> List<T> getAttributes(Table tableType) {
+    List<T> results = Lists.newArrayList();
+    for (Record record : records) {
+      results.add((T)record.getAttribute(tableType));
+    }
+    return results;
+  }
+
+  public <T extends ModelWithId> List<T> getModels() {
+    List<T> results = Lists.newArrayList();
+
     return results;
   }
 

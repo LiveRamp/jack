@@ -1,17 +1,21 @@
 package com.rapleaf.jack.queries;
 
+import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Record {
+  private final Collection<Table> tables;
   private final Map<Column, Object> columns;
 
-  Record(int columnCount) {
+  Record(Collection<Table> tables, int columnCount) {
+    this.tables = tables;
     this.columns = Maps.newHashMapWithExpectedSize(columnCount);
   }
 
@@ -70,6 +74,54 @@ public class Record {
   public Boolean getBoolean(Column column) {
     Object value = checkTypeAndReturnObject(column, Boolean.class);
     return value == null ? null : (Boolean)value;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <A extends AttributesWithId> A getAttribute(Table tableType) {
+    Constructor<A> constructor = null;
+    String tableName = null;
+    for (Table table : tables) {
+      if (table.getAttributeType().equals(tableType.getAttributeType())) {
+        tableName = table.getAlias();
+        try {
+          constructor = ((Class<A>)table.getAttributeType()).getConstructor(Long.class);
+        } catch (NoSuchMethodException e) {
+          throw new RuntimeException(e);
+        }
+        break;
+      }
+    }
+
+    if (constructor == null || tableName == null) {
+      throw new RuntimeException("No columns from Table " + tableName + " are included in this record");
+    }
+
+    Long id = null;
+    Map<Enum, Object> fieldMap = Maps.newHashMap();
+    for (Map.Entry<Column, Object> entry : columns.entrySet()) {
+      Column column = entry.getKey();
+      if (column.getTable().equals(tableName)) {
+        if (column.getField() != null) {
+          fieldMap.put(column.getField(), entry.getValue());
+        } else if (id == null) {
+          id = ((Number)(entry.getValue())).longValue();
+        } else {
+          throw new RuntimeException("The record contains multiple IDs for Table " + tableName);
+        }
+      }
+    }
+
+    A attribute;
+    try {
+      attribute = constructor.newInstance(id);
+      for (Map.Entry<Enum, Object> entry : fieldMap.entrySet()) {
+        attribute.setField(entry.getKey().name(), entry.getValue());
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return attribute;
   }
 
   private Object checkTypeAndReturnObject(Column column, Class clazz) {
