@@ -7,12 +7,16 @@ import com.rapleaf.jack.ModelWithId;
 
 public interface Table {
 
+  public String getName();
+
+  public String getAlias();
+
   public Set<Column> getAllColumns();
 
   public String getSqlKeyword();
 
   public Class<? extends AttributesWithId> getAttributeType();
 
-  public Class<? extends ModelWithId> getModelType();
+  public <M extends ModelWithId> Class<M> getModelType();
 
 }
