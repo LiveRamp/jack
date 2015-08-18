@@ -7,29 +7,26 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
-
 import com.rapleaf.jack.test_project.IDatabases;
-import com.rapleaf.jack.util.JackUtility;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
@@ -49,7 +46,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     public final Column SOME_BOOLEAN;
 
     private Tbl(String alias) {
-      super("users", alias);
+      super("users", alias, User.Attributes.class, User.class);
       this.ID = Column.fromId(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
       this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);

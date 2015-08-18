@@ -43,7 +43,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     public final Column UPDATED_AT;
 
     private Tbl(String alias) {
-      super("posts", alias);
+      super("posts", alias, Post.Attributes.class, Post.class);
       this.ID = Column.fromId(alias);
       this.TITLE = Column.fromField(alias, _Fields.title, String.class);
       this.POSTED_AT_MILLIS = Column.fromField(alias, _Fields.posted_at_millis, Long.class);

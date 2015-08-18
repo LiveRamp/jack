@@ -40,7 +40,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     public final Column USER_ID;
 
     private Tbl(String alias) {
-      super("images", alias);
+      super("images", alias, Image.Attributes.class, Image.class);
       this.ID = Column.fromId(alias);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
       Collections.addAll(this.allColumns, ID, USER_ID);
