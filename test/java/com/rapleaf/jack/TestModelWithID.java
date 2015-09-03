@@ -1,13 +1,14 @@
 package com.rapleaf.jack;
 
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import junit.framework.TestCase;
-
-import java.io.IOException;
 
 public class TestModelWithID extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
@@ -32,6 +33,9 @@ public class TestModelWithID extends TestCase {
   }
 
   public void testFields() {
+
+    assertTrue(postModel.toString().equals("<Post id: 0 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
+    assertTrue(userModel.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
 
     try {
       postModel.getField("fake_field");
@@ -77,7 +81,7 @@ public class TestModelWithID extends TestCase {
       dbs.getDatabase1().posts().save(postModel);
 
       assertTrue("Check updated_at was updated " + postModel.getField("updated_at"),
-          Math.abs((Long) postModel.getField("updated_at") - System.currentTimeMillis()) < 1500);
+          Math.abs((Long)postModel.getField("updated_at") - System.currentTimeMillis()) < 1500);
       // give 1.5 second window in case things are slow
     } catch (IOException e) {
       e.printStackTrace();
@@ -101,7 +105,7 @@ public class TestModelWithID extends TestCase {
 
   public void testCovarianceofTypedIdMethod() {
     Image.Id typedId = imageModel.getTypedId();
-    ModelIdWrapper modelIdWrapper = ((ModelWithId) imageModel).getTypedId();
+    ModelIdWrapper modelIdWrapper = ((ModelWithId)imageModel).getTypedId();
   }
 
   public void testIdToString() {
