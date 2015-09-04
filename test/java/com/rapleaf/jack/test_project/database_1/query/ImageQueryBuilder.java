@@ -3,6 +3,7 @@ package com.rapleaf.jack.test_project.database_1.query;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
@@ -42,6 +43,11 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     return this;
   }
 
+  public ImageQueryBuilder whereId(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    return this;
+  }
+
   public ImageQueryBuilder limit(int offset, int nResults) {
     setLimit(new LimitCriterion(offset, nResults));
     return this;
@@ -61,18 +67,18 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
-  
+
   public ImageQueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
-  
+
   public ImageQueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
-  
-  public ImageQueryBuilder orderById(QueryOrder queryOrder) {    
+
+  public ImageQueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
@@ -86,12 +92,12 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
     addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
     return this;
   }
-  
+
   public ImageQueryBuilder orderByUserId() {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, QueryOrder.ASC));
     return this;
   }
-  
+
   public ImageQueryBuilder orderByUserId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Image._Fields.user_id, queryOrder));
     return this;

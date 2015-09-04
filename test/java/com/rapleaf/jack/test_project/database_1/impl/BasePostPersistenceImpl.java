@@ -187,25 +187,29 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
     for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
-      Post._Fields field = (Post._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
         }
         try {
-          switch (field) {
-            case title:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case posted_at_millis:
-              preparedStatement.setDate(++index, new Date((Long) parameter));
-              break;
-            case user_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-            case updated_at:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-              break;
+          if (constraint.isId()) {
+            preparedStatement.setLong(++index, (Long)parameter);
+          } else {
+            Post._Fields field = (Post._Fields)constraint.getField();
+            switch (field) {
+              case title:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case posted_at_millis:
+                preparedStatement.setDate(++index, new Date((Long) parameter));
+                break;
+              case user_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+              case updated_at:
+                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+                break;
+            }
           }
         } catch (SQLException e) {
           throw new IOException(e);
