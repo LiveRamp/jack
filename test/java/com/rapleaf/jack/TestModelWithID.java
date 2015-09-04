@@ -34,9 +34,6 @@ public class TestModelWithID extends TestCase {
 
   public void testFields() {
 
-    assertTrue(postModel.toString().equals("<Post id: 0 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
-    assertTrue(userModel.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
-
     try {
       postModel.getField("fake_field");
       fail("Non-existent field should have thrown exception on get");
@@ -110,6 +107,17 @@ public class TestModelWithID extends TestCase {
 
   public void testIdToString() {
     assertEquals("<Image.Id: 1>", new Image.Id(1l).toString());
+  }
+
+  public void testToString() throws IOException {
+    assertTrue("check Post toString output",
+        postModel.toString().equals("<Post id: 0 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
+    assertTrue("check User toString output",
+        userModel.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
+    User userModel1 = dbs.getDatabase1().users().find(0);
+    assertTrue("check User toString output",
+        userModel1.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
+ 
   }
 
 }
