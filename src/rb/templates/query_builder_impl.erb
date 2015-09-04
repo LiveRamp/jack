@@ -3,6 +3,7 @@ package <%= root_package %>.query;
 import java.util.Set;
 
 import <%= JACK_NAMESPACE %>.queries.AbstractQueryBuilder;
+import <%= JACK_NAMESPACE %>.queries.Column;
 import <%= JACK_NAMESPACE %>.queries.FieldSelector;
 import <%= JACK_NAMESPACE %>.queries.where_operators.IWhereOperator;
 import <%= JACK_NAMESPACE %>.queries.where_operators.JackMatchers;
@@ -43,7 +44,7 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
   }
 
   public <%= model_defn.query_builder_name %> whereId(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Column fromId(null), operator, null));
+    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
     return this;
   }
 
