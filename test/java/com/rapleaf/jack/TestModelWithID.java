@@ -13,19 +13,25 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 public class TestModelWithID extends TestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
   private Post postModel;
+  private Post postModelx;
   private IDatabases dbs;
   private Image imageModel;
   private User userModel;
+  private User userModelx;
 
   @Override
   public void setUp() {
     dbs = new DatabasesImpl(DATABASE_CONNECTION1);
+    postModelx = new Post(15, "Test Post", 100l, 1, 0l);
     postModel = new Post(0, "Test Post", 100l, 1, 0l);
     imageModel = new Image(0, null, dbs);
+    userModelx = new User(2134l, "handle", 0l, 0, 0l, 0l, "bio2", null, 0.0, 0.0, true);
     userModel = new User(0l, "handle", 0l, 0, 0l, 0l, "bio", null, 0.0, 0.0, true);
+
     try {
       dbs.getDatabase1().deleteAll();
       dbs.getDatabase1().users().save(userModel);
+      dbs.getDatabase1().users().save(userModelx);
     } catch (IOException e) {
       e.printStackTrace();
       fail("IO Exception");
@@ -111,13 +117,18 @@ public class TestModelWithID extends TestCase {
 
   public void testToString() throws IOException {
     assertTrue("check Post toString output",
+        postModelx.toString().equals("<Post id: 15 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
+    assertTrue("check Post toString output",
         postModel.toString().equals("<Post id: 0 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
     assertTrue("check User toString output",
-        userModel.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
-    User userModel1 = dbs.getDatabase1().users().find(0);
+        userModelx.toString().equals("<User id: 2134 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio2 some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
+    User userModel1 = dbs.getDatabase1().users().find(2134);
     assertTrue("check User toString output",
-        userModel1.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
- 
+        userModel1.toString().equals("<User id: 2134 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio2 some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
+    User userModel2 = dbs.getDatabase1().users().find(0);
+    assertTrue("check User toString output",
+        userModel2.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
+
   }
 
 }
