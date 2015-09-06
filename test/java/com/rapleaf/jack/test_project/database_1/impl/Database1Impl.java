@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 import java.io.IOException;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.LazyLoadPersistence;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -22,21 +23,38 @@ public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
-
-  private boolean disableCaching;
-  private volatile ICommentPersistence comments;
-  private volatile IImagePersistence images;
-  private volatile IPostPersistence posts;
-  private volatile IUserPersistence users;
+  private final LazyLoadPersistence<ICommentPersistence, IDatabases> comments;
+  private final LazyLoadPersistence<IImagePersistence, IDatabases> images;
+  private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
+  private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.disableCaching = false;
-    this.comments = null;
-    this.images = null;
-    this.posts = null;
-    this.users = null;
+    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseCommentPersistenceImpl(conn, databases);
+      }
+    };
+    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IImagePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseImagePersistenceImpl(conn, databases);
+      }
+    };
+    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IPostPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BasePostPersistenceImpl(conn, databases);
+      }
+    };
+    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IUserPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseUserPersistenceImpl(conn, databases);
+      }
+    };
   }
 
   public GenericQuery.Builder createQuery() {
@@ -44,63 +62,19 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public ICommentPersistence comments(){
-    if (comments == null) {
-      synchronized (this) {
-        ICommentPersistence commentsTmp = new BaseCommentPersistenceImpl(conn, databases);
-        this.comments = commentsTmp;
-      }
-    }
-    
-    if (disableCaching) {
-      comments.disableCaching();
-    }
-    
-    return comments;
+    return comments.get();
   }
 
   public IImagePersistence images(){
-    if (images == null) {
-      synchronized (this) {
-        IImagePersistence imagesTmp = new BaseImagePersistenceImpl(conn, databases);
-        this.images = imagesTmp;
-      }
-    }
-    
-    if (disableCaching) {
-      images.disableCaching();
-    }
-    
-    return images;
+    return images.get();
   }
 
   public IPostPersistence posts(){
-    if (posts == null) {
-      synchronized (this) {
-        IPostPersistence postsTmp = new BasePostPersistenceImpl(conn, databases);
-        this.posts = postsTmp;
-      }
-    }
-    
-    if (disableCaching) {
-      posts.disableCaching();
-    }
-    
-    return posts;
+    return posts.get();
   }
 
   public IUserPersistence users(){
-    if (users == null) {
-      synchronized (this) {
-        IUserPersistence usersTmp = new BaseUserPersistenceImpl(conn, databases);
-        this.users = usersTmp;
-      }
-    }
-    
-    if (disableCaching) {
-      users.disableCaching();
-    }
-    
-    return users;
+    return users.get();
   }
 
   public boolean deleteAll() throws IOException {
@@ -117,19 +91,10 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public void disableCaching() {
-    disableCaching = true;
-    if (comments != null) {
-      comments.disableCaching();
-    }
-    if (images != null) {
-      images.disableCaching();
-    }
-    if (posts != null) {
-      posts.disableCaching();
-    }
-    if (users != null) {
-      users.disableCaching();
-    }
+    comments.get().disableCaching();
+    images.get().disableCaching();
+    posts.get().disableCaching();
+    users.get().disableCaching();
   }
 
   public void setAutoCommit(boolean autoCommit) {

@@ -18,7 +18,8 @@ package <%= root_package %>.impl;
 
 import java.io.IOException;
 
-import <%= root_package %>.I<%=db_name%>;
+import <%= root_package %>.I<%= db_name%>;
+import <%= JACK_NAMESPACE %>.LazyLoadPersistence;
 import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 
@@ -33,19 +34,21 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
 
-  private boolean disableCaching;
-
 <% model_defns.each do |model_defn| %>
-  private volatile <%= model_defn.iface_name %> <%= model_defn.table_name %>;
+  private final LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases> <%= model_defn.table_name %>;
 <% end %>
 
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.disableCaching = false;
     
   <% model_defns.each do |model_defn| %>
-    this.<%= model_defn.table_name %> = null;
+    this.<%= model_defn.table_name %> = new LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases>(conn, databases) {
+      @Override
+      protected <%= model_defn.iface_name %> build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new <%= model_defn.impl_name %>(conn, databases);
+      }
+    };
   <% end %>
   }
 
@@ -56,18 +59,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   <% model_defns.each do |model_defn| %>
 
   public <%= model_defn.iface_name %> <%= model_defn.persistence_getter %>{
-    if (<%= model_defn.table_name %> == null) {
-      synchronized (this) {
-        <%= model_defn.iface_name %> <%= model_defn.table_name %>Tmp = new <%= model_defn.impl_name %>(conn, databases);
-        this.<%= model_defn.table_name %> = <%= model_defn.table_name %>Tmp;
-      }
-    }
-    
-    if (disableCaching) {
-      <%= model_defn.table_name %>.disableCaching();
-    }
-    
-    return <%= model_defn.table_name %>;
+    return <%= model_defn.table_name %>.get();
   }
   <% end %>
 
@@ -84,13 +76,9 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   }
 
   public void disableCaching() {
-    disableCaching = true;
-
-    <% model_defns.each do |model_defn| %>
-    if (<%= model_defn.table_name %> != null) {
-      <%= model_defn.table_name %>.disableCaching();
-    }
-    <% end %>
+  <% model_defns.each do |model_defn| %>
+    <%= model_defn.table_name %>.get().disableCaching();
+  <% end %>
   }
 
   public void setAutoCommit(boolean autoCommit) {
