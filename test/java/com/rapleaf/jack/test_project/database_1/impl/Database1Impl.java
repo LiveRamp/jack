@@ -7,7 +7,6 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.queries.GenericQuery;
@@ -23,18 +22,21 @@ public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
-  private final AtomicReference<ICommentPersistence> comments;
-  private final AtomicReference<IImagePersistence> images;
-  private final AtomicReference<IPostPersistence> posts;
-  private final AtomicReference<IUserPersistence> users;
+
+  private boolean disableCaching;
+  private volatile ICommentPersistence comments;
+  private volatile IImagePersistence images;
+  private volatile IPostPersistence posts;
+  private volatile IUserPersistence users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.comments = new AtomicReference<ICommentPersistence>(new BaseCommentPersistenceImpl(conn, databases));
-    this.images = new AtomicReference<IImagePersistence>(new BaseImagePersistenceImpl(conn, databases));
-    this.posts = new AtomicReference<IPostPersistence>(new BasePostPersistenceImpl(conn, databases));
-    this.users = new AtomicReference<IUserPersistence>(new BaseUserPersistenceImpl(conn, databases));
+    this.disableCaching = false;
+    this.comments = null;
+    this.images = null;
+    this.posts = null;
+    this.users = null;
 }
 
   public GenericQuery.Builder createQuery() {
@@ -42,19 +44,63 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public ICommentPersistence comments(){
-    return comments.get();
+    if (comments == null) {
+      synchronized (this) {
+        ICommentPersistence commentsTmp = new BaseCommentPersistenceImpl(conn, databases);
+        this.comments = commentsTmp;
+      }
+    }
+    
+    if (disableCaching) {
+      comments.disableCaching();
+    }
+    
+    return comments;
   }
 
   public IImagePersistence images(){
-    return images.get();
+    if (images == null) {
+      synchronized (this) {
+        IImagePersistence imagesTmp = new BaseImagePersistenceImpl(conn, databases);
+        this.images = imagesTmp;
+      }
+    }
+    
+    if (disableCaching) {
+      images.disableCaching();
+    }
+    
+    return images;
   }
 
   public IPostPersistence posts(){
-    return posts.get();
+    if (posts == null) {
+      synchronized (this) {
+        IPostPersistence postsTmp = new BasePostPersistenceImpl(conn, databases);
+        this.posts = postsTmp;
+      }
+    }
+    
+    if (disableCaching) {
+      posts.disableCaching();
+    }
+    
+    return posts;
   }
 
   public IUserPersistence users(){
-    return users.get();
+    if (users == null) {
+      synchronized (this) {
+        IUserPersistence usersTmp = new BaseUserPersistenceImpl(conn, databases);
+        this.users = usersTmp;
+      }
+    }
+    
+    if (disableCaching) {
+      users.disableCaching();
+    }
+    
+    return users;
   }
 
   public boolean deleteAll() throws IOException {
@@ -71,10 +117,7 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public void disableCaching() {
-    comments().disableCaching();
-    images().disableCaching();
-    posts().disableCaching();
-    users().disableCaching();
+    disableCaching = true;
   }
 
   public void setAutoCommit(boolean autoCommit) {
