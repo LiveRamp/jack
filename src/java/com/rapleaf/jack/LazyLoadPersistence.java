@@ -33,6 +33,9 @@ public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends
 
   public void disableCaching() {
     disableCaching = true;
+    if (persistence != null) {
+      persistence.disableCaching();
+    }
   }
 
   protected abstract T build(BaseDatabaseConnection conn, D databases);
