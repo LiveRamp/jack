@@ -47,7 +47,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   <% model_defns.each do |model_defn| %>
     this.<%= model_defn.table_name %> = null;
   <% end %>
-}
+  }
 
   public GenericQuery.Builder createQuery() {
     return GenericQuery.create(conn);

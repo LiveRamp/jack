@@ -37,7 +37,7 @@ public class Database1Impl implements IDatabase1 {
     this.images = null;
     this.posts = null;
     this.users = null;
-}
+  }
 
   public GenericQuery.Builder createQuery() {
     return GenericQuery.create(conn);
