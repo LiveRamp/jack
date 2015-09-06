@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.queries.GenericQuery;
@@ -22,47 +23,47 @@ public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
-  private final ICommentPersistence comments;
-  private final IImagePersistence images;
-  private final IPostPersistence posts;
-  private final IUserPersistence users;
+  private final AtomicReference<ICommentPersistence> comments;
+  private final AtomicReference<IImagePersistence> images;
+  private final AtomicReference<IPostPersistence> posts;
+  private final AtomicReference<IUserPersistence> users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.comments = new BaseCommentPersistenceImpl(conn, databases);
-    this.images = new BaseImagePersistenceImpl(conn, databases);
-    this.posts = new BasePostPersistenceImpl(conn, databases);
-    this.users = new BaseUserPersistenceImpl(conn, databases);
-  }
+    this.comments = new AtomicReference<ICommentPersistence>(new BaseCommentPersistenceImpl(conn, databases));
+    this.images = new AtomicReference<IImagePersistence>(new BaseImagePersistenceImpl(conn, databases));
+    this.posts = new AtomicReference<IPostPersistence>(new BasePostPersistenceImpl(conn, databases));
+    this.users = new AtomicReference<IUserPersistence>(new BaseUserPersistenceImpl(conn, databases));
+}
 
   public GenericQuery.Builder createQuery() {
     return GenericQuery.create(conn);
   }
 
   public ICommentPersistence comments(){
-    return comments;
+    return comments.get();
   }
 
   public IImagePersistence images(){
-    return images;
+    return images.get();
   }
 
   public IPostPersistence posts(){
-    return posts;
+    return posts.get();
   }
 
   public IUserPersistence users(){
-    return users;
+    return users.get();
   }
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
     try {
-    success &= comments.deleteAll();
-    success &= images.deleteAll();
-    success &= posts.deleteAll();
-    success &= users.deleteAll();
+    success &= comments().deleteAll();
+    success &= images().deleteAll();
+    success &= posts().deleteAll();
+    success &= users().deleteAll();
     } catch (IOException e) {
       throw e;
     }
@@ -70,10 +71,10 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public void disableCaching() {
-    comments.disableCaching();
-    images.disableCaching();
-    posts.disableCaching();
-    users.disableCaching();
+    comments().disableCaching();
+    images().disableCaching();
+    posts().disableCaching();
+    users().disableCaching();
   }
 
   public void setAutoCommit(boolean autoCommit) {
