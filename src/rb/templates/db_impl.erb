@@ -85,6 +85,12 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public void disableCaching() {
     disableCaching = true;
+
+    <% model_defns.each do |model_defn| %>
+    if (<%= model_defn.table_name %> != null) {
+      <%= model_defn.table_name %>.disableCaching();
+    }
+    <% end %>
   }
 
   public void setAutoCommit(boolean autoCommit) {

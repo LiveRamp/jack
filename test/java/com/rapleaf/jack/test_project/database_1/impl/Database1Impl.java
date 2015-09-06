@@ -118,6 +118,18 @@ public class Database1Impl implements IDatabase1 {
 
   public void disableCaching() {
     disableCaching = true;
+    if (comments != null) {
+      comments.disableCaching();
+    }
+    if (images != null) {
+      images.disableCaching();
+    }
+    if (posts != null) {
+      posts.disableCaching();
+    }
+    if (users != null) {
+      users.disableCaching();
+    }
   }
 
   public void setAutoCommit(boolean autoCommit) {
