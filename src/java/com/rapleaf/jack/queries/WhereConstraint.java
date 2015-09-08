@@ -36,6 +36,10 @@ public class WhereConstraint<T> implements QueryCondition {
     return column.getField();
   }
 
+  public boolean isId() {
+    return column.getField() == null;
+  }
+
   public IWhereOperator<T> getOperator() {
     return operator;
   }

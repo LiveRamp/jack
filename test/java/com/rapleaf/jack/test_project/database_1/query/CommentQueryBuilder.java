@@ -3,6 +3,7 @@ package com.rapleaf.jack.test_project.database_1.query;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
+import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
@@ -42,6 +43,11 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     return this;
   }
 
+  public CommentQueryBuilder whereId(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    return this;
+  }
+
   public CommentQueryBuilder limit(int offset, int nResults) {
     setLimit(new LimitCriterion(offset, nResults));
     return this;
@@ -61,18 +67,18 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
-  
+
   public CommentQueryBuilder order(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
-  
+
   public CommentQueryBuilder orderById() {
     this.addOrder(new OrderCriterion(QueryOrder.ASC));
     return this;
   }
-  
-  public CommentQueryBuilder orderById(QueryOrder queryOrder) {    
+
+  public CommentQueryBuilder orderById(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(queryOrder));
     return this;
   }
@@ -86,12 +92,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     addWhereConstraint(new WhereConstraint<String>(Comment._Fields.content, operator));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByContent() {
     this.addOrder(new OrderCriterion(Comment._Fields.content, QueryOrder.ASC));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByContent(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.content, queryOrder));
     return this;
@@ -106,12 +112,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     addWhereConstraint(new WhereConstraint<Integer>(Comment._Fields.commenter_id, operator));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCommenterId() {
     this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, QueryOrder.ASC));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCommenterId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.commenter_id, queryOrder));
     return this;
@@ -126,12 +132,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.commented_on_id, operator));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCommentedOnId() {
     this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, QueryOrder.ASC));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCommentedOnId(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.commented_on_id, queryOrder));
     return this;
@@ -146,12 +152,12 @@ public class CommentQueryBuilder extends AbstractQueryBuilder<Comment> {
     addWhereConstraint(new WhereConstraint<Long>(Comment._Fields.created_at, operator));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCreatedAt() {
     this.addOrder(new OrderCriterion(Comment._Fields.created_at, QueryOrder.ASC));
     return this;
   }
-  
+
   public CommentQueryBuilder orderByCreatedAt(QueryOrder queryOrder) {
     this.addOrder(new OrderCriterion(Comment._Fields.created_at, queryOrder));
     return this;

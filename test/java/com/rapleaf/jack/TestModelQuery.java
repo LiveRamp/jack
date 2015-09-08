@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import junit.framework.TestCase;
 
@@ -21,7 +22,19 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 import static com.rapleaf.jack.queries.AggregatorFunctions.max;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.between;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.contains;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.endsWith;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.equalTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThan;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThanOrEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.in;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThan;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThanOrEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.notBetween;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.notEqualTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.notIn;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.startsWith;
 
 
 public class TestModelQuery extends TestCase {
@@ -210,6 +223,29 @@ public class TestModelQuery extends TestCase {
         .find();
     assertEquals(1, result.size());
     assertTrue(result.contains(sampleUsers[3]));
+  }
+
+  public void testQueryWhereId() throws IOException, SQLException {
+    IUserPersistence users = dbs.getDatabase1().users();
+    users.deleteAll();
+
+    User userA = users.createDefaultInstance().setHandle("A");
+    User userB = users.createDefaultInstance().setHandle("B");
+    User userC = users.createDefaultInstance().setHandle("C");
+    userA.save();
+    userB.save();
+    userC.save();
+
+    List<User> result = users.query().whereId(JackMatchers.equalTo(userB.getId())).find();
+
+    assertEquals(1, result.size());
+    assertTrue(result.contains(userB));
+
+    result = users.query().whereId(JackMatchers.in(Lists.newArrayList(userA.getId(), userC.getId()))).find();
+
+    assertEquals(2, result.size());
+    assertTrue(result.contains(userA));
+    assertTrue(result.contains(userC));
   }
 
   public void testQueryWithOrder() throws IOException, SQLException {

@@ -160,16 +160,20 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
     for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
-      Image._Fields field = (Image._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
         }
         try {
-          switch (field) {
-            case user_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
+          if (constraint.isId()) {
+            preparedStatement.setLong(++index, (Long)parameter);
+          } else {
+            Image._Fields field = (Image._Fields)constraint.getField();
+            switch (field) {
+              case user_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+            }
           }
         } catch (SQLException e) {
           throw new IOException(e);
