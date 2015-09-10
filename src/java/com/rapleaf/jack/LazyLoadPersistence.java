@@ -20,7 +20,9 @@ public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends
   public T get() {
     if (persistence == null) {
       synchronized (this) {
-        this.persistence = build(conn, databases);
+        if (persistence == null) {
+          this.persistence = build(conn, databases);
+        }
       }
     }
 
