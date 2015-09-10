@@ -91,10 +91,10 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public void disableCaching() {
-    comments.get().disableCaching();
-    images.get().disableCaching();
-    posts.get().disableCaching();
-    users.get().disableCaching();
+    comments.disableCaching();
+    images.disableCaching();
+    posts.disableCaching();
+    users.disableCaching();
   }
 
   public void setAutoCommit(boolean autoCommit) {
