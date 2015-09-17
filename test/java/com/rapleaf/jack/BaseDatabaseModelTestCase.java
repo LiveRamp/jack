@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import junit.framework.TestCase;
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -597,5 +598,15 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(post2, posts.get(1));
     assertEquals(post3, posts.get(2));
     assertEquals(post4, posts.get(3));
+  }
+
+  public void testDisableThenEnableCaching() {
+    // Create a new instance to avoid changing caching behavior for other tests
+    IDatabases dbs = this.getDBS();
+    IDatabase1 db1 = dbs.getDatabase1();
+    db1.disableCaching();
+    assertFalse(db1.comments().isCaching());
+    db1.comments().enableCaching();
+    assertTrue(db1.comments().isCaching());
   }
 }
