@@ -7,7 +7,7 @@ public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends
 
   private volatile T persistence;
 
-  private boolean disableCaching;
+  private volatile boolean disableCaching;
 
   public LazyLoadPersistence(BaseDatabaseConnection conn, D databases) {
     this.conn = conn;
@@ -22,12 +22,12 @@ public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends
       synchronized (this) {
         if (persistence == null) {
           this.persistence = build(conn, databases);
+
+          if (disableCaching) {
+            persistence.disableCaching();
+          }
         }
       }
-    }
-
-    if (disableCaching) {
-      persistence.disableCaching();
     }
 
     return persistence;
@@ -35,6 +35,7 @@ public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends
 
   public void disableCaching() {
     disableCaching = true;
+
     if (persistence != null) {
       persistence.disableCaching();
     }
