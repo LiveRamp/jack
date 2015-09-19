@@ -1,6 +1,8 @@
 package com.rapleaf.jack;
 
-public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends GenericDatabases> {
+import java.io.Serializable;
+
+public abstract class LazyLoadPersistence<T extends IModelPersistence, D extends GenericDatabases> implements Serializable {
 
   private final BaseDatabaseConnection conn;
   private final D databases;
