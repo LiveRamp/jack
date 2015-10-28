@@ -145,6 +145,7 @@
         <directory>./</directory>
         <includes>
           <include>Gemfile</include>
+          <include>Gemfile.lock</include>
         </includes>
       </resource>
     </resources>
