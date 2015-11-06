@@ -137,6 +137,11 @@ public class GenericQuery {
     return this;
   }
 
+  public GenericQuery groupBy(Collection<Column> columns){
+    this.groupByColumns.addAll(columns);
+    return this;
+  }
+
   public GenericQuery groupBy(Column column, Column... columns) {
     this.groupByColumns.add(column);
     this.groupByColumns.addAll(Arrays.asList(columns));
