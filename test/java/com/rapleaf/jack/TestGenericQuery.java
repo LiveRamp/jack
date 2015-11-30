@@ -932,20 +932,34 @@ public class TestGenericQuery {
   @Test
   public void testModelAndAttributeFromRecord() throws Exception {
     userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
-    Record record = db.createQuery().from(User.TBL).orderBy(User.SOME_DATETIME, ASC).fetch().get(0);
-    User.Attributes lhs = userA.getAttributes();
-    User.Attributes rhs = record.getAttribute(User.TBL);
+    postA = posts.create("Post A from User A", date, userA.getIntId(), datetime);
+    Record record = db.createQuery()
+        .from(User.TBL)
+        .innerJoin(Post.TBL).on(Post.USER_ID.equalTo(User.ID))
+        .orderBy(User.SOME_DATETIME, ASC)
+        .fetch()
+        .get(0);
+    User.Attributes userLhs = userA.getAttributes();
+    User.Attributes userRhs = record.getAttribute(User.TBL);
 
-    assertEquals(lhs.getId(), rhs.getId());
-    assertEquals(lhs.getHandle(), rhs.getHandle());
-    assertEquals(lhs.getCreatedAtMillis(), rhs.getCreatedAtMillis());
-    assertEquals(lhs.getSomeDate(), rhs.getSomeDate());
-    assertEquals(lhs.getSomeDatetime(), rhs.getSomeDatetime());
-    assertEquals(lhs.getBio(), rhs.getBio());
-    assertArrayEquals(lhs.getSomeBinary(), rhs.getSomeBinary());
-    assertEquals(lhs.getSomeFloat(), rhs.getSomeFloat(), 0.000001);
-    assertEquals(lhs.getSomeDecimal(), rhs.getSomeDecimal());
-    assertEquals(lhs.isSomeBoolean(), rhs.isSomeBoolean());
+    assertEquals(userLhs.getId(), userRhs.getId());
+    assertEquals(userLhs.getHandle(), userRhs.getHandle());
+    assertEquals(userLhs.getCreatedAtMillis(), userRhs.getCreatedAtMillis());
+    assertEquals(userLhs.getSomeDate(), userRhs.getSomeDate());
+    assertEquals(userLhs.getSomeDatetime(), userRhs.getSomeDatetime());
+    assertEquals(userLhs.getBio(), userRhs.getBio());
+    assertArrayEquals(userLhs.getSomeBinary(), userRhs.getSomeBinary());
+    assertEquals(userLhs.getSomeFloat(), userRhs.getSomeFloat(), 0.000001);
+    assertEquals(userLhs.getSomeDecimal(), userRhs.getSomeDecimal());
+    assertEquals(userLhs.isSomeBoolean(), userRhs.isSomeBoolean());
+
+    Post.Attributes postLhs = postA.getAttributes();
+    Post.Attributes postRhs = record.getAttribute(Post.TBL);
+    assertEquals(postLhs.getId(), postRhs.getId());
+    assertEquals(postLhs.getTitle(), postRhs.getTitle());
+    assertEquals(postLhs.getPostedAtMillis(), postRhs.getPostedAtMillis());
+    assertEquals(postLhs.getUserId(), postRhs.getUserId());
+    assertEquals(postLhs.getUpdatedAt(), postRhs.getUpdatedAt());
   }
 
 }
