@@ -82,7 +82,7 @@ public class Record {
     String tableName = tableType.getAlias();
     Constructor<A> constructor;
     try {
-      constructor = ((Class<A>)tableType.getAttributeType()).getConstructor(Long.TYPE);
+      constructor = ((Class<A>)tableType.getAttributesType()).getConstructor(Long.TYPE);
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
@@ -129,7 +129,7 @@ public class Record {
   @SuppressWarnings("unchecked")
   public <M extends ModelWithId, D extends GenericDatabases> M getModel(Table tableType, D databases) {
     try {
-      Constructor<M> constructor = (Constructor<M>)(tableType.getModelType().getConstructor(tableType.getAttributeType(), databases.getClass().getInterfaces()[0]));
+      Constructor<M> constructor = (Constructor<M>)(tableType.getModelType().getConstructor(tableType.getAttributesType(), databases.getClass().getInterfaces()[0]));
       M model = constructor.newInstance(getAttributes(tableType), databases);
       model.setCreated(true);
       return model;
