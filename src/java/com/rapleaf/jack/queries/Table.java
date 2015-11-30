@@ -15,7 +15,7 @@ public interface Table {
 
   public String getSqlKeyword();
 
-  public Class<? extends AttributesWithId> getAttributeType();
+  public <A extends AttributesWithId> Class<A> getAttributeType();
 
   public <M extends ModelWithId> Class<M> getModelType();
 

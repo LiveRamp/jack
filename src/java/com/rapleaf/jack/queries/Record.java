@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries;
 
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Record {
@@ -76,15 +78,14 @@ public class Record {
     return value == null ? null : (Boolean)value;
   }
 
-  @SuppressWarnings("unchecked")
-  public <A extends AttributesWithId> A getAttribute(Table tableType) {
+  public <A extends AttributesWithId> A getAttribute(Class<A> attributesType) {
     Constructor<A> constructor = null;
     String tableName = null;
     for (Table table : tables) {
-      if (table.getAttributeType().equals(tableType.getAttributeType())) {
+      if (table.getAttributeType().equals(attributesType)) {
         tableName = table.getAlias();
         try {
-          constructor = ((Class<A>)table.getAttributeType()).getConstructor(Long.class);
+          constructor = ((Class<A>)table.getAttributeType()).getConstructor(Long.TYPE);
         } catch (NoSuchMethodException e) {
           throw new RuntimeException(e);
         }
@@ -115,13 +116,24 @@ public class Record {
     try {
       attribute = constructor.newInstance(id);
       for (Map.Entry<Enum, Object> entry : fieldMap.entrySet()) {
-        attribute.setField(entry.getKey().name(), entry.getValue());
+        Object value = entry.getValue();
+        if (value instanceof Date) {
+          attribute.setField(entry.getKey().name(), ((Date)value).getTime());
+        } else if (value instanceof BigDecimal || value instanceof Float) {
+          attribute.setField(entry.getKey().name(), ((Number)value).doubleValue());
+        } else {
+          attribute.setField(entry.getKey().name(), entry.getValue());
+        }
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
 
     return attribute;
+  }
+
+  public <M extends ModelWithId> M getModel(Class<M> modelType) {
+    return null;
   }
 
   private Object checkTypeAndReturnObject(Column column, Class clazz) {
