@@ -934,7 +934,7 @@ public class TestGenericQuery {
     userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
     Record record = db.createQuery().from(User.TBL).orderBy(User.SOME_DATETIME, ASC).fetch().get(0);
     User.Attributes lhs = userA.getAttributes();
-    User.Attributes rhs = record.getAttribute(User.Attributes.class);
+    User.Attributes rhs = record.getAttribute(User.TBL);
 
     assertEquals(lhs.getId(), rhs.getId());
     assertEquals(lhs.getHandle(), rhs.getHandle());

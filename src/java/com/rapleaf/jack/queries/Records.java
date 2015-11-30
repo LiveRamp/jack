@@ -87,10 +87,11 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public <T extends AttributesWithId> List<T> getAttributes(Class<T> attributesType) {
+  @SuppressWarnings("unchecked")
+  public <T extends AttributesWithId> List<T> getAttributes(Table tableType) {
     List<T> results = Lists.newArrayList();
     for (Record record : records) {
-      results.add(record.getAttribute(attributesType));
+      results.add((T)record.getAttribute(tableType));
     }
     return results;
   }

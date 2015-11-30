@@ -2,7 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -13,11 +12,9 @@ import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Record {
-  private final Collection<Table> tables;
   private final Map<Column, Object> columns;
 
-  Record(Collection<Table> tables, int columnCount) {
-    this.tables = tables;
+  Record(int columnCount) {
     this.columns = Maps.newHashMapWithExpectedSize(columnCount);
   }
 
@@ -78,19 +75,14 @@ public class Record {
     return value == null ? null : (Boolean)value;
   }
 
-  public <A extends AttributesWithId> A getAttribute(Class<A> attributesType) {
-    Constructor<A> constructor = null;
-    String tableName = null;
-    for (Table table : tables) {
-      if (table.getAttributeType().equals(attributesType)) {
-        tableName = table.getAlias();
-        try {
-          constructor = ((Class<A>)table.getAttributeType()).getConstructor(Long.TYPE);
-        } catch (NoSuchMethodException e) {
-          throw new RuntimeException(e);
-        }
-        break;
-      }
+  @SuppressWarnings("unchecked")
+  public <A extends AttributesWithId> A getAttribute(Table tableType) {
+    String tableName = tableType.getAlias();
+    Constructor<A> constructor;
+    try {
+      constructor = ((Class<A>)tableType.getAttributeType()).getConstructor(Long.TYPE);
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
     }
 
     if (constructor == null || tableName == null) {
