@@ -36,6 +36,10 @@ public class WhereConstraint<T> implements QueryCondition {
     return column.getField();
   }
 
+  public boolean isId() {
+    return column.getField() == null;
+  }
+
   public IWhereOperator<T> getOperator() {
     return operator;
   }
@@ -50,6 +54,6 @@ public class WhereConstraint<T> implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return (logic != null ? logic.toString() + " " : "") + column.getSqlKeyword() + " " + operator.getSqlStatement();
+    return (logic != null ? logic.toString() + " " : "") + "`" + column.getSqlKeyword() + "` " + operator.getSqlStatement();
   }
 }

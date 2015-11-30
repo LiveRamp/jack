@@ -182,25 +182,29 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   protected void setStatementParameters(PreparedStatement preparedStatement, WhereClause whereClause) throws IOException {
     int index = 0;
     for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
-      Comment._Fields field = (Comment._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
         }
         try {
-          switch (field) {
-            case content:
-              preparedStatement.setString(++index, (String) parameter);
-              break;
-            case commenter_id:
-              preparedStatement.setInt(++index, (Integer) parameter);
-              break;
-            case commented_on_id:
-              preparedStatement.setLong(++index, (Long) parameter);
-              break;
-            case created_at:
-              preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
-              break;
+          if (constraint.isId()) {
+            preparedStatement.setLong(++index, (Long)parameter);
+          } else {
+            Comment._Fields field = (Comment._Fields)constraint.getField();
+            switch (field) {
+              case content:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
+              case commenter_id:
+                preparedStatement.setInt(++index, (Integer) parameter);
+                break;
+              case commented_on_id:
+                preparedStatement.setLong(++index, (Long) parameter);
+                break;
+              case created_at:
+                preparedStatement.setTimestamp(++index, new Timestamp((Long) parameter));
+                break;
+            }
           }
         } catch (SQLException e) {
           throw new IOException(e);

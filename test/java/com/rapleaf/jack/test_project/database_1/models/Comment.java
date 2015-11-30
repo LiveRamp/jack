@@ -435,6 +435,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
   public String toString() {
     return "<Comment"
+      + " id: " + this.getId()
       + " content: " + getContent()
       + " commenter_id: " + getCommenterId()
       + " commented_on_id: " + getCommentedOnId()

@@ -392,6 +392,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public String toString() {
     return "<<%= model_defn.model_name %>"
+      + " id: " + this.getId()
       <% model_defn.fields.each do |field_defn| %>
       + " <%= field_defn.name %>: " + <%= field_defn.getter %>
       <% end %>

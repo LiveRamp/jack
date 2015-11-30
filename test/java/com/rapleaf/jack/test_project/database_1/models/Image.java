@@ -273,6 +273,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public String toString() {
     return "<Image"
+      + " id: " + this.getId()
       + " user_id: " + getUserId()
       + ">";
   }

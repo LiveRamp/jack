@@ -582,6 +582,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
   public String toString() {
     return "<User"
+      + " id: " + this.getId()
       + " handle: " + getHandle()
       + " created_at_millis: " + getCreatedAtMillis()
       + " num_posts: " + getNumPosts()

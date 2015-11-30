@@ -113,7 +113,7 @@
           <include>**/*.rb</include>
           <include>**/*.erb</include>
           <include>**/Gemfile</include>
-
+          <include>**/Gemfile.lock</include>
         </includes>
       </resource>
       <resource>
@@ -145,6 +145,7 @@
         <directory>./</directory>
         <includes>
           <include>Gemfile</include>
+          <include>Gemfile.lock</include>
         </includes>
       </resource>
     </resources>

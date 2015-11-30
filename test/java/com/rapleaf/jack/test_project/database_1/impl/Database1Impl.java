@@ -9,6 +9,7 @@ package com.rapleaf.jack.test_project.database_1.impl;
 import java.io.IOException;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.LazyLoadPersistence;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -22,18 +23,38 @@ public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
-  private final ICommentPersistence comments;
-  private final IImagePersistence images;
-  private final IPostPersistence posts;
-  private final IUserPersistence users;
+  private final LazyLoadPersistence<ICommentPersistence, IDatabases> comments;
+  private final LazyLoadPersistence<IImagePersistence, IDatabases> images;
+  private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
+  private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
     this.conn = conn;
     this.databases = databases;
-    this.comments = new BaseCommentPersistenceImpl(conn, databases);
-    this.images = new BaseImagePersistenceImpl(conn, databases);
-    this.posts = new BasePostPersistenceImpl(conn, databases);
-    this.users = new BaseUserPersistenceImpl(conn, databases);
+    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseCommentPersistenceImpl(conn, databases);
+      }
+    };
+    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IImagePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseImagePersistenceImpl(conn, databases);
+      }
+    };
+    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IPostPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BasePostPersistenceImpl(conn, databases);
+      }
+    };
+    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected IUserPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseUserPersistenceImpl(conn, databases);
+      }
+    };
   }
 
   public GenericQuery.Builder createQuery() {
@@ -41,28 +62,28 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public ICommentPersistence comments(){
-    return comments;
+    return comments.get();
   }
 
   public IImagePersistence images(){
-    return images;
+    return images.get();
   }
 
   public IPostPersistence posts(){
-    return posts;
+    return posts.get();
   }
 
   public IUserPersistence users(){
-    return users;
+    return users.get();
   }
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
     try {
-    success &= comments.deleteAll();
-    success &= images.deleteAll();
-    success &= posts.deleteAll();
-    success &= users.deleteAll();
+    success &= comments().deleteAll();
+    success &= images().deleteAll();
+    success &= posts().deleteAll();
+    success &= users().deleteAll();
     } catch (IOException e) {
       throw e;
     }

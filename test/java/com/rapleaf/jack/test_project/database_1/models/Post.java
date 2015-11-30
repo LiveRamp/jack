@@ -390,6 +390,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
   public String toString() {
     return "<Post"
+      + " id: " + this.getId()
       + " title: " + getTitle()
       + " posted_at_millis: " + getPostedAtMillis()
       + " user_id: " + getUserId()

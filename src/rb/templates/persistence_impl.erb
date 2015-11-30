@@ -159,18 +159,22 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     <% else %>
     int index = 0;
     for (WhereConstraint constraint : whereClause.getWhereConstraints()) {
-      <%= model_defn.model_name %>._Fields field = (<%= model_defn.model_name %>._Fields)constraint.getField();
       for (Object parameter : constraint.getParameters()) {
         if (parameter == null) {
           continue;
         }
         try {
-          switch (field) {
-      <% model_defn.fields.each do |field_defn| %>
-            case <%= field_defn.name %>:
-              preparedStatement.set<%=field_defn.prep_stmt_type%>(++index, <%=field_defn.prep_stmt_modifier("(#{field_defn.java_type(true)}) parameter")%>);
-              break;
-      <% end %>
+          if (constraint.isId()) {
+            preparedStatement.setLong(++index, (Long)parameter);
+          } else {
+            <%= model_defn.model_name %>._Fields field = (<%= model_defn.model_name %>._Fields)constraint.getField();
+            switch (field) {
+        <% model_defn.fields.each do |field_defn| %>
+              case <%= field_defn.name %>:
+                preparedStatement.set<%=field_defn.prep_stmt_type%>(++index, <%=field_defn.prep_stmt_modifier("(#{field_defn.java_type(true)}) parameter")%>);
+                break;
+        <% end %>
+            }
           }
         } catch (SQLException e) {
           throw new IOException(e);
