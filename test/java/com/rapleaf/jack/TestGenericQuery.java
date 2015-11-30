@@ -49,7 +49,7 @@ public class TestGenericQuery {
   private final IPostPersistence posts = db.posts();
 
   private User userA, userB, userC, userD, userE, userF, userG, userH;
-  private Post postA, postB, postC, postD, postE;
+  private Post postA, postB, postC;
   private Comment commentA, commentB, commentC, commentD;
   private long date, datetime;
   private Records results1, results2;
@@ -103,7 +103,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.BIO.equalTo("Trader"),
-               User.HANDLE.equalTo("B"))
+            User.HANDLE.equalTo("B"))
         .fetch();
     assertEquals(1, results1.size());
     assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
@@ -121,7 +121,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.BIO.equalTo("Trader"),
-               User.NUM_POSTS.equalTo(1).or(User.NUM_POSTS.equalTo(2)).or(User.NUM_POSTS.equalTo(3)))
+            User.NUM_POSTS.equalTo(1).or(User.NUM_POSTS.equalTo(2)).or(User.NUM_POSTS.equalTo(3)))
         .fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
@@ -129,8 +129,8 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.NUM_POSTS.between(1, 2),
-               User.BIO.equalTo("CEO")
-                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B")))
+            User.BIO.equalTo("CEO")
+                .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B")))
         .fetch();
     assertEquals(2, results1.size());
     assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
@@ -138,9 +138,9 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.NUM_POSTS.between(1, 2),
-               User.BIO.equalTo("CEO")
-                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B"))
-                   .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
+            User.BIO.equalTo("CEO")
+                .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B"))
+                .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
         .fetch();
     assertEquals(3, results1.size());
     assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
@@ -345,7 +345,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(1, results1.size());
     assertEquals("Casey", results1.get(0).getString(User.HANDLE));
-    
+
     results1 = db.createQuery().from(User.TBL).where(User.SOME_DATETIME.isNull()).fetch();
     assertEquals(3, results1.size());
 
@@ -532,8 +532,8 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .where(User.HANDLE.equalTo("A"),
-               User.BIO.equalTo("CEO"),
-               User.NUM_POSTS.equalTo(1))
+            User.BIO.equalTo("CEO"),
+            User.NUM_POSTS.equalTo(1))
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());
@@ -748,16 +748,14 @@ public class TestGenericQuery {
     userB = users.create("B", datetime, 0, date - 1, datetime, "Byline Editor", new byte[]{(byte)1}, 2.2, 2.02, true);
     userC = users.create("C", datetime, 0, date + 2, datetime, "Code Refactor", new byte[]{(byte)2}, 2.2, 2.02, false);
 
-    postA = posts.create("Post A from User A", datetime, userA.getIntId(), datetime);
+    postA = posts.create("Post A from User B", datetime, userB.getIntId(), datetime);
     postB = posts.create("Post B from User B", datetime, userB.getIntId(), datetime);
-    postC = posts.create("Post C from User B", datetime, userB.getIntId(), datetime);
-    postD = posts.create("Post D from User C", datetime, userC.getIntId(), datetime);
-    postE = posts.create("Post E from User C", datetime, userC.getIntId(), datetime);
+    postC = posts.create("Post C from User C", datetime, userC.getIntId(), datetime);
 
-    commentA = comments.create("Comment A on Post B from User A", userA.getIntId(), postB.getIntId(), datetime);
-    commentB = comments.create("Comment B on Post B from User B", userB.getIntId(), postB.getIntId(), datetime);
-    commentC = comments.create("Comment C on Post C from User B", userB.getIntId(), postC.getIntId(), datetime);
-    commentD = comments.create("Comment D on Post E from User C", userC.getIntId(), postE.getIntId(), datetime);
+    commentA = comments.create("Comment A on Post A from User A", userA.getIntId(), postA.getIntId(), datetime);
+    commentB = comments.create("Comment B on Post A from User B", userB.getIntId(), postA.getIntId(), datetime);
+    commentC = comments.create("Comment C on Post B from User B", userB.getIntId(), postB.getIntId(), datetime);
+    commentD = comments.create("Comment D on Post C from User C", userC.getIntId(), postC.getIntId(), datetime);
 
     results1 = db.createQuery()
         .from(Comment.TBL)
@@ -775,22 +773,22 @@ public class TestGenericQuery {
     Record recordForCommentA = results1.get(0);
     assertEquals(commentA.getContent(), recordForCommentA.getString(Comment.CONTENT));
     assertEquals(userA.getHandle(), recordForCommentA.getString(User.HANDLE));
-    assertEquals(postB.getTitle(), recordForCommentA.getString(Post.TITLE));
+    assertEquals(postA.getTitle(), recordForCommentA.getString(Post.TITLE));
 
     Record recordForCommentC = results1.get(1);
     assertEquals(commentC.getContent(), recordForCommentC.getString(Comment.CONTENT));
     assertEquals(userB.getHandle(), recordForCommentC.getString(User.HANDLE));
-    assertEquals(postC.getTitle(), recordForCommentC.getString(Post.TITLE));
+    assertEquals(postB.getTitle(), recordForCommentC.getString(Post.TITLE));
 
     Record recordForCommentB = results1.get(2);
     assertEquals(commentB.getContent(), recordForCommentB.getString(Comment.CONTENT));
     assertEquals(userB.getHandle(), recordForCommentB.getString(User.HANDLE));
-    assertEquals(postB.getTitle(), recordForCommentB.getString(Post.TITLE));
+    assertEquals(postA.getTitle(), recordForCommentB.getString(Post.TITLE));
 
     Record recordForCommentD = results1.get(3);
     assertEquals(commentD.getContent(), recordForCommentD.getString(Comment.CONTENT));
     assertEquals(userC.getHandle(), recordForCommentD.getString(User.HANDLE));
-    assertEquals(postE.getTitle(), recordForCommentD.getString(Post.TITLE));
+    assertEquals(postC.getTitle(), recordForCommentD.getString(Post.TITLE));
   }
 
   @Test
