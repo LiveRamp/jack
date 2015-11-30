@@ -51,7 +51,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<<%= model_defn.model_name %>.Attributes, <%= model_defn.model_name %>> {
     public final Column ID;
     <% model_defn.fields.each do |field_defn| %>
     public final Column <%= field_defn.name.upcase %>;

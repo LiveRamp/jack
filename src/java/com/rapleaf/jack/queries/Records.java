@@ -88,20 +88,18 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T extends AttributesWithId> List<T> getAttributes(Table tableType) {
-    List<T> results = Lists.newArrayList();
+  public <A extends AttributesWithId, M extends ModelWithId> List<A> getAttributes(Table<A, M> tableType) {
+    List<A> results = Lists.newArrayList();
     for (Record record : records) {
-      results.add((T)record.getAttributes(tableType));
+      results.add(record.getAttributes(tableType));
     }
     return results;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T extends ModelWithId, D extends GenericDatabases> List<T> getModels(Table tableType, D databases) {
-    List<T> results = Lists.newArrayList();
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> List<M> getModels(Table<A, M> tableType, D databases) {
+    List<M> results = Lists.newArrayList();
     for (Record record : records) {
-      results.add((T)record.getModel(tableType, databases));
+      results.add(record.getModel(tableType, databases));
     }
     return results;
   }

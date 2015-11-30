@@ -35,7 +35,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   
   public static final long serialVersionUID = 2502129457421563432L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<Image.Attributes, Image> {
     public final Column ID;
     public final Column USER_ID;
 

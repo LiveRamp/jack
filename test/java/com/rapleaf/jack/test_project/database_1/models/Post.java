@@ -35,7 +35,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   
   public static final long serialVersionUID = -1518028829029140792L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<Post.Attributes, Post> {
     public final Column ID;
     public final Column TITLE;
     public final Column POSTED_AT_MILLIS;

@@ -77,12 +77,11 @@ public class Record {
     return value == null ? null : (Boolean)value;
   }
 
-  @SuppressWarnings("unchecked")
-  public <A extends AttributesWithId> A getAttributes(Table tableType) {
+  public <A extends AttributesWithId, M extends ModelWithId> A getAttributes(Table<A, M> tableType) {
     String tableName = tableType.getAlias();
     Constructor<A> constructor;
     try {
-      constructor = ((Class<A>)tableType.getAttributesType()).getConstructor(Long.TYPE);
+      constructor = tableType.getAttributesType().getConstructor(Long.TYPE);
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
@@ -130,15 +129,14 @@ public class Record {
     return attribute;
   }
 
-  @SuppressWarnings("unchecked")
-  public <M extends ModelWithId, D extends GenericDatabases> M getModel(Table tableType, D databases) {
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> M getModel(Table<A, M> tableType, D databases) {
     try {
       AttributesWithId attributes = getAttributes(tableType);
       if (attributes == null) {
         return null;
       }
 
-      Constructor<M> constructor = (Constructor<M>)(tableType.getModelType().getConstructor(tableType.getAttributesType(), databases.getClass().getInterfaces()[0]));
+      Constructor<M> constructor = (tableType.getModelType().getConstructor(tableType.getAttributesType(), databases.getClass().getInterfaces()[0]));
       M model = constructor.newInstance(attributes, databases);
       model.setCreated(true);
       return model;
