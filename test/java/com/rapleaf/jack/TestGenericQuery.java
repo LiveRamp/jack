@@ -928,4 +928,24 @@ public class TestGenericQuery {
     assertEquals(3, results1.size());
     assertEquals(Sets.newHashSet("D", "E", "F"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
   }
+
+  @Test
+  public void testModelAndAttributeFromRecord() throws Exception {
+    userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
+    Record record = db.createQuery().from(User.TBL).orderBy(User.SOME_DATETIME, ASC).fetch().get(0);
+    User.Attributes lhs = userA.getAttributes();
+    User.Attributes rhs = record.getAttribute(User.Attributes.class);
+
+    assertEquals(lhs.getId(), rhs.getId());
+    assertEquals(lhs.getHandle(), rhs.getHandle());
+    assertEquals(lhs.getCreatedAtMillis(), rhs.getCreatedAtMillis());
+    assertEquals(lhs.getSomeDate(), rhs.getSomeDate());
+    assertEquals(lhs.getSomeDatetime(), rhs.getSomeDatetime());
+    assertEquals(lhs.getBio(), rhs.getBio());
+    assertArrayEquals(lhs.getSomeBinary(), rhs.getSomeBinary());
+    assertEquals(lhs.getSomeFloat(), rhs.getSomeFloat(), 0.000001);
+    assertEquals(lhs.getSomeDecimal(), rhs.getSomeDecimal());
+    assertEquals(lhs.isSomeBoolean(), rhs.isSomeBoolean());
+  }
+
 }
