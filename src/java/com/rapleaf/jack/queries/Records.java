@@ -91,7 +91,7 @@ public class Records implements Iterable<Record> {
   public <T extends AttributesWithId> List<T> getAttributes(Table tableType) {
     List<T> results = Lists.newArrayList();
     for (Record record : records) {
-      results.add((T)record.getAttribute(tableType));
+      results.add((T)record.getAttributes(tableType));
     }
     return results;
   }

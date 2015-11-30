@@ -76,7 +76,7 @@ public class Record {
   }
 
   @SuppressWarnings("unchecked")
-  public <A extends AttributesWithId> A getAttribute(Table tableType) {
+  public <A extends AttributesWithId> A getAttributes(Table tableType) {
     String tableName = tableType.getAlias();
     Constructor<A> constructor;
     try {

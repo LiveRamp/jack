@@ -940,7 +940,7 @@ public class TestGenericQuery {
         .fetch()
         .get(0);
     User.Attributes userLhs = userA.getAttributes();
-    User.Attributes userRhs = record.getAttribute(User.TBL);
+    User.Attributes userRhs = record.getAttributes(User.TBL);
 
     assertEquals(userLhs.getId(), userRhs.getId());
     assertEquals(userLhs.getHandle(), userRhs.getHandle());
@@ -954,7 +954,7 @@ public class TestGenericQuery {
     assertEquals(userLhs.isSomeBoolean(), userRhs.isSomeBoolean());
 
     Post.Attributes postLhs = postA.getAttributes();
-    Post.Attributes postRhs = record.getAttribute(Post.TBL);
+    Post.Attributes postRhs = record.getAttributes(Post.TBL);
     assertEquals(postLhs.getId(), postRhs.getId());
     assertEquals(postLhs.getTitle(), postRhs.getTitle());
     assertEquals(postLhs.getPostedAtMillis(), postRhs.getPostedAtMillis());
