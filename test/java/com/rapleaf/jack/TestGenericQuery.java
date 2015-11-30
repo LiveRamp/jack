@@ -961,10 +961,16 @@ public class TestGenericQuery {
     assertEquals(postAttrLhs.getUserId(), postAttrRhs.getUserId());
     assertEquals(postAttrLhs.getUpdatedAt(), postAttrRhs.getUpdatedAt());
 
+    Comment.Attributes commentAttr = record.getAttributes(Comment.TBL);
+    assertNull(commentAttr);
+
     User modelFromRecord = record.getModel(User.TBL, db.getDatabases());
     String newHandle = "new handle";
     modelFromRecord.setHandle(newHandle).save();
     assertEquals(users.find(modelFromRecord.getId()).getHandle(), newHandle);
+
+    Comment comment = record.getModel(Comment.TBL, db.getDatabases());
+    assertNull(comment);
   }
 
 }

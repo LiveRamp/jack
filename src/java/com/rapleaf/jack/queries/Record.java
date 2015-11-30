@@ -106,6 +106,10 @@ public class Record {
       }
     }
 
+    if (id == null) {
+      return null;
+    }
+
     A attribute;
     try {
       attribute = constructor.newInstance(id);
@@ -129,8 +133,13 @@ public class Record {
   @SuppressWarnings("unchecked")
   public <M extends ModelWithId, D extends GenericDatabases> M getModel(Table tableType, D databases) {
     try {
+      AttributesWithId attributes = getAttributes(tableType);
+      if (attributes == null) {
+        return null;
+      }
+
       Constructor<M> constructor = (Constructor<M>)(tableType.getModelType().getConstructor(tableType.getAttributesType(), databases.getClass().getInterfaces()[0]));
-      M model = constructor.newInstance(getAttributes(tableType), databases);
+      M model = constructor.newInstance(attributes, databases);
       model.setCreated(true);
       return model;
     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
