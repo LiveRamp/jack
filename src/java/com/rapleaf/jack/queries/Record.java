@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.GenericDatabases;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.util.JackUtility;
 
@@ -124,8 +126,16 @@ public class Record {
     return attribute;
   }
 
-  public <M extends ModelWithId> M getModel(Class<M> modelType) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <M extends ModelWithId, D extends GenericDatabases> M getModel(Table tableType, D databases) {
+    try {
+      Constructor<M> constructor = (Constructor<M>)(tableType.getModelType().getConstructor(tableType.getAttributeType(), databases.getClass().getInterfaces()[0]));
+      M model = constructor.newInstance(getAttributes(tableType), databases);
+      model.setCreated(true);
+      return model;
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Object checkTypeAndReturnObject(Column column, Class clazz) {

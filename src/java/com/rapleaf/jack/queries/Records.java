@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.GenericDatabases;
 import com.rapleaf.jack.ModelWithId;
 
 public class Records implements Iterable<Record> {
@@ -96,10 +97,11 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public <T extends ModelWithId> List<T> getModels(Class<T> modelType) {
+  @SuppressWarnings("unchecked")
+  public <T extends ModelWithId, D extends GenericDatabases> List<T> getModels(Table tableType, D databases) {
     List<T> results = Lists.newArrayList();
     for (Record record : records) {
-      results.add(record.getModel(modelType));
+      results.add((T)record.getModel(tableType, databases));
     }
     return results;
   }

@@ -939,27 +939,32 @@ public class TestGenericQuery {
         .orderBy(User.SOME_DATETIME, ASC)
         .fetch()
         .get(0);
-    User.Attributes userLhs = userA.getAttributes();
-    User.Attributes userRhs = record.getAttributes(User.TBL);
+    User.Attributes userAttrLhs = userA.getAttributes();
+    User.Attributes userAttrRhs = record.getAttributes(User.TBL);
 
-    assertEquals(userLhs.getId(), userRhs.getId());
-    assertEquals(userLhs.getHandle(), userRhs.getHandle());
-    assertEquals(userLhs.getCreatedAtMillis(), userRhs.getCreatedAtMillis());
-    assertEquals(userLhs.getSomeDate(), userRhs.getSomeDate());
-    assertEquals(userLhs.getSomeDatetime(), userRhs.getSomeDatetime());
-    assertEquals(userLhs.getBio(), userRhs.getBio());
-    assertArrayEquals(userLhs.getSomeBinary(), userRhs.getSomeBinary());
-    assertEquals(userLhs.getSomeFloat(), userRhs.getSomeFloat(), 0.000001);
-    assertEquals(userLhs.getSomeDecimal(), userRhs.getSomeDecimal());
-    assertEquals(userLhs.isSomeBoolean(), userRhs.isSomeBoolean());
+    assertEquals(userAttrLhs.getId(), userAttrRhs.getId());
+    assertEquals(userAttrLhs.getHandle(), userAttrRhs.getHandle());
+    assertEquals(userAttrLhs.getCreatedAtMillis(), userAttrRhs.getCreatedAtMillis());
+    assertEquals(userAttrLhs.getSomeDate(), userAttrRhs.getSomeDate());
+    assertEquals(userAttrLhs.getSomeDatetime(), userAttrRhs.getSomeDatetime());
+    assertEquals(userAttrLhs.getBio(), userAttrRhs.getBio());
+    assertArrayEquals(userAttrLhs.getSomeBinary(), userAttrRhs.getSomeBinary());
+    assertEquals(userAttrLhs.getSomeFloat(), userAttrRhs.getSomeFloat(), 0.000001);
+    assertEquals(userAttrLhs.getSomeDecimal(), userAttrRhs.getSomeDecimal());
+    assertEquals(userAttrLhs.isSomeBoolean(), userAttrRhs.isSomeBoolean());
 
-    Post.Attributes postLhs = postA.getAttributes();
-    Post.Attributes postRhs = record.getAttributes(Post.TBL);
-    assertEquals(postLhs.getId(), postRhs.getId());
-    assertEquals(postLhs.getTitle(), postRhs.getTitle());
-    assertEquals(postLhs.getPostedAtMillis(), postRhs.getPostedAtMillis());
-    assertEquals(postLhs.getUserId(), postRhs.getUserId());
-    assertEquals(postLhs.getUpdatedAt(), postRhs.getUpdatedAt());
+    Post.Attributes postAttrLhs = postA.getAttributes();
+    Post.Attributes postAttrRhs = record.getAttributes(Post.TBL);
+    assertEquals(postAttrLhs.getId(), postAttrRhs.getId());
+    assertEquals(postAttrLhs.getTitle(), postAttrRhs.getTitle());
+    assertEquals(postAttrLhs.getPostedAtMillis(), postAttrRhs.getPostedAtMillis());
+    assertEquals(postAttrLhs.getUserId(), postAttrRhs.getUserId());
+    assertEquals(postAttrLhs.getUpdatedAt(), postAttrRhs.getUpdatedAt());
+
+    User modelFromRecord = record.getModel(User.TBL, db.getDatabases());
+    String newHandle = "new handle";
+    modelFromRecord.setHandle(newHandle).save();
+    assertEquals(users.find(modelFromRecord.getId()).getHandle(), newHandle);
   }
 
 }
