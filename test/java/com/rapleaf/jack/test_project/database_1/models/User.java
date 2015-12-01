@@ -33,9 +33,9 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
-  public static final long serialVersionUID = 2764180304945930907L;
+  public static final long serialVersionUID = -966057050205502149L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<User.Attributes, User> {
     public final Column ID;
     public final Column HANDLE;
     public final Column CREATED_AT_MILLIS;
@@ -49,7 +49,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     public final Column SOME_BOOLEAN;
 
     private Tbl(String alias) {
-      super("users", alias);
+      super("users", alias, User.Attributes.class, User.class);
       this.ID = Column.fromId(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
       this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
@@ -613,7 +613,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 5810949180036000899L;
+    public static final long serialVersionUID = 7482296567648746981L;
 
     // Fields
     private String __handle;

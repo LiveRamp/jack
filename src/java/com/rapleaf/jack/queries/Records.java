@@ -5,6 +5,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.GenericDatabases;
+import com.rapleaf.jack.ModelWithId;
+
 public class Records implements Iterable<Record> {
   private final List<Record> records;
 
@@ -80,6 +84,22 @@ public class Records implements Iterable<Record> {
     List<Boolean> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getBoolean(column));
+    }
+    return results;
+  }
+
+  public <A extends AttributesWithId, M extends ModelWithId> List<A> getAttributes(Table<A, M> tableType) {
+    List<A> results = Lists.newArrayList();
+    for (Record record : records) {
+      results.add(record.getAttributes(tableType));
+    }
+    return results;
+  }
+
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> List<M> getModels(Table<A, M> tableType, D databases) {
+    List<M> results = Lists.newArrayList();
+    for (Record record : records) {
+      results.add(record.getModel(tableType, databases));
     }
     return results;
   }

@@ -33,9 +33,9 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
   
-  public static final long serialVersionUID = -1518028829029140792L;
+  public static final long serialVersionUID = -399049548729901546L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<Post.Attributes, Post> {
     public final Column ID;
     public final Column TITLE;
     public final Column POSTED_AT_MILLIS;
@@ -43,7 +43,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     public final Column UPDATED_AT;
 
     private Tbl(String alias) {
-      super("posts", alias);
+      super("posts", alias, Post.Attributes.class, Post.class);
       this.ID = Column.fromId(alias);
       this.TITLE = Column.fromField(alias, _Fields.title, String.class);
       this.POSTED_AT_MILLIS = Column.fromField(alias, _Fields.posted_at_millis, Long.class);
@@ -411,7 +411,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = -1641110165272227035L;
+    public static final long serialVersionUID = -452436965662476312L;
 
     // Fields
     private String __title;

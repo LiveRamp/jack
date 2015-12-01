@@ -33,14 +33,14 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
   
-  public static final long serialVersionUID = 2502129457421563432L;
+  public static final long serialVersionUID = -3351451520429699622L;
 
-  public static class Tbl extends AbstractTable {
+  public static class Tbl extends AbstractTable<Image.Attributes, Image> {
     public final Column ID;
     public final Column USER_ID;
 
     private Tbl(String alias) {
-      super("images", alias);
+      super("images", alias, Image.Attributes.class, Image.class);
       this.ID = Column.fromId(alias);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
       Collections.addAll(this.allColumns, ID, USER_ID);
@@ -290,7 +290,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 1258217664023344706L;
+    public static final long serialVersionUID = 5384617403533794948L;
 
     // Fields
     private Integer __user_id;

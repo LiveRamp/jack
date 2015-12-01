@@ -1,10 +1,15 @@
 package com.rapleaf.jack.queries;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.GenericDatabases;
 import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.util.JackUtility;
 
@@ -70,6 +75,74 @@ public class Record {
   public Boolean getBoolean(Column column) {
     Object value = checkTypeAndReturnObject(column, Boolean.class);
     return value == null ? null : (Boolean)value;
+  }
+
+  public <A extends AttributesWithId, M extends ModelWithId> A getAttributes(Table<A, M> tableType) {
+    String tableName = tableType.getAlias();
+    Constructor<A> constructor;
+    try {
+      constructor = tableType.getAttributesType().getConstructor(Long.TYPE);
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+
+    if (constructor == null || tableName == null) {
+      throw new RuntimeException("No columns from Table " + tableName + " are included in this record");
+    }
+
+    Long id = null;
+    Map<Enum, Object> fieldMap = Maps.newHashMap();
+    for (Map.Entry<Column, Object> entry : columns.entrySet()) {
+      Column column = entry.getKey();
+      if (column.getTable().equals(tableName)) {
+        if (column.getField() != null) {
+          fieldMap.put(column.getField(), entry.getValue());
+        } else if (id == null) {
+          id = ((Number)(entry.getValue())).longValue();
+        } else {
+          throw new RuntimeException("The record contains multiple IDs for Table " + tableName);
+        }
+      }
+    }
+
+    if (id == null) {
+      return null;
+    }
+
+    A attribute;
+    try {
+      attribute = constructor.newInstance(id);
+      for (Map.Entry<Enum, Object> entry : fieldMap.entrySet()) {
+        Object value = entry.getValue();
+        if (value instanceof Date) {
+          attribute.setField(entry.getKey().name(), ((Date)value).getTime());
+        } else if (value instanceof BigDecimal || value instanceof Float) {
+          attribute.setField(entry.getKey().name(), ((Number)value).doubleValue());
+        } else {
+          attribute.setField(entry.getKey().name(), entry.getValue());
+        }
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return attribute;
+  }
+
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> M getModel(Table<A, M> tableType, D databases) {
+    try {
+      AttributesWithId attributes = getAttributes(tableType);
+      if (attributes == null) {
+        return null;
+      }
+
+      Constructor<M> constructor = (tableType.getModelType().getConstructor(tableType.getAttributesType(), databases.getClass().getInterfaces()[0]));
+      M model = constructor.newInstance(attributes, databases);
+      model.setCreated(true);
+      return model;
+    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Object checkTypeAndReturnObject(Column column, Class clazz) {
