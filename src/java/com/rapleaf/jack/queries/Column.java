@@ -1,10 +1,24 @@
 package com.rapleaf.jack.queries;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 
-import com.rapleaf.jack.queries.where_operators.*;
+import com.rapleaf.jack.queries.where_operators.Between;
+import com.rapleaf.jack.queries.where_operators.EqualTo;
+import com.rapleaf.jack.queries.where_operators.GreaterThan;
+import com.rapleaf.jack.queries.where_operators.GreaterThanOrEqualTo;
+import com.rapleaf.jack.queries.where_operators.In;
+import com.rapleaf.jack.queries.where_operators.IsNotNull;
+import com.rapleaf.jack.queries.where_operators.IsNull;
+import com.rapleaf.jack.queries.where_operators.LessThan;
+import com.rapleaf.jack.queries.where_operators.LessThanOrEqualTo;
+import com.rapleaf.jack.queries.where_operators.Match;
+import com.rapleaf.jack.queries.where_operators.NotBetween;
+import com.rapleaf.jack.queries.where_operators.NotEqualTo;
+import com.rapleaf.jack.queries.where_operators.NotIn;
 
-public class Column {
+public class Column<T> {
   private static String DEFAULT_ID_FIELD = "id";
 
   protected String table;
@@ -17,18 +31,30 @@ public class Column {
     this.type = type;
   }
 
-  protected Column(Column that) {
+  protected <M> Column(Column<M> that) {
     this.table = that.table;
     this.field = that.field;
     this.type = that.type;
   }
 
-  public static Column fromId(String table) {
-    return new Column(table, null, Long.class);
+  public static Column<Long> fromId(String table) {
+    return new Column<Long>(table, null, Long.class);
   }
 
-  public static Column fromField(String table, Enum field, Class fieldType) {
-    return new Column(table, field, fieldType);
+  public static <T> Column<T> fromField(String table, Enum field, Class<T> fieldType) {
+    return new Column<T>(table, field, fieldType);
+  }
+
+  public static Column<Long> fromTimestamp(String table, Enum field) {
+    return new Column<Long>(table, field, Timestamp.class);
+  }
+
+  public static Column<Long> fromDate(String table, Enum field) {
+    return new Column<Long>(table, field, Date.class);
+  }
+
+  public <M> Column<M> as(Class<M> type) {
+    return new Column<M>(this.table, this.field, type);
   }
 
   public String getTable() {
@@ -59,15 +85,15 @@ public class Column {
     return sqlKeyword.toString();
   }
 
-  public <T> GenericConstraint<T> isNotNull() {
+  public GenericConstraint<T> isNotNull() {
     return new GenericConstraint<T>(this, new IsNotNull<T>());
   }
 
-  public <T> GenericConstraint<T> isNull() {
+  public GenericConstraint<T> isNull() {
     return new GenericConstraint<T>(this, new IsNull<T>());
   }
 
-  public <T> GenericConstraint<T> equalTo(T value) {
+  public GenericConstraint<T> equalTo(T value) {
     if (value != null) {
       return new GenericConstraint<T>(this, new EqualTo<T>(value));
     } else {
@@ -75,7 +101,7 @@ public class Column {
     }
   }
 
-  public <T> GenericConstraint<T> equalTo(Column column) {
+  public GenericConstraint<T> equalTo(Column<T> column) {
     if (column != null) {
       return new GenericConstraint<T>(this, new EqualTo<T>(column));
     } else {
@@ -83,7 +109,7 @@ public class Column {
     }
   }
 
-  public <T> GenericConstraint<T> notEqualTo(T value) {
+  public GenericConstraint<T> notEqualTo(T value) {
     if (value != null) {
       return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
     } else {
@@ -91,7 +117,7 @@ public class Column {
     }
   }
 
-  public <T> GenericConstraint<T> notEqualTo(Column column) {
+  public GenericConstraint<T> notEqualTo(Column<T> column) {
     if (column != null) {
       return new GenericConstraint<T>(this, new NotEqualTo<T>(column));
     } else {
@@ -99,100 +125,100 @@ public class Column {
     }
   }
 
-  public <T> GenericConstraint<T> greaterThan(T value) {
+  public GenericConstraint<T> greaterThan(T value) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(value));
   }
 
-  public <T> GenericConstraint<T> greaterThan(Column column) {
+  public GenericConstraint<T> greaterThan(Column<T> column) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(column));
   }
 
-  public <T> GenericConstraint<T> greaterThanOrEqualTo(T value) {
+  public GenericConstraint<T> greaterThanOrEqualTo(T value) {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> greaterThanOrEqualTo(Column value) {
+  public GenericConstraint<T> greaterThanOrEqualTo(Column<T> value) {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> lessThan(T value) {
+  public GenericConstraint<T> lessThan(T value) {
     return new GenericConstraint<T>(this, new LessThan<T>(value));
   }
 
-  public <T> GenericConstraint<T> lessThan(Column column) {
+  public GenericConstraint<T> lessThan(Column<T> column) {
     return new GenericConstraint<T>(this, new LessThan<T>(column));
   }
 
-  public <T> GenericConstraint<T> lessThanOrEqualTo(T value) {
+  public GenericConstraint<T> lessThanOrEqualTo(T value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> lessThanOrEqualTo(Column value) {
+  public GenericConstraint<T> lessThanOrEqualTo(Column<T> value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public <T> GenericConstraint<T> between(Comparable min, Comparable max) {
-    return new GenericConstraint<T>(this, new Between<T>((T)min, (T)max));
-  }
-
-  public <T> GenericConstraint<T> between(Column min, Comparable max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, (T)max));
-  }
-
-  public <T> GenericConstraint<T> between(Comparable min, Column max) {
-    return new GenericConstraint<T>(this, new Between<T>((T)min, max));
-  }
-
-  public <T> GenericConstraint<T> between(Column min, Column max) {
+  public GenericConstraint<T> between(T min, T max) {
     return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> notBetween(Comparable min, Comparable max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>((T)min, (T)max));
+  public GenericConstraint<T> between(Column<T> min, T max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> notBetween(Column min, Comparable max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(min, (T)max));
+  public GenericConstraint<T> between(T min, Column<T> max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> notBetween(Comparable min, Column max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>((T)min, max));
+  public GenericConstraint<T> between(Column<T> min, Column<T> max) {
+    return new GenericConstraint<T>(this, new Between<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> notBetween(Column min, Column max) {
+  public GenericConstraint<T> notBetween(T min, T max) {
     return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
   }
 
-  public <T> GenericConstraint<T> in(T value, T... otherValues) {
+  public GenericConstraint<T> notBetween(Column<T> min, T max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public GenericConstraint<T> notBetween(T min, Column<T> max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public GenericConstraint<T> notBetween(Column<T> min, Column<T> max) {
+    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+  }
+
+  public GenericConstraint<T> in(T value, T... otherValues) {
     return new GenericConstraint<T>(this, new In<T>(value, otherValues));
   }
 
-  public <T> GenericConstraint<T> in(Collection<T> values) {
+  public GenericConstraint<T> in(Collection<T> values) {
     return new GenericConstraint<T>(this, new In<T>(values));
   }
 
-  public <T> GenericConstraint<T> notIn(T value, T... otherValues) {
+  public GenericConstraint<T> notIn(T value, T... otherValues) {
     return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
   }
 
-  public <T> GenericConstraint<T> notIn(Collection<T> values) {
+  public GenericConstraint<T> notIn(Collection<T> values) {
     return new GenericConstraint<T>(this, new NotIn<T>(values));
   }
 
   public GenericConstraint<String> matches(String pattern) {
-    return new GenericConstraint<String>(this, new Match(pattern));
+    return new GenericConstraint<String>(this.as(String.class), new Match(pattern));
   }
 
   public GenericConstraint<String> contains(String string) {
-    return new GenericConstraint<String>(this, new Match("%" + string + "%"));
+    return new GenericConstraint<String>(this.as(String.class), new Match("%" + string + "%"));
   }
 
   public GenericConstraint<String> startsWith(String start) {
-    return new GenericConstraint<String>(this, new Match(start + "%"));
+    return new GenericConstraint<String>(this.as(String.class), new Match(start + "%"));
   }
 
   public GenericConstraint<String> endsWith(String end) {
-    return new GenericConstraint<String>(this, new Match("%" + end));
+    return new GenericConstraint<String>(this.as(String.class), new Match("%" + end));
   }
 
   @Override
