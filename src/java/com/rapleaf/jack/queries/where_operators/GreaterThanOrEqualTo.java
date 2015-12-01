@@ -8,7 +8,7 @@ public class GreaterThanOrEqualTo<V> extends WhereOperator<V> {
     super(">= ?", value);
   }
 
-  public GreaterThanOrEqualTo(Column column) {
+  public GreaterThanOrEqualTo(Column<V> column) {
     super(">= " + column.getSqlKeyword());
   }
 }

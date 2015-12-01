@@ -16,7 +16,7 @@ public class NotEqualTo<V> extends WhereOperator<V> {
     }
   }
 
-  public NotEqualTo(Column column) {
+  public NotEqualTo(Column<V> column) {
     super("<> " + column.getSqlKeyword());
     Preconditions.checkNotNull(column);
   }

@@ -16,7 +16,7 @@ public class EqualTo<V> extends WhereOperator<V> {
     }
   }
 
-  public EqualTo(Column column) {
+  public EqualTo(Column<V> column) {
     super("= " + column.getSqlKeyword());
     Preconditions.checkNotNull(column);
   }

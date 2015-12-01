@@ -8,7 +8,7 @@ public class LessThanOrEqualTo<V> extends WhereOperator<V> {
     super("<= ?", value);
   }
 
-  public LessThanOrEqualTo(Column column) {
+  public LessThanOrEqualTo(Column<V> column) {
     super("<= " + column.getSqlKeyword());
   }
 }

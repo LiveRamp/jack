@@ -10,17 +10,17 @@ public class Between<V> extends WhereOperator<V> {
     super("BETWEEN ? AND ?", min, max);
   }
 
-  public Between(Column min, V max) {
+  public Between(Column<V> min, V max) {
     super("BETWEEN " + min.getSqlKeyword() + " AND ?", max);
     Preconditions.checkNotNull(min);
   }
 
-  public Between(V min, Column max) {
+  public Between(V min, Column<V> max) {
     super("BETWEEN ? AND " + max.getSqlKeyword(), min);
     Preconditions.checkNotNull(max);
   }
 
-  public Between(Column min, Column max) {
+  public Between(Column<V> min, Column<V> max) {
     super("BETWEEN " + min.getSqlKeyword() + " AND " + max.getSqlKeyword());
     Preconditions.checkNotNull(min);
     Preconditions.checkNotNull(max);
