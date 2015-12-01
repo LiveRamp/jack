@@ -28,10 +28,6 @@ import static com.rapleaf.jack.queries.AggregatedColumn.COUNT;
 import static com.rapleaf.jack.queries.AggregatedColumn.MAX;
 import static com.rapleaf.jack.queries.AggregatedColumn.MIN;
 import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
-import static com.rapleaf.jack.queries.Functions.DATE;
-import static com.rapleaf.jack.queries.Functions.DATES;
-import static com.rapleaf.jack.queries.Functions.DATETIME;
-import static com.rapleaf.jack.queries.Functions.DATETIMES;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
 import static org.junit.Assert.assertArrayEquals;
@@ -169,6 +165,11 @@ public class TestGenericQuery {
     assertEquals(8, results1.get(0).columnCount());
 
     Record record = results1.get(0);
+    Long id = record.get(User.ID);
+    System.out.println(id);
+    Object object = record.getObject(User.ID);
+    System.out.println(object);
+    System.out.println(object.getClass().getSimpleName());
     assertTrue(record.getLong(User.ID).equals(userA.getId()));
     assertTrue(record.getIntFromLong(User.ID).equals(userA.getIntId()));
     assertTrue(record.getString(User.HANDLE).equals(userA.getHandle()));
@@ -384,7 +385,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.equalTo(DATETIME(timestampA)))
+        .where(User.SOME_DATETIME.equalTo(timestampA))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
@@ -392,7 +393,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.lessThan(DATETIME(timestampB)))
+        .where(User.SOME_DATETIME.lessThan(timestampB))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
@@ -400,7 +401,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.lessThanOrEqualTo(DATETIME(timestampB)))
+        .where(User.SOME_DATETIME.lessThanOrEqualTo(timestampB))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(2, results1.size());
@@ -408,7 +409,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.between(DATETIME(timestampB), DATETIME(timestampD)))
+        .where(User.SOME_DATETIME.between(timestampB, timestampD))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(3, results1.size());
@@ -416,7 +417,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.in(DATETIMES(timestampB, timestampC, timestampD)))
+        .where(User.SOME_DATETIME.in(timestampB, timestampC, timestampD))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(3, results1.size());
@@ -424,7 +425,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.in(DATETIMES(Sets.newHashSet(timestampB, timestampC))))
+        .where(User.SOME_DATETIME.in(Sets.newHashSet(timestampB, timestampC)))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(2, results1.size());
@@ -444,7 +445,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.equalTo(DATE(timestampA)))
+        .where(User.SOME_DATE.equalTo(timestampA))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
@@ -452,7 +453,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.lessThan(DATE(timestampB)))
+        .where(User.SOME_DATE.lessThan(timestampB))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
@@ -460,7 +461,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.lessThanOrEqualTo(DATE(timestampB)))
+        .where(User.SOME_DATE.lessThanOrEqualTo(timestampB))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(2, results1.size());
@@ -468,7 +469,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.between(DATE(timestampB), DATE(timestampD)))
+        .where(User.SOME_DATE.between(timestampB, timestampD))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(3, results1.size());
@@ -476,7 +477,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.in(DATES(timestampB, timestampC, timestampD)))
+        .where(User.SOME_DATE.in(timestampB, timestampC, timestampD))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(3, results1.size());
@@ -484,7 +485,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.in(DATES(Sets.newHashSet(timestampB, timestampC))))
+        .where(User.SOME_DATE.in(Sets.newHashSet(timestampB, timestampC)))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(2, results1.size());
@@ -738,8 +739,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getInt(AVG(User.NUM_POSTS)) == 49);
-    assertTrue(results2.get(1).getInt(AVG(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)) == 49);
+    assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)) == 50);
   }
 
   @Test
@@ -759,7 +760,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(Comment.TBL)
-        .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID))
+        .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID.as(Long.class)))
         .leftJoin(Post.TBL).on(Post.ID.equalTo(Comment.COMMENTED_ON_ID))
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
@@ -897,8 +898,8 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL),
-            User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT))
+        .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL.as(Integer.class)),
+            User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE, User.SOME_DECIMAL, User.NUM_POSTS, User.SOME_FLOAT)
         .fetch();
     assertEquals(3, results1.size());
@@ -906,7 +907,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.between(User.SOME_DECIMAL, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.between(User.SOME_DECIMAL.as(Integer.class), User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(3, results1.size());
@@ -914,7 +915,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.between(4, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.between(4, User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(2, results1.size());
@@ -922,7 +923,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.notBetween(4, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.notBetween(4, User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(3, results1.size());
@@ -935,7 +936,7 @@ public class TestGenericQuery {
     postA = posts.create("Post A from User A", date, userA.getIntId(), datetime);
     Record record = db.createQuery()
         .from(User.TBL)
-        .innerJoin(Post.TBL).on(Post.USER_ID.equalTo(User.ID))
+        .innerJoin(Post.TBL).on(Post.USER_ID.equalTo(User.ID.as(Integer.class)))
         .orderBy(User.SOME_DATETIME, ASC)
         .fetch()
         .get(0);
