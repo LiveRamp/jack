@@ -137,7 +137,7 @@ public class GenericQuery {
     return this;
   }
 
-  public GenericQuery groupBy(Collection<Column> columns){
+  public GenericQuery groupBy(Collection<Column> columns) {
     this.groupByColumns.addAll(columns);
     return this;
   }
@@ -240,7 +240,10 @@ public class GenericQuery {
     Record record = new Record(selectedColumns.size());
     for (Column column : selectedColumns) {
       String sqlKeyword = column.getSqlKeyword();
+      // TODO: use specific types
       Object value = queryResultSet.getObject(sqlKeyword);
+      // TODO: remove
+      System.out.println(sqlKeyword + " (" + column.getType().getSimpleName() + "): " + value + " (" + value.getClass().getSimpleName() + ")");
       value = queryResultSet.wasNull() ? null : value;
       record.addColumn(column, value);
     }
