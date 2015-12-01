@@ -7,30 +7,33 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.DefaultAssociationMetadata;
+import com.rapleaf.jack.BelongsToAssociation;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
+import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.ModelIdWrapper;
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.DefaultAssociationMetadata;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
+
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.util.JackUtility;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
   
-  public static final long serialVersionUID = 2764180304945930907L;
+  public static final long serialVersionUID = -966057050205502149L;
 
   public static class Tbl extends AbstractTable<User.Attributes, User> {
     public final Column ID;
@@ -610,7 +613,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 5810949180036000899L;
+    public static final long serialVersionUID = 7482296567648746981L;
 
     // Fields
     private String __handle;

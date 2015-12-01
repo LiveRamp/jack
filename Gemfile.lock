@@ -9,4 +9,4 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (>= 3.0.0)
-  i18n
+  i18n (= 0.5.0)
