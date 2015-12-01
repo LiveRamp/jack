@@ -20,11 +20,11 @@ public class Record {
     this.columns = Maps.newHashMapWithExpectedSize(columnCount);
   }
 
-  void addColumn(Column column, Object value) {
+  <T> void addColumn(Column<T> column, T value) {
     columns.put(column, value);
   }
 
-  public boolean contains(Column column) {
+  public <T> boolean contains(Column<T> column) {
     return columns.containsKey(column);
   }
 
@@ -36,17 +36,22 @@ public class Record {
     return columns;
   }
 
-  public Integer getInt(Column column) {
+  public <T extends Number> Number getNumber(Column<T> column) {
+    Object value = checkTypeAndReturnObject(column, Number.class);
+    return value == null ? null : ((Number)value);
+  }
+
+  public Integer getInt(Column<Integer> column) {
     Object value = checkTypeAndReturnObject(column, Integer.class);
     return value == null ? null : ((Number)value).intValue();
   }
 
-  public Integer getIntFromLong(Column column) {
+  public Integer getIntFromLong(Column<Long> column) {
     Object value = checkTypeAndReturnObject(column, Long.class);
     return value == null ? null : JackUtility.safeLongToInt(getLong(column));
   }
 
-  public Long getLong(Column column) {
+  public Long getLong(Column<Long> column) {
     Object value = checkTypeAndReturnObject(column, Long.class);
     if (value == null) {
       return null;
@@ -57,22 +62,22 @@ public class Record {
     }
   }
 
-  public String getString(Column column) {
+  public String getString(Column<String> column) {
     Object value = checkTypeAndReturnObject(column, String.class);
     return value == null ? null : (String)value;
   }
 
-  public byte[] getByteArray(Column column) {
+  public byte[] getByteArray(Column<byte[]> column) {
     Object value = checkTypeAndReturnObject(column, byte[].class);
     return value == null ? null : (byte[])value;
   }
 
-  public Double getDouble(Column column) {
+  public Double getDouble(Column<Double> column) {
     Object value = checkTypeAndReturnObject(column, Double.class);
     return value == null ? null : ((Number)value).doubleValue();
   }
 
-  public Boolean getBoolean(Column column) {
+  public Boolean getBoolean(Column<Boolean> column) {
     Object value = checkTypeAndReturnObject(column, Boolean.class);
     return value == null ? null : (Boolean)value;
   }
@@ -153,7 +158,12 @@ public class Record {
     }
   }
 
-  private Object getObject(Column column) {
+  @SuppressWarnings("unchecked")
+  public <T> T get(Column<T> column) {
+    return (T)columns.get(column);
+  }
+
+  public Object getObject(Column column) {
     if (columns.containsKey(column)) {
       return columns.get(column);
     } else {

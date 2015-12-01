@@ -32,7 +32,7 @@ public class Records implements Iterable<Record> {
     return records.get(index);
   }
 
-  public List<Integer> getInts(Column column) {
+  public List<Integer> getInts(Column<Integer> column) {
     List<Integer> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getInt(column));
@@ -40,7 +40,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<Integer> getIntsFromLongs(Column column) {
+  public List<Integer> getIntsFromLongs(Column<Long> column) {
     List<Integer> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getIntFromLong(column));
@@ -48,7 +48,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<Long> getLongs(Column column) {
+  public List<Long> getLongs(Column<Long> column) {
     List<Long> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getLong(column));
@@ -56,7 +56,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<String> getStrings(Column column) {
+  public List<String> getStrings(Column<String> column) {
     List<String> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getString(column));
@@ -64,7 +64,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<byte[]> getByteArrays(Column column) {
+  public List<byte[]> getByteArrays(Column<byte[]> column) {
     List<byte[]> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getByteArray(column));
@@ -72,7 +72,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<Double> getDoubles(Column column) {
+  public List<Double> getDoubles(Column<Double> column) {
     List<Double> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getDouble(column));
@@ -80,7 +80,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public List<Boolean> getBooleans(Column column) {
+  public List<Boolean> getBooleans(Column<Boolean> column) {
     List<Boolean> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getBoolean(column));
