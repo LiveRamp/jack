@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
 
-public class AggregatedColumn extends Column {
+public class AggregatedColumn<T> extends Column<T> {
 
   private enum Function {
     COUNT, AVG, SUM, MAX, MIN
@@ -13,24 +13,24 @@ public class AggregatedColumn extends Column {
     this.function = function;
   }
 
-  public static AggregatedColumn COUNT(Column column) {
-    return new AggregatedColumn(column, Function.COUNT);
+  public static AggregatedColumn<Integer> COUNT(Column column) {
+    return new AggregatedColumn<Integer>(column, Function.COUNT);
   }
 
-  public static AggregatedColumn AVG(Column column) {
-    return new AggregatedColumn(column, Function.AVG);
+  public static <T extends Number> AggregatedColumn<Number> AVG(Column<T> column) {
+    return new AggregatedColumn<Number>(column, Function.AVG);
   }
 
-  public static AggregatedColumn SUM(Column column) {
-    return new AggregatedColumn(column, Function.SUM);
+  public static <T extends Number> AggregatedColumn<T> SUM(Column<T> column) {
+    return new AggregatedColumn<T>(column, Function.SUM);
   }
 
-  public static AggregatedColumn MAX(Column column) {
-    return new AggregatedColumn(column, Function.MAX);
+  public static <T extends Number> AggregatedColumn<T> MAX(Column<T> column) {
+    return new AggregatedColumn<T>(column, Function.MAX);
   }
 
-  public static AggregatedColumn MIN(Column column) {
-    return new AggregatedColumn(column, Function.MIN);
+  public static <T extends Number> AggregatedColumn<T> MIN(Column<T> column) {
+    return new AggregatedColumn<T>(column, Function.MIN);
   }
 
   @Override
