@@ -52,9 +52,9 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
   public static class Tbl extends AbstractTable<<%= model_defn.model_name %>.Attributes, <%= model_defn.model_name %>> {
-    public final Column ID;
+    public final Column<Long> ID;
     <% model_defn.fields.each do |field_defn| %>
-    public final Column <%= field_defn.name.upcase %>;
+    public final Column<<%= field_defn.java_type(true) %>> <%= field_defn.name.upcase %>;
     <% end %>
 
     private Tbl(String alias) {
@@ -72,9 +72,9 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public static final Tbl TBL = new Tbl("<%= model_defn.table_name %>");
-  public static final Column ID = TBL.ID;
+  public static final Column<Long> ID = TBL.ID;
   <% model_defn.fields.each do |field_defn| %>
-  public static final Column <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
+  public static final Column<<%= field_defn.java_type(true) %>> <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
   <% end %>
 
   private final Attributes attributes;
