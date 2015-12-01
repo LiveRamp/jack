@@ -36,8 +36,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public static final long serialVersionUID = -3351451520429699622L;
 
   public static class Tbl extends AbstractTable<Image.Attributes, Image> {
-    public final Column ID;
-    public final Column USER_ID;
+    public final Column<Long> ID;
+    public final Column<Integer> USER_ID;
 
     private Tbl(String alias) {
       super("images", alias, Image.Attributes.class, Image.class);
@@ -52,8 +52,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public static final Tbl TBL = new Tbl("images");
-  public static final Column ID = TBL.ID;
-  public static final Column USER_ID = TBL.USER_ID;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<Integer> USER_ID = TBL.USER_ID;
 
   private final Attributes attributes;
 
