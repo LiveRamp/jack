@@ -1,7 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import com.rapleaf.jack.queries.where_operators.Between;
@@ -46,7 +44,7 @@ public class Column<T> {
   }
 
   public static Column<Long> fromTimestamp(String table, Enum field) {
-    return new Column<Long>(table, field, Timestamp.class);
+    return new Column<Long>(table, field, java.sql.Timestamp.class);
   }
 
   public static Column<Long> fromDate(String table, Enum field) {
