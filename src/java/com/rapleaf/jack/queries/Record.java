@@ -2,7 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -42,7 +41,7 @@ public class Record {
 
   public Integer getInt(Column<Integer> column) {
     Object value = checkTypeAndReturnObject(column, Integer.class);
-    return value == null ? null : ((Number)value).intValue();
+    return value == null ? null : (Integer)value;
   }
 
   public Integer getIntFromLong(Column<Long> column) {
@@ -52,13 +51,7 @@ public class Record {
 
   public Long getLong(Column<Long> column) {
     Object value = checkTypeAndReturnObject(column, Long.class);
-    if (value == null) {
-      return null;
-    } else if (value instanceof Date) {
-      return ((Date)value).getTime();
-    } else {
-      return ((Number)value).longValue();
-    }
+    return value == null ? null : (Long)value;
   }
 
   public String getString(Column<String> column) {
@@ -73,7 +66,7 @@ public class Record {
 
   public Double getDouble(Column<Double> column) {
     Object value = checkTypeAndReturnObject(column, Double.class);
-    return value == null ? null : ((Number)value).doubleValue();
+    return value == null ? null : (Double)value;
   }
 
   public Boolean getBoolean(Column<Boolean> column) {
@@ -146,27 +139,19 @@ public class Record {
   private Object checkTypeAndReturnObject(Column column, Class clazz) {
     if (clazz.isAssignableFrom(column.getType()) ||
         clazz == Long.class && java.util.Date.class.isAssignableFrom(column.getType())) {
-      return getObject(column);
+      if (columns.containsKey(column)) {
+        return columns.get(column);
+      } else {
+        throw new RuntimeException("Column " + column.toString() + " is not included in the query");
+      }
     } else {
-      throw new RuntimeException(getExceptionMessage(column, clazz));
+      throw new RuntimeException("Column " + column.toString() + " is not compatible with type " + clazz.getSimpleName());
     }
   }
 
   @SuppressWarnings("unchecked")
   public <T> T get(Column<T> column) {
     return (T)columns.get(column);
-  }
-
-  public Object getObject(Column column) {
-    if (columns.containsKey(column)) {
-      return columns.get(column);
-    } else {
-      throw new RuntimeException("Column " + column.toString() + " is not included in the query");
-    }
-  }
-
-  private String getExceptionMessage(Column column, Class clazz) throws RuntimeException {
-    return "Column " + column.toString() + " is not of type " + clazz.getSimpleName();
   }
 
   @Override
