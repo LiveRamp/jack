@@ -250,7 +250,7 @@ public class TestGenericQuery {
   }
 
   @Test
-  public void testFunctions() throws Exception {
+  public void testDates() throws Exception {
     long timestampA = Timestamp.valueOf("2015-03-01 03:10:01").getTime();
     long timestampB = Timestamp.valueOf("2015-03-02 04:09:03").getTime();
     long timestampC = Timestamp.valueOf("2015-03-03 05:08:05").getTime();

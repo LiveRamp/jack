@@ -1,46 +1,43 @@
 package com.rapleaf.jack.queries.where_operators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public abstract class WhereOperator<V> implements IWhereOperator<V> {
 
-  protected final List<V> parameters;
+  protected final List<V> parameters = Lists.newArrayList();
   protected String sqlStatement;
 
   protected WhereOperator(String sqlStatement) {
     this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>();
   }
 
   protected WhereOperator(String sqlStatement, V parameter) {
     this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>();
     this.parameters.add(parameter);
     ensureNoNullParameter();
   }
 
   protected WhereOperator(String sqlStatement, V param1, V param2) {
     this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>();
     this.parameters.add(param1);
     this.parameters.add(param2);
     ensureNoNullParameter();
   }
 
-  protected WhereOperator(String sqlStatement, V param1, V... otherParam) {
+  protected WhereOperator(String sqlStatement, V param, V... otherParam) {
     this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>();
-    this.parameters.add(param1);
+    this.parameters.add(param);
     Collections.addAll(this.parameters, otherParam);
     ensureNoNullParameter();
   }
 
-  protected WhereOperator(String sqlStatement, Collection<V> collection) {
+  protected WhereOperator(String sqlStatement, Collection<V> parameters) {
     this.sqlStatement = sqlStatement;
-    this.parameters = new ArrayList<V>(collection);
+    this.parameters.addAll(parameters);
     ensureNoNullParameter();
   }
 
