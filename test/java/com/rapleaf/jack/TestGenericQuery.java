@@ -165,11 +165,6 @@ public class TestGenericQuery {
     assertEquals(8, results1.get(0).columnCount());
 
     Record record = results1.get(0);
-    Long id = record.get(User.ID);
-    System.out.println(id);
-    Object object = record.getObject(User.ID);
-    System.out.println(object);
-    System.out.println(object.getClass().getSimpleName());
     assertTrue(record.getLong(User.ID).equals(userA.getId()));
     assertTrue(record.getIntFromLong(User.ID).equals(userA.getIntId()));
     assertTrue(record.getString(User.HANDLE).equals(userA.getHandle()));
