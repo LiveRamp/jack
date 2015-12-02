@@ -34,6 +34,15 @@ public class Record {
     return columns;
   }
 
+  @SuppressWarnings("unchecked")
+  public <T> T get(Column<T> column) {
+    return (T)columns.get(column);
+  }
+
+  public <T> Object getObject(Column<T> column) {
+    return columns.get(column);
+  }
+
   public <T extends Number> Number getNumber(Column<T> column) {
     Object value = checkTypeAndReturnObject(column, Number.class);
     return value == null ? null : ((Number)value);
@@ -147,11 +156,6 @@ public class Record {
     } else {
       throw new RuntimeException("Column " + column.toString() + " is not compatible with type " + clazz.getSimpleName());
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T> T get(Column<T> column) {
-    return (T)columns.get(column);
   }
 
   @Override

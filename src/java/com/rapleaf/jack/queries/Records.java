@@ -32,6 +32,14 @@ public class Records implements Iterable<Record> {
     return records.get(index);
   }
 
+  public <T> List<T> gets(Column<T> column) {
+    List<T> results = Lists.newArrayList();
+    for (Record record : records) {
+      results.add(record.get(column));
+    }
+    return results;
+  }
+
   public List<Integer> getInts(Column<Integer> column) {
     List<Integer> results = Lists.newArrayList();
     for (Record record : records) {
