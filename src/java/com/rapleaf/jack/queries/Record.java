@@ -2,7 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -118,14 +117,7 @@ public class Record {
     try {
       attribute = constructor.newInstance(id);
       for (Map.Entry<Enum, Object> entry : fieldMap.entrySet()) {
-        Object value = entry.getValue();
-        if (value instanceof Date) {
-          attribute.setField(entry.getKey().name(), ((Date)value).getTime());
-        } else if (value instanceof BigDecimal || value instanceof Float) {
-          attribute.setField(entry.getKey().name(), ((Number)value).doubleValue());
-        } else {
-          attribute.setField(entry.getKey().name(), entry.getValue());
-        }
+        attribute.setField(entry.getKey().name(), entry.getValue());
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
