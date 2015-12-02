@@ -150,8 +150,10 @@ public class Record {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private Object checkTypeAndReturnObject(Column column, Class clazz) {
-    if (column.getType().equals(clazz)) {
+    if (clazz.isAssignableFrom(column.getType()) ||
+        clazz == Long.class && java.util.Date.class.isAssignableFrom(column.getType())) {
       return getObject(column);
     } else {
       throw new RuntimeException(getExceptionMessage(column, clazz));

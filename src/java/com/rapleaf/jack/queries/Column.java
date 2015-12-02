@@ -50,7 +50,7 @@ public class Column<T> {
   }
 
   public static Column<Long> fromDate(String table, Enum field) {
-    return new Column<Long>(table, field, Date.class);
+    return new Column<Long>(table, field, java.sql.Date.class);
   }
 
   public <M> Column<M> as(Class<M> type) {
