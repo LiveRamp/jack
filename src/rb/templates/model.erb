@@ -61,7 +61,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       super("<%= model_defn.table_name %>", alias, <%= model_defn.model_name %>.Attributes.class, <%= model_defn.model_name %>.class);
       this.ID = Column.fromId(alias);
       <% model_defn.fields.each do |field_defn| %>
-      this.<%= field_defn.name.upcase %> = Column.fromField(alias, _Fields.<%= field_defn.name%>, <%= field_defn.java_type(true) %>.class);
+      this.<%= field_defn.name.upcase %> = <%= field_defn.column_defn %>
       <% end %>
       Collections.addAll(this.allColumns, ID<% model_defn.fields.each_with_index do |field_defn, index| %>, <%= field_defn.name.upcase %><% end %>);
     }
