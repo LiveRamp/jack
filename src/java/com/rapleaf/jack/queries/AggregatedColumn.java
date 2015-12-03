@@ -13,8 +13,12 @@ public class AggregatedColumn<T> extends Column<T> {
     this.function = function;
   }
 
-  public static AggregatedColumn<Integer> COUNT(Column column) {
-    return new AggregatedColumn<Integer>(column, Function.COUNT);
+  // TODO: modify COUNT to the following once all production code of generic query has been updated.
+  // public static AggregatedColumn<Integer> COUNT(Column column) {
+  //   return new AggregatedColumn<Integer>(column, Function.COUNT);
+  // }
+  public static <T> AggregatedColumn<T> COUNT(Column<T> column) {
+    return new AggregatedColumn<T>(column, Function.COUNT);
   }
 
   public static <T extends Number> AggregatedColumn<Number> AVG(Column<T> column) {
