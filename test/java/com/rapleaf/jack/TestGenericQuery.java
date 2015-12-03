@@ -625,8 +625,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)) == 49);
-    assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)).intValue() == 49);
+    assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)).longValue() == 50);
   }
 
   @Test
