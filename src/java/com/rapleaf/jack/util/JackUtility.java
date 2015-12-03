@@ -13,11 +13,6 @@ public final class JackUtility {
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
   public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
-  public static final Map<Class, DateTimeFormatter> FORMATTER_MAP = new HashMap<Class, DateTimeFormatter>(2) {{
-    put(java.sql.Date.class, DATE_FORMATTER);
-    put(java.sql.Timestamp.class, TIMESTAMP_FORMATTER);
-  }};
-
   public static final Map<Class, Function<Long, String>> FORMATTER_FUNCTION_MAP = new HashMap<Class, Function<Long, String>>(2) {{
     put(java.sql.Date.class, new DateFormatter(DATE_FORMATTER));
     put(java.sql.Timestamp.class, new DateFormatter(TIMESTAMP_FORMATTER));

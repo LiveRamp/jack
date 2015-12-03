@@ -2,13 +2,9 @@ package com.rapleaf.jack.queries;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.rapleaf.jack.queries.where_operators.Between;
 import com.rapleaf.jack.queries.where_operators.EqualTo;
@@ -29,10 +25,6 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class Column<T> {
   private static final String DEFAULT_ID_FIELD = "id";
-  private static final Map<Class, DateTimeFormatter> FORMATTER_TYPE = new HashMap<Class, DateTimeFormatter>(2) {{
-    put(java.sql.Date.class, DateTimeFormat.forPattern("yyyy-MM-dd"));
-    put(java.sql.Timestamp.class, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
-  }};
 
   protected String table;
   protected final Enum field;
@@ -109,7 +101,7 @@ public class Column<T> {
   public GenericConstraint equalTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
-        return createDateConstraint(new EqualTo<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+        return createDateConstraint(new EqualTo<Long>(Long.class.cast(value)));
       } else {
         return new GenericConstraint<T>(this, new EqualTo<T>(value));
       }
@@ -129,7 +121,7 @@ public class Column<T> {
   public GenericConstraint notEqualTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
-        return createDateConstraint(new NotEqualTo<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+        return createDateConstraint(new NotEqualTo<Long>(Long.class.cast(value)));
       } else {
         return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
       }
@@ -148,7 +140,7 @@ public class Column<T> {
 
   public GenericConstraint greaterThan(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new GreaterThan<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new GreaterThan<Long>(Long.class.cast(value)));
     } else {
       return new GenericConstraint<T>(this, new GreaterThan<T>(value));
     }
@@ -160,7 +152,7 @@ public class Column<T> {
 
   public GenericConstraint greaterThanOrEqualTo(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new GreaterThanOrEqualTo<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new GreaterThanOrEqualTo<Long>(Long.class.cast(value)));
     } else {
       return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
     }
@@ -172,7 +164,7 @@ public class Column<T> {
 
   public GenericConstraint lessThan(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new LessThan<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new LessThan<Long>(Long.class.cast(value)));
     } else {
       return new GenericConstraint<T>(this, new LessThan<T>(value));
     }
@@ -184,7 +176,7 @@ public class Column<T> {
 
   public GenericConstraint lessThanOrEqualTo(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new LessThanOrEqualTo<Long>(Long.class.cast(value)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new LessThanOrEqualTo<Long>(Long.class.cast(value)));
     } else {
       return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
     }
@@ -196,7 +188,7 @@ public class Column<T> {
 
   public GenericConstraint between(T min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(Long.class.cast(min), Long.class.cast(max)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new Between<Long>(Long.class.cast(min), Long.class.cast(max)));
     } else {
       return new GenericConstraint<T>(this, new Between<T>(min, max));
     }
@@ -204,7 +196,7 @@ public class Column<T> {
 
   public GenericConstraint between(Column<T> min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(min.as(Long.class), Long.class.cast(max)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new Between<Long>(min.as(Long.class), Long.class.cast(max)));
     } else {
       return new GenericConstraint<T>(this, new Between<T>(min, max));
     }
@@ -212,7 +204,7 @@ public class Column<T> {
 
   public GenericConstraint between(T min, Column<T> max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(Long.class.cast(min), max.as(Long.class)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new Between<Long>(Long.class.cast(min), max.as(Long.class)));
     } else {
       return new GenericConstraint<T>(this, new Between<T>(min, max));
     }
@@ -224,7 +216,7 @@ public class Column<T> {
 
   public GenericConstraint notBetween(T min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), Long.class.cast(max)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), Long.class.cast(max)));
     } else {
       return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
     }
@@ -232,7 +224,7 @@ public class Column<T> {
 
   public GenericConstraint notBetween(Column<T> min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(min.as(Long.class), Long.class.cast(max)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new NotBetween<Long>(min.as(Long.class), Long.class.cast(max)));
     } else {
       return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
     }
@@ -240,7 +232,7 @@ public class Column<T> {
 
   public GenericConstraint notBetween(T min, Column<T> max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), max.as(Long.class)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), max.as(Long.class)));
     } else {
       return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
     }
@@ -252,10 +244,7 @@ public class Column<T> {
 
   public GenericConstraint in(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(
-          new In<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)),
-          FORMATTER_TYPE.get(type)
-      );
+      return createDateConstraint(new In<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
       return new GenericConstraint<T>(this, new In<T>(value, otherValues));
     }
@@ -263,7 +252,7 @@ public class Column<T> {
 
   public GenericConstraint in(Collection<T> values) {
     if (isDateColumn()) {
-      return createDateConstraint(new In<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new In<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)));
     } else {
       return new GenericConstraint<T>(this, new In<T>(values));
     }
@@ -271,10 +260,7 @@ public class Column<T> {
 
   public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(
-          new NotIn<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)),
-          FORMATTER_TYPE.get(type)
-      );
+      return createDateConstraint(new NotIn<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
       return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
     }
@@ -282,7 +268,7 @@ public class Column<T> {
 
   public GenericConstraint notIn(Collection<T> values) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotIn<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)), FORMATTER_TYPE.get(type));
+      return createDateConstraint(new NotIn<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)));
     } else {
       return new GenericConstraint<T>(this, new NotIn<T>(values));
     }
@@ -308,7 +294,7 @@ public class Column<T> {
     return java.util.Date.class.isAssignableFrom(type);
   }
 
-  private GenericConstraint createDateConstraint(WhereOperator<Long> operator, DateTimeFormatter formatter) {
+  private GenericConstraint createDateConstraint(WhereOperator<Long> operator) {
     return new GenericConstraint<String>(
         this.as(String.class),
         new GenericOperator<String>(
