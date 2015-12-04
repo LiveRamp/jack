@@ -145,13 +145,9 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.isEmpty());
 
     // NotIn with empty collection
-    try {
-      users.query().whereSomeDatetime(notIn(Collections.<Long>emptySet()))
-          .find();
-      fail("Using a NotIn operator with an empty collection should throw an exception.");
-    } catch (IllegalArgumentException e) {
-      //This is expected
-    }
+    result = users.query().whereSomeDatetime(notIn(Collections.<Long>emptySet()))
+        .find();
+    assertEquals(5, result.size());
 
     // Contains and In
     result = users.query().whereBio(contains("f"))

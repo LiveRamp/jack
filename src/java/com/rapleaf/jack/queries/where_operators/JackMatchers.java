@@ -38,7 +38,10 @@ public class JackMatchers {
     return new NotIn<T>(value1, otherValues);
   }
 
-  public static <T> NotIn<T> notIn(Collection<T> values) {
+  public static <T> IWhereOperator<T> notIn(Collection<T> values) {
+    if (values.isEmpty()) {
+      return noop();
+    }
     return new NotIn<T>(values);
   }
 
@@ -80,5 +83,9 @@ public class JackMatchers {
 
   public static Match endsWith(String end) {
     return new Match("%" + end);
+  }
+
+  public static <T> IWhereOperator<T> noop() {
+    return new NoOp<T>();
   }
 }
