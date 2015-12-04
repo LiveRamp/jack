@@ -6,7 +6,7 @@ import java.util.List;
 public class NoOp<T> implements IWhereOperator<T> {
   @Override
   public String getSqlStatement() {
-    return "1=1";
+    return "is not null OR true";
   }
 
   @Override
