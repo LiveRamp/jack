@@ -14,7 +14,7 @@ public class AggregatedColumn<T> extends Column<T> {
   }
 
   public static <T> AggregatedColumn<Integer> COUNT(Column<T> column) {
-    return new AggregatedColumn<Integer>(column, Function.COUNT);
+    return new AggregatedColumn<Integer>(column.as(Integer.class), Function.COUNT);
   }
 
   public static <T extends Number> AggregatedColumn<Number> AVG(Column<T> column) {
