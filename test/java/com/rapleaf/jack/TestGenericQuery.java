@@ -148,6 +148,28 @@ public class TestGenericQuery {
   }
 
   @Test
+  public void testColumnTypeConversion() throws Exception {
+    userA = users.createDefaultInstance().setNumPosts(1).setSomeDecimal(1.0);
+    userA.save();
+
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.as(String.class).equalTo("1"))
+        .fetch();
+    assertEquals(1, results1.size());
+    assertEquals(1.0, results1.get(0).get(User.SOME_DECIMAL),  0.000001);
+
+    // Type conversion should not change the type of the column in query result
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .where(User.NUM_POSTS.equalTo(User.SOME_DECIMAL.as(Integer.class)))
+        .fetch();
+    assertEquals(1, results1.size());
+    assertEquals(Double.class, results1.get(0).get(User.SOME_DECIMAL).getClass());
+    assertEquals(Integer.class, results1.get(0).get(User.NUM_POSTS).getClass());
+  }
+
+  @Test
   public void testQueryOperators() throws Exception {
     User brad = users.createDefaultInstance().setHandle("Brad").setBio("Soccer player").setNumPosts(1).setCreatedAtMillis(datetime - 1L);
     User brandon = users.createDefaultInstance().setHandle("Brandon").setBio("Formula 1 driver").setNumPosts(2).setCreatedAtMillis(datetime - 1L).setSomeDatetime(datetime);
@@ -605,6 +627,13 @@ public class TestGenericQuery {
         .fetch();
     assertTrue(results2.get(0).get(COUNT(User.NUM_POSTS)) == 50);
     assertTrue(results2.get(1).get(COUNT(User.NUM_POSTS)) == 50);
+
+    // Count should work on columns that are not of type int
+    results2 = db.createQuery()
+        .from(User.TBL)
+        .select(COUNT(User.HANDLE))
+        .fetch();
+    assertTrue(results2.get(0).get(COUNT(User.HANDLE)) == 100);
 
     // Test Sum
     results2 = db.createQuery()
