@@ -10,7 +10,7 @@ public class GreaterThan<V> extends WhereOperator<V> {
     super("> ?", value);
   }
 
-  public GreaterThan(Column column) {
+  public GreaterThan(Column<V> column) {
     super("> " + column.getSqlKeyword());
     Preconditions.checkNotNull(column);
   }

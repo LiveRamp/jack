@@ -36,11 +36,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public static final long serialVersionUID = 6213989608937906012L;
 
   public static class Tbl extends AbstractTable<Comment.Attributes, Comment> {
-    public final Column ID;
-    public final Column CONTENT;
-    public final Column COMMENTER_ID;
-    public final Column COMMENTED_ON_ID;
-    public final Column CREATED_AT;
+    public final Column<Long> ID;
+    public final Column<String> CONTENT;
+    public final Column<Integer> COMMENTER_ID;
+    public final Column<Long> COMMENTED_ON_ID;
+    public final Column<Long> CREATED_AT;
 
     private Tbl(String alias) {
       super("comments", alias, Comment.Attributes.class, Comment.class);
@@ -48,7 +48,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
       this.COMMENTER_ID = Column.fromField(alias, _Fields.commenter_id, Integer.class);
       this.COMMENTED_ON_ID = Column.fromField(alias, _Fields.commented_on_id, Long.class);
-      this.CREATED_AT = Column.fromField(alias, _Fields.created_at, Long.class);
+      this.CREATED_AT = Column.fromTimestamp(alias, _Fields.created_at);
       Collections.addAll(this.allColumns, ID, CONTENT, COMMENTER_ID, COMMENTED_ON_ID, CREATED_AT);
     }
 
@@ -58,11 +58,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public static final Tbl TBL = new Tbl("comments");
-  public static final Column ID = TBL.ID;
-  public static final Column CONTENT = TBL.CONTENT;
-  public static final Column COMMENTER_ID = TBL.COMMENTER_ID;
-  public static final Column COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
-  public static final Column CREATED_AT = TBL.CREATED_AT;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<String> CONTENT = TBL.CONTENT;
+  public static final Column<Integer> COMMENTER_ID = TBL.COMMENTER_ID;
+  public static final Column<Long> COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
+  public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
 
   private final Attributes attributes;
 

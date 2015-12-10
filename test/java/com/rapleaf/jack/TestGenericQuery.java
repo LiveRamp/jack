@@ -1,11 +1,8 @@
 package com.rapleaf.jack;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -28,16 +25,10 @@ import static com.rapleaf.jack.queries.AggregatedColumn.COUNT;
 import static com.rapleaf.jack.queries.AggregatedColumn.MAX;
 import static com.rapleaf.jack.queries.AggregatedColumn.MIN;
 import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
-import static com.rapleaf.jack.queries.Functions.DATE;
-import static com.rapleaf.jack.queries.Functions.DATES;
-import static com.rapleaf.jack.queries.Functions.DATETIME;
-import static com.rapleaf.jack.queries.Functions.DATETIMES;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -106,7 +97,7 @@ public class TestGenericQuery {
             User.HANDLE.equalTo("B"))
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userB.getId() == results1.get(0).getLong(User.ID));
+    assertTrue(userB.getId() == results1.get(0).get(User.ID));
 
     // query with or clause
     results1 = db.createQuery()
@@ -115,7 +106,7 @@ public class TestGenericQuery {
             .or(User.HANDLE.equalTo("B")))
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     // query with various where logic
     results1 = db.createQuery()
@@ -124,7 +115,7 @@ public class TestGenericQuery {
             User.NUM_POSTS.equalTo(1).or(User.NUM_POSTS.equalTo(2)).or(User.NUM_POSTS.equalTo(3)))
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -133,7 +124,7 @@ public class TestGenericQuery {
                 .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("B")))
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -143,7 +134,7 @@ public class TestGenericQuery {
                 .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -153,111 +144,7 @@ public class TestGenericQuery {
             .or(User.BIO.equalTo("Trader"), User.HANDLE.equalTo("A")))
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
-  }
-
-  @Test
-  public void testGetMethodsForNotNullColumns() throws Exception {
-    userA = users.create("A", datetime, 15, date, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
-
-    results1 = db.createQuery()
-        .from(User.TBL)
-        .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATE, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
-        .fetch();
-
-    assertEquals(1, results1.size());
-    assertEquals(8, results1.get(0).columnCount());
-
-    Record record = results1.get(0);
-    assertTrue(record.getLong(User.ID).equals(userA.getId()));
-    assertTrue(record.getIntFromLong(User.ID).equals(userA.getIntId()));
-    assertTrue(record.getString(User.HANDLE).equals(userA.getHandle()));
-    assertTrue(record.getDouble(User.SOME_DECIMAL).equals(userA.getSomeDecimal()));
-    assertTrue(record.getLong(User.SOME_DATE).equals(userA.getSomeDate()));
-    assertTrue(record.getLong(User.SOME_DATETIME).equals(userA.getSomeDatetime()));
-    assertTrue(record.getInt(User.NUM_POSTS).equals(userA.getNumPosts()));
-    assertTrue(record.getBoolean(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
-    assertTrue(Arrays.toString(record.getByteArray(User.SOME_BINARY)).equals(Arrays.toString(userA.getSomeBinary())));
-  }
-
-  @Test
-  public void testGetMethodsForNullColumns() throws Exception {
-    userA = users.create("A", 15);
-
-    results1 = db.createQuery()
-        .from(User.TBL)
-        .select(User.SOME_DECIMAL, User.SOME_DATETIME, User.SOME_BOOLEAN, User.SOME_BINARY)
-        .fetch();
-
-    assertEquals(1, results1.size());
-    assertEquals(4, results1.get(0).columnCount());
-
-    Record record = results1.get(0);
-    assertNull(record.getDouble(User.SOME_DECIMAL));
-    assertNull(record.getLong(User.SOME_DATETIME));
-    assertNull(record.getBoolean(User.SOME_BOOLEAN));
-    assertNull(record.getByteArray(User.SOME_BINARY));
-  }
-
-  @Test
-  public void testGetMethodsForRecordsWithNullValues() throws Exception {
-    userA = users.create("A", datetime, 1, 2L, null, null, new byte[]{(byte)3}, 1.1, null, true);
-    userB = users.create("B", datetime + 3, 2, 4L, null, null, new byte[]{(byte)4}, 1.2, null, false);
-    userC = users.create("C", datetime - 10, 3, 6L, null, null, new byte[]{(byte)5}, 1.3, null, true);
-    userA.save();
-    userB.save();
-    userC.save();
-
-    results1 = db.createQuery()
-        .from(User.TBL)
-        .fetch();
-
-    assertEquals(
-        Lists.newArrayList(userA.getId(), userB.getId(), userC.getId()),
-        results1.getLongs(User.ID)
-    );
-
-    assertEquals(
-        Lists.newArrayList((int)userA.getId(), (int)userB.getId(), (int)userC.getId()),
-        results1.getIntsFromLongs(User.ID)
-    );
-
-    assertEquals(
-        Lists.newArrayList(1, 2, 3),
-        results1.getInts(User.NUM_POSTS)
-    );
-
-    assertEquals(
-        Lists.newArrayList("A", "B", "C"),
-        results1.getStrings(User.HANDLE)
-    );
-
-    List<byte[]> byteArrays = results1.getByteArrays(User.SOME_BINARY);
-    assertArrayEquals(new byte[]{(byte)3}, byteArrays.get(0));
-    assertArrayEquals(new byte[]{(byte)4}, byteArrays.get(1));
-    assertArrayEquals(new byte[]{(byte)5}, byteArrays.get(2));
-
-    List<Double> doubles = results1.getDoubles(User.SOME_FLOAT);
-    assertTrue(Math.abs(1.1 - doubles.get(0)) < 0.00001);
-    assertTrue(Math.abs(1.2 - doubles.get(1)) < 0.00001);
-    assertTrue(Math.abs(1.3 - doubles.get(2)) < 0.00001);
-
-    assertEquals(Lists.newArrayList(true, false, true), results1.getBooleans(User.SOME_BOOLEAN));
-
-    assertEquals(
-        Lists.newArrayList((Long)null, (Long)null, (Long)null),
-        results1.getLongs(User.SOME_DATETIME)
-    );
-
-    assertEquals(
-        Lists.newArrayList((String)null, (String)null, (String)null),
-        results1.getStrings(User.BIO)
-    );
-
-    assertEquals(
-        Lists.newArrayList((Double)null, (Double)null, (Double)null),
-        results1.getDoubles(User.SOME_DECIMAL)
-    );
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId()), Sets.newHashSet(results1.gets(User.ID)));
   }
 
   @Test
@@ -276,32 +163,32 @@ public class TestGenericQuery {
     // Equal To
     results1 = db.createQuery().from(User.TBL).where(User.HANDLE.equalTo("Brad")).fetch();
     assertEquals(1, results1.size());
-    assertEquals("Brad", results1.get(0).getString(User.HANDLE));
+    assertEquals("Brad", results1.get(0).get(User.HANDLE));
 
     // Between
     results1 = db.createQuery().from(User.TBL).where(User.NUM_POSTS.between(4, 8)).fetch();
     assertEquals(1, results1.size());
-    assertEquals("James", results1.get(0).getString(User.HANDLE));
+    assertEquals("James", results1.get(0).get(User.HANDLE));
 
     // Not Between
     results1 = db.createQuery().from(User.TBL).where(User.NUM_POSTS.notBetween(4, 8)).fetch();
     assertEquals(4, results1.size());
-    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     // Less Than
     results1 = db.createQuery().from(User.TBL).where(User.CREATED_AT_MILLIS.lessThan(datetime)).fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("Brad", "Brandon"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     // Greater Than
     results1 = db.createQuery().from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThan(datetime - 1)).fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet("Casey", "John", "James"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("Casey", "John", "James"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     // Less Than Or Equal To
     results1 = db.createQuery().from(User.TBL).where(User.CREATED_AT_MILLIS.lessThanOrEqualTo(datetime)).fetch();
     assertEquals(4, results1.size());
-    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("Brad", "Brandon", "Casey", "John"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     // Greater Than Or Equal To
     results1 = db.createQuery().from(User.TBL).where(User.CREATED_AT_MILLIS.greaterThanOrEqualTo(datetime - 1)).fetch();
@@ -335,7 +222,7 @@ public class TestGenericQuery {
             User.NUM_POSTS.in(1, 3, 5))
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals("James", results1.get(0).getString(User.HANDLE));
+    assertEquals("James", results1.get(0).get(User.HANDLE));
 
     // Not In and Not Equal To
     results1 = db.createQuery()
@@ -344,14 +231,14 @@ public class TestGenericQuery {
             User.NUM_POSTS.notEqualTo(5))
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals("Casey", results1.get(0).getString(User.HANDLE));
+    assertEquals("Casey", results1.get(0).get(User.HANDLE));
 
     results1 = db.createQuery().from(User.TBL).where(User.SOME_DATETIME.isNull()).fetch();
     assertEquals(3, results1.size());
 
     results1 = db.createQuery().from(User.TBL).where(User.SOME_DATETIME.isNotNull()).fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet("James", "Brandon"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("James", "Brandon"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     // If a null parameter is passed, an exception should be thrown
     try {
@@ -363,7 +250,7 @@ public class TestGenericQuery {
   }
 
   @Test
-  public void testFunctions() throws Exception {
+  public void testDates() throws Exception {
     long timestampA = Timestamp.valueOf("2015-03-01 03:10:01").getTime();
     long timestampB = Timestamp.valueOf("2015-03-02 04:09:03").getTime();
     long timestampC = Timestamp.valueOf("2015-03-03 05:08:05").getTime();
@@ -384,51 +271,51 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.equalTo(DATETIME(timestampA)))
+        .where(User.SOME_DATETIME.equalTo(timestampA))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+    assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.lessThan(DATETIME(timestampB)))
+        .where(User.SOME_DATETIME.lessThan(timestampB))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+    assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.lessThanOrEqualTo(DATETIME(timestampB)))
+        .where(User.SOME_DATETIME.lessThanOrEqualTo(timestampB))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.between(DATETIME(timestampB), DATETIME(timestampD)))
+        .where(User.SOME_DATETIME.between(timestampB, timestampD))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.in(DATETIMES(timestampB, timestampC, timestampD)))
+        .where(User.SOME_DATETIME.in(timestampB, timestampC, timestampD))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.in(DATETIMES(Sets.newHashSet(timestampB, timestampC))))
+        .where(User.SOME_DATETIME.in(Sets.newHashSet(timestampB, timestampC)))
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     // DATE
     userA = users.createDefaultInstance().setSomeDate(timestampA);
@@ -444,51 +331,51 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.equalTo(DATE(timestampA)))
+        .where(User.SOME_DATE.equalTo(timestampA))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+    assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.lessThan(DATE(timestampB)))
+        .where(User.SOME_DATE.lessThan(timestampB))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).getLong(User.ID));
+    assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.lessThanOrEqualTo(DATE(timestampB)))
+        .where(User.SOME_DATE.lessThanOrEqualTo(timestampB))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.between(DATE(timestampB), DATE(timestampD)))
+        .where(User.SOME_DATE.between(timestampB, timestampD))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.in(DATES(timestampB, timestampC, timestampD)))
+        .where(User.SOME_DATE.in(timestampB, timestampC, timestampD))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId(), userD.getId()), Sets.newHashSet(results1.gets(User.ID)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATE.in(DATES(Sets.newHashSet(timestampB, timestampC))))
+        .where(User.SOME_DATE.in(Sets.newHashSet(timestampB, timestampC)))
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.getLongs(User.ID)));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), Sets.newHashSet(results1.gets(User.ID)));
   }
 
   @Test
@@ -526,7 +413,7 @@ public class TestGenericQuery {
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals("C", results1.get(0).getString(User.HANDLE));
+    assertEquals("C", results1.get(0).get(User.HANDLE));
 
     // A chained query with single result should return a list with one element.
     results1 = db.createQuery()
@@ -537,7 +424,7 @@ public class TestGenericQuery {
         .orderBy(User.ID)
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals("A", results1.get(0).getString(User.HANDLE));
+    assertEquals("A", results1.get(0).get(User.HANDLE));
 
     // A chained query with multiple results ordered by a specific field by default should be ordered in an ascending manner.
     // expected result: [userC, userE, userD]
@@ -552,9 +439,9 @@ public class TestGenericQuery {
         .orderBy(User.BIO, ASC)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals("C", results1.get(0).getString(User.HANDLE));
-    assertEquals("E", results1.get(1).getString(User.HANDLE));
-    assertEquals("D", results1.get(2).getString(User.HANDLE));
+    assertEquals("C", results1.get(0).get(User.HANDLE));
+    assertEquals("E", results1.get(1).get(User.HANDLE));
+    assertEquals("D", results1.get(2).get(User.HANDLE));
     assertTrue(results1.equals(results2));
 
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
@@ -565,9 +452,9 @@ public class TestGenericQuery {
         .orderBy(User.BIO, DESC)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals("D", results1.get(0).getString(User.HANDLE));
-    assertEquals("E", results1.get(1).getString(User.HANDLE));
-    assertEquals("C", results1.get(2).getString(User.HANDLE));
+    assertEquals("D", results1.get(0).get(User.HANDLE));
+    assertEquals("E", results1.get(1).get(User.HANDLE));
+    assertEquals("C", results1.get(2).get(User.HANDLE));
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [userA, userB, userC, userE, userD, userG, userF, userH]
@@ -578,14 +465,14 @@ public class TestGenericQuery {
         .orderBy(User.BIO, ASC)
         .fetch();
     assertEquals(8, results1.size());
-    assertEquals("A", results1.get(0).getString(User.HANDLE));
-    assertEquals("B", results1.get(1).getString(User.HANDLE));
-    assertEquals("C", results1.get(2).getString(User.HANDLE));
-    assertEquals("E", results1.get(3).getString(User.HANDLE));
-    assertEquals("D", results1.get(4).getString(User.HANDLE));
-    assertEquals("G", results1.get(5).getString(User.HANDLE));
-    assertEquals("F", results1.get(6).getString(User.HANDLE));
-    assertEquals("H", results1.get(7).getString(User.HANDLE));
+    assertEquals("A", results1.get(0).get(User.HANDLE));
+    assertEquals("B", results1.get(1).get(User.HANDLE));
+    assertEquals("C", results1.get(2).get(User.HANDLE));
+    assertEquals("E", results1.get(3).get(User.HANDLE));
+    assertEquals("D", results1.get(4).get(User.HANDLE));
+    assertEquals("G", results1.get(5).get(User.HANDLE));
+    assertEquals("F", results1.get(6).get(User.HANDLE));
+    assertEquals("H", results1.get(7).get(User.HANDLE));
 
     // a chained ordered query ordered by multiple fields should be ordered accordingly.
     // expected result: [C, H, D, A, F, E, G, B]
@@ -596,14 +483,14 @@ public class TestGenericQuery {
         .orderBy(User.BIO, DESC)
         .fetch();
     assertEquals(8, results1.size());
-    assertEquals("C", results1.get(0).getString(User.HANDLE));
-    assertEquals("H", results1.get(1).getString(User.HANDLE));
-    assertEquals("D", results1.get(2).getString(User.HANDLE));
-    assertEquals("A", results1.get(3).getString(User.HANDLE));
-    assertEquals("F", results1.get(4).getString(User.HANDLE));
-    assertEquals("E", results1.get(5).getString(User.HANDLE));
-    assertEquals("G", results1.get(6).getString(User.HANDLE));
-    assertEquals("B", results1.get(7).getString(User.HANDLE));
+    assertEquals("C", results1.get(0).get(User.HANDLE));
+    assertEquals("H", results1.get(1).get(User.HANDLE));
+    assertEquals("D", results1.get(2).get(User.HANDLE));
+    assertEquals("A", results1.get(3).get(User.HANDLE));
+    assertEquals("F", results1.get(4).get(User.HANDLE));
+    assertEquals("E", results1.get(5).get(User.HANDLE));
+    assertEquals("G", results1.get(6).get(User.HANDLE));
+    assertEquals("B", results1.get(7).get(User.HANDLE));
   }
 
   @Test
@@ -624,7 +511,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
     for (int i = 0; i < results1.size(); i++) {
-      assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i);
+      assertTrue(results1.get(i).get(User.NUM_POSTS) == i);
     }
 
     results1 = db.createQuery()
@@ -635,7 +522,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
     for (int i = 0; i < results1.size(); i++) {
-      assertTrue(results1.get(i).getInt(User.NUM_POSTS) == i + 6);
+      assertTrue(results1.get(i).get(User.NUM_POSTS) == i + 6);
     }
 
     results1 = db.createQuery()
@@ -694,10 +581,10 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getString(User.HANDLE).equals("0"));
-    assertTrue(results2.get(0).getInt(MAX(User.NUM_POSTS)) == 98);
-    assertTrue(results2.get(1).getString(User.HANDLE).equals("1"));
-    assertTrue(results2.get(1).getInt(MAX(User.NUM_POSTS)) == 99);
+    assertTrue(results2.get(0).get(User.HANDLE).equals("0"));
+    assertTrue(results2.get(0).get(MAX(User.NUM_POSTS)) == 98);
+    assertTrue(results2.get(1).get(User.HANDLE).equals("1"));
+    assertTrue(results2.get(1).get(MAX(User.NUM_POSTS)) == 99);
 
     // Test Min
     results2 = db.createQuery()
@@ -706,8 +593,8 @@ public class TestGenericQuery {
         .groupBy(User.HANDLE)
         .orderBy(User.HANDLE)
         .fetch();
-    assertTrue(results2.get(0).getInt(MIN(User.NUM_POSTS)) == 0);
-    assertTrue(results2.get(1).getInt(MIN(User.NUM_POSTS)) == 1);
+    assertTrue(results2.get(0).get(MIN(User.NUM_POSTS)) == 0);
+    assertTrue(results2.get(1).get(MIN(User.NUM_POSTS)) == 1);
 
     // Test Count
     results2 = db.createQuery()
@@ -716,8 +603,8 @@ public class TestGenericQuery {
         .groupBy(User.HANDLE)
         .orderBy(User.HANDLE)
         .fetch();
-    assertTrue(results2.get(0).getInt(COUNT(User.NUM_POSTS)) == 50);
-    assertTrue(results2.get(1).getInt(COUNT(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(0).get(COUNT(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(1).get(COUNT(User.NUM_POSTS)) == 50);
 
     // Test Sum
     results2 = db.createQuery()
@@ -727,8 +614,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getInt(SUM(User.NUM_POSTS)) == 2450);
-    assertTrue(results2.get(1).getInt(SUM(User.NUM_POSTS)) == 2500);
+    assertTrue(results2.get(0).get(SUM(User.NUM_POSTS)) == 2450);
+    assertTrue(results2.get(1).get(SUM(User.NUM_POSTS)) == 2500);
 
     // Test Avg
     results2 = db.createQuery()
@@ -738,8 +625,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getInt(AVG(User.NUM_POSTS)) == 49);
-    assertTrue(results2.get(1).getInt(AVG(User.NUM_POSTS)) == 50);
+    assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)).intValue() == 49);
+    assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)).longValue() == 50);
   }
 
   @Test
@@ -759,7 +646,7 @@ public class TestGenericQuery {
 
     results1 = db.createQuery()
         .from(Comment.TBL)
-        .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID))
+        .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID.as(Long.class)))
         .leftJoin(Post.TBL).on(Post.ID.equalTo(Comment.COMMENTED_ON_ID))
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
@@ -771,24 +658,24 @@ public class TestGenericQuery {
 
     // the result is: comment A, C, B, D
     Record recordForCommentA = results1.get(0);
-    assertEquals(commentA.getContent(), recordForCommentA.getString(Comment.CONTENT));
-    assertEquals(userA.getHandle(), recordForCommentA.getString(User.HANDLE));
-    assertEquals(postA.getTitle(), recordForCommentA.getString(Post.TITLE));
+    assertEquals(commentA.getContent(), recordForCommentA.get(Comment.CONTENT));
+    assertEquals(userA.getHandle(), recordForCommentA.get(User.HANDLE));
+    assertEquals(postA.getTitle(), recordForCommentA.get(Post.TITLE));
 
     Record recordForCommentC = results1.get(1);
-    assertEquals(commentC.getContent(), recordForCommentC.getString(Comment.CONTENT));
-    assertEquals(userB.getHandle(), recordForCommentC.getString(User.HANDLE));
-    assertEquals(postB.getTitle(), recordForCommentC.getString(Post.TITLE));
+    assertEquals(commentC.getContent(), recordForCommentC.get(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForCommentC.get(User.HANDLE));
+    assertEquals(postB.getTitle(), recordForCommentC.get(Post.TITLE));
 
     Record recordForCommentB = results1.get(2);
-    assertEquals(commentB.getContent(), recordForCommentB.getString(Comment.CONTENT));
-    assertEquals(userB.getHandle(), recordForCommentB.getString(User.HANDLE));
-    assertEquals(postA.getTitle(), recordForCommentB.getString(Post.TITLE));
+    assertEquals(commentB.getContent(), recordForCommentB.get(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForCommentB.get(User.HANDLE));
+    assertEquals(postA.getTitle(), recordForCommentB.get(Post.TITLE));
 
     Record recordForCommentD = results1.get(3);
-    assertEquals(commentD.getContent(), recordForCommentD.getString(Comment.CONTENT));
-    assertEquals(userC.getHandle(), recordForCommentD.getString(User.HANDLE));
-    assertEquals(postC.getTitle(), recordForCommentD.getString(Post.TITLE));
+    assertEquals(commentD.getContent(), recordForCommentD.get(Comment.CONTENT));
+    assertEquals(userC.getHandle(), recordForCommentD.get(User.HANDLE));
+    assertEquals(postC.getTitle(), recordForCommentD.get(Post.TITLE));
   }
 
   @Test
@@ -830,7 +717,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(5, results1.size());
     assertEquals(11, results1.get(0).columnCount());
-    assertTrue(results1.get(0).getLong(handlers.ID) == userD.getId());
+    assertTrue(results1.get(0).get(handlers.ID) == userD.getId());
 
     // test self join with table alias
     results1 = db.createQuery()
@@ -840,16 +727,16 @@ public class TestGenericQuery {
         .select(handlers.HANDLE, handlers.BIO, bios.HANDLE, bios.BIO)
         .fetch();
     assertEquals(5, results1.size());
-    assertTrue(results1.get(0).getString(bios.HANDLE).equals("D"));
-    assertTrue(results1.get(0).getString(handlers.HANDLE).equals("G"));
-    assertTrue(results1.get(1).getString(bios.HANDLE).equals("E"));
-    assertTrue(results1.get(1).getString(handlers.HANDLE).equals("H"));
-    assertTrue(results1.get(2).getString(bios.HANDLE).equals("F"));
-    assertTrue(results1.get(2).getString(handlers.HANDLE).equals("D"));
-    assertTrue(results1.get(3).getString(bios.HANDLE).equals("G"));
-    assertTrue(results1.get(3).getString(handlers.HANDLE).equals("E"));
-    assertTrue(results1.get(4).getString(bios.HANDLE).equals("H"));
-    assertTrue(results1.get(4).getString(handlers.HANDLE).equals("F"));
+    assertTrue(results1.get(0).get(bios.HANDLE).equals("D"));
+    assertTrue(results1.get(0).get(handlers.HANDLE).equals("G"));
+    assertTrue(results1.get(1).get(bios.HANDLE).equals("E"));
+    assertTrue(results1.get(1).get(handlers.HANDLE).equals("H"));
+    assertTrue(results1.get(2).get(bios.HANDLE).equals("F"));
+    assertTrue(results1.get(2).get(handlers.HANDLE).equals("D"));
+    assertTrue(results1.get(3).get(bios.HANDLE).equals("G"));
+    assertTrue(results1.get(3).get(handlers.HANDLE).equals("E"));
+    assertTrue(results1.get(4).get(bios.HANDLE).equals("H"));
+    assertTrue(results1.get(4).get(handlers.HANDLE).equals("F"));
 
     // test self join with complex conditions
     // select the entry with the largest num_posts group by some_boolean
@@ -864,14 +751,14 @@ public class TestGenericQuery {
         .select(User.HANDLE, User.SOME_BOOLEAN, User.BIO, User.NUM_POSTS)
         .fetch();
     assertEquals(2, results1.size());
-    assertTrue(results1.get(0).getString(User.HANDLE).equals("D"));
-    assertTrue(results1.get(0).getString(User.BIO).equals("F"));
-    assertTrue(results1.get(0).getBoolean(User.SOME_BOOLEAN).equals(true));
-    assertTrue(results1.get(0).getInt(User.NUM_POSTS).equals(5));
-    assertTrue(results1.get(1).getString(User.HANDLE).equals("G"));
-    assertTrue(results1.get(1).getString(User.BIO).equals("D"));
-    assertTrue(results1.get(1).getBoolean(User.SOME_BOOLEAN).equals(false));
-    assertTrue(results1.get(1).getInt(User.NUM_POSTS).equals(7));
+    assertTrue(results1.get(0).get(User.HANDLE).equals("D"));
+    assertTrue(results1.get(0).get(User.BIO).equals("F"));
+    assertTrue(results1.get(0).get(User.SOME_BOOLEAN).equals(true));
+    assertTrue(results1.get(0).get(User.NUM_POSTS).equals(5));
+    assertTrue(results1.get(1).get(User.HANDLE).equals("G"));
+    assertTrue(results1.get(1).get(User.BIO).equals("D"));
+    assertTrue(results1.get(1).get(User.SOME_BOOLEAN).equals(false));
+    assertTrue(results1.get(1).get(User.NUM_POSTS).equals(7));
   }
 
   @Test
@@ -893,84 +780,40 @@ public class TestGenericQuery {
         .where(User.HANDLE.equalTo(User.BIO))
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet("D", "F"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("D", "F"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL),
-            User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT))
+        .where(User.NUM_POSTS.greaterThanOrEqualTo(User.SOME_DECIMAL.as(Integer.class)),
+            User.NUM_POSTS.lessThanOrEqualTo(User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE, User.SOME_DECIMAL, User.NUM_POSTS, User.SOME_FLOAT)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.between(User.SOME_DECIMAL, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.between(User.SOME_DECIMAL.as(Integer.class), User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("D", "G", "H"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.between(4, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.between(4, User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(2, results1.size());
-    assertEquals(Sets.newHashSet("G", "H"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
+    assertEquals(Sets.newHashSet("G", "H"), Sets.newHashSet(results1.gets(User.HANDLE)));
 
     results1 = db.createQuery()
         .from(User.TBL)
-        .where(User.NUM_POSTS.notBetween(4, User.SOME_FLOAT))
+        .where(User.NUM_POSTS.notBetween(4, User.SOME_FLOAT.as(Integer.class)))
         .select(User.HANDLE)
         .fetch();
     assertEquals(3, results1.size());
-    assertEquals(Sets.newHashSet("D", "E", "F"), Sets.newHashSet(results1.getStrings(User.HANDLE)));
-  }
-
-  @Test
-  public void testModelAndAttributeFromRecord() throws Exception {
-    userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
-    postA = posts.create("Post A from User A", date, userA.getIntId(), datetime);
-    Record record = db.createQuery()
-        .from(User.TBL)
-        .innerJoin(Post.TBL).on(Post.USER_ID.equalTo(User.ID))
-        .orderBy(User.SOME_DATETIME, ASC)
-        .fetch()
-        .get(0);
-    User.Attributes userAttrLhs = userA.getAttributes();
-    User.Attributes userAttrRhs = record.getAttributes(User.TBL);
-
-    assertEquals(userAttrLhs.getId(), userAttrRhs.getId());
-    assertEquals(userAttrLhs.getHandle(), userAttrRhs.getHandle());
-    assertEquals(userAttrLhs.getCreatedAtMillis(), userAttrRhs.getCreatedAtMillis());
-    assertEquals(userAttrLhs.getSomeDate(), userAttrRhs.getSomeDate());
-    assertEquals(userAttrLhs.getSomeDatetime(), userAttrRhs.getSomeDatetime());
-    assertEquals(userAttrLhs.getBio(), userAttrRhs.getBio());
-    assertArrayEquals(userAttrLhs.getSomeBinary(), userAttrRhs.getSomeBinary());
-    assertEquals(userAttrLhs.getSomeFloat(), userAttrRhs.getSomeFloat(), 0.000001);
-    assertEquals(userAttrLhs.getSomeDecimal(), userAttrRhs.getSomeDecimal());
-    assertEquals(userAttrLhs.isSomeBoolean(), userAttrRhs.isSomeBoolean());
-
-    Post.Attributes postAttrLhs = postA.getAttributes();
-    Post.Attributes postAttrRhs = record.getAttributes(Post.TBL);
-    assertEquals(postAttrLhs.getId(), postAttrRhs.getId());
-    assertEquals(postAttrLhs.getTitle(), postAttrRhs.getTitle());
-    assertEquals(postAttrLhs.getPostedAtMillis(), postAttrRhs.getPostedAtMillis());
-    assertEquals(postAttrLhs.getUserId(), postAttrRhs.getUserId());
-    assertEquals(postAttrLhs.getUpdatedAt(), postAttrRhs.getUpdatedAt());
-
-    Comment.Attributes commentAttr = record.getAttributes(Comment.TBL);
-    assertNull(commentAttr);
-
-    User modelFromRecord = record.getModel(User.TBL, db.getDatabases());
-    String newHandle = "new handle";
-    modelFromRecord.setHandle(newHandle).save();
-    assertEquals(users.find(modelFromRecord.getId()).getHandle(), newHandle);
-
-    Comment comment = record.getModel(Comment.TBL, db.getDatabases());
-    assertNull(comment);
+    assertEquals(Sets.newHashSet("D", "E", "F"), Sets.newHashSet(results1.gets(User.HANDLE)));
   }
 
 }

@@ -206,5 +206,16 @@ class FieldDefn
         "rs.get#{prep_stmt_type}(\"#{name}\")"
     end
   end
+
+  def column_defn
+    case data_type
+      when :date
+        "Column.fromDate(alias, _Fields.#{name});"
+      when :datetime
+        "Column.fromTimestamp(alias, _Fields.#{name});"
+      else
+        "Column.fromField(alias, _Fields.#{name}, #{java_type(true)}.class);"
+    end
+  end
   
 end

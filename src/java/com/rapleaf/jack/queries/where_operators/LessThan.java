@@ -10,7 +10,7 @@ public class LessThan<V> extends WhereOperator<V> {
     super("< ?", value);
   }
 
-  public LessThan(Column column) {
+  public LessThan(Column<V> column) {
     super("< " + column.getSqlKeyword());
     Preconditions.checkNotNull(column);
   }

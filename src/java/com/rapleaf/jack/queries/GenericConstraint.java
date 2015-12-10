@@ -9,11 +9,11 @@ import com.google.common.collect.Lists;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 
 public class GenericConstraint<T> implements QueryCondition {
-  private final Column column;
+  private final Column<T> column;
   private final IWhereOperator<T> operator;
   private final List<List<GenericConstraint>> chainedOrConstraints;
 
-  GenericConstraint(Column column, IWhereOperator<T> operator) {
+  GenericConstraint(Column<T> column, IWhereOperator<T> operator) {
     this.column = column;
     this.operator = operator;
     this.chainedOrConstraints = Lists.newArrayList();
