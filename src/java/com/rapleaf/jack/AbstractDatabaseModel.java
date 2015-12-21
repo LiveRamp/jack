@@ -32,13 +32,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
-import com.rapleaf.jack.queries.ModelDelete;
-import com.rapleaf.jack.queries.WhereClause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;
+import com.rapleaf.jack.queries.WhereClause;
 
 public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     IModelPersistence<T> {
