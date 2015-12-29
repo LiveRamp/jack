@@ -195,7 +195,11 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     <% else %>
     {
     <% end %>
+    <% if field_defn.name == "lock_version" and field_defn.data_type == :integer  %>
+      stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
+    <% else %>
       stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
+    <% end %>
     }
       <% x+= 1 %>
     <% end %>
