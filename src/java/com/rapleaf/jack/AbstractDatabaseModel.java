@@ -32,15 +32,18 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Optional;
-import com.rapleaf.jack.queries.ModelDelete;
-import com.rapleaf.jack.queries.WhereClause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rapleaf.jack.exception.JackException;
+import com.rapleaf.jack.exception.StaleModelException;
+import com.rapleaf.jack.exception.TooManyRowsUpdatedException;
 import com.rapleaf.jack.queries.FieldSelector;
+import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;
+import com.rapleaf.jack.queries.WhereClause;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
+public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ?>> implements
     IModelPersistence<T> {
 
   private static Logger LOG = LoggerFactory.getLogger(AbstractDatabaseModel.class);
@@ -608,26 +611,114 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   protected abstract void setAttrs(T model, PreparedStatement stmt)
       throws SQLException;
 
-  @Override
-  public boolean save(T model) throws IOException {
+  // Placeholder default ActiveRecord lock field name
+  private String getLockFieldName(T model) {
+    return "lock_version";
+  }
+
+  // ActiveRecord documentation says it supports lock version for integer fields
+  // That corresponds to the Integer and Long fields, but we only support locking on Integer for now
+  private boolean supportsOptimisticLocking(T model) {
+    final String lockFieldName = getLockFieldName(model);
+
+    if (model.hasField(lockFieldName)) {
+      Object field = model.getField(lockFieldName);
+      return (field != null && field.getClass().equals(Integer.class));
+    } else {
+      return false;
+    }
+  }
+
+  private int getLockVersion(T model) {
+    return (Integer)model.getField(getLockFieldName(model));
+  }
+
+  private String getLockedUpdateStatement(T model) {
+    return String.format(
+        "UPDATE %s SET %s WHERE id=? AND %s=?;",
+        tableName, getSetFieldsPrepStatementSection(), getLockFieldName(model));
+  }
+
+  private PreparedStatement getFilledInUpdateStatement(T model) throws SQLException {
+    PreparedStatement saveStmt = getSaveStmt();
+    setAttrs(model, saveStmt);
+    return saveStmt;
+  }
+
+  private PreparedStatement getFilledInLockingUpdateStatement(T model, int lockVersion) throws SQLException {
+    PreparedStatement saveStmt = conn.getPreparedStatement(getLockedUpdateStatement(model));
+    setAttrs(model, saveStmt);
+    // the lock_version is after all the field params and the id param
+    saveStmt.setLong(fieldNames.size() + 2, lockVersion);
+
+    return saveStmt;
+  }
+
+  private boolean handleCachePostSuccessfulUpdate(T model) {
+    if (useCache) {
+      cachedById.put(model.getId(), model);
+    }
+    clearForeignKeyCache();
+    return true;
+  }
+
+  private void executeUpdateAndValidateResult(PreparedStatement saveStmt, T model, Long oldUpdatedAt) throws SQLException, TooManyRowsUpdatedException, StaleModelException {
+    saveStmt.execute();
+    final int updateCount = saveStmt.getUpdateCount();
+    saveStmt.close();
+
+    // since the statement includes id we expect at most 1 row to be updated
+    if (updateCount > 1) {
+      throw new TooManyRowsUpdatedException();
+      // we assume that if we didn't update any row, it was because the model represents a stale view
+    } else if (updateCount < 1) {
+      // don't match Rails behaviour (updated_at changed on field modification)
+      // match Jack behaviour (updated_at changed on save)
+      revertRailsUpdatedAt(model, oldUpdatedAt);
+      throw new StaleModelException();
+    }
+  }
+
+  public boolean saveStrict(T model) throws JackException, IOException {
     Long oldUpdatedAt = handleRailsUpdatedAt(model);
     if (model.isCreated()) {
-      PreparedStatement saveStmt = getSaveStmt();
-      try {
-        setAttrs(model, saveStmt);
-        saveStmt.execute();
-        boolean success = saveStmt.getUpdateCount() == 1;
-        saveStmt.close();
-        if (success && useCache) {
-          cachedById.put(model.getId(), model);
+
+      if (supportsOptimisticLocking(model)) {
+        try {
+          final int lockVersion = getLockVersion(model);
+          PreparedStatement saveStmt = getFilledInLockingUpdateStatement(model, lockVersion);
+          executeUpdateAndValidateResult(saveStmt, model, oldUpdatedAt);
+
+          // If we failed to update, we wouldn't have gotten here.
+          // Now update the lock_version to match what we just put in the DB
+          model.setField(getLockFieldName(model), lockVersion + 1);
+
+          // Locking will not function if the cache is used to fetch the two models
+          // since they are the same reference, and hence modifying one is modifying
+          // the other.
+          // We still want the right result in there, though.
+          handleCachePostSuccessfulUpdate(model);
+
+          return true;
+
+        } catch (SQLException e) {
+          revertRailsUpdatedAt(model, oldUpdatedAt);
+          throw new IOException(e);
         }
-        clearForeignKeyCache();
-        return success;
-      } catch (SQLException e) {
-        revertRailsUpdatedAt(model, oldUpdatedAt);
-        throw new IOException(e);
+
+      } else {
+        try {
+          PreparedStatement saveStmt = getFilledInUpdateStatement(model);
+          executeUpdateAndValidateResult(saveStmt, model, oldUpdatedAt);
+          handleCachePostSuccessfulUpdate(model);
+          return true;
+        } catch (SQLException e) {
+          revertRailsUpdatedAt(model, oldUpdatedAt);
+          throw new IOException(e);
+        }
+
       }
-    } else {
+    } else { // no locking required on insert
       PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
       try {
         setAttrs(model, insertStmt);
@@ -645,6 +736,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
         revertRailsUpdatedAt(model, oldUpdatedAt);
         throw new IOException(e);
       }
+    }
+  }
+
+  @Override
+  public boolean save(T model) throws IOException {
+    try {
+      return saveStrict(model);
+    } catch (JackException e) {
+      return false;
     }
   }
 
