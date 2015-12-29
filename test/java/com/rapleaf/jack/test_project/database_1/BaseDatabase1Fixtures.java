@@ -22,6 +22,7 @@ public class BaseDatabase1Fixtures extends DbFixtures {
   public static void setup(IDatabases databases) throws SQLException, IOException {
     databases.getDatabase1().comments().deleteAll();
     databases.getDatabase1().images().deleteAll();
+    databases.getDatabase1().lockableModels().deleteAll();
     databases.getDatabase1().posts().deleteAll();
     databases.getDatabase1().users().deleteAll();
   }
