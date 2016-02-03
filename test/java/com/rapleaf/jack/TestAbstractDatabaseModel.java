@@ -6,7 +6,11 @@ import java.util.List;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
+import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
+import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
+import com.rapleaf.jack.test_project.database_1.models.LockableModel;
+import com.rapleaf.jack.test_project.database_1.models.User;
 
 /**
  * This test runs all test cases from the superclass on the real (not mock) models. Do no put any
@@ -59,5 +63,100 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
       dbs.getDatabase1().setAutoCommit(true);
     }
   }
-  
+
+  public void testOptimisticLockingHasNoEffectWhileCaching() throws IOException {
+    final IUserPersistence users = dbs.getDatabase1().users();
+    final User user = users.create("handle1", 1);
+    user.setCreatedAtMillis(1l);
+    if (!user.save()) {
+      fail("Failed to setup test properly");
+    }
+
+    final User user1 = users.find(user.getId());
+    final User user2 = users.find(user.getId());
+
+    user1.setCreatedAtMillis(2l);
+    user1.save();
+
+    user2.setCreatedAtMillis(3l);
+    user2.save();
+
+    final User finalUser = users.find(user.getId());
+
+    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+
+    final ILockableModelPersistence lockableModels = dbs.getDatabase1().lockableModels();
+    final LockableModel lockableModel = lockableModels.createDefaultInstance();
+    lockableModel.setMessage("Original");
+    if (!lockableModel.save()) {
+      fail("Failed to setup test properly");
+    }
+
+    final LockableModel lockableModel1 = lockableModels.find(lockableModel.getId());
+    final LockableModel lockableModel2 = lockableModels.find(lockableModel.getId());
+
+    lockableModel1.setMessage("First");
+    lockableModel2.setMessage("Second");
+    final boolean firstSuccess = lockableModel1.save();
+    final boolean secondSuccess = lockableModel2.save();
+
+    final LockableModel finalLockableModel = lockableModels.find(lockableModel.getId());
+
+    assertTrue(firstSuccess);
+    assertTrue(secondSuccess);
+    assertEquals("Second", finalLockableModel.getMessage());
+  }
+
+  public void testOptimisticLockingShouldNotAffectNonLockableModels() throws IOException {
+    final IDatabases dbs = getDBS(); // new instance since caching will affect results
+    dbs.getDatabase1().disableCaching();
+    final IUserPersistence users = dbs.getDatabase1().users();
+    final User user = users.create("handle1", 1);
+    user.setCreatedAtMillis(1l);
+    if (!user.save()) {
+      fail("Failed to setup test properly");
+    }
+
+    final User user1 = users.find(user.getId());
+    final User user2 = users.find(user.getId());
+
+    user1.setCreatedAtMillis(2l);
+    user1.save();
+
+    user2.setCreatedAtMillis(3l);
+    user2.save();
+
+    final User finalUser = users.find(user.getId());
+
+    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+  }
+
+  public void testOptimisticLockingShouldPreventClobberingLockableModels() throws IOException {
+    final IDatabases dbs = getDBS(); // new instance since caching will affect results
+    dbs.getDatabase1().disableCaching();
+    final ILockableModelPersistence lockableModels = dbs.getDatabase1().lockableModels();
+    final LockableModel lockableModel = lockableModels.createDefaultInstance();
+    lockableModel.setMessage("Original");
+    if (!lockableModel.save()) {
+      fail("Failed to setup test properly");
+    }
+
+    final LockableModel lockableModel1 = lockableModels.find(lockableModel.getId());
+    final LockableModel lockableModel2 = lockableModels.find(lockableModel.getId());
+
+    lockableModel1.setMessage("First");
+    lockableModel2.setMessage("Second");
+    final boolean firstSuccess = lockableModel1.save();
+
+    final LockableModel lockableModel2Copy = lockableModel2.getCopy();
+    final boolean secondSuccess = lockableModel2.save();
+
+    final LockableModel finalLockableModel = lockableModels.find(lockableModel.getId());
+
+    assertTrue(firstSuccess); // first should succeed
+    assertFalse(secondSuccess); // second should fail
+    assertEquals("First", finalLockableModel.getMessage()); // first success should have taken effect
+    assertEquals(lockableModel2Copy, lockableModel2); // second should be unaffected by saveAttempt
+  }
+
 }

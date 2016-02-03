@@ -14,6 +14,7 @@ import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
+import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
@@ -25,6 +26,7 @@ public class Database1Impl implements IDatabase1 {
   private final IDatabases databases;
   private final LazyLoadPersistence<ICommentPersistence, IDatabases> comments;
   private final LazyLoadPersistence<IImagePersistence, IDatabases> images;
+  private final LazyLoadPersistence<ILockableModelPersistence, IDatabases> lockable_models;
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
@@ -41,6 +43,12 @@ public class Database1Impl implements IDatabase1 {
       @Override
       protected IImagePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
         return new BaseImagePersistenceImpl(conn, databases);
+      }
+    };
+    this.lockable_models = new LazyLoadPersistence<ILockableModelPersistence, IDatabases>(conn, databases) {
+      @Override
+      protected ILockableModelPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseLockableModelPersistenceImpl(conn, databases);
       }
     };
     this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases) {
@@ -69,6 +77,10 @@ public class Database1Impl implements IDatabase1 {
     return images.get();
   }
 
+  public ILockableModelPersistence lockableModels(){
+    return lockable_models.get();
+  }
+
   public IPostPersistence posts(){
     return posts.get();
   }
@@ -82,6 +94,7 @@ public class Database1Impl implements IDatabase1 {
     try {
     success &= comments().deleteAll();
     success &= images().deleteAll();
+    success &= lockableModels().deleteAll();
     success &= posts().deleteAll();
     success &= users().deleteAll();
     } catch (IOException e) {
@@ -93,6 +106,7 @@ public class Database1Impl implements IDatabase1 {
   public void disableCaching() {
     comments.disableCaching();
     images.disableCaching();
+    lockable_models.disableCaching();
     posts.disableCaching();
     users.disableCaching();
   }

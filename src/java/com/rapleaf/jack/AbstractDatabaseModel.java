@@ -35,18 +35,24 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rapleaf.jack.exception.JackException;
+import com.rapleaf.jack.exception.StaleModelException;
+import com.rapleaf.jack.exception.TooManyRowsUpdatedException;
 import com.rapleaf.jack.queries.FieldSelector;
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.queries.WhereClause;
 
-public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
+public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends GenericDatabases>> implements
     IModelPersistence<T> {
 
+  public static final String DEFAULT_LOCK_FIELD_NAME = "lock_version";
   private static Logger LOG = LoggerFactory.getLogger(AbstractDatabaseModel.class);
 
   protected static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
+  private final String setFieldsPrepStatementSection;
+  private final String lockFieldName;
 
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
@@ -56,7 +62,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   private final String tableName;
 
   private final List<String> fieldNames;
-  private final String updateStatement;
 
   protected final Map<Long, T> cachedById = new HashMap<Long, T>();
   protected final Map<String, Map<Long, List<T>>> cachedByForeignKey = new HashMap<String, Map<Long, List<T>>>();
@@ -73,8 +78,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    updateStatement =
-        String.format("UPDATE %s SET %s WHERE id=?;", tableName, getSetFieldsPrepStatementSection());
+
+    setFieldsPrepStatementSection = getSetFieldsPrepStatementSection();
+    lockFieldName = DEFAULT_LOCK_FIELD_NAME;
   }
 
   protected String getInsertStatement(List<String> fieldNames) {
@@ -418,10 +424,6 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return conn.getPreparedStatement(statementString);
   }
 
-  protected PreparedStatement getSaveStmt() {
-    return conn.getPreparedStatement(updateStatement);
-  }
-
   protected final static Integer getIntOrNull(ResultSet rs, String column)
       throws SQLException {
     Integer value = rs.getInt(column);
@@ -608,43 +610,114 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   protected abstract void setAttrs(T model, PreparedStatement stmt)
       throws SQLException;
 
-  @Override
-  public boolean save(T model) throws IOException {
+  // ActiveRecord documentation says it supports optimistic locking using integer fields
+  // That corresponds to the Integer and Long fields, but we only support locking on Integer for now
+  private boolean supportsOptimisticLocking(T model) {
+    return model.hasField(lockFieldName)
+        && model.getField(lockFieldName) != null
+        && model.getField(lockFieldName).getClass().equals(Integer.class);
+  }
+
+  private int getLockVersion(T model) {
+    return (Integer)model.getField(lockFieldName);
+  }
+
+  public boolean saveStrict(T model) throws JackException, IOException {
     Long oldUpdatedAt = handleRailsUpdatedAt(model);
     if (model.isCreated()) {
-      PreparedStatement saveStmt = getSaveStmt();
-      try {
-        setAttrs(model, saveStmt);
-        saveStmt.execute();
-        boolean success = saveStmt.getUpdateCount() == 1;
-        saveStmt.close();
-        if (success && useCache) {
-          cachedById.put(model.getId(), model);
+
+      if (supportsOptimisticLocking(model)) {
+        UpdateStatementPreparer<T> usp = new UpdateStatementPreparer.Locking<>(
+            tableName, setFieldsPrepStatementSection, lockFieldName, fieldNames.size(), getLockVersion(model));
+
+        final boolean success = updateStrict(model, usp, oldUpdatedAt);
+        if (success) {
+          // If successful, update the lock_version to match what we just put in the DB
+          model.setField(lockFieldName, getLockVersion(model) + 1);
         }
-        clearForeignKeyCache();
+
         return success;
-      } catch (SQLException e) {
-        revertRailsUpdatedAt(model, oldUpdatedAt);
-        throw new IOException(e);
+      } else {
+        final UpdateStatementPreparer<T> usp = new UpdateStatementPreparer.Normal<>(tableName, setFieldsPrepStatementSection);
+        return updateStrict(model, usp, oldUpdatedAt);
       }
+
     } else {
-      PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
-      try {
-        setAttrs(model, insertStmt);
-        insertStmt.setLong(fieldNames.size() + 1, model.getId());
-        insertStmt.execute();
-        boolean success = insertStmt.getUpdateCount() == 1;
-        insertStmt.close();
-        if (success && useCache) {
+      // optimistic locking impossible on insert
+      return insertStrict(model, oldUpdatedAt);
+    }
+  }
+
+  private boolean insertStrict(T model, Long oldUpdatedAt) throws JackException, IOException {
+    PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
+    try {
+      setAttrs(model, insertStmt);
+      insertStmt.setLong(fieldNames.size() + 1, model.getId());
+      insertStmt.execute();
+      final int updateCount = insertStmt.getUpdateCount();
+      insertStmt.close();
+
+      if (updateCount > 1) {
+        throw new TooManyRowsUpdatedException();
+      } else if (updateCount < 1) {
+        revertRailsUpdatedAt(model, oldUpdatedAt);
+        throw new StaleModelException();
+      } else {
+        if (useCache) {
           cachedById.put(model.getId(), model);
         }
         clearForeignKeyCache();
         model.setCreated(true);
-        return success;
-      } catch (SQLException e) {
-        revertRailsUpdatedAt(model, oldUpdatedAt);
-        throw new IOException(e);
+        return true;
       }
+    } catch (SQLException e) {
+      revertRailsUpdatedAt(model, oldUpdatedAt);
+      throw new IOException(e);
+    }
+  }
+
+  private boolean updateStrict(T model, UpdateStatementPreparer<T> usp, Long oldUpdatedAt) throws TooManyRowsUpdatedException, StaleModelException, IOException {
+    try {
+      final PreparedStatement saveStmt = conn.getPreparedStatement(usp.getSaveStmt());
+      usp.setParams(this, model, saveStmt);
+      saveStmt.execute();
+      final int updateCount = saveStmt.getUpdateCount();
+      saveStmt.close();
+
+      // since the statement includes id we expect at most 1 row to be updated
+      if (updateCount > 1) {
+        throw new TooManyRowsUpdatedException();
+      } else if (updateCount < 1) { // no row updated => id or lock_version is non-matching => stale
+        // don't match Rails behaviour (updated_at changed on field modification)
+        // do    match Jack  behaviour (updated_at changed on successful save)
+        revertRailsUpdatedAt(model, oldUpdatedAt);
+        throw new StaleModelException();
+      } else {
+
+        // Locking will not prevent clobbering if the cache is used to fetch the
+        // two models since they are the same reference, and hence modifying one
+        // is modifying the other.
+        // We still want the right result in there, though.
+        if (useCache) {
+          cachedById.put(model.getId(), model);
+        }
+        clearForeignKeyCache();
+
+        return true;
+      }
+
+    } catch (SQLException e) {
+      revertRailsUpdatedAt(model, oldUpdatedAt);
+      throw new IOException(e);
+    }
+  }
+
+  @Override
+  public boolean save(T model) throws IOException {
+    try {
+      return saveStrict(model);
+    } catch (JackException e) {
+      return false;
     }
   }
 
@@ -807,6 +880,54 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
       conn.resetConnection(e);
     } catch (SQLException e) {
       LOG.warn("Failed to close query", e);
+    }
+  }
+
+  private abstract static class UpdateStatementPreparer<T extends ModelWithId<T, ? extends GenericDatabases>> {
+
+    private String saveStmt;
+
+    public UpdateStatementPreparer(String saveStmt) {
+      this.saveStmt = saveStmt;
+    }
+
+    public String getSaveStmt() {
+      return saveStmt;
+    }
+
+    public abstract PreparedStatement setParams(AbstractDatabaseModel<T> baseModel, T modelInstance, PreparedStatement statement) throws SQLException;
+
+    static class Normal<A extends ModelWithId<A, ? extends GenericDatabases>> extends UpdateStatementPreparer<A> {
+
+      public Normal(String tableName, String setFieldsPrepStatementSection) {
+        super(String.format("UPDATE %s SET %s WHERE id=?;", tableName, setFieldsPrepStatementSection));
+      }
+
+      @Override
+      public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
+        baseModel.setAttrs(modelInstance, statement);
+        return statement;
+      }
+    }
+
+    static class Locking<A extends ModelWithId<A, ? extends GenericDatabases>> extends UpdateStatementPreparer<A> {
+
+      private final int numFieldNames;
+      private final int lockVersion;
+
+      Locking(String tableName, String setFieldsPrepStatementSection, String lockFieldName, int numFieldNames, int lockVersion) {
+        super(String.format("UPDATE %s SET %s WHERE id=? AND %s=?;", tableName, setFieldsPrepStatementSection, lockFieldName));
+        this.numFieldNames = numFieldNames;
+        this.lockVersion = lockVersion;
+      }
+
+      @Override
+      public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
+        baseModel.setAttrs(modelInstance, statement);
+        // the lock_version is after all the field params and the id param
+        statement.setLong(numFieldNames + 2, lockVersion);
+        return statement;
+      }
     }
   }
 }
