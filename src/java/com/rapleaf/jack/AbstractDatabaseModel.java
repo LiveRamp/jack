@@ -46,11 +46,13 @@ import com.rapleaf.jack.queries.WhereClause;
 public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends GenericDatabases>> implements
     IModelPersistence<T> {
 
+  public static final String DEFAULT_LOCK_FIELD_NAME = "lock_version";
   private static Logger LOG = LoggerFactory.getLogger(AbstractDatabaseModel.class);
 
   protected static final int MAX_CONNECTION_RETRIES = 1;
   private final String idQuoteString;
   private final String setFieldsPrepStatementSection;
+  private final String lockFieldName;
 
   protected static interface AttrSetter {
     public void set(PreparedStatement stmt) throws SQLException;
@@ -78,6 +80,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     }
 
     setFieldsPrepStatementSection = getSetFieldsPrepStatementSection();
+    lockFieldName = DEFAULT_LOCK_FIELD_NAME;
   }
 
   protected String getInsertStatement(List<String> fieldNames) {
@@ -607,26 +610,16 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   protected abstract void setAttrs(T model, PreparedStatement stmt)
       throws SQLException;
 
-  // Placeholder default ActiveRecord lock field name
-  private String getLockFieldName(T model) {
-    return "lock_version";
-  }
-
   // ActiveRecord documentation says it supports optimistic locking using integer fields
   // That corresponds to the Integer and Long fields, but we only support locking on Integer for now
   private boolean supportsOptimisticLocking(T model) {
-    final String lockFieldName = getLockFieldName(model);
-
-    if (model.hasField(lockFieldName)) {
-      Object field = model.getField(lockFieldName);
-      return (field != null && field.getClass().equals(Integer.class));
-    } else {
-      return false;
-    }
+    return model.hasField(lockFieldName)
+        && model.getField(lockFieldName) != null
+        && model.getField(lockFieldName).getClass().equals(Integer.class);
   }
 
   private int getLockVersion(T model) {
-    return (Integer)model.getField(getLockFieldName(model));
+    return (Integer)model.getField(lockFieldName);
   }
 
   public boolean saveStrict(T model) throws JackException, IOException {
@@ -635,12 +628,12 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
       if (supportsOptimisticLocking(model)) {
         UpdateStatementPreparer<T> usp = new UpdateStatementPreparer.Locking<>(
-            tableName, setFieldsPrepStatementSection, getLockFieldName(model), fieldNames.size(), getLockVersion(model));
+            tableName, setFieldsPrepStatementSection, lockFieldName, fieldNames.size(), getLockVersion(model));
 
         final boolean success = updateStrict(model, usp, oldUpdatedAt);
         if (success) {
           // If successful, update the lock_version to match what we just put in the DB
-          model.setField(getLockFieldName(model), getLockVersion(model) + 1);
+          model.setField(lockFieldName, getLockVersion(model) + 1);
         }
 
         return success;
