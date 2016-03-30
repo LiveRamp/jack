@@ -107,7 +107,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   public List<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Comment> foundList = new ArrayList<Comment>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -122,7 +122,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((Comment._Fields) field);
@@ -235,7 +235,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   @Override
   protected Comment instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Comment(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Comment(id,
       allFields || selectedFields.contains(Comment._Fields.content) ? rs.getString("content") : null,
       allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : 0,
       allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : 0L,

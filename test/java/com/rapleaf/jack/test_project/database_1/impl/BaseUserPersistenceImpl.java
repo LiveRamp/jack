@@ -142,7 +142,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<User> foundList = new ArrayList<User>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -157,7 +157,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((User._Fields) field);
@@ -338,7 +338,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   @Override
   protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new User(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new User(id,
       allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : "",
       allFields || selectedFields.contains(User._Fields.created_at_millis) ? getLongOrNull(rs, "created_at_millis") : null,
       allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : 0,

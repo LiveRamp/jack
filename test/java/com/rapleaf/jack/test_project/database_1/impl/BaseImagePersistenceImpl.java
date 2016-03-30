@@ -94,7 +94,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   public List<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Image> foundList = new ArrayList<Image>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -109,7 +109,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((Image._Fields) field);
@@ -195,7 +195,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   @Override
   protected Image instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Image(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Image(id,
       allFields || selectedFields.contains(Image._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,
       databases
     );
