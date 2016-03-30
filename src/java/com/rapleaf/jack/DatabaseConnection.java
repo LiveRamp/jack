@@ -24,9 +24,9 @@ import org.jvyaml.YAML;
 
 /**
  * The DatabaseConnection class manages connections to your databases. The
- * database to be used is specified in config/environment.yml. This file 
+ * database to be used is specified in config/environment.yml. This file
  * in turn points to a set of login credentials in config/database.yml.
- * 
+ * <p/>
  * All public methods methods of DatabaseConnection throw RuntimeExceptions
  * (rather than IO or SQL exceptions).
  */
@@ -45,7 +45,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   public DatabaseConnection(String dbname_key) throws RuntimeException {
     this(dbname_key, DEFAULT_EXPIRATION);
   }
-  
+
   public DatabaseConnection(String dbname_key, long expiration) {
     Map<String, String> db_info = null;
     Map<String, Object> env_info = null;
@@ -68,6 +68,9 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     } else if (adapter.equals("postgresql")) {
       driver = "postgresql";
       driverClass = "org.postgresql.Driver";
+    } else if (adapter.equals("redshift")) {
+      driver = "redshift";
+      driverClass = "com.amazon.redshift.jdbc41.Driver";
     } else {
       driverClass = null;
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
@@ -93,7 +96,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    */
   public Connection getConnection() {
     try {
-      if(conn == null) {
+      if (conn == null) {
         Class.forName(driverClass);
         conn = DriverManager.getConnection(connectionString, username, password);
       } else if (isExpired() || conn.isClosed()) {
@@ -101,7 +104,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       }
       updateExpiration();
       return conn;
-    } catch(Exception e) { //IOEx., SQLEx.
+    } catch (Exception e) { //IOEx., SQLEx.
       throw new RuntimeException(e);
     }
   }
@@ -110,7 +113,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * When using a parallel test environment, we append an integer that lives in
    * an environment variable to the database name.
    *
-   * @param base_name the name of the database
+   * @param base_name    the name of the database
    * @param use_parallel if true, append an integer specified in an environment
    *                     variable to the end of base_name
    * @return the name of the database that we should connect to
@@ -118,13 +121,11 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   protected String getDbName(String base_name, Boolean use_parallel) {
     if (use_parallel == null || !use_parallel) {
       return base_name;
-    }
-    else {
+    } else {
       String partitionNumber = System.getenv(PARTITION_NUM_ENV_VARIABLE_NAME);
       if (partitionNumber != null) {
         return base_name + partitionNumber;
-      }
-      else {
+      } else {
         throw new RuntimeException("Expected the " + PARTITION_NUM_ENV_VARIABLE_NAME + " environment variable to be set, but it wasn't. Either disable parallel tests or make sure the variable is defined.");
       }
     }
