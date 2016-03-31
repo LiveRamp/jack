@@ -21,7 +21,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public class Database1Impl implements IDatabase1 {
-  
+
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
   private final LazyLoadPersistence<ICommentPersistence, IDatabases> comments;

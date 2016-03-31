@@ -91,14 +91,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     <%= field_defn.name %>("<%= field_defn.column_name %>"),
   <% end %>;
 
-    private final String column;
+    private final String __column;
 
     _Fields(String column) {
-      this.column = column;
+      this.__column = column;
     }
 
     public String getColumn() {
-      return column;
+      return __column;
     }
 
     @Override
