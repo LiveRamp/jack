@@ -1,11 +1,11 @@
 # Copyright 2011 Rapleaf
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ class ModelDefn
   end
 
   def create_signature_full(excluded_field_name = nil)
-    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ") 
+    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
   end
 
   def fields_with_default_created_at(excluded_field_name = nil)
@@ -56,22 +56,22 @@ class ModelDefn
   end
 
   def create_signature_small(excluded_field_name = nil)
-    temp = @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ") 
+    temp = @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
     create_signature_full(excluded_field_name) == temp ? nil : temp
   end
 
   def create_argument_defaults(excluded_field_name = nil)
-    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| field_defn.java_default_value }.join(", ") 
+    @fields.reject{|field_defn| field_defn.name == excluded_field_name }.reject{|field_defn| field_defn.nullable? }.map{|field_defn| field_defn.java_default_value }.join(", ")
   end
 
   def field_names_list(only_not_null = false, quoted = true)
-    @fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| quoted ? "\"#{x.name}\"" : "#{x.name}" }.join(", ")
+    @fields.select{|x| x.args[":null"] == "false" || !only_not_null}.map{|x| quoted ? "\"#{x.column_name}\"" : "#{x.name}" }.join(", ")
   end
-  
+
   def iface_name
     "I#{model_name}Persistence"
   end
-  
+
   def impl_name
     "Base#{model_name}PersistenceImpl"
   end
@@ -91,23 +91,23 @@ class ModelDefn
   def id_wrapper_name
       "#{model_name}.Id"
    end
-  
+
   def persistence_getter
     x = table_name.camelcase
     x[0,1] = x[0,1].downcase
     "#{x}()"
   end
-  
+
   def import
     "import #{namespace}.models.#{model_name};"
   end
-  
+
   def validate
     raise unless table_name && table_name != ""
     raise unless model_name && model_name != ""
     raise unless database_defn
   end
-  
+
   def serial_version_uid
     schema_info = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args.sort_by{|h| h.join}}"}.join
     schema_info += @associations.map{|a| "#{a.type}#{a.name}#{a.assoc_model_name}"}.join

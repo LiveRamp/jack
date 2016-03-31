@@ -86,6 +86,16 @@ public class UserDeleteBuilder extends AbstractDeleteBuilder<User> {
     return this;
   }
 
+  public UserDeleteBuilder _tbl(String value) {
+    addWhereConstraint(new WhereConstraint<String>(User._Fields._tbl, JackMatchers.equalTo(value)));
+    return this;
+  }
+
+  public UserDeleteBuilder where_tbl(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(User._Fields._tbl, operator));
+    return this;
+  }
+
   public UserDeleteBuilder someBinary(byte[] value) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
     return this;

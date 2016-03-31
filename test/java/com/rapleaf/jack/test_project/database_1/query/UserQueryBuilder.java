@@ -203,6 +203,26 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
+  public UserQueryBuilder _tbl(String value) {
+    addWhereConstraint(new WhereConstraint<String>(User._Fields._tbl, JackMatchers.equalTo(value)));
+    return this;
+  }
+
+  public UserQueryBuilder where_tbl(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(User._Fields._tbl, operator));
+    return this;
+  }
+
+  public UserQueryBuilder orderBy_tbl() {
+    this.addOrder(new OrderCriterion(User._Fields._tbl, QueryOrder.ASC));
+    return this;
+  }
+
+  public UserQueryBuilder orderBy_tbl(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(User._Fields._tbl, queryOrder));
+    return this;
+  }
+
   public UserQueryBuilder someBinary(byte[] value) {
     addWhereConstraint(new WhereConstraint<byte[]>(User._Fields.some_binary, JackMatchers.equalTo(value)));
     return this;

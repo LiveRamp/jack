@@ -43,7 +43,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   private final IDatabases databases;
 
   public BaseUserPersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "users", Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_decimal", "some_boolean"));
+    super(conn, "users", Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "tbl", "some_binary", "some_float", "some_decimal", "some_boolean"));
     this.databases = databases;
   }
 
@@ -55,14 +55,15 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     Long some_date = (Long) fieldsMap.get(User._Fields.some_date);
     Long some_datetime = (Long) fieldsMap.get(User._Fields.some_datetime);
     String bio = (String) fieldsMap.get(User._Fields.bio);
+    String _tbl = (String) fieldsMap.get(User._Fields._tbl);
     byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
     Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
     Double some_decimal = (Double) fieldsMap.get(User._Fields.some_decimal);
     Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
-    return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+    return create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
   }
 
-  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
+  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setString(1, handle);
@@ -87,29 +88,34 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
         } else {
           stmt.setString(6, bio);
         }
-        if (some_binary == null) {
-          stmt.setNull(7, java.sql.Types.BINARY);
+        if (_tbl == null) {
+          stmt.setNull(7, java.sql.Types.CHAR);
         } else {
-          stmt.setBytes(7, some_binary);
+          stmt.setString(7, _tbl);
+        }
+        if (some_binary == null) {
+          stmt.setNull(8, java.sql.Types.BINARY);
+        } else {
+          stmt.setBytes(8, some_binary);
         }
         if (some_float == null) {
-          stmt.setNull(8, java.sql.Types.DOUBLE);
+          stmt.setNull(9, java.sql.Types.DOUBLE);
         } else {
-          stmt.setDouble(8, some_float);
+          stmt.setDouble(9, some_float);
         }
         if (some_decimal == null) {
-          stmt.setNull(9, java.sql.Types.DECIMAL);
+          stmt.setNull(10, java.sql.Types.DECIMAL);
         } else {
-          stmt.setDouble(9, some_decimal);
+          stmt.setDouble(10, some_decimal);
         }
         if (some_boolean == null) {
-          stmt.setNull(10, java.sql.Types.BOOLEAN);
+          stmt.setNull(11, java.sql.Types.BOOLEAN);
         } else {
-          stmt.setBoolean(10, some_boolean);
+          stmt.setBoolean(11, some_boolean);
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_decimal", "some_boolean")));
-    User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean, databases);
+    }, getInsertStatement(Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "tbl", "some_binary", "some_float", "some_decimal", "some_boolean")));
+    User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
@@ -124,7 +130,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
           stmt.setInt(2, num_posts);
       }
     }, getInsertStatement(Arrays.<String>asList("handle", "num_posts")));
-    User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, null, databases);
+    User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
@@ -200,6 +206,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
             case bio:
               preparedStatement.setString(i+1, (String) nonNullValues.get(i));
               break;
+            case _tbl:
+              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              break;
             case some_binary:
               preparedStatement.setBytes(i+1, (byte[]) nonNullValues.get(i));
               break;
@@ -263,6 +272,9 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
               case bio:
                 preparedStatement.setString(++index, (String) parameter);
                 break;
+              case _tbl:
+                preparedStatement.setString(++index, (String) parameter);
+                break;
               case some_binary:
                 preparedStatement.setBytes(++index, (byte[]) parameter);
                 break;
@@ -312,27 +324,32 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     } else {
       stmt.setString(6, model.getBio());
     }
-    if (model.getSomeBinary() == null) {
-      stmt.setNull(7, java.sql.Types.BINARY);
+    if (model.get_tbl() == null) {
+      stmt.setNull(7, java.sql.Types.CHAR);
     } else {
-      stmt.setBytes(7, model.getSomeBinary());
+      stmt.setString(7, model.get_tbl());
+    }
+    if (model.getSomeBinary() == null) {
+      stmt.setNull(8, java.sql.Types.BINARY);
+    } else {
+      stmt.setBytes(8, model.getSomeBinary());
     }
     if (model.getSomeFloat() == null) {
-      stmt.setNull(8, java.sql.Types.DOUBLE);
+      stmt.setNull(9, java.sql.Types.DOUBLE);
     } else {
-      stmt.setDouble(8, model.getSomeFloat());
+      stmt.setDouble(9, model.getSomeFloat());
     }
     if (model.getSomeDecimal() == null) {
-      stmt.setNull(9, java.sql.Types.DECIMAL);
+      stmt.setNull(10, java.sql.Types.DECIMAL);
     } else {
-      stmt.setDouble(9, model.getSomeDecimal());
+      stmt.setDouble(10, model.getSomeDecimal());
     }
     if (model.isSomeBoolean() == null) {
-      stmt.setNull(10, java.sql.Types.BOOLEAN);
+      stmt.setNull(11, java.sql.Types.BOOLEAN);
     } else {
-      stmt.setBoolean(10, model.isSomeBoolean());
+      stmt.setBoolean(11, model.isSomeBoolean());
     }
-    stmt.setLong(11, model.getId());
+    stmt.setLong(12, model.getId());
   }
 
   @Override
@@ -346,6 +363,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       allFields || selectedFields.contains(User._Fields.some_date) ? getDateAsLong(rs, "some_date") : null,
       allFields || selectedFields.contains(User._Fields.some_datetime) ? getDateAsLong(rs, "some_datetime") : null,
       allFields || selectedFields.contains(User._Fields.bio) ? rs.getString("bio") : null,
+      allFields || selectedFields.contains(User._Fields._tbl) ? rs.getString("tbl") : null,
       allFields || selectedFields.contains(User._Fields.some_binary) ? rs.getBytes("some_binary") : null,
       allFields || selectedFields.contains(User._Fields.some_float) ? getDoubleOrNull(rs, "some_float") : null,
       allFields || selectedFields.contains(User._Fields.some_decimal) ? getDoubleOrNull(rs, "some_decimal") : null,
@@ -376,6 +394,10 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   public List<User> findByBio(final String value) throws IOException {
     return find(new HashMap<Enum, Object>(){{put(User._Fields.bio, value);}});
+  }
+
+  public List<User> findBy_tbl(final String value) throws IOException {
+    return find(new HashMap<Enum, Object>(){{put(User._Fields._tbl, value);}});
   }
 
   public List<User> findBySomeBinary(final byte[] value) throws IOException {

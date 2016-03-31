@@ -32,17 +32,18 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.JackUtility;
 
 public class User extends ModelWithId<User, IDatabases> implements Comparable<User>{
-  
-  public static final long serialVersionUID = -966057050205502149L;
+
+  public static final long serialVersionUID = 7587738163241736302L;
 
   public static class Tbl extends AbstractTable<User.Attributes, User> {
-    public final Column<Long> ID;
+      public final Column<Long> ID;
     public final Column<String> HANDLE;
     public final Column<Long> CREATED_AT_MILLIS;
     public final Column<Integer> NUM_POSTS;
     public final Column<Long> SOME_DATE;
     public final Column<Long> SOME_DATETIME;
     public final Column<String> BIO;
+    public final Column<String> _TBL;
     public final Column<byte[]> SOME_BINARY;
     public final Column<Double> SOME_FLOAT;
     public final Column<Double> SOME_DECIMAL;
@@ -50,18 +51,19 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     private Tbl(String alias) {
       super("users", alias, User.Attributes.class, User.class);
-      this.ID = Column.fromId(alias);
+        this.ID = Column.fromId(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
       this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
       this.NUM_POSTS = Column.fromField(alias, _Fields.num_posts, Integer.class);
       this.SOME_DATE = Column.fromDate(alias, _Fields.some_date);
       this.SOME_DATETIME = Column.fromTimestamp(alias, _Fields.some_datetime);
       this.BIO = Column.fromField(alias, _Fields.bio, String.class);
+      this._TBL = Column.fromField(alias, _Fields._tbl, String.class);
       this.SOME_BINARY = Column.fromField(alias, _Fields.some_binary, byte[].class);
       this.SOME_FLOAT = Column.fromField(alias, _Fields.some_float, Double.class);
       this.SOME_DECIMAL = Column.fromField(alias, _Fields.some_decimal, Double.class);
       this.SOME_BOOLEAN = Column.fromField(alias, _Fields.some_boolean, Boolean.class);
-      Collections.addAll(this.allColumns, ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
+      Collections.addAll(this.allColumns, ID, HANDLE, CREATED_AT_MILLIS, NUM_POSTS, SOME_DATE, SOME_DATETIME, BIO, _TBL, SOME_BINARY, SOME_FLOAT, SOME_DECIMAL, SOME_BOOLEAN);
     }
 
     public static Tbl as(String alias) {
@@ -70,17 +72,18 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   }
 
   public static final Tbl TBL = new Tbl("users");
-  public static final Column<Long> ID = TBL.ID;
-  public static final Column<String> HANDLE = TBL.HANDLE;
-  public static final Column<Long> CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
-  public static final Column<Integer> NUM_POSTS = TBL.NUM_POSTS;
-  public static final Column<Long> SOME_DATE = TBL.SOME_DATE;
-  public static final Column<Long> SOME_DATETIME = TBL.SOME_DATETIME;
-  public static final Column<String> BIO = TBL.BIO;
-  public static final Column<byte[]> SOME_BINARY = TBL.SOME_BINARY;
-  public static final Column<Double> SOME_FLOAT = TBL.SOME_FLOAT;
-  public static final Column<Double> SOME_DECIMAL = TBL.SOME_DECIMAL;
-  public static final Column<Boolean> SOME_BOOLEAN = TBL.SOME_BOOLEAN;
+    public static final Column<Long> ID = TBL.ID;
+      public static final Column<String> HANDLE = TBL.HANDLE;
+      public static final Column<Long> CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
+      public static final Column<Integer> NUM_POSTS = TBL.NUM_POSTS;
+      public static final Column<Long> SOME_DATE = TBL.SOME_DATE;
+      public static final Column<Long> SOME_DATETIME = TBL.SOME_DATETIME;
+      public static final Column<String> BIO = TBL.BIO;
+      public static final Column<String> _TBL = TBL._TBL;
+      public static final Column<byte[]> SOME_BINARY = TBL.SOME_BINARY;
+      public static final Column<Double> SOME_FLOAT = TBL.SOME_FLOAT;
+      public static final Column<Double> SOME_DECIMAL = TBL.SOME_DECIMAL;
+      public static final Column<Boolean> SOME_BOOLEAN = TBL.SOME_BOOLEAN;
 
   private final Attributes attributes;
 
@@ -92,16 +95,33 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   private HasOneAssociation<Image> __assoc_image;
 
   public enum _Fields {
-    handle,
-    created_at_millis,
-    num_posts,
-    some_date,
-    some_datetime,
-    bio,
-    some_binary,
-    some_float,
-    some_decimal,
-    some_boolean,
+    handle("handle"),
+      created_at_millis("created_at_millis"),
+      num_posts("num_posts"),
+      some_date("some_date"),
+      some_datetime("some_datetime"),
+      bio("bio"),
+      _tbl("tbl"),
+      some_binary("some_binary"),
+      some_float("some_float"),
+      some_decimal("some_decimal"),
+      some_boolean("some_boolean"),
+  ;
+
+    private final String column;
+
+    _Fields(String column) {
+      this.column = column;
+    }
+
+    public String getColumn() {
+      return column;
+    }
+
+    @Override
+    public String toString() {
+      return getColumn();
+    }
   }
 
   @Override
@@ -112,19 +132,19 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     return cachedTypedId;
   }
 
-  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+    attributes = new Attributes(id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
     this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
     this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
     this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
   }
 
-  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
+  public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
     super(null);
-    attributes = new Attributes(id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+    attributes = new Attributes(id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
   }
-  
+
   public User(long id, final String handle, final int num_posts, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, handle, num_posts);
@@ -176,7 +196,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
@@ -241,6 +261,16 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     return this;
   }
 
+  public String get_tbl(){
+    return attributes.get_tbl();
+  }
+
+  public User set_tbl(String newval){
+    attributes.set_tbl(newval);
+    cachedHashCode = 0;
+    return this;
+  }
+
   public byte[] getSomeBinary(){
     return attributes.getSomeBinary();
   }
@@ -301,6 +331,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       case bio:
         setBio((String) value);
         break;
+      case _tbl:
+        set_tbl((String) value);
+        break;
       case some_binary:
         setSomeBinary((byte[]) value);
         break;
@@ -317,7 +350,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
-  
+
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("handle")) {
       setHandle((String)  value);
@@ -341,6 +374,10 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     }
     if (fieldName.equals("bio")) {
       setBio((String)  value);
+      return;
+    }
+    if (fieldName.equals("_tbl")) {
+      set_tbl((String)  value);
       return;
     }
     if (fieldName.equals("some_binary")) {
@@ -376,6 +413,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         return Long.class;
       case bio:
         return String.class;
+      case _tbl:
+        return String.class;
       case some_binary:
         return byte[].class;
       case some_float:
@@ -386,10 +425,10 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         return Boolean.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
-  public static Class getFieldType(String fieldName) {    
+  public static Class getFieldType(String fieldName) {
     if (fieldName.equals("handle")) {
       return String.class;
     }
@@ -406,6 +445,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       return Long.class;
     }
     if (fieldName.equals("bio")) {
+      return String.class;
+    }
+    if (fieldName.equals("_tbl")) {
       return String.class;
     }
     if (fieldName.equals("some_binary")) {
@@ -458,6 +500,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     if (fieldName.equals("bio")) {
       return getBio();
     }
+    if (fieldName.equals("_tbl")) {
+      return get_tbl();
+    }
     if (fieldName.equals("some_binary")) {
       return getSomeBinary();
     }
@@ -487,6 +532,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         return getSomeDatetime();
       case bio:
         return getBio();
+      case _tbl:
+        return get_tbl();
       case some_binary:
         return getSomeBinary();
       case some_float:
@@ -498,7 +545,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -519,6 +566,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       return true;
     }
     if (fieldName.equals("bio")) {
+      return true;
+    }
+    if (fieldName.equals("_tbl")) {
       return true;
     }
     if (fieldName.equals("some_binary")) {
@@ -549,6 +599,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       case some_datetime:
         return null;
       case bio:
+        return null;
+      case _tbl:
         return null;
       case some_binary:
         return null;
@@ -592,6 +644,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       + " some_date: " + getSomeDate()
       + " some_datetime: " + getSomeDatetime()
       + " bio: " + getBio()
+      + " _tbl: " + get_tbl()
       + " some_binary: " + getSomeBinary()
       + " some_float: " + getSomeFloat()
       + " some_decimal: " + getSomeDecimal()
@@ -609,11 +662,11 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public int compareTo(User that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
-  
-  
+
+
   public static class Attributes extends AttributesWithId {
-    
-    public static final long serialVersionUID = 7482296567648746981L;
+
+    public static final long serialVersionUID = 1057660547899832901L;
 
     // Fields
     private String __handle;
@@ -622,6 +675,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     private Long __some_date;
     private Long __some_datetime;
     private String __bio;
+    private String ___tbl;
     private byte[] __some_binary;
     private Double __some_float;
     private Double __some_decimal;
@@ -631,7 +685,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       super(id);
     }
 
-    public Attributes(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
+    public Attributes(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
       super(id);
       this.__handle = handle;
       this.__created_at_millis = created_at_millis;
@@ -639,12 +693,13 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__some_date = some_date;
       this.__some_datetime = some_datetime;
       this.__bio = bio;
+      this.___tbl = _tbl;
       this.__some_binary = some_binary;
       this.__some_float = some_float;
       this.__some_decimal = some_decimal;
       this.__some_boolean = some_boolean;
     }
-    
+
     public Attributes(long id, final String handle, final int num_posts) {
       super(id);
       this.__handle = handle;
@@ -663,6 +718,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       Long some_date = (Long) fieldsMap.get(User._Fields.some_date);
       Long some_datetime = (Long) fieldsMap.get(User._Fields.some_datetime);
       String bio = (String) fieldsMap.get(User._Fields.bio);
+      String _tbl = (String) fieldsMap.get(User._Fields._tbl);
       byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
       Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
       Double some_decimal = (Double) fieldsMap.get(User._Fields.some_decimal);
@@ -673,6 +729,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__some_date = some_date;
       this.__some_datetime = some_datetime;
       this.__bio = bio;
+      this.___tbl = _tbl;
       this.__some_binary = some_binary;
       this.__some_float = some_float;
       this.__some_decimal = some_decimal;
@@ -687,6 +744,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__some_date = other.getSomeDate();
       this.__some_datetime = other.getSomeDatetime();
       this.__bio = other.getBio();
+      this.___tbl = other.get_tbl();
       this.__some_binary = copyBinary(other.getSomeBinary());
       this.__some_float = other.getSomeFloat();
       this.__some_decimal = other.getSomeDecimal();
@@ -753,6 +811,16 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       return this;
     }
 
+    public String get_tbl(){
+      return ___tbl;
+    }
+
+    public Attributes set_tbl(String newval){
+      this.___tbl = newval;
+      cachedHashCode = 0;
+      return this;
+    }
+
     public byte[] getSomeBinary(){
       return __some_binary;
     }
@@ -813,6 +881,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         case bio:
           setBio((String) value);
           break;
+        case _tbl:
+          set_tbl((String) value);
+          break;
         case some_binary:
           setSomeBinary((byte[]) value);
           break;
@@ -855,6 +926,10 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         setBio((String)  value);
         return;
       }
+      if (fieldName.equals("_tbl")) {
+        set_tbl((String)  value);
+        return;
+      }
       if (fieldName.equals("some_binary")) {
         setSomeBinary((byte[])  value);
         return;
@@ -888,6 +963,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
           return Long.class;
         case bio:
           return String.class;
+        case _tbl:
+          return String.class;
         case some_binary:
           return byte[].class;
         case some_float:
@@ -898,10 +975,10 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
           return Boolean.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
-      }    
+      }
     }
 
-    public static Class getFieldType(String fieldName) {    
+    public static Class getFieldType(String fieldName) {
       if (fieldName.equals("handle")) {
         return String.class;
       }
@@ -918,6 +995,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         return Long.class;
       }
       if (fieldName.equals("bio")) {
+        return String.class;
+      }
+      if (fieldName.equals("_tbl")) {
         return String.class;
       }
       if (fieldName.equals("some_binary")) {
@@ -958,6 +1038,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       if (fieldName.equals("bio")) {
         return getBio();
       }
+      if (fieldName.equals("_tbl")) {
+        return get_tbl();
+      }
       if (fieldName.equals("some_binary")) {
         return getSomeBinary();
       }
@@ -987,6 +1070,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
           return getSomeDatetime();
         case bio:
           return getBio();
+        case _tbl:
+          return get_tbl();
         case some_binary:
           return getSomeBinary();
         case some_float:
@@ -1021,6 +1106,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       if (fieldName.equals("bio")) {
         return true;
       }
+      if (fieldName.equals("_tbl")) {
+        return true;
+      }
       if (fieldName.equals("some_binary")) {
         return true;
       }
@@ -1050,6 +1138,8 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
           return null;
         case bio:
           return null;
+        case _tbl:
+          return null;
         case some_binary:
           return null;
         case some_float:
@@ -1061,13 +1151,13 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
-    
+
     @Override
     public Set<Enum> getFieldSet() {
       Set set = EnumSet.allOf(_Fields.class);
       return set;
     }
-    
+
     public String toString() {
       return "<User.Attributes"
         + " handle: " + getHandle()
@@ -1076,6 +1166,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
         + " some_date: " + getSomeDate()
         + " some_datetime: " + getSomeDatetime()
         + " bio: " + getBio()
+        + " _tbl: " + get_tbl()
         + " some_binary: " + getSomeBinary()
         + " some_float: " + getSomeFloat()
         + " some_decimal: " + getSomeDecimal()
