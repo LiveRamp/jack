@@ -54,6 +54,6 @@ public class WhereConstraint<T> implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return (logic != null ? logic.toString() + " " : "") + column.getSqlKeyword() + operator.getSqlStatement();
+    return (logic != null ? logic.toString() + " " : "") + "`" + column.getSqlKeyword() + "` " + operator.getSqlStatement();
   }
 }
