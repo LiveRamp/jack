@@ -77,14 +77,14 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       updated_at("updated_at"),
   ;
 
-    private final String column;
+    private final String __column;
 
     _Fields(String column) {
-      this.column = column;
+      this.__column = column;
     }
 
     public String getColumn() {
-      return column;
+      return __column;
     }
 
     @Override

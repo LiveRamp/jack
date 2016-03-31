@@ -66,14 +66,14 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     user_id("user_id"),
   ;
 
-    private final String column;
+    private final String __column;
 
     _Fields(String column) {
-      this.column = column;
+      this.__column = column;
     }
 
     public String getColumn() {
-      return column;
+      return __column;
     }
 
     @Override
