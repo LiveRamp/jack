@@ -1,14 +1,6 @@
 package com.rapleaf.jack;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
-import junit.framework.TestCase;
-
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.test_project.DatabasesImpl;
@@ -16,11 +8,15 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
+import junit.framework.TestCase;
 
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.equalTo;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThan;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.in;
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThan;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
 
 public class TestModelDelete extends TestCase {
 
@@ -35,7 +31,7 @@ public class TestModelDelete extends TestCase {
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, equalTo(5)));
 
-    String expectedStatement = "DELETE FROM posts WHERE (id in (1,50,3,10) AND title = ? AND user_id = ?)".toLowerCase();
+    String expectedStatement = "DELETE FROM posts WHERE (id in (1,50,3,10) AND `title` = ? AND `user_id` = ?)".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
@@ -57,7 +53,7 @@ public class TestModelDelete extends TestCase {
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, in(5, 10)));
 
-    String expectedStatement = "DELETE FROM posts WHERE (title = ? AND user_id IN (?, ?))".toLowerCase();
+    String expectedStatement = "DELETE FROM posts WHERE (`title` = ? AND `user_id` IN (?, ?))".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
