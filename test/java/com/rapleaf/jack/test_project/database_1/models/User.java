@@ -36,7 +36,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public static final long serialVersionUID = 7587738163241736302L;
 
   public static class Tbl extends AbstractTable<User.Attributes, User> {
-      public final Column<Long> ID;
+    public final Column<Long> ID;
     public final Column<String> HANDLE;
     public final Column<Long> CREATED_AT_MILLIS;
     public final Column<Integer> NUM_POSTS;
@@ -51,7 +51,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     private Tbl(String alias) {
       super("users", alias, User.Attributes.class, User.class);
-        this.ID = Column.fromId(alias);
+      this.ID = Column.fromId(alias);
       this.HANDLE = Column.fromField(alias, _Fields.handle, String.class);
       this.CREATED_AT_MILLIS = Column.fromField(alias, _Fields.created_at_millis, Long.class);
       this.NUM_POSTS = Column.fromField(alias, _Fields.num_posts, Integer.class);
@@ -72,18 +72,18 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   }
 
   public static final Tbl TBL = new Tbl("users");
-    public static final Column<Long> ID = TBL.ID;
-      public static final Column<String> HANDLE = TBL.HANDLE;
-      public static final Column<Long> CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
-      public static final Column<Integer> NUM_POSTS = TBL.NUM_POSTS;
-      public static final Column<Long> SOME_DATE = TBL.SOME_DATE;
-      public static final Column<Long> SOME_DATETIME = TBL.SOME_DATETIME;
-      public static final Column<String> BIO = TBL.BIO;
-      public static final Column<String> _TBL = TBL._TBL;
-      public static final Column<byte[]> SOME_BINARY = TBL.SOME_BINARY;
-      public static final Column<Double> SOME_FLOAT = TBL.SOME_FLOAT;
-      public static final Column<Double> SOME_DECIMAL = TBL.SOME_DECIMAL;
-      public static final Column<Boolean> SOME_BOOLEAN = TBL.SOME_BOOLEAN;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<String> HANDLE = TBL.HANDLE;
+  public static final Column<Long> CREATED_AT_MILLIS = TBL.CREATED_AT_MILLIS;
+  public static final Column<Integer> NUM_POSTS = TBL.NUM_POSTS;
+  public static final Column<Long> SOME_DATE = TBL.SOME_DATE;
+  public static final Column<Long> SOME_DATETIME = TBL.SOME_DATETIME;
+  public static final Column<String> BIO = TBL.BIO;
+  public static final Column<String> _TBL = TBL._TBL;
+  public static final Column<byte[]> SOME_BINARY = TBL.SOME_BINARY;
+  public static final Column<Double> SOME_FLOAT = TBL.SOME_FLOAT;
+  public static final Column<Double> SOME_DECIMAL = TBL.SOME_DECIMAL;
+  public static final Column<Boolean> SOME_BOOLEAN = TBL.SOME_BOOLEAN;
 
   private final Attributes attributes;
 

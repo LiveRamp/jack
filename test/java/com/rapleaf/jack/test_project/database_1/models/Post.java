@@ -36,7 +36,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public static final long serialVersionUID = -399049548729901546L;
 
   public static class Tbl extends AbstractTable<Post.Attributes, Post> {
-      public final Column<Long> ID;
+    public final Column<Long> ID;
     public final Column<String> TITLE;
     public final Column<Long> POSTED_AT_MILLIS;
     public final Column<Integer> USER_ID;
@@ -44,7 +44,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
     private Tbl(String alias) {
       super("posts", alias, Post.Attributes.class, Post.class);
-        this.ID = Column.fromId(alias);
+      this.ID = Column.fromId(alias);
       this.TITLE = Column.fromField(alias, _Fields.title, String.class);
       this.POSTED_AT_MILLIS = Column.fromDate(alias, _Fields.posted_at_millis);
       this.USER_ID = Column.fromField(alias, _Fields.user_id, Integer.class);
@@ -58,11 +58,11 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   }
 
   public static final Tbl TBL = new Tbl("posts");
-    public static final Column<Long> ID = TBL.ID;
-      public static final Column<String> TITLE = TBL.TITLE;
-      public static final Column<Long> POSTED_AT_MILLIS = TBL.POSTED_AT_MILLIS;
-      public static final Column<Integer> USER_ID = TBL.USER_ID;
-      public static final Column<Long> UPDATED_AT = TBL.UPDATED_AT;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<String> TITLE = TBL.TITLE;
+  public static final Column<Long> POSTED_AT_MILLIS = TBL.POSTED_AT_MILLIS;
+  public static final Column<Integer> USER_ID = TBL.USER_ID;
+  public static final Column<Long> UPDATED_AT = TBL.UPDATED_AT;
 
   private final Attributes attributes;
 

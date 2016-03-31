@@ -36,7 +36,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   public static final long serialVersionUID = 2267084843778072603L;
 
   public static class Tbl extends AbstractTable<LockableModel.Attributes, LockableModel> {
-      public final Column<Long> ID;
+    public final Column<Long> ID;
     public final Column<Integer> LOCK_VERSION;
     public final Column<String> MESSAGE;
     public final Column<Long> CREATED_AT;
@@ -44,7 +44,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
     private Tbl(String alias) {
       super("lockable_models", alias, LockableModel.Attributes.class, LockableModel.class);
-        this.ID = Column.fromId(alias);
+      this.ID = Column.fromId(alias);
       this.LOCK_VERSION = Column.fromField(alias, _Fields.lock_version, Integer.class);
       this.MESSAGE = Column.fromField(alias, _Fields.message, String.class);
       this.CREATED_AT = Column.fromTimestamp(alias, _Fields.created_at);
@@ -58,11 +58,11 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   }
 
   public static final Tbl TBL = new Tbl("lockable_models");
-    public static final Column<Long> ID = TBL.ID;
-      public static final Column<Integer> LOCK_VERSION = TBL.LOCK_VERSION;
-      public static final Column<String> MESSAGE = TBL.MESSAGE;
-      public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
-      public static final Column<Long> UPDATED_AT = TBL.UPDATED_AT;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<Integer> LOCK_VERSION = TBL.LOCK_VERSION;
+  public static final Column<String> MESSAGE = TBL.MESSAGE;
+  public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
+  public static final Column<Long> UPDATED_AT = TBL.UPDATED_AT;
 
   private final Attributes attributes;
 

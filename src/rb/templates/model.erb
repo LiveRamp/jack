@@ -52,18 +52,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   public static final long serialVersionUID = <%= model_defn.serial_version_uid %>L;
 
   public static class Tbl extends AbstractTable<<%= model_defn.model_name %>.Attributes, <%= model_defn.model_name %>> {
-    <% unless database_defn.disable_rails_id %>
-      public final Column<Long> ID;
-    <% end %>
+    public final Column<Long> ID;
     <% model_defn.fields.each do |field_defn| %>
     public final Column<<%= field_defn.java_type(true) %>> <%= field_defn.name.upcase %>;
     <% end %>
 
     private Tbl(String alias) {
       super("<%= model_defn.table_name %>", alias, <%= model_defn.model_name %>.Attributes.class, <%= model_defn.model_name %>.class);
-      <% unless database_defn.disable_rails_id %>
-        this.ID = Column.fromId(alias);
-      <% end %>
+      this.ID = Column.fromId(alias);
       <% model_defn.fields.each do |field_defn| %>
       this.<%= field_defn.name.upcase %> = <%= field_defn.column_defn %>
       <% end %>
@@ -76,13 +72,9 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
   public static final Tbl TBL = new Tbl("<%= model_defn.table_name %>");
-  <% unless database_defn.disable_rails_id %>
-    public static final Column<Long> ID = TBL.ID;
-  <% end %>
+  public static final Column<Long> ID = TBL.ID;
   <% model_defn.fields.each do |field_defn| %>
-    <% if field_defn.name != 'tbl' %>
-      public static final Column<<%= field_defn.java_type(true) %>> <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
-    <% end %>
+  public static final Column<<%= field_defn.java_type(true) %>> <%= field_defn.name.upcase %> = TBL.<%= field_defn.name.upcase %>;
   <% end %>
 
   private final Attributes attributes;
@@ -96,7 +88,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public enum _Fields {
   <% model_defn.fields.each do |field_defn| %>
-    <%= field_defn.name %>("<%= field_defn.column_name%>"),
+    <%= field_defn.name %>("<%= field_defn.column_name %>"),
   <% end %>;
 
     private final String column;
@@ -117,17 +109,13 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   @Override
   public <%=model_defn.id_wrapper_name%> getTypedId() {
-    <% unless database_defn.disable_rails_id %>
     if (cachedTypedId == null) {
       cachedTypedId = new <%=model_defn.id_wrapper_name%>(this.getId());
     }
     return cachedTypedId;
-    <% else %>
-      return null;
-    <% end %>
   }
 
-  public <%= model_defn.model_name %>(<% unless database_defn.disable_rails_id %>long id<%= create_signature_full.empty? ? "" : ", " %><% end %><%= create_signature_full %>, IDatabases databases) {
+  public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"}.join %>);
 
@@ -136,14 +124,14 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
-  public <%= model_defn.model_name %>(<% unless database_defn.disable_rails_id %>long id<%= create_signature_full.empty? ? "" : ", " %><% end %><%= create_signature_full %>) {
+  public <%= model_defn.model_name %>(long id<%= create_signature_full.empty? ? "" : ", " %><%= create_signature_full %>) {
     super(null);
     attributes = new Attributes(id<%= model_defn.fields.map{|fd| ", #{fd.name}"}.join %>);
   }
 
 <% if model_defn.should_make_created_at_methods %>
 
-  public <%= model_defn.model_name %>(<% unless database_defn.disable_rails_id %>long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><% end %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
 
@@ -152,7 +140,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
   }
 
-  public <%= model_defn.model_name %>(<% unless database_defn.disable_rails_id %>long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><% end %><%= model_defn.create_signature_full("created_at") %>) {
+  public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>) {
     super(null);
     attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
   }
@@ -160,7 +148,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
 <% if !create_signature_small.nil? %>
 
-  public <%= model_defn.model_name %>(<% unless database_defn.disable_rails_id %>long id<%= create_signature_small.empty? ? "" : ", " %><% end %><%= create_signature_small %>, IDatabases databases) {
+  public <%= model_defn.model_name %>(long id<%= create_signature_small.empty? ? "" : ", " %><%= create_signature_small %>, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id<%= model_defn.fields.select{|fd| !fd.nullable?}.map{|fd| ", #{fd.name}"}.join %>);
 

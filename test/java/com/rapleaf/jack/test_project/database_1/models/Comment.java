@@ -36,7 +36,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public static final long serialVersionUID = 6213989608937906012L;
 
   public static class Tbl extends AbstractTable<Comment.Attributes, Comment> {
-      public final Column<Long> ID;
+    public final Column<Long> ID;
     public final Column<String> CONTENT;
     public final Column<Integer> COMMENTER_ID;
     public final Column<Long> COMMENTED_ON_ID;
@@ -44,7 +44,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     private Tbl(String alias) {
       super("comments", alias, Comment.Attributes.class, Comment.class);
-        this.ID = Column.fromId(alias);
+      this.ID = Column.fromId(alias);
       this.CONTENT = Column.fromField(alias, _Fields.content, String.class);
       this.COMMENTER_ID = Column.fromField(alias, _Fields.commenter_id, Integer.class);
       this.COMMENTED_ON_ID = Column.fromField(alias, _Fields.commented_on_id, Long.class);
@@ -58,11 +58,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public static final Tbl TBL = new Tbl("comments");
-    public static final Column<Long> ID = TBL.ID;
-      public static final Column<String> CONTENT = TBL.CONTENT;
-      public static final Column<Integer> COMMENTER_ID = TBL.COMMENTER_ID;
-      public static final Column<Long> COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
-      public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
+  public static final Column<Long> ID = TBL.ID;
+  public static final Column<String> CONTENT = TBL.CONTENT;
+  public static final Column<Integer> COMMENTER_ID = TBL.COMMENTER_ID;
+  public static final Column<Long> COMMENTED_ON_ID = TBL.COMMENTED_ON_ID;
+  public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
 
   private final Attributes attributes;
 
