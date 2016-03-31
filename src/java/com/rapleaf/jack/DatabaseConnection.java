@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.Map;
 
 import org.jvyaml.YAML;
@@ -32,6 +33,10 @@ import org.jvyaml.YAML;
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
+
+  public static final String MYSQL_JDBC_DRIVER = "com.mysql.jdbc.Driver";
+  public static final String POSTGRESQL_JDBC_DRIVER = "org.postgresql.Driver";
+  public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
 
   private final String connectionString;
   private final String username;
@@ -64,13 +69,13 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     String driver;
     if (adapter.equals("mysql") || adapter.equals("mysql_replication") || adapter.equals("mysql2")) {
       driver = "mysql";
-      driverClass = "com.mysql.jdbc.Driver";
+      driverClass = MYSQL_JDBC_DRIVER;
     } else if (adapter.equals("postgresql")) {
       driver = "postgresql";
-      driverClass = "org.postgresql.Driver";
+      driverClass = POSTGRESQL_JDBC_DRIVER;
     } else if (adapter.equals("redshift")) {
       driver = "redshift";
-      driverClass = "com.amazon.redshift.jdbc41.Driver";
+      driverClass = REDSHIFT_JDBC_DRIVER;
     } else {
       driverClass = null;
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
@@ -107,6 +112,22 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     } catch (Exception e) { //IOEx., SQLEx.
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public PreparedStatement getPreparedStatement(String statement) {
+    if (driverClass.equals(REDSHIFT_JDBC_DRIVER)) {
+      statement = statement.replaceAll("`", "\"");
+    }
+    return super.getPreparedStatement(statement);
+  }
+
+  @Override
+  public PreparedStatement getPreparedStatement(String statement, int options) {
+    if (driverClass.equals(REDSHIFT_JDBC_DRIVER)) {
+      statement = statement.replaceAll("`", "\"");
+    }
+    return super.getPreparedStatement(statement, options);
   }
 
   /**
