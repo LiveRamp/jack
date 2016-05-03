@@ -1,0 +1,11 @@
+language:
+  - java
+
+jdk:
+  - oraclejdk7
+
+services:
+  - mysql
+
+before_install:
+  - test/select-dbms.sh mysql
