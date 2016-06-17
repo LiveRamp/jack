@@ -1,13 +1,15 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.util.JackUtility;
 
-public final class IndexHint {
+public final class IndexHint implements QueryCondition {
 
   public enum Type {
     USE, FORCE, IGNORE
@@ -34,12 +36,14 @@ public final class IndexHint {
   private Scope scope;
   private List<String> indexNames;
 
-  private IndexHint(Type type, Scope scope, List<Index> indices) {
+  IndexHint(Type type, Scope scope, Index index, Index... indices) {
     this.type = type;
     this.scope = scope;
-    this.indexNames = FluentIterable.from(indices).transform(JackUtility.INDEX_NAME_EXTRACTOR).toImmutableList();
+    this.indexNames = Lists.newArrayList(index.getName());
+    this.indexNames.addAll(Collections2.transform(Arrays.asList(indices), JackUtility.INDEX_NAME_EXTRACTOR));
   }
 
+  @Override
   public String getSqlStatement() {
     return type.name() + " INDEX " + scope.getSqlStatement() + " (" + Joiner.on(",").join(indexNames) + ")";
   }

@@ -30,6 +30,7 @@ public class GenericQuery {
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
+  private final List<IndexHint> indexHints;
   private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
@@ -41,6 +42,7 @@ public class GenericQuery {
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
     this.orderCriteria = Lists.newArrayList();
+    this.indexHints = Lists.newArrayList();
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.absent();
@@ -157,6 +159,36 @@ public class GenericQuery {
   public GenericQuery select(Column column, Column... columns) {
     this.selectedColumns.add(column);
     this.selectedColumns.addAll(Arrays.asList(columns));
+    return this;
+  }
+
+  public GenericQuery useIndex(Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.USE, IndexHint.Scope.ALL, index, indices));
+    return this;
+  }
+
+  public GenericQuery useIndex(IndexHint.Scope hintScope, Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.USE, hintScope, index, indices));
+    return this;
+  }
+
+  public GenericQuery forceIndex(Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.FORCE, IndexHint.Scope.ALL, index, indices));
+    return this;
+  }
+
+  public GenericQuery forceIndex(IndexHint.Scope hintScope, Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.FORCE, hintScope, index, indices));
+    return this;
+  }
+
+  public GenericQuery ignoreIndex(Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.IGNORE, IndexHint.Scope.ALL, index, indices));
+    return this;
+  }
+
+  public GenericQuery ignoreIndex(IndexHint.Scope hintScope, Index index, Index... indices) {
+    this.indexHints.add(new IndexHint(IndexHint.Type.IGNORE, hintScope, index, indices));
     return this;
   }
 
@@ -290,7 +322,8 @@ public class GenericQuery {
         + getWhereClause()
         + getGroupByClause()
         + getOrderClause()
-        + getLimitClause();
+        + getLimitClause()
+        + getIndexHintClause();
   }
 
   private String getSelectClause() {
@@ -344,6 +377,14 @@ public class GenericQuery {
       return limitCriteria.get().getSqlStatement() + " ";
     } else {
       return "";
+    }
+  }
+
+  private String getIndexHintClause() {
+    if (indexHints.isEmpty()) {
+      return "";
+    } else {
+      return getClauseFromQueryConditions(indexHints, "", " ", " ");
     }
   }
 
