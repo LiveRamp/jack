@@ -8,6 +8,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.rapleaf.jack.queries.Index;
+
 public final class JackUtility {
 
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -22,6 +24,13 @@ public final class JackUtility {
     @Override
     public Long apply(final Object value) {
       return Long.class.cast(value);
+    }
+  };
+
+  public static final Function<Index, String> INDEX_NAME_EXTRACTOR = new Function<Index, String>() {
+    @Override
+    public String apply(final Index index) {
+      return index.getName();
     }
   };
 
