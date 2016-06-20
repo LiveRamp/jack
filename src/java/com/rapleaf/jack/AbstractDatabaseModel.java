@@ -622,8 +622,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return (Integer)model.getField(lockFieldName);
   }
 
-  public boolean saveStrict(T model) throws JackException, IOException {
-    Long oldUpdatedAt = handleRailsUpdatedAt(model);
+  public boolean saveStrict(long updateTimeMillis, T model) throws JackException, IOException {
+    Long oldUpdatedAt = handleRailsUpdatedAt(updateTimeMillis, model);
     if (model.isCreated()) {
 
       if (supportsOptimisticLocking(model)) {
@@ -714,8 +714,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   @Override
   public boolean save(T model) throws IOException {
+    return save(System.currentTimeMillis(), model);
+  }
+
+  @Override
+  public boolean save(long updateTimeMillis, T model) throws IOException {
     try {
-      return saveStrict(model);
+      return saveStrict(updateTimeMillis, model);
     } catch (JackException e) {
       return false;
     }
@@ -848,10 +853,10 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return false;
   }
 
-  private long handleRailsUpdatedAt(T model) {
+  private long handleRailsUpdatedAt(long updateTimeMillis, T model) {
     if (updatedAtCanBeHandled(model)) {
       long oldUpdatedAt = (Long)model.getField("updated_at");
-      model.setField("updated_at", System.currentTimeMillis());
+      model.setField("updated_at", updateTimeMillis);
       // return old value in case save fails and we need to reset
       return oldUpdatedAt;
     }
