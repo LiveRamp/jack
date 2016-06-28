@@ -25,10 +25,10 @@ import <%= "#{root_package}.iface.#{model_defn.iface_name};" %>
 import <%= project_defn.databases_namespace %>.IDatabases;
 
 public interface I<%= db_name %> extends IDb {
-  public IDatabases getDatabases();
+  IDatabases getDatabases();
 
 <% model_defns.each do |model_defn| %>
-  public <%="#{model_defn.iface_name} #{model_defn.persistence_getter}" %>;
+  <%="#{model_defn.iface_name} #{model_defn.persistence_getter}" %>;
 <% end%>
 
 }

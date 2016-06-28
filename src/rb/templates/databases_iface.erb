@@ -24,6 +24,6 @@ import <%= JACK_NAMESPACE %>.GenericDatabases;
 
 public interface IDatabases extends GenericDatabases {
   <% project_defn.databases.each do |db| %>
-  public I<%= db.name %> <%= db.getter %>;
+  I<%= db.name %> <%= db.getter %>;
   <% end %>
 }
