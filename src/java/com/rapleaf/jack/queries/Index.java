@@ -2,10 +2,14 @@ package com.rapleaf.jack.queries;
 
 public final class Index {
 
-  private String name;
+  private final String name;
 
-  public Index(String name) {
+  private Index(String name) {
     this.name = name;
+  }
+
+  public static Index of(final String name) {
+    return new Index(name);
   }
 
   public String getName() {

@@ -36,7 +36,7 @@ public final class IndexHint implements QueryCondition {
   private Scope scope;
   private List<String> indexNames;
 
-  IndexHint(Type type, Scope scope, Index index, Index... indices) {
+  public IndexHint(Type type, Scope scope, Index index, Index... indices) {
     this.type = type;
     this.scope = scope;
     this.indexNames = Lists.newArrayList(index.getName());
