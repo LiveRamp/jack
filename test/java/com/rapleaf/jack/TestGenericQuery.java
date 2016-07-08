@@ -8,6 +8,8 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.queries.Index;
+import com.rapleaf.jack.queries.IndexHints;
 import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
@@ -157,7 +159,7 @@ public class TestGenericQuery {
         .where(User.NUM_POSTS.as(String.class).equalTo("1"))
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals(1.0, results1.get(0).get(User.SOME_DECIMAL),  0.000001);
+    assertEquals(1.0, results1.get(0).get(User.SOME_DECIMAL), 0.000001);
 
     // Type conversion should not change the type of the column in query result
     results1 = db.createQuery()
@@ -845,4 +847,19 @@ public class TestGenericQuery {
     assertEquals(Sets.newHashSet("D", "E", "F"), Sets.newHashSet(results1.gets(User.HANDLE)));
   }
 
+  @Test
+  public void testIndexHints() throws Exception {
+    Index index1 = Index.of("mock_index_1");
+    Index index2 = Index.of("mock_index_2");
+
+    String sqlStatement = db.createQuery()
+        .from(User.TBL.with(IndexHints.use(index1), IndexHints.ignore(index2)))
+        .getSqlStatement();
+    System.out.println(sqlStatement);
+
+    assertTrue(sqlStatement.contains("USE INDEX"));
+    assertTrue(sqlStatement.contains("IGNORE INDEX"));
+    assertTrue(sqlStatement.contains(index1.getName()));
+    assertTrue(sqlStatement.contains(index2.getName()));
+  }
 }
