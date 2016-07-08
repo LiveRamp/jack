@@ -25,7 +25,7 @@ public class GenericQuery {
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final BaseDatabaseConnection dbConnection;
-  private final List<Table> includedTables;
+  private final List<TableReference> tableReferences;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
@@ -37,7 +37,20 @@ public class GenericQuery {
 
   private GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
     this.dbConnection = dbConnection;
-    this.includedTables = Lists.newArrayList(table);
+    this.tableReferences = Lists.<TableReference>newArrayList(new SingleTableReference(table));
+    this.joinConditions = Lists.newArrayList();
+    this.whereConstraints = Lists.newArrayList();
+    this.parameters = Lists.newArrayList();
+    this.orderCriteria = Lists.newArrayList();
+    this.indexHints = Lists.newArrayList();
+    this.selectedColumns = Sets.newHashSet();
+    this.groupByColumns = Sets.newHashSet();
+    this.limitCriteria = Optional.absent();
+  }
+
+  private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference) {
+    this.dbConnection = dbConnection;
+    this.tableReferences = Lists.<TableReference>newArrayList(tableReference);
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
@@ -65,7 +78,11 @@ public class GenericQuery {
     }
 
     public GenericQuery from(Table table) {
-      return new GenericQuery(dbConnection, table);
+      return from(new SingleTableReference(table));
+    }
+
+    public GenericQuery from(TableReference tableReference) {
+      return new GenericQuery(dbConnection, tableReference);
     }
   }
 
@@ -102,7 +119,7 @@ public class GenericQuery {
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    this.includedTables.add(joinCondition.getTable());
+    this.tableReferences.add(joinCondition.getTableReference());
     this.joinConditions.add(joinCondition);
   }
 
@@ -341,15 +358,15 @@ public class GenericQuery {
     }
 
     if (selectedColumns.isEmpty()) {
-      for (Table table : includedTables) {
-        selectedColumns.addAll(table.getAllColumns());
+      for (TableReference tableReference : tableReferences) {
+        selectedColumns.addAll(tableReference.getTable().getAllColumns());
       }
     }
     return getClauseFromColumns(selectedColumns, "SELECT ", ", ", " ");
   }
 
   private String getFromClause() {
-    return "FROM " + includedTables.get(0).getSqlKeyword() + " ";
+    return "FROM " + tableReferences.get(0).getSqlStatement() + " ";
   }
 
   private String getJoinClause() {

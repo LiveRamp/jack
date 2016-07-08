@@ -54,4 +54,9 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
   public Class<M> getModelType() {
     return modelType;
   }
+
+  @Override
+  public TableReference with(final IndexHint indexHint, final IndexHint... indexHints) {
+    return new SingleTableReference(this, indexHint, indexHints);
+  }
 }
