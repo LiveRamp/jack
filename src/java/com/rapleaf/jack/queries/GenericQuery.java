@@ -107,15 +107,27 @@ public class GenericQuery {
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
+    return leftJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder leftJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, tableReference);
   }
 
   public JoinConditionBuilder rightJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
+    return rightJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder rightJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, tableReference);
   }
 
   public JoinConditionBuilder innerJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
+    return innerJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder innerJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, tableReference);
   }
 
   void addJoinCondition(JoinCondition joinCondition) {

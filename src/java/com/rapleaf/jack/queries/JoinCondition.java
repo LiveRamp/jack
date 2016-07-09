@@ -7,12 +7,6 @@ public class JoinCondition implements QueryCondition {
   private final TableReference tableReference;
   private final List<GenericConstraint> constraints;
 
-  JoinCondition(JoinType joinType, Table table, List<GenericConstraint> constraints) {
-    this.joinType = joinType;
-    this.tableReference = new SingleTableReference(table);
-    this.constraints = constraints;
-  }
-
   JoinCondition(JoinType joinType, TableReference tableReference, List<GenericConstraint> constraints) {
     this.joinType = joinType;
     this.tableReference = tableReference;
