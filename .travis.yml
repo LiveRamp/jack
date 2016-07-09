@@ -7,10 +7,9 @@ jdk:
 services:
   - mysql
 
-before_install:
-  - export RAILS_ENV=development
-  - test/select-dbms.sh mysql
+install:
   - rvm install 1.8.7
 
-script:
-  - mvn test
+before_script:
+  - export RAILS_ENV=development
+  - test/select-dbms.sh mysql
