@@ -4,6 +4,9 @@ language:
 jdk:
   - oraclejdk7
 
+notifications:
+  email: false
+
 services:
   - mysql
 
