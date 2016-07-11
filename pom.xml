@@ -244,7 +244,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>/bin/sh</executable>
+              <executable>/bin/bash</executable>
               <arguments>
                 <argument>test/create_databases.sh</argument>
               </arguments>
@@ -259,7 +259,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>/bin/sh</executable>
+              <executable>/bin/bash</executable>
               <arguments>
                 <argument>test/migrate_project.sh</argument>
                 <argument>test/test_project/database_1</argument>

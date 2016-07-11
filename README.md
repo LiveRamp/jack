@@ -1,6 +1,8 @@
 Project Jack
 ------------
 
+[![Build Status](https://travis-ci.org/LiveRamp/jack.svg?branch=master)](https://travis-ci.org/LiveRamp/jack)
+
 Do you use Ruby/Rails and Java in your company? We do. And we're sick and tired of maintaining two different sets of schemas, models, and whatnot!
 
 To that end, we've created Jack (**J**ava **AC**tive record (+**K**)). The project consists of:
