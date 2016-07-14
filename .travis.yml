@@ -16,3 +16,6 @@ install:
 before_script:
   - export RAILS_ENV=development
   - test/select-dbms.sh mysql
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
