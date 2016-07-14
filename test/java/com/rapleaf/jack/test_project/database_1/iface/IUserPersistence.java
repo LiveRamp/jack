@@ -17,22 +17,22 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface IUserPersistence extends IModelPersistence<User> {
-  public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException;
-  public User create(final String handle, final int num_posts) throws IOException;
+  User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException;
+  User create(final String handle, final int num_posts) throws IOException;
 
-  public User createDefaultInstance() throws IOException;
-  public List<User> findByHandle(String value)  throws IOException;
-  public List<User> findByCreatedAtMillis(Long value)  throws IOException;
-  public List<User> findByNumPosts(int value)  throws IOException;
-  public List<User> findBySomeDate(Long value)  throws IOException;
-  public List<User> findBySomeDatetime(Long value)  throws IOException;
-  public List<User> findByBio(String value)  throws IOException;
-  public List<User> findBySomeBinary(byte[] value)  throws IOException;
-  public List<User> findBySomeFloat(Double value)  throws IOException;
-  public List<User> findBySomeDecimal(Double value)  throws IOException;
-  public List<User> findBySomeBoolean(Boolean value)  throws IOException;
+  User createDefaultInstance() throws IOException;
+  List<User> findByHandle(String value)  throws IOException;
+  List<User> findByCreatedAtMillis(Long value)  throws IOException;
+  List<User> findByNumPosts(int value)  throws IOException;
+  List<User> findBySomeDate(Long value)  throws IOException;
+  List<User> findBySomeDatetime(Long value)  throws IOException;
+  List<User> findByBio(String value)  throws IOException;
+  List<User> findBySomeBinary(byte[] value)  throws IOException;
+  List<User> findBySomeFloat(Double value)  throws IOException;
+  List<User> findBySomeDecimal(Double value)  throws IOException;
+  List<User> findBySomeBoolean(Boolean value)  throws IOException;
 
-  public UserQueryBuilder query();
+  UserQueryBuilder query();
 
-  public UserDeleteBuilder delete();
+  UserDeleteBuilder delete();
 }
