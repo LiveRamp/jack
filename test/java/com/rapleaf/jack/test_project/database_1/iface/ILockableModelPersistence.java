@@ -17,16 +17,16 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ILockableModelPersistence extends IModelPersistence<LockableModel> {
-  public LockableModel create(final int lock_version, final String message, final long created_at, final long updated_at) throws IOException;
-  public LockableModel create(final int lock_version, final long created_at, final long updated_at) throws IOException;
+  LockableModel create(final int lock_version, final String message, final long created_at, final long updated_at) throws IOException;
+  LockableModel create(final int lock_version, final long created_at, final long updated_at) throws IOException;
 
-  public LockableModel createDefaultInstance() throws IOException;
-  public List<LockableModel> findByLockVersion(int value)  throws IOException;
-  public List<LockableModel> findByMessage(String value)  throws IOException;
-  public List<LockableModel> findByCreatedAt(long value)  throws IOException;
-  public List<LockableModel> findByUpdatedAt(long value)  throws IOException;
+  LockableModel createDefaultInstance() throws IOException;
+  List<LockableModel> findByLockVersion(int value)  throws IOException;
+  List<LockableModel> findByMessage(String value)  throws IOException;
+  List<LockableModel> findByCreatedAt(long value)  throws IOException;
+  List<LockableModel> findByUpdatedAt(long value)  throws IOException;
 
-  public LockableModelQueryBuilder query();
+  LockableModelQueryBuilder query();
 
-  public LockableModelDeleteBuilder delete();
+  LockableModelDeleteBuilder delete();
 }
