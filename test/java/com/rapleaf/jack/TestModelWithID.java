@@ -92,6 +92,15 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  public void testManualUpdatedAt() throws IOException {
+    postModel.setField("updated_at", 0l);
+    long updateTime = 47l;
+    dbs.getDatabase1().posts().save(updateTime, postModel);
+
+    assertEquals("Check updated_at was updated " + postModel.getField("updated_at"),
+        updateTime, ((Long)postModel.getField("updated_at")).longValue());
+  }
+
   public void testClearAssociations() throws IOException {
 
     assertNull(imageModel.getUser());

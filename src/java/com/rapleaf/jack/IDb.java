@@ -14,6 +14,8 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
+import com.rapleaf.jack.queries.GenericQuery;
+
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -39,4 +41,6 @@ public interface IDb extends Serializable {
   public void rollback();
 
   public void resetConnection();
+
+  GenericQuery.Builder createQuery();
 }

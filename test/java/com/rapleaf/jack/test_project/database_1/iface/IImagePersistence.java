@@ -17,13 +17,13 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface IImagePersistence extends IModelPersistence<Image> {
-  public Image create(final Integer user_id) throws IOException;
-  public Image create() throws IOException;
+  Image create(final Integer user_id) throws IOException;
+  Image create() throws IOException;
 
-  public Image createDefaultInstance() throws IOException;
-  public List<Image> findByUserId(Integer value)  throws IOException;
+  Image createDefaultInstance() throws IOException;
+  List<Image> findByUserId(Integer value)  throws IOException;
 
-  public ImageQueryBuilder query();
+  ImageQueryBuilder query();
 
-  public ImageDeleteBuilder delete();
+  ImageDeleteBuilder delete();
 }

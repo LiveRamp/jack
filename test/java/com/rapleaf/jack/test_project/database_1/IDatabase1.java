@@ -16,12 +16,11 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.IDatabases;
 
 public interface IDatabase1 extends IDb {
-  public GenericQuery.Builder createQuery();
-  public IDatabases getDatabases();
-  public ICommentPersistence comments();
-  public IImagePersistence images();
-  public ILockableModelPersistence lockableModels();
-  public IPostPersistence posts();
-  public IUserPersistence users();
+  IDatabases getDatabases();
+  ICommentPersistence comments();
+  IImagePersistence images();
+  ILockableModelPersistence lockableModels();
+  IPostPersistence posts();
+  IUserPersistence users();
 
 }

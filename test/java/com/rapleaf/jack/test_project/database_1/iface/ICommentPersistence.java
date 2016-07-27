@@ -17,16 +17,16 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ICommentPersistence extends IModelPersistence<Comment> {
-  public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
-  public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
+  Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
+  Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException;
 
-  public Comment createDefaultInstance() throws IOException;
-  public List<Comment> findByContent(String value)  throws IOException;
-  public List<Comment> findByCommenterId(int value)  throws IOException;
-  public List<Comment> findByCommentedOnId(long value)  throws IOException;
-  public List<Comment> findByCreatedAt(long value)  throws IOException;
+  Comment createDefaultInstance() throws IOException;
+  List<Comment> findByContent(String value)  throws IOException;
+  List<Comment> findByCommenterId(int value)  throws IOException;
+  List<Comment> findByCommentedOnId(long value)  throws IOException;
+  List<Comment> findByCreatedAt(long value)  throws IOException;
 
-  public CommentQueryBuilder query();
+  CommentQueryBuilder query();
 
-  public CommentDeleteBuilder delete();
+  CommentDeleteBuilder delete();
 }
