@@ -1,11 +1,11 @@
 # Copyright 2011 Rapleaf
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,8 @@
 class AssociationDefn
   attr_accessor :type, :name, :args, :assoc_model_name, :foreign_key, :foreign_key_java_type, :assoc_model, :defunct
 
+  include HashRegexHelpers
+
   def initialize(line, model_defn)
     @type = line.split(" ").first
     @name = line.split(" ")[1]
@@ -21,9 +23,9 @@ class AssociationDefn
     @type = type
     @name = name.gsub(":", "").gsub(",", "")
 
-    changed_class_name = line.match(/^.*:class_name => ['"]([^'"]*)['"].*$/)
+    changed_class_name = extract_string_hash_value(line, :class_name)
 
-    if changed_class_name 
+    if changed_class_name
       @assoc_model_name = changed_class_name[1]
     else
       case @type
@@ -36,11 +38,11 @@ class AssociationDefn
       end
     end
 
-    changed_fk = line.match(/^.*:foreign_key => ['"]([^'"]*)['"].*$/)
+    changed_fk = extract_string_hash_value(line, :foreign_key)
     if changed_fk
       @foreign_key = changed_fk[1]
     else
-      changed_fk = line.match(/^.*:foreign_key => :([^,]*),?.*$/)
+      changed_fk = extract_symbol_hash_value(line, :foreign_key)
       if changed_fk
         @foreign_key = changed_fk[1]
       else
@@ -79,7 +81,7 @@ class AssociationDefn
         "HasOneAssociation"
     end
   end
-  
+
   def constructor_call
     case @type
       when "belongs_to"
@@ -113,11 +115,11 @@ class AssociationDefn
     puts "couldn't find a table named #{other_table_name} #{self.inspect}"
     @defunct = true
   end
-  
+
   def field_name
     "__assoc_#{@name}"
   end
-  
+
   def assoc_getter
     "get#{@name.camelcase}"
   end
