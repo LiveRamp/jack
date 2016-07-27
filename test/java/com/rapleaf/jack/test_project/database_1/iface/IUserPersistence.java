@@ -17,7 +17,7 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface IUserPersistence extends IModelPersistence<User> {
-  User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException;
+  User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException;
   User create(final String handle, final int num_posts) throws IOException;
 
   User createDefaultInstance() throws IOException;
@@ -27,6 +27,7 @@ public interface IUserPersistence extends IModelPersistence<User> {
   List<User> findBySomeDate(Long value)  throws IOException;
   List<User> findBySomeDatetime(Long value)  throws IOException;
   List<User> findByBio(String value)  throws IOException;
+  List<User> findBy_tbl(String value)  throws IOException;
   List<User> findBySomeBinary(byte[] value)  throws IOException;
   List<User> findBySomeFloat(Double value)  throws IOException;
   List<User> findBySomeDecimal(Double value)  throws IOException;

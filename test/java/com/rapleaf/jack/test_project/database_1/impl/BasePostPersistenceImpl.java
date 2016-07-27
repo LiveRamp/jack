@@ -112,7 +112,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Post> foundList = new ArrayList<Post>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -127,7 +127,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((Post._Fields) field);
@@ -246,7 +246,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   @Override
   protected Post instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Post(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Post(id,
       allFields || selectedFields.contains(Post._Fields.title) ? rs.getString("title") : null,
       allFields || selectedFields.contains(Post._Fields.posted_at_millis) ? getDateAsLong(rs, "posted_at_millis") : null,
       allFields || selectedFields.contains(Post._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,

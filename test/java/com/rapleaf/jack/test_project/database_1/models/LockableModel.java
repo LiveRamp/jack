@@ -32,7 +32,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.JackUtility;
 
 public class LockableModel extends ModelWithId<LockableModel, IDatabases> implements Comparable<LockableModel>{
-  
+
   public static final long serialVersionUID = 2267084843778072603L;
 
   public static class Tbl extends AbstractTable<LockableModel.Attributes, LockableModel> {
@@ -71,10 +71,26 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   // Associations
 
   public enum _Fields {
-    lock_version,
-    message,
-    created_at,
-    updated_at,
+    lock_version("lock_version"),
+      message("message"),
+      created_at("created_at"),
+      updated_at("updated_at"),
+  ;
+
+    private final String __column;
+
+    _Fields(String column) {
+      this.__column = column;
+    }
+
+    public String getColumn() {
+      return __column;
+    }
+
+    @Override
+    public String toString() {
+      return getColumn();
+    }
   }
 
   @Override
@@ -94,7 +110,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     super(null);
     attributes = new Attributes(id, lock_version, message, created_at, updated_at);
   }
-  
+
   public LockableModel(long id, final int lock_version, final String message, final long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, lock_version, message, updated_at);
@@ -104,7 +120,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     super(null);
     attributes = new Attributes(id, lock_version, message, updated_at);
   }
-  
+
   public LockableModel(long id, final int lock_version, final long created_at, final long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, lock_version, created_at, updated_at);
@@ -114,7 +130,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     super(null);
     attributes = new Attributes(id, lock_version, created_at, updated_at);
   }
-   
+
   public LockableModel(long id, final int lock_version, final long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, lock_version, updated_at);
@@ -157,7 +173,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     if (databases != null) {
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
@@ -220,7 +236,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
-  
+
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("lock_version")) {
       setLockVersion((Integer)  value);
@@ -253,10 +269,10 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
         return long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
-  public static Class getFieldType(String fieldName) {    
+  public static Class getFieldType(String fieldName) {
     if (fieldName.equals("lock_version")) {
       return int.class;
     }
@@ -305,7 +321,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -377,10 +393,10 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   public int compareTo(LockableModel that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
-  
-  
+
+
   public static class Attributes extends AttributesWithId {
-    
+
     public static final long serialVersionUID = 2267084843778072603L;
 
     // Fields
@@ -400,7 +416,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       this.__created_at = created_at;
       this.__updated_at = updated_at;
     }
-    
+
     public Attributes(long id, final int lock_version, final String message, final long updated_at) {
       super(id);
       this.__lock_version = lock_version;
@@ -408,14 +424,14 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       this.__updated_at = updated_at;
       this.__created_at = System.currentTimeMillis();
     }
-    
+
     public Attributes(long id, final int lock_version, final long created_at, final long updated_at) {
       super(id);
       this.__lock_version = lock_version;
       this.__created_at = created_at;
       this.__updated_at = updated_at;
     }
-    
+
     public Attributes(long id, final int lock_version, final long updated_at) {
       super(id);
       this.__lock_version = lock_version;
@@ -539,10 +555,10 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
           return long.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
-      }    
+      }
     }
 
-    public static Class getFieldType(String fieldName) {    
+    public static Class getFieldType(String fieldName) {
       if (fieldName.equals("lock_version")) {
         return int.class;
       }
@@ -624,13 +640,13 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
-    
+
     @Override
     public Set<Enum> getFieldSet() {
       Set set = EnumSet.allOf(_Fields.class);
       return set;
     }
-    
+
     public String toString() {
       return "<LockableModel.Attributes"
         + " lock_version: " + getLockVersion()

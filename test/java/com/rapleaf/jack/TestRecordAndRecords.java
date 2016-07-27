@@ -49,15 +49,15 @@ public class TestRecordAndRecords {
 
   @Test
   public void testGetMethodsForNotNullColumns() throws Exception {
-    userA = users.create("A", datetime, 15, date, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
+    userA = users.create("A", datetime, 15, date, datetime, "Assembly Coder", "ABC", new byte[]{(byte)3}, 1.1, 1.01, true);
 
     results = db.createQuery()
         .from(User.TBL)
-        .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATE, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY)
+        .select(User.ID, User.HANDLE, User.SOME_DECIMAL, User.SOME_DATE, User.SOME_DATETIME, User.NUM_POSTS, User.SOME_BOOLEAN, User.SOME_BINARY, User._TBL)
         .fetch();
 
     assertEquals(1, results.size());
-    assertEquals(8, results.get(0).columnCount());
+    assertEquals(9, results.get(0).columnCount());
 
     Record record = results.get(0);
     assertTrue(record.getLong(User.ID).equals(userA.getId()));
@@ -82,6 +82,9 @@ public class TestRecordAndRecords {
 
     assertTrue(record.getBoolean(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
     assertTrue(record.get(User.SOME_BOOLEAN).equals(userA.isSomeBoolean()));
+
+    assertTrue(record.getString(User._TBL).equals(userA.get_tbl()));
+    assertTrue(record.get(User._TBL).equals(userA.get_tbl()));
 
     assertArrayEquals(userA.getSomeBinary(), record.getByteArray(User.SOME_BINARY));
     assertArrayEquals(userA.getSomeBinary(), record.get(User.SOME_BINARY));
@@ -115,9 +118,9 @@ public class TestRecordAndRecords {
 
   @Test
   public void testGetMethodsForRecordsWithNullValues() throws Exception {
-    userA = users.create("A", datetime, 1, 2L, null, null, new byte[]{(byte)3}, 1.1, null, true);
-    userB = users.create("B", datetime + 3, 2, 4L, null, null, new byte[]{(byte)4}, 1.2, null, false);
-    userC = users.create("C", datetime - 10, 3, 6L, null, null, new byte[]{(byte)5}, 1.3, null, true);
+    userA = users.create("A", datetime, 1, 2L, null, null, null, new byte[]{(byte)3}, 1.1, null, true);
+    userB = users.create("B", datetime + 3, 2, 4L, null, null, null, new byte[]{(byte)4}, 1.2, null, false);
+    userC = users.create("C", datetime - 10, 3, 6L, null, null, null, new byte[]{(byte)5}, 1.3, null, true);
     userA.save();
     userB.save();
     userC.save();
@@ -209,7 +212,7 @@ public class TestRecordAndRecords {
 
   @Test
   public void testModelAndAttributeFromRecord() throws Exception {
-    userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
+    userA = users.create("A", datetime, 1, date, datetime, "Assembly Coder", null, new byte[]{(byte)1, (byte)2, (byte)3}, 1.1, 1.01, true);
     post = posts.create("Post A from User A", date, userA.getIntId(), datetime);
     Record record = db.createQuery()
         .from(User.TBL)

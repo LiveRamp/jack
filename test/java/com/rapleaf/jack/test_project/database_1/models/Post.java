@@ -32,7 +32,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Post>{
-  
+
   public static final long serialVersionUID = -399049548729901546L;
 
   public static class Tbl extends AbstractTable<Post.Attributes, Post> {
@@ -73,10 +73,26 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   private HasManyAssociation<Comment> __assoc_comments;
 
   public enum _Fields {
-    title,
-    posted_at_millis,
-    user_id,
-    updated_at,
+    title("title"),
+      posted_at_millis("posted_at_millis"),
+      user_id("user_id"),
+      updated_at("updated_at"),
+  ;
+
+    private final String __column;
+
+    _Fields(String column) {
+      this.__column = column;
+    }
+
+    public String getColumn() {
+      return __column;
+    }
+
+    @Override
+    public String toString() {
+      return getColumn();
+    }
   }
 
   @Override
@@ -98,7 +114,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     super(null);
     attributes = new Attributes(id, title, posted_at_millis, user_id, updated_at);
   }
-  
+
   public Post(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
@@ -147,7 +163,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
       this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
@@ -213,7 +229,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
-  
+
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("title")) {
       setTitle((String)  value);
@@ -246,10 +262,10 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
         return Long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
-  public static Class getFieldType(String fieldName) {    
+  public static Class getFieldType(String fieldName) {
     if (fieldName.equals("title")) {
       return String.class;
     }
@@ -306,7 +322,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -362,7 +378,6 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   }
 
   public User createUser(final String handle, final int num_posts) throws IOException {
- 
     User newUser = databases.getDatabase1().users().create(handle, num_posts);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -370,9 +385,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     return newUser;
   }
 
-  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
- 
-    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
+    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
@@ -380,7 +394,6 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   }
 
   public User createUser() throws IOException {
- 
     User newUser = databases.getDatabase1().users().create("", 0);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -407,10 +420,10 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public int compareTo(Post that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
-  
-  
+
+
   public static class Attributes extends AttributesWithId {
-    
+
     public static final long serialVersionUID = -452436965662476312L;
 
     // Fields
@@ -546,10 +559,10 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
           return Long.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
-      }    
+      }
     }
 
-    public static Class getFieldType(String fieldName) {    
+    public static Class getFieldType(String fieldName) {
       if (fieldName.equals("title")) {
         return String.class;
       }
@@ -631,13 +644,13 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
-    
+
     @Override
     public Set<Enum> getFieldSet() {
       Set set = EnumSet.allOf(_Fields.class);
       return set;
     }
-    
+
     public String toString() {
       return "<Post.Attributes"
         + " title: " + getTitle()

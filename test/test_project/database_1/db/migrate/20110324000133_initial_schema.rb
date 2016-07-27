@@ -16,6 +16,7 @@ class InitialSchema < ActiveRecord::Migration
       t.date :some_date
       t.datetime :some_datetime
       t.text :bio
+      t.text :tbl
       # t.varbinary :some_varbinary
       t.binary :some_binary
       t.float :some_float
@@ -27,7 +28,7 @@ class InitialSchema < ActiveRecord::Migration
     create_table :images do |t|
       t.integer :user_id
     end
-    
+
     # bigint primary key!
     # try a belongs_to style association
     create_table :posts do |t|
@@ -41,8 +42,8 @@ class InitialSchema < ActiveRecord::Migration
     elsif psql?
       execute("ALTER TABLE posts ALTER COLUMN id TYPE bigint")
     end
-    
-    
+
+
     # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
       t.text :content

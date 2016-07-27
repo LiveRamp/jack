@@ -32,7 +32,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Image extends ModelWithId<Image, IDatabases> implements Comparable<Image>{
-  
+
   public static final long serialVersionUID = -3351451520429699622L;
 
   public static class Tbl extends AbstractTable<Image.Attributes, Image> {
@@ -63,7 +63,23 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   private BelongsToAssociation<User> __assoc_user;
 
   public enum _Fields {
-    user_id,
+    user_id("user_id"),
+  ;
+
+    private final String __column;
+
+    _Fields(String column) {
+      this.__column = column;
+    }
+
+    public String getColumn() {
+      return __column;
+    }
+
+    @Override
+    public String toString() {
+      return getColumn();
+    }
   }
 
   @Override
@@ -84,7 +100,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     super(null);
     attributes = new Attributes(id, user_id);
   }
-  
+
   public Image(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
@@ -130,7 +146,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
@@ -157,7 +173,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
-  
+
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("user_id")) {
       setUserId((Integer)  value);
@@ -172,10 +188,10 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
         return Integer.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
-  public static Class getFieldType(String fieldName) {    
+  public static Class getFieldType(String fieldName) {
     if (fieldName.equals("user_id")) {
       return Integer.class;
     }
@@ -204,7 +220,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -245,7 +261,6 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public User createUser(final String handle, final int num_posts) throws IOException {
- 
     User newUser = databases.getDatabase1().users().create(handle, num_posts);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -253,9 +268,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     return newUser;
   }
 
-  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
- 
-    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+  public User createUser(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
+    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
@@ -263,7 +277,6 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   }
 
   public User createUser() throws IOException {
- 
     User newUser = databases.getDatabase1().users().create("", 0);
     setUserId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -286,10 +299,10 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public int compareTo(Image that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
-  
-  
+
+
   public static class Attributes extends AttributesWithId {
-    
+
     public static final long serialVersionUID = 5384617403533794948L;
 
     // Fields
@@ -353,10 +366,10 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
           return Integer.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
-      }    
+      }
     }
 
-    public static Class getFieldType(String fieldName) {    
+    public static Class getFieldType(String fieldName) {
       if (fieldName.equals("user_id")) {
         return Integer.class;
       }
@@ -399,13 +412,13 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
-    
+
     @Override
     public Set<Enum> getFieldSet() {
       Set set = EnumSet.allOf(_Fields.class);
       return set;
     }
-    
+
     public String toString() {
       return "<Image.Attributes"
         + " user_id: " + getUserId()

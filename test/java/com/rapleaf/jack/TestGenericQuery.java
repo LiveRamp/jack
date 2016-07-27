@@ -73,7 +73,7 @@ public class TestGenericQuery {
         .from(User.TBL)
         .fetch();
     assertFalse(results1.isEmpty());
-    assertEquals(11, results1.get(0).columnCount());
+    assertEquals(12, results1.get(0).columnCount());
 
     // query with only select clause should return all records with the specified columns
     results1 = db.createQuery()
@@ -157,7 +157,7 @@ public class TestGenericQuery {
         .where(User.NUM_POSTS.as(String.class).equalTo("1"))
         .fetch();
     assertEquals(1, results1.size());
-    assertEquals(1.0, results1.get(0).get(User.SOME_DECIMAL),  0.000001);
+    assertEquals(1.0, results1.get(0).get(User.SOME_DECIMAL), 0.000001);
 
     // Type conversion should not change the type of the column in query result
     results1 = db.createQuery()
@@ -660,9 +660,9 @@ public class TestGenericQuery {
 
   @Test
   public void testSimpleJoinQuery() throws Exception {
-    userA = users.create("A", datetime, 0, date + 1, datetime, "Assembly Coder", new byte[]{(byte)3}, 1.1, 1.01, true);
-    userB = users.create("B", datetime, 0, date - 1, datetime, "Byline Editor", new byte[]{(byte)1}, 2.2, 2.02, true);
-    userC = users.create("C", datetime, 0, date + 2, datetime, "Code Refactor", new byte[]{(byte)2}, 2.2, 2.02, false);
+    userA = users.create("A", datetime, 0, date + 1, datetime, "Assembly Coder", "tbl", new byte[]{(byte)3}, 1.1, 1.01, true);
+    userB = users.create("B", datetime, 0, date - 1, datetime, "Byline Editor", "tbl", new byte[]{(byte)1}, 2.2, 2.02, true);
+    userC = users.create("C", datetime, 0, date + 2, datetime, "Code Refactor", "tbl", new byte[]{(byte)2}, 2.2, 2.02, false);
 
     postA = posts.create("Post A from User B", datetime, userB.getIntId(), datetime);
     postB = posts.create("Post B from User B", datetime, userB.getIntId(), datetime);
@@ -679,11 +679,11 @@ public class TestGenericQuery {
         .leftJoin(Post.TBL).on(Post.ID.equalTo(Comment.COMMENTED_ON_ID))
         .orderBy(User.HANDLE)
         .orderBy(Post.TITLE, QueryOrder.DESC)
-        .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
+        .select(User.HANDLE, User._TBL, Comment.CONTENT, Post.TITLE)
         .fetch();
 
     assertEquals(4, results1.size());
-    assertEquals(3, results1.get(0).columnCount());
+    assertEquals(4, results1.get(0).columnCount());
 
     // the result is: comment A, C, B, D
     Record recordForCommentA = results1.get(0);
@@ -745,7 +745,7 @@ public class TestGenericQuery {
         .orderBy(handlers.HANDLE)
         .fetch();
     assertEquals(5, results1.size());
-    assertEquals(11, results1.get(0).columnCount());
+    assertEquals(12, results1.get(0).columnCount());
     assertTrue(results1.get(0).get(handlers.ID) == userD.getId());
 
     // test self join with table alias

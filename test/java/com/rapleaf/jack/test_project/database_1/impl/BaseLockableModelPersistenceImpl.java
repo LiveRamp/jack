@@ -107,7 +107,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
   public List<LockableModel> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<LockableModel> foundList = new ArrayList<LockableModel>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -122,7 +122,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((LockableModel._Fields) field);
@@ -235,7 +235,8 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   @Override
   protected LockableModel instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new LockableModel(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new LockableModel(id,
       allFields || selectedFields.contains(LockableModel._Fields.lock_version) ? getIntOrNull(rs, "lock_version") : 0,
       allFields || selectedFields.contains(LockableModel._Fields.message) ? rs.getString("message") : null,
       allFields || selectedFields.contains(LockableModel._Fields.created_at) ? getDateAsLong(rs, "created_at") : 0L,

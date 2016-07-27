@@ -32,7 +32,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.util.JackUtility;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
-  
+
   public static final long serialVersionUID = 6213989608937906012L;
 
   public static class Tbl extends AbstractTable<Comment.Attributes, Comment> {
@@ -73,10 +73,26 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   private BelongsToAssociation<Post> __assoc_post;
 
   public enum _Fields {
-    content,
-    commenter_id,
-    commented_on_id,
-    created_at,
+    content("content"),
+      commenter_id("commenter_id"),
+      commented_on_id("commented_on_id"),
+      created_at("created_at"),
+  ;
+
+    private final String __column;
+
+    _Fields(String column) {
+      this.__column = column;
+    }
+
+    public String getColumn() {
+      return __column;
+    }
+
+    @Override
+    public String toString() {
+      return getColumn();
+    }
   }
 
   @Override
@@ -98,7 +114,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     super(null);
     attributes = new Attributes(id, content, commenter_id, commented_on_id, created_at);
   }
-  
+
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, content, commenter_id, commented_on_id);
@@ -110,7 +126,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     super(null);
     attributes = new Attributes(id, content, commenter_id, commented_on_id);
   }
-  
+
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id, created_at);
@@ -122,7 +138,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     super(null);
     attributes = new Attributes(id, commenter_id, commented_on_id, created_at);
   }
-   
+
   public Comment(long id, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id);
@@ -171,7 +187,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
@@ -240,7 +256,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         throw new IllegalStateException("Invalid field: " + field);
     }
   }
-  
+
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("content")) {
       setContent((String)  value);
@@ -273,10 +289,10 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
         return long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
-    }    
+    }
   }
 
-  public static Class getFieldType(String fieldName) {    
+  public static Class getFieldType(String fieldName) {
     if (fieldName.equals("content")) {
       return String.class;
     }
@@ -333,7 +349,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -389,7 +405,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public User createCommenter(final String handle, final int num_posts) throws IOException {
- 
     User newUser = databases.getDatabase1().users().create(handle, num_posts);
     setCommenterId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -397,9 +412,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     return newUser;
   }
 
-  public User createCommenter(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
- 
-    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
+  public User createCommenter(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final String _tbl, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
+    User newUser = databases.getDatabase1().users().create(handle, created_at_millis, num_posts, some_date, some_datetime, bio, _tbl, some_binary, some_float, some_decimal, some_boolean);
     setCommenterId(JackUtility.safeLongToInt(newUser.getId()));
     save();
     __assoc_user.clearCache();
@@ -407,7 +421,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public User createCommenter() throws IOException {
- 
     User newUser = databases.getDatabase1().users().create("", 0);
     setCommenterId(JackUtility.safeLongToInt(newUser.getId()));
     save();
@@ -416,7 +429,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public Post createCommentedOn() throws IOException {
- 
     Post newPost = databases.getDatabase1().posts().create();
     setCommentedOnId(newPost.getId());
     save();
@@ -425,7 +437,6 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   }
 
   public Post createCommentedOn(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
- 
     Post newPost = databases.getDatabase1().posts().create(title, posted_at_millis, user_id, updated_at);
     setCommentedOnId(newPost.getId());
     save();
@@ -452,10 +463,10 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public int compareTo(Comment that){
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
-  
-  
+
+
   public static class Attributes extends AttributesWithId {
-    
+
     public static final long serialVersionUID = -2156535913590481279L;
 
     // Fields
@@ -475,7 +486,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       this.__commented_on_id = commented_on_id;
       this.__created_at = created_at;
     }
-    
+
     public Attributes(long id, final String content, final int commenter_id, final long commented_on_id) {
       super(id);
       this.__content = content;
@@ -483,14 +494,14 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       this.__commented_on_id = commented_on_id;
       this.__created_at = System.currentTimeMillis();
     }
-    
+
     public Attributes(long id, final int commenter_id, final long commented_on_id, final long created_at) {
       super(id);
       this.__commenter_id = commenter_id;
       this.__commented_on_id = commented_on_id;
       this.__created_at = created_at;
     }
-    
+
     public Attributes(long id, final int commenter_id, final long commented_on_id) {
       super(id);
       this.__commenter_id = commenter_id;
@@ -614,10 +625,10 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
           return long.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
-      }    
+      }
     }
 
-    public static Class getFieldType(String fieldName) {    
+    public static Class getFieldType(String fieldName) {
       if (fieldName.equals("content")) {
         return String.class;
       }
@@ -699,13 +710,13 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       }
       throw new IllegalStateException("Invalid field: " + field);
     }
-    
+
     @Override
     public Set<Enum> getFieldSet() {
       Set set = EnumSet.allOf(_Fields.class);
       return set;
     }
-    
+
     public String toString() {
       return "<Comment.Attributes"
         + " content: " + getContent()

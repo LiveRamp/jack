@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20151226013740) do
     t.date     "some_date"
     t.datetime "some_datetime"
     t.text     "bio"
+    t.text     "tbl"
     t.binary   "some_binary"
     t.float    "some_float"
     t.decimal  "some_decimal",                   :precision => 20, :scale => 10
