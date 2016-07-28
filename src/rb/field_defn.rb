@@ -36,7 +36,7 @@ class FieldDefn
   end
 
   def is_long?
-    !args["limit"].nil? && args["limit"].to_i > 4
+    !args[:limit].nil? && args[:limit].to_i > 4
   end
 
   JAVA_DEFAULT_VALUES = {

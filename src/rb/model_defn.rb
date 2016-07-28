@@ -67,7 +67,14 @@ class ModelDefn
   end
 
   def field_names_list(only_not_null = false, quoted = true)
-    @fields.select{|x| x.args["null"] == "false" || !only_not_null}.map{|x| quoted ? "\"#{x.name}\"" : "#{x.name}" }.join(", ")
+    @fields.
+      reject do |x|
+        only_not_null && x.nullable?
+      end.
+      map do |x|
+        quoted ? "\"#{x.name}\"" : "#{x.name}"
+      end.
+      join(", ")
   end
 
   def iface_name
