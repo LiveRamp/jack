@@ -116,16 +116,21 @@ class ModelDefn
     raise unless model_name && model_name != ""
     raise unless database_defn
   end
+  
+  def digest(data)
+    Digest::MD5.digest(data).unpack('q')[0]
+  end
 
   def serial_version_uid
     schema_info = @fields.map(&:serial_version_uid_component).join
+    puts schema_info
     schema_info += @associations.map{|a| "#{a.type}#{a.name}#{a.assoc_model_name}"}.join
-    Digest::MD5.digest(schema_info).unpack('q')[0]
+    digest(schema_info)
   end
 
   def attributes_serial_version_uid
     schema_info = @fields.map(&:serial_version_uid_component).join
-    Digest::MD5.digest(schema_info).unpack('q')[0]
+    digest(schema_info)
   end
 
 end
