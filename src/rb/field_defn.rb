@@ -26,7 +26,6 @@ class FieldDefn
     if !@default_value.nil?
       if data_type == :datetime || data_type == :date
         @default_value = (Time.parse(@default_value).to_i * 1000).to_s.concat("L")
-        puts @default_value.inspect
       end
     end
 
