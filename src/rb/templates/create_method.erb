@@ -1,12 +1,12 @@
 <%#
 # Copyright 2011 Rapleaf
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,11 +40,10 @@
 <% end %>
       }
     }, getInsertStatement(<%= "Arrays.<String>asList(" + model_defn.field_names_list(only_not_null) + ")"  %>));
-<% names_only = model_defn.fields.map{|field_defn| field_defn.args[":null"] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ") %>
+<% names_only = model_defn.fields.map{|field_defn| field_defn.args[:null] == "false" || !only_not_null ? field_defn.name : "null"}.join(", ") %>
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-

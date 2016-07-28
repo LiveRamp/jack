@@ -40,11 +40,11 @@ class AssociationDefn
 
     changed_fk = extract_string_hash_value(line, :foreign_key)
     if changed_fk
-      @foreign_key = changed_fk[1]
+      @foreign_key = changed_fk
     else
       changed_fk = extract_symbol_hash_value(line, :foreign_key)
       if changed_fk
-        @foreign_key = changed_fk[1]
+        @foreign_key = changed_fk
       else
         case @type
           when "belongs_to"

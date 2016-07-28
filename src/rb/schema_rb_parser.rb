@@ -35,6 +35,7 @@ class SchemaRbParser
           matches = line.match(/^\s*t\.([a-z]+)\s*"([^"]+)",?(.*)$/)
           raise "problem with #{model_defn.table_name}" if !matches
           field_defn = FieldDefn.new(matches[2], matches[1].to_sym, ordinal, eval("{#{matches[3]}}"))
+
           model_defn.fields << field_defn
 
           line = file_lines.shift
