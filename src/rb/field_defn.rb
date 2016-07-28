@@ -213,6 +213,19 @@ class FieldDefn
         "Column.fromField(alias, _Fields.#{name}, #{java_type(true)}.class);"
     end
   end
+  
+  def self.parse_option_fields(s)
+    options = eval(sprintf('{%s}', s))
+    options.each do |k, v|
+      # Jack relies on values being valid drop-ins in generated Java code.
+      # Strings must be wrapped in quotes.
+      if v.is_a?(String) or v.is_a?(Symbol)
+        options[k] = sprintf('"%s"', v)
+      end
+    end
+      
+    options
+  end
 
   def serial_version_uid_component
     s = sprintf("%s%s%s", name, data_type, ordinal)
