@@ -13,7 +13,7 @@
 # limitations under the License.
 
 class SchemaRbParser
-  include HashRegexHelpers
+  extend HashRegexHelpers
 
   def self.parse(schema_rb)
     file_lines = File.read(schema_rb).split("\n")

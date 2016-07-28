@@ -7,6 +7,10 @@ module HashRegexHelpers
     extract_hash_value(data, key, /:(?<value>[a-zA-Z@$_][a-zA-Z0-9_]*[a-zA-Z_=?!]?)/)
   end
 
+  def extract_numeric_hash_value(data, key)
+    extract_hash_value(data, key, /(?<value>\d+)/)
+  end
+
   def extract_hash_value(data, key, value)
     value_regex = nil
 

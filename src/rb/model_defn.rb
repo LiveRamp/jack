@@ -27,12 +27,12 @@ class ModelDefn
     @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
     @model_name = @table_name.singularize.camelcase
 
-    if extract_hash_value(line, :id, false)
+    if extract_hash_value(decl_line, :id, false)
       raise "Table #{@table_name} appears not to have a primary key, which is currently unsupported."
     end
 
     # check if the primary key has been renamed
-    if extract_hash_value(line, :primary_key, /"(?<value>|')/)
+    if extract_hash_value(decl_line, :primary_key, /"(?<value>|')/)
       raise "Table #{@table_name} appears to have a renamed primary key, which is currently unsupported."
     end
   end

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 class ModelsDirProcessor
-  include HashRegexHelpers
+  extend HashRegexHelpers
 
   def self.process(base_dir, database_defn, model_defns_by_table_name)
     models_dir = base_dir + "/" + database_defn.models_dir
