@@ -118,13 +118,13 @@ class ModelDefn
   end
 
   def serial_version_uid
-    schema_info = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args.sort_by{|h| h.join}.join("")}"}.join
+    schema_info = @fields.map(&:serial_version_uid_component).join
     schema_info += @associations.map{|a| "#{a.type}#{a.name}#{a.assoc_model_name}"}.join
     Digest::MD5.digest(schema_info).unpack('q')[0]
   end
 
   def attributes_serial_version_uid
-    schema_info = @fields.map{|f| "#{f.name}#{f.data_type}#{f.ordinal}#{f.args.sort_by{|h| h.join}.join("")}"}.join
+    schema_info = @fields.map(&:serial_version_uid_component).join
     Digest::MD5.digest(schema_info).unpack('q')[0]
   end
 

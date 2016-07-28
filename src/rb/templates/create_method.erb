@@ -20,7 +20,6 @@
   }
 
 <% end %>
-
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {

@@ -214,4 +214,17 @@ class FieldDefn
     end
   end
 
+  def serial_version_uid_component
+    s = sprintf("%s%s%s", name, data_type, ordinal)
+
+    # Maintain backwards compatability with older version of Jack that had
+    # attribute keys like ':key' instead of :key
+    old_args = Hash[args.map { |k, v| [":#{k}", v] }]
+    old_args = old_args.sort_by { |x| x.join }
+
+    s << old_args.join("")
+
+    s
+  end
+
 end
