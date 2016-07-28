@@ -123,7 +123,6 @@ class ModelDefn
 
   def serial_version_uid
     schema_info = @fields.map(&:serial_version_uid_component).join
-    puts schema_info
     schema_info += @associations.map{|a| "#{a.type}#{a.name}#{a.assoc_model_name}"}.join
     digest(schema_info)
   end
