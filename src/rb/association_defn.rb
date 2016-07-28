@@ -26,7 +26,7 @@ class AssociationDefn
     changed_class_name = extract_string_hash_value(line, :class_name)
 
     if changed_class_name
-      @assoc_model_name = changed_class_name[1]
+      @assoc_model_name = changed_class_name
     else
       case @type
         when "belongs_to"
