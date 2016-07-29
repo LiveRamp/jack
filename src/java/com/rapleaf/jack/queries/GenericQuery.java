@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.tracking.NoOpAction;
+import com.rapleaf.jack.tracking.PostQueryAction;
 import com.rapleaf.jack.tracking.QueryStatistics;
 
 public class GenericQuery {
@@ -26,6 +28,7 @@ public class GenericQuery {
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final BaseDatabaseConnection dbConnection;
+  private final PostQueryAction postQueryAction;
   private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
@@ -35,8 +38,9 @@ public class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
     this.dbConnection = dbConnection;
+    this.postQueryAction = postQueryAction;
     this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
@@ -53,6 +57,7 @@ public class GenericQuery {
 
   public static class Builder {
     private BaseDatabaseConnection dbConnection;
+    private PostQueryAction postQueryAction = new NoOpAction();
 
     public Builder(BaseDatabaseConnection dbConnection) {
       this.dbConnection = dbConnection;
@@ -63,8 +68,13 @@ public class GenericQuery {
       return this;
     }
 
+    public Builder setPostQueryAction(PostQueryAction action) {
+      this.postQueryAction = action;
+      return this;
+    }
+
     public GenericQuery from(Table table) {
-      return new GenericQuery(dbConnection, table);
+      return new GenericQuery(dbConnection, table, postQueryAction);
     }
   }
 
@@ -180,7 +190,15 @@ public class GenericQuery {
         final Records queryResults = getQueryResults(preparedStatement);
         statTracker.recordQueryExecEnd();
 
-        queryResults.addStatistics(statTracker.calculate());
+        final QueryStatistics statistics = statTracker.calculate();
+        queryResults.addStatistics(statistics);
+
+        try {
+          postQueryAction.perform(statistics);
+        } catch (Exception ignoredException) {
+          LOG.error(String.format("Error occurred running post-query action %s", postQueryAction), ignoredException);
+        }
+
         return queryResults;
       } catch (SQLRecoverableException e) {
         LOG.error(e.toString());
