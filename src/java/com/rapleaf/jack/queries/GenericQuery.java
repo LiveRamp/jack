@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.tracking.QueryStatistics;
 
 public class GenericQuery {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
@@ -166,11 +167,21 @@ public class GenericQuery {
 
   public Records fetch() throws IOException {
     int retryCount = 0;
+    final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
+    statTracker.recordQueryPrepStart();
     PreparedStatement preparedStatement = getPreparedStatement();
+    statTracker.recordQueryPrepEnd();
 
     while (true) {
       try {
-        return getQueryResults(preparedStatement);
+        statTracker.recordAttempt();
+
+        statTracker.recordQueryExecStart();
+        final Records queryResults = getQueryResults(preparedStatement);
+        statTracker.recordQueryExecEnd();
+
+        queryResults.addStatistics(statTracker.calculate());
+        return queryResults;
       } catch (SQLRecoverableException e) {
         LOG.error(e.toString());
         if (++retryCount > MAX_CONNECTION_RETRIES) {
