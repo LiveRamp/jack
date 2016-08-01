@@ -107,7 +107,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
   public List<LockableModel> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<LockableModel> foundList = new ArrayList<LockableModel>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -122,7 +122,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((LockableModel._Fields) field);
@@ -245,27 +245,19 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   public List<LockableModel> findByLockVersion(final int value) throws IOException {
-    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
-    searchKey.put(LockableModel._Fields.lock_version, value);
-    return find(searchKey);
+    return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.lock_version, value));
   }
 
   public List<LockableModel> findByMessage(final String value) throws IOException {
-    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
-    searchKey.put(LockableModel._Fields.message, value);
-    return find(searchKey);
+    return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.message, value));
   }
 
   public List<LockableModel> findByCreatedAt(final long value) throws IOException {
-    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
-    searchKey.put(LockableModel._Fields.created_at, value);
-    return find(searchKey);
+    return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.created_at, value));
   }
 
   public List<LockableModel> findByUpdatedAt(final long value) throws IOException {
-    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
-    searchKey.put(LockableModel._Fields.updated_at, value);
-    return find(searchKey);
+    return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.updated_at, value));
   }
 
   public LockableModelQueryBuilder query() {
