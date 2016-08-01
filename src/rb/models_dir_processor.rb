@@ -13,6 +13,8 @@
 # limitations under the License.
 
 class ModelsDirProcessor
+  extend HashRegexHelpers
+
   def self.process(base_dir, database_defn, model_defns_by_table_name)
     models_dir = base_dir + "/" + database_defn.models_dir
     Dir.glob("#{models_dir}/**/*.rb").each do |model_file_name|
@@ -50,7 +52,15 @@ class ModelsDirProcessor
     if not_matches
       matching_lines = matching_lines.reject { |l| l =~ /^\s*#{not_matches}/ }
     end
-    # ":jack_generate => false" flag makes it easy to tell Jack to ignore associations in cases where you are using rails features that jack doesn't support (e.g. polymorphic associations)
-    matching_lines.reject{|l| l =~ /:jack_generate\s*=>\s*false/}.map{|l| AssociationDefn.new(l, model_defn)}
+    matching_lines.
+      reject do |l|
+        # ":jack_generate => false" flag makes it easy to tell Jack to ignore
+        # associations in cases where you are using rails features that jack
+        # doesn't support (e.g. polymorphic associations)
+        extract_hash_value(l, :jack_generate, false)
+      end.
+      map do |l|
+        AssociationDefn.new(l, model_defn)
+      end
   end
 end
