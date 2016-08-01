@@ -85,7 +85,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   public List<<%= model_defn.model_name %>> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -100,7 +100,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((<%= model_defn.model_name %>._Fields) field);
@@ -220,7 +220,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   <% model_defn.fields.each do |field_defn| %>
 
   public List<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);}});
+    return find(Collections.<Enum, Object>singletonMap(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value));
   }
   <% end %>
 

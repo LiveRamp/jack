@@ -107,7 +107,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
   public List<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Comment> foundList = new ArrayList<Comment>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -122,7 +122,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((Comment._Fields) field);
@@ -245,19 +245,19 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   public List<Comment> findByContent(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.content, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Comment._Fields.content, value));
   }
 
   public List<Comment> findByCommenterId(final int value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commenter_id, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Comment._Fields.commenter_id, value));
   }
 
   public List<Comment> findByCommentedOnId(final long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.commented_on_id, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Comment._Fields.commented_on_id, value));
   }
 
   public List<Comment> findByCreatedAt(final long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Comment._Fields.created_at, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Comment._Fields.created_at, value));
   }
 
   public CommentQueryBuilder query() {

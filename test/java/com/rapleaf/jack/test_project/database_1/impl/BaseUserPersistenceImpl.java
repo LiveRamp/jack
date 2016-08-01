@@ -142,7 +142,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<User> foundList = new ArrayList<User>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -157,7 +157,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((User._Fields) field);
@@ -354,43 +354,43 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public List<User> findByHandle(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.handle, value));
   }
 
   public List<User> findByCreatedAtMillis(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.created_at_millis, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.created_at_millis, value));
   }
 
   public List<User> findByNumPosts(final int value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.num_posts, value));
   }
 
   public List<User> findBySomeDate(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_date, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_date, value));
   }
 
   public List<User> findBySomeDatetime(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_datetime, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_datetime, value));
   }
 
   public List<User> findByBio(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.bio, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.bio, value));
   }
 
   public List<User> findBySomeBinary(final byte[] value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_binary, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_binary, value));
   }
 
   public List<User> findBySomeFloat(final Double value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_float, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_float, value));
   }
 
   public List<User> findBySomeDecimal(final Double value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_decimal, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_decimal, value));
   }
 
   public List<User> findBySomeBoolean(final Boolean value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
+    return find(Collections.<Enum, Object>singletonMap(User._Fields.some_boolean, value));
   }
 
   public UserQueryBuilder query() {
