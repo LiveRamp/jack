@@ -354,43 +354,63 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public List<User> findByHandle(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.handle, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.handle, value);
+    return find(searchKey);
   }
 
   public List<User> findByCreatedAtMillis(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.created_at_millis, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.created_at_millis, value);
+    return find(searchKey);
   }
 
   public List<User> findByNumPosts(final int value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.num_posts, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.num_posts, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeDate(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_date, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_date, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeDatetime(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_datetime, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_datetime, value);
+    return find(searchKey);
   }
 
   public List<User> findByBio(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.bio, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.bio, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeBinary(final byte[] value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_binary, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_binary, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeFloat(final Double value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_float, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_float, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeDecimal(final Double value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_decimal, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_decimal, value);
+    return find(searchKey);
   }
 
   public List<User> findBySomeBoolean(final Boolean value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(User._Fields.some_boolean, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(User._Fields.some_boolean, value);
+    return find(searchKey);
   }
 
   public UserQueryBuilder query() {

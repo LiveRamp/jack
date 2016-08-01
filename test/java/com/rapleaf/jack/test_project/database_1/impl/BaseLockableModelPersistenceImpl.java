@@ -245,19 +245,27 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   public List<LockableModel> findByLockVersion(final int value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(LockableModel._Fields.lock_version, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(LockableModel._Fields.lock_version, value);
+    return find(searchKey);
   }
 
   public List<LockableModel> findByMessage(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(LockableModel._Fields.message, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(LockableModel._Fields.message, value);
+    return find(searchKey);
   }
 
   public List<LockableModel> findByCreatedAt(final long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(LockableModel._Fields.created_at, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(LockableModel._Fields.created_at, value);
+    return find(searchKey);
   }
 
   public List<LockableModel> findByUpdatedAt(final long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(LockableModel._Fields.updated_at, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(LockableModel._Fields.updated_at, value);
+    return find(searchKey);
   }
 
   public LockableModelQueryBuilder query() {

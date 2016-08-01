@@ -256,19 +256,27 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public List<Post> findByTitle(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(Post._Fields.title, value);
+    return find(searchKey);
   }
 
   public List<Post> findByPostedAtMillis(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.posted_at_millis, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(Post._Fields.posted_at_millis, value);
+    return find(searchKey);
   }
 
   public List<Post> findByUserId(final Integer value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(Post._Fields.user_id, value);
+    return find(searchKey);
   }
 
   public List<Post> findByUpdatedAt(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(Post._Fields.updated_at, value);
+    return find(searchKey);
   }
 
   public PostQueryBuilder query() {

@@ -220,7 +220,9 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   <% model_defn.fields.each do |field_defn| %>
 
   public List<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(final <%= field_defn.java_type %> value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);}});
+    Map<Enum, Object> searchKey = new HashMap<>(1, 1.0f);
+    searchKey.put(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>, value);
+    return find(searchKey);
   }
   <% end %>
 
