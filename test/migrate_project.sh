@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 pushd `pwd`
 cd $1
 bundle install
