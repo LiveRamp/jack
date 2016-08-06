@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FORBIDDEN_FIELD_NAMES = ["tbl"]
+FORBIDDEN_FIELD_NAMES = ["tbl", "id"]
 
 class SchemaRbParser
   extend HashRegexHelpers
