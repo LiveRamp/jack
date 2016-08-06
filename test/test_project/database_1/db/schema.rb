@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -16,7 +17,7 @@ ActiveRecord::Schema.define(:version => 20151226013740) do
     t.text     "content"
     t.integer  "commenter_id",                                                    :null => false
     t.integer  "commented_on_id", :limit => 8,                                    :null => false
-    t.datetime "created_at",                   :default => '1970-01-01 00:00:00 GMT', :null => false
+    t.datetime "created_at",                   :default => '1970-01-01 00:00:00', :null => false
   end
 
   create_table "images", :force => true do |t|
