@@ -53,7 +53,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 0L : created_at_tmp;
+    long created_at = created_at_tmp == null ? 28800000L : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
