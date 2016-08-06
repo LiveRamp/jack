@@ -1,12 +1,12 @@
 <%#
 # Copyright 2011 Rapleaf
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -209,7 +209,17 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   @Override
   protected <%= model_defn.model_name %> instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new <%= model_defn.model_name %>(rs.getLong("id"),
+    <% if database_defn.support_missing_id %>
+    long id;
+    try {
+      id = rs.getLong("id");
+    } catch (SQLException e) {
+      id = -1;
+    }
+    <% else %>
+    long id = rs.getLong("id");
+    <% end %>
+    return new <%= model_defn.model_name %>(id,
     <% model_defn.fields.each do |field_defn| %>
       allFields || selectedFields.contains(<%= model_defn.model_name %>._Fields.<%=field_defn.name%>) ? <%= field_defn.get_from_rs %> : <%= field_defn.nullable? ? "null" : field_defn.java_default_value %>,
     <% end %>
