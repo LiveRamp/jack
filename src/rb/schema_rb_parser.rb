@@ -37,18 +37,18 @@ class SchemaRbParser
           matches = line.match(/^\s*t\.([a-z]+)\s*"([^"]+)",?(.*)$/)
           raise "problem with #{model_defn.table_name}" if !matches
           field_name = matches[2]
-          next if FORBIDDEN_FIELD_NAMES.include?(field_name)
-          field_defn = FieldDefn.new(
-              field_name,
-              matches[1].to_sym,
-              ordinal,
-              FieldDefn.parse_option_fields(matches[3])
-          )
+          unless FORBIDDEN_FIELD_NAMES.include?(field_name)
+            field_defn = FieldDefn.new(
+                field_name,
+                matches[1].to_sym,
+                ordinal,
+                FieldDefn.parse_option_fields(matches[3])
+            )
 
-          model_defn.fields << field_defn
-
+            model_defn.fields << field_defn
+            ordinal += 1
+          end
           line = file_lines.shift
-          ordinal += 1
         end
         models << model_defn
       end
