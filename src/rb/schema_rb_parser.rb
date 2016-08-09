@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FORBIDDEN_FIELD_NAMES = ["tbl", "id"]
+
 class SchemaRbParser
   extend HashRegexHelpers
 
@@ -34,17 +36,19 @@ class SchemaRbParser
         while line =~ /^\s*t\.[a-z]+ / && !file_lines.empty?
           matches = line.match(/^\s*t\.([a-z]+)\s*"([^"]+)",?(.*)$/)
           raise "problem with #{model_defn.table_name}" if !matches
-          field_defn = FieldDefn.new(
-              matches[2], 
-              matches[1].to_sym, 
-              ordinal, 
-              FieldDefn.parse_option_fields(matches[3])
-          )
+          field_name = matches[2]
+          unless FORBIDDEN_FIELD_NAMES.include?(field_name)
+            field_defn = FieldDefn.new(
+                field_name,
+                matches[1].to_sym,
+                ordinal,
+                FieldDefn.parse_option_fields(matches[3])
+            )
 
-          model_defn.fields << field_defn
-
+            model_defn.fields << field_defn
+            ordinal += 1
+          end
           line = file_lines.shift
-          ordinal += 1
         end
         models << model_defn
       end

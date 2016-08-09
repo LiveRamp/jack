@@ -10,3 +10,4 @@ database.yml
 Gemfile
 lib
 target
+.idea
