@@ -210,12 +210,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   protected <%= model_defn.model_name %> instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     <% if database_defn.support_missing_id %>
-    long id;
-    try {
-      id = rs.getLong("id");
-    } catch (SQLException e) {
-      id = -1;
-    }
+    long id = JackUtility.hasColumn(rs, "id") ? rs.getLong("id") : -1;
     <% else %>
     long id = rs.getLong("id");
     <% end %>
