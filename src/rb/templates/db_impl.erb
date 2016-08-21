@@ -28,19 +28,22 @@ import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 <% end%>
 
 import <%= project_defn.databases_namespace %>.IDatabases;
+import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class <%=db_name%>Impl implements I<%=db_name%> {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
+  private final PostQueryAction postQueryAction;
 
 <% model_defns.each do |model_defn| %>
   private final LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases> <%= model_defn.table_name %>;
 <% end %>
 
-  public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
+  public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
+    this.postQueryAction = postQueryAction;
     
   <% model_defns.each do |model_defn| %>
     this.<%= model_defn.table_name %> = new LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases>(conn, databases) {
@@ -53,7 +56,9 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   }
 
   public GenericQuery.Builder createQuery() {
-    return GenericQuery.create(conn);
+    final GenericQuery.Builder builder = GenericQuery.create(conn);
+    builder.setPostQueryAction(postQueryAction);
+    return builder;
   }
 
   <% model_defns.each do |model_defn| %>

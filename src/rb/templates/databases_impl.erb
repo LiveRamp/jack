@@ -22,6 +22,8 @@ import <%= JACK_NAMESPACE %>.DatabaseConnection;
 import <%= db.namespace %>.I<%= db.name %>;
 import <%= db.namespace %>.impl.<%= db.name %>Impl;
 <% end %>
+import com.rapleaf.jack.tracking.PostQueryAction;
+import com.rapleaf.jack.tracking.NoOpAction;
 
 public class DatabasesImpl implements IDatabases {
 
@@ -33,16 +35,21 @@ public class DatabasesImpl implements IDatabases {
   }
 
   public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
+    this(new NoOpAction(), <%= project_defn.databases.map{|db| db.connection_name}.join(", ") %>);
+  }
+
+  public DatabasesImpl(PostQueryAction postQueryAction, <%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
     <% project_defn.databases.each do |db| %>
-    this.<%= db.name.underscore %> = new <%= db.name %>Impl(<%= db.connection_name %>, this);
+    this.<%= db.name.underscore %> = new <%= db.name %>Impl(<%= db.connection_name %>, this, postQueryAction);
     <% end %>
   }
+
 
   <% project_defn.databases.each do |db| %>
 
   public I<%= db.name %> <%= db.getter %> {
     if (<%= db.name.underscore %> == null) {
-      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this);
+      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this, new NoOpAction());
     }
     return <%= db.name.underscore %>;
   }
