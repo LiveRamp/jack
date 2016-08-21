@@ -14,10 +14,14 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
-import com.rapleaf.jack.queries.GenericQuery;
-
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
+import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.Records;
 
 public interface IDb extends Serializable {
   
@@ -43,4 +47,6 @@ public interface IDb extends Serializable {
   public void resetConnection();
 
   GenericQuery.Builder createQuery();
+
+  Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
 }
