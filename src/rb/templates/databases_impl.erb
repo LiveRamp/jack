@@ -31,7 +31,14 @@ public class DatabasesImpl implements IDatabases {
   private I<%= db.name %> <%= db.name.underscore %>;
   <% end %>
 
+  private final PostQueryAction postQueryAction;
+
   public DatabasesImpl() {
+    this(new NoOpAction());
+  }
+
+  public DatabasesImpl(PostQueryAction postQueryAction) {
+    this.postQueryAction = postQueryAction;
   }
 
   public DatabasesImpl(<%= project_defn.databases.map{|db| ["BaseDatabaseConnection", db.connection_name].join(" ")}.join(", ") %>) {
@@ -42,6 +49,7 @@ public class DatabasesImpl implements IDatabases {
     <% project_defn.databases.each do |db| %>
     this.<%= db.name.underscore %> = new <%= db.name %>Impl(<%= db.connection_name %>, this, postQueryAction);
     <% end %>
+    this.postQueryAction = postQueryAction;
   }
 
 
@@ -49,7 +57,7 @@ public class DatabasesImpl implements IDatabases {
 
   public I<%= db.name %> <%= db.getter %> {
     if (<%= db.name.underscore %> == null) {
-      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this, new NoOpAction());
+      this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this, this.postQueryAction);
     }
     return <%= db.name.underscore %>;
   }
