@@ -1,5 +1,7 @@
 package com.rapleaf.jack.tracking;
 
-public interface PostQueryAction {
+import java.io.Serializable;
+
+public interface PostQueryAction extends Serializable {
   void perform(QueryStatistics statistics);
 }
