@@ -18,6 +18,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
+import com.google.common.base.Optional;
+
 /**
  * The DatabaseConnection class manages connections to your databases. The
  * database to be used is specified in config/environment.yml. This file
@@ -34,8 +36,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
 
   private final String connectionString;
-  private final String username;
-  private final String password;
+  private final Optional<String> username;
+  private final Optional<String> password;
   private final String driverClass;
   private long expiresAt;
   private long expiration;
@@ -89,7 +91,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     try {
       if (conn == null) {
         Class.forName(driverClass);
-        conn = DriverManager.getConnection(connectionString, username, password);
+        conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
       } else if (isExpired() || conn.isClosed()) {
         resetConnection();
       }

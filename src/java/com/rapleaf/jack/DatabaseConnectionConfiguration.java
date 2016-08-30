@@ -16,10 +16,10 @@ public class DatabaseConnectionConfiguration {
   private String dbName;
   private Optional<Integer> port;
   private Optional<Boolean> parrallelTest;
-  private String username;
-  private String password;
+  private Optional<String> username;
+  private Optional<String> password;
 
-  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parrallelTest, String username, String password) {
+  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parrallelTest, Optional<String> username, Optional<String> password) {
     this.adapter = adapter;
     this.host = host;
     this.dbName = dbName;
@@ -48,12 +48,12 @@ public class DatabaseConnectionConfiguration {
     String adapter = load("adapter", db_info, "adapter", "database", "JACK_DB_ADAPTER", "jack.db.adapter", new StringIdentity());
     String host = load("host", db_info, "host", "database", "JACK_DB_HOST", "jack.db.host", new StringIdentity());
     String dbName = load("database name", db_info, "database", "database", "JACK_DB_NAME", "jack.db.name", new StringIdentity());
-    Optional<Integer> port = loadOpt("port", db_info, "port", "database", "JACK_DB_PORT", "jack.db.port", new ToInteger());
-    Optional<Boolean> parallelTesting = loadOpt("parrallel testing", env_info, "enable_parallel_tests", "environment",
+    Optional<Integer> port = loadOpt(db_info, "port", "JACK_DB_PORT", "jack.db.port", new ToInteger());
+    Optional<Boolean> parallelTesting = loadOpt(env_info, "enable_parallel_tests",
         "JACK_DB_PARALLEL_TESTS", "jack.db.parallel.test", new ToBoolean());
 
-    String username = load("username", db_info, "username", "database", "JACK_DB_USERNAME", "jack.db.username", new StringIdentity());
-    String password = load("password", db_info, "password", "database", "JACK_DB_PASSWORD", "jack.db.password", new StringIdentity());
+    Optional<String> username = loadOpt(db_info, "username", "JACK_DB_USERNAME", "jack.db.username", new StringIdentity());
+    Optional<String> password = loadOpt(db_info, "password", "JACK_DB_PASSWORD", "jack.db.password", new StringIdentity());
 
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
   }
@@ -67,22 +67,20 @@ public class DatabaseConnectionConfiguration {
       String javaProp,
       Function<String, T> fromString) {
 
-    Optional<T> result = loadOpt(readableName, map, mapKey, mapYmlFile, envVar, javaProp, fromString);
+    Optional<T> result = loadOpt(map, mapKey, envVar, javaProp, fromString);
     if (result.isPresent()) {
       return result.get();
     } else {
       throw new RuntimeException("Unable to find required configuration " + readableName + ". Please set using one of:\n" +
           "Environment Variable: " + envVar + "\n" +
           "Java System Property: " + javaProp + "\n" +
-          "Entry in config/environment.yml or config/database.yml: " + mapKey);
+          "Entry in config/"+mapYmlFile+".yml: " + mapKey);
     }
   }
 
   private static <T> Optional<T> loadOpt(
-      String readableName,
       Map<String, Object> map,
       String mapKey,
-      String mapYmlFile,
       String envVar,
       String javaProp,
       Function<String, T> fromString) {
@@ -119,11 +117,11 @@ public class DatabaseConnectionConfiguration {
     return parrallelTest.isPresent() ? parrallelTest.get() : false;
   }
 
-  public String getUsername() {
+  public Optional<String> getUsername() {
     return username;
   }
 
-  public String getPassword() {
+  public Optional<String> getPassword() {
     return password;
   }
 
