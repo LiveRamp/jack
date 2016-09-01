@@ -1,6 +1,14 @@
 package com.rapleaf.jack;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.collect.Sets;
+import org.junit.Test;
+
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.test_project.DatabasesImpl;
@@ -8,21 +16,21 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import junit.framework.TestCase;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.equalTo;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.greaterThan;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.in;
+import static com.rapleaf.jack.queries.where_operators.JackMatchers.lessThan;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import static com.rapleaf.jack.queries.where_operators.JackMatchers.*;
-
-public class TestModelDelete extends TestCase {
+public class TestModelDelete {
 
   private static final IDatabases dbs = new DatabasesImpl();
   private IUserPersistence users;
 
+  @Test
   public void testDeleteStatement() {
     String tableName = "posts";
 
@@ -35,6 +43,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
+  @Test
   public void testIdOnlyStatement() {
     String tableName = "posts";
 
@@ -46,6 +55,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
+  @Test
   public void testWhereConditionOnlyStatement() {
     String tableName = "posts";
 
@@ -57,6 +67,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
+  @Test
   public void testDeleteWithDeleteStatement() throws IOException {
     IUserPersistence users = populateDatabase();
 
@@ -67,6 +78,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(3, allUsers.size());
   }
 
+  @Test
   public void testDeleteAll() throws IOException, SQLException {
     populateDatabase();
 
@@ -76,6 +88,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(0, users.findAll().size());
   }
 
+  @Test
   public void testDeleteById() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -98,6 +111,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(1, users.findAll().size());
   }
 
+  @Test
   public void testDeleteByCondition() throws IOException, SQLException {
     populateDatabase();
 
@@ -106,6 +120,7 @@ public class TestModelDelete extends TestCase {
     assertEquals(2, users.findAll().size());
   }
 
+  @Test
   public void testModelDeleteClearsCache() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -143,5 +158,4 @@ public class TestModelDelete extends TestCase {
     userD.save();
     return users;
   }
-
 }
