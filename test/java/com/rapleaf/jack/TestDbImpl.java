@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.junit.Test;
 
 import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.Record;
@@ -16,6 +17,8 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestDbImpl extends BaseDatabaseModelTestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
 
@@ -24,6 +27,7 @@ public class TestDbImpl extends BaseDatabaseModelTestCase {
     return new DatabasesImpl(DATABASE_CONNECTION1);
   }
 
+  @Test
   public void testFindBySql() throws SQLException, IOException {
     final IDatabase1 database1 = getDBS().getDatabase1();
     final User user1 = database1.users().create("auser", 400);
@@ -42,5 +46,4 @@ public class TestDbImpl extends BaseDatabaseModelTestCase {
     assertEquals(Lists.newArrayList("atitle", "secondtitle"), titles);
     assertEquals(Lists.newArrayList(post1.getId(), post2.getId()), ids);
   }
-
 }

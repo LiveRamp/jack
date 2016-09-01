@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
-import junit.framework.TestCase;
 
 import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -26,18 +28,25 @@ import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-public abstract class BaseDatabaseModelTestCase extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public abstract class BaseDatabaseModelTestCase {
 
   protected final IDatabases dbs = getDBS();
 
   public abstract IDatabases getDBS();
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUp() throws Exception {
     dbs.getDatabase1().deleteAll();
   }
 
+  @Test
   public void testCreate() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -45,9 +54,10 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t2 = t0 + 20;
     byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
     User bryand = users.create("bryand", t0, 5, t1, t2, "this is a relatively long string", someBinary, 1.2d, 3.4d, true);
-    verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
+    verifyCreatedUser(t0, t1, t2, someBinary, bryand);
   }
 
+  @Test
   public void testCreateWithBigintPrimaryKey() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     long postId = Integer.MAX_VALUE * 2l;
@@ -64,6 +74,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertNotNull("Post should be findable by foreign key", c.getPost());
   }
 
+  @Test
   public void testCreateFromMap() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -71,7 +82,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     long t2 = t0 + 20;
     byte[] someBinary = new byte[]{5, 4, 3, 2, 1};
 
-    Map<Enum, Object> fieldsMap = new HashMap<Enum, Object>();
+    Map<Enum, Object> fieldsMap = new HashMap<>();
     fieldsMap.put(User._Fields.handle, "bryand");
     fieldsMap.put(User._Fields.created_at_millis, t0);
     fieldsMap.put(User._Fields.num_posts, 5);
@@ -84,15 +95,16 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     fieldsMap.put(User._Fields.some_boolean, true);
 
     User bryand = (User)users.create(fieldsMap);
-    verifyCreatedUser(users, t0, t1, t2, someBinary, bryand);
+    verifyCreatedUser(t0, t1, t2, someBinary, bryand);
   }
 
+  @Test
   public void testCreateWithDefaultValues() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
     User user = users.createDefaultInstance();
   }
 
-  private void verifyCreatedUser(IUserPersistence users, long t0, long t1, long t2, byte[] someBinary, User bryand) throws IOException {
+  private void verifyCreatedUser(long t0, long t1, long t2, byte[] someBinary, User bryand) throws IOException {
     assertEquals("bryand", bryand.getHandle());
     assertEquals(Long.valueOf(t0), bryand.getCreatedAtMillis());
     assertEquals(5, bryand.getNumPosts());
@@ -100,14 +112,12 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Long.valueOf(t2), bryand.getSomeDatetime());
     assertEquals("this is a relatively long string", bryand.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand.getSomeBinary()));
-    assertEquals(1.2, bryand.getSomeFloat());
-    assertEquals(3.4, bryand.getSomeDecimal());
+    assertEquals(1.2, bryand.getSomeFloat(), 0.0);
+    assertEquals(3.4, bryand.getSomeDecimal(), 0.0);
     assertTrue(bryand.isSomeBoolean());
-
-    // no longer a valid assertion, since we are deep copying objects out of the cache
-    // assertTrue(bryand == users.find(bryand.getId()));
   }
 
+  @Test
   public void testFind() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -127,17 +137,19 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     // assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
     assertEquals("this is a relatively long string", bryand_again.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
-    assertEquals(1.2, bryand_again.getSomeFloat());
-    assertEquals(3.4, bryand_again.getSomeDecimal());
+    assertEquals(1.2, bryand_again.getSomeFloat(), 0.0);
+    assertEquals(3.4, bryand_again.getSomeDecimal(), 0.0);
     assertTrue(bryand_again.isSomeBoolean());
   }
 
+  @Test
   public void testFindEmptySet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     List<User> foundValues = users.find(new HashSet<Long>());
     assertEquals(0, foundValues.size());
   }
 
+  @Test
   public void testFindSet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -182,8 +194,8 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     // assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
     assertEquals("this is a relatively long string", bryand_again.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(bryand_again.getSomeBinary()));
-    assertEquals(1.2, bryand_again.getSomeFloat());
-    assertEquals(3.4, bryand_again.getSomeDecimal());
+    assertEquals(1.2, bryand_again.getSomeFloat(), 0.0);
+    assertEquals(3.4, bryand_again.getSomeDecimal(), 0.0);
     assertTrue(bryand_again.isSomeBoolean());
 
     assertEquals(notBryand.getId(), notBryand_again.getId());
@@ -196,11 +208,12 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     // assertEquals(Long.valueOf(t2), bryand_again.getSomeDatetime());
     assertEquals("another relatively long string", notBryand_again.getBio());
     assertEquals(ByteBuffer.wrap(someBinary), ByteBuffer.wrap(notBryand_again.getSomeBinary()));
-    assertEquals(1.2, notBryand_again.getSomeFloat());
-    assertEquals(3.4, notBryand_again.getSomeDecimal());
+    assertEquals(1.2, notBryand_again.getSomeFloat(), 0.0);
+    assertEquals(3.4, notBryand_again.getSomeDecimal(), 0.0);
     assertTrue(notBryand_again.isSomeBoolean());
   }
 
+  @Test
   public void testFindSetFromCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     long t0 = System.currentTimeMillis();
@@ -232,6 +245,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     }
   }
 
+  @Test
   public void testFindCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User user = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -241,6 +255,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(u1, u2);
   }
 
+  @Test
   public void testFindAllByForeignKey() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
@@ -255,6 +270,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(userComments.contains(c3));
   }
 
+  @Test
   public void testFindAllFromCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -285,6 +301,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals("findAll did not return cached objects for all 3 users!", 3, numFound);
   }
 
+  @Test
   public void testFindAllAndCache() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -308,6 +325,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue("No User instance equivalent to u1_1 was found!", found);
   }
 
+  @Test
   public void testFindAllByForeignKeyFromSet() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     comments.deleteAll();
@@ -339,6 +357,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertFalse(userCommentsSecondQuery.contains(c5));
   }
 
+  @Test
   public void testFindAllWithConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -353,6 +372,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(u2), users.findAll("handle != 'bryand' AND handle != 'emilyl' AND 0.5 < 1.0e1"));
   }
 
+  @Test
   public void testFindAllWithNullValues() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -364,6 +384,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(u2), users.findAll("(created_at_millis IS NULL) IS TRUE"));
   }
 
+  @Test
   public void testFindAllWithLikeConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -378,6 +399,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
 
   }
 
+  @Test
   public void testFindAllWithNumericInConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -389,6 +411,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(u1), users.findAll("num_posts not in (3 , 7) AND 5 > 4"));
   }
 
+  @Test
   public void testFindAllWithStringInConditions() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -400,6 +423,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(u1), users.findAll("handle not in ('thomask' , 'wers') AND 5 > 4"));
   }
 
+  @Test
   public void testFindAllWithEscapedQuotesInStrings() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("brya'nd", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -411,6 +435,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(u2), users.findAll("handle = 'thoma\"sk'"));
   }
 
+  @Test
   public void testBelongsTo() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -420,6 +445,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(u1, p1.getUser());
   }
 
+  @Test
   public void testHasOne() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -429,6 +455,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(u1, image.getUser());
   }
 
+  @Test
   public void testHasMany() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
     User u1 = users.create("bryand", System.currentTimeMillis(), 5, System.currentTimeMillis() + 10, System.currentTimeMillis() + 20, "this is a relatively long string", new byte[]{5, 4, 3, 2, 1}, 1.2d, 3.4d, true);
@@ -441,6 +468,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(new ArrayList<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
+  @Test
   public void testFindByForeignKey() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create("title", 0L, 1, 0l);
@@ -449,6 +477,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Collections.singletonList(post), posts.findAllByForeignKey("user_id", 1));
   }
 
+  @Test
   public void testSetReturnsModifiedModel() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
@@ -459,6 +488,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(post, postCopy);
   }
 
+  @Test
   public void testNullTreatment() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
@@ -470,6 +500,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertNull(post.getUser());
   }
 
+  @Test
   public void testDelete() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
@@ -478,6 +509,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertNull(posts.find(id));
   }
 
+  @Test
   public void testSave() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
@@ -487,6 +519,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(Long.valueOf(20), posts.find(id).getPostedAtMillis());
   }
 
+  @Test
   public void testInsertOnSave() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = new Post(50, "Post", 20L, 100, 0l, dbs);
@@ -494,6 +527,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(post, posts.find(50));
   }
 
+  @Test
   public void testFindWithFieldsMap() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
 
@@ -525,6 +559,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u1));
   }
 
+  @Test
   public void testFindByField() throws IOException {
     IUserPersistence users = dbs.getDatabase1().users();
 
@@ -546,6 +581,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertTrue(found.contains(u2));
   }
 
+  @Test
   public void testCopyConstructor() {
     User orig = new User(1, "some_handle", 1L, 1, 1L, 1L, "bio", "bio".getBytes(), 1d, 2d, true);
     User copy = new User(orig);
@@ -563,6 +599,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals((Object)true, copy.isSomeBoolean());
   }
 
+  @Test
   public void testCreateAssociation() throws Exception {
     IImagePersistence images = dbs.getDatabase1().images();
 
@@ -578,6 +615,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(i1, imageInDb);
   }
 
+  @Test
   public void testComparable() {
     Post post1 = new Post(50, "Post1", 20L, 100, 0l, dbs);
     Post post2 = new Post(70, "Post2", 20L, 100, 0l, dbs);
@@ -600,6 +638,7 @@ public abstract class BaseDatabaseModelTestCase extends TestCase {
     assertEquals(post4, posts.get(3));
   }
 
+  @Test
   public void testDisableThenEnableCaching() {
     // Create a new instance to avoid changing caching behavior for other tests
     IDatabases dbs = this.getDBS();

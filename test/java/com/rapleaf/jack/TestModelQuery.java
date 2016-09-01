@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import com.rapleaf.jack.queries.AggregatorFunctions;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
@@ -35,12 +35,16 @@ import static com.rapleaf.jack.queries.where_operators.JackMatchers.notBetween;
 import static com.rapleaf.jack.queries.where_operators.JackMatchers.notEqualTo;
 import static com.rapleaf.jack.queries.where_operators.JackMatchers.notIn;
 import static com.rapleaf.jack.queries.where_operators.JackMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
-public class TestModelQuery extends TestCase {
+public class TestModelQuery {
 
   private static final IDatabases dbs = new DatabasesImpl();
 
+  @Test
   public void testBasicQuery() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -80,6 +84,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.isEmpty());
   }
 
+  @Test
   public void testQueryOperators() throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
@@ -180,6 +185,7 @@ public class TestModelQuery extends TestCase {
     }
   }
 
+  @Test
   public void testQueryById() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -221,6 +227,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.contains(sampleUsers[3]));
   }
 
+  @Test
   public void testQueryWhereId() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -244,6 +251,7 @@ public class TestModelQuery extends TestCase {
     assertTrue(result.contains(userC));
   }
 
+  @Test
   public void testQueryWithOrder() throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
@@ -352,6 +360,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(7, orderedResult1.indexOf(userB));
   }
 
+  @Test
   public void testQueryByIdWithOrder() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -403,6 +412,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(4, orderedResult1.indexOf(sampleUsers[0]));
   }
 
+  @Test
   public void testQueryWithLimit() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
@@ -458,6 +468,7 @@ public class TestModelQuery extends TestCase {
     assertEquals(3, result.size());
   }
 
+  @Test
   public void testQueryWithSelect() throws IOException, SQLException {
 
     IUserPersistence users = dbs.getDatabase1().users();
@@ -503,6 +514,7 @@ public class TestModelQuery extends TestCase {
     }
   }
 
+  @Test
   public void testGroupBy() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
