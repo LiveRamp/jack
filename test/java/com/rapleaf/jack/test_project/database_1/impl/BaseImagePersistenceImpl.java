@@ -31,6 +31,7 @@ import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
@@ -195,7 +196,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   @Override
   protected Image instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Image(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Image(id,
       allFields || selectedFields.contains(Image._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,
       databases
     );

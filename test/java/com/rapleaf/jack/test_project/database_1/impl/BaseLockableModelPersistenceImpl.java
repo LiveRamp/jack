@@ -31,6 +31,7 @@ import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.models.LockableModel;
 import com.rapleaf.jack.test_project.database_1.query.LockableModelQueryBuilder;
@@ -235,7 +236,8 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   @Override
   protected LockableModel instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new LockableModel(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new LockableModel(id,
       allFields || selectedFields.contains(LockableModel._Fields.lock_version) ? getIntOrNull(rs, "lock_version") : 0,
       allFields || selectedFields.contains(LockableModel._Fields.message) ? rs.getString("message") : null,
       allFields || selectedFields.contains(LockableModel._Fields.created_at) ? getDateAsLong(rs, "created_at") : 0L,

@@ -8,9 +8,11 @@ import com.google.common.collect.Lists;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.GenericDatabases;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.tracking.QueryStatistics;
 
 public class Records implements Iterable<Record> {
   private final List<Record> records;
+  private QueryStatistics queryStatistics;
 
   Records() {
     this.records = Lists.newArrayList();
@@ -18,6 +20,10 @@ public class Records implements Iterable<Record> {
 
   void addRecord(Record record) {
     records.add(record);
+  }
+
+  void addStatistics(QueryStatistics statistics) {
+    this.queryStatistics = statistics;
   }
 
   public boolean isEmpty() {
@@ -110,6 +116,10 @@ public class Records implements Iterable<Record> {
       results.add(record.getModel(tableType, databases));
     }
     return results;
+  }
+
+  public QueryStatistics getQueryStatistics() {
+    return queryStatistics;
   }
 
   @Override

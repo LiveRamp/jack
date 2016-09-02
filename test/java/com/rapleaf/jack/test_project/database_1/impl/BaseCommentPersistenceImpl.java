@@ -6,38 +6,29 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
-import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
+import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
-import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.queries.WhereConstraint;
+import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
-import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
-
-
-import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 
 public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> implements ICommentPersistence {
   private final IDatabases databases;
@@ -53,7 +44,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
     long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
     Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
-    long created_at = created_at_tmp == null ? 0L : created_at_tmp;
+    long created_at = created_at_tmp == null ? 28800000L : created_at_tmp;
     return create(content, commenter_id, commented_on_id, created_at);
   }
 
@@ -235,7 +226,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   @Override
   protected Comment instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Comment(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Comment(id,
       allFields || selectedFields.contains(Comment._Fields.content) ? rs.getString("content") : null,
       allFields || selectedFields.contains(Comment._Fields.commenter_id) ? getIntOrNull(rs, "commenter_id") : 0,
       allFields || selectedFields.contains(Comment._Fields.commented_on_id) ? getLongOrNull(rs, "commented_on_id") : 0L,

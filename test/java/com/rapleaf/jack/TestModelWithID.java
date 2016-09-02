@@ -2,7 +2,8 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.IDatabases;
@@ -10,7 +11,14 @@ import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-public class TestModelWithID extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class TestModelWithID {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
   private Post postModel;
   private Post postModelx;
@@ -19,7 +27,7 @@ public class TestModelWithID extends TestCase {
   private User userModel;
   private User userModelx;
 
-  @Override
+  @Before
   public void setUp() {
     dbs = new DatabasesImpl(DATABASE_CONNECTION1);
     postModelx = new Post(15, "Test Post", 100l, 1, 0l);
@@ -38,6 +46,7 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  @Test
   public void testFields() {
 
     try {
@@ -70,6 +79,7 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  @Test
   public void testBelongsToAssociations() throws IOException {
 
     assertNull(imageModel.getUser());
@@ -78,6 +88,7 @@ public class TestModelWithID extends TestCase {
     assertEquals(imageModel.getUser(), userModel);
   }
 
+  @Test
   public void testUpdatedAt() {
     postModel.setField("updated_at", 0l);
     try {
@@ -92,6 +103,7 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  @Test
   public void testManualUpdatedAt() throws IOException {
     postModel.setField("updated_at", 0l);
     long updateTime = 47l;
@@ -101,6 +113,7 @@ public class TestModelWithID extends TestCase {
         updateTime, ((Long)postModel.getField("updated_at")).longValue());
   }
 
+  @Test
   public void testClearAssociations() throws IOException {
 
     assertNull(imageModel.getUser());
@@ -115,15 +128,18 @@ public class TestModelWithID extends TestCase {
     }
   }
 
+  @Test
   public void testCovarianceofTypedIdMethod() {
     Image.Id typedId = imageModel.getTypedId();
     ModelIdWrapper modelIdWrapper = ((ModelWithId)imageModel).getTypedId();
   }
 
+  @Test
   public void testIdToString() {
     assertEquals("<Image.Id: 1>", new Image.Id(1l).toString());
   }
 
+  @Test
   public void testToString() throws IOException {
     assertTrue("check Post toString output",
         postModelx.toString().equals("<Post id: 15 title: Test Post posted_at_millis: 100 user_id: 1 updated_at: 0>"));
@@ -139,5 +155,4 @@ public class TestModelWithID extends TestCase {
         userModel2.toString().equals("<User id: 0 handle: handle created_at_millis: 0 num_posts: 0 some_date: 0 some_datetime: 0 bio: bio some_binary: null some_float: 0.0 some_decimal: 0.0 some_boolean: true>"));
 
   }
-
 }

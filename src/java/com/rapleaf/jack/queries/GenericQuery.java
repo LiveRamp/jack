@@ -2,10 +2,8 @@ package com.rapleaf.jack.queries;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.tracking.NoOpAction;
+import com.rapleaf.jack.tracking.PostQueryAction;
+import com.rapleaf.jack.tracking.QueryStatistics;
 
 public class GenericQuery {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
@@ -26,6 +27,7 @@ public class GenericQuery {
 
   private final BaseDatabaseConnection dbConnection;
   private final List<TableReference> tableReferences;
+  private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
@@ -35,9 +37,10 @@ public class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
     this.dbConnection = dbConnection;
     this.tableReferences = Lists.<TableReference>newArrayList(new SingleTableReference(table));
+    this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
@@ -48,9 +51,10 @@ public class GenericQuery {
     this.limitCriteria = Optional.absent();
   }
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
     this.dbConnection = dbConnection;
-    this.tableReferences = Lists.<TableReference>newArrayList(tableReference);
+    this.tableReferences = Lists.newArrayList(tableReference);
+    this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
@@ -67,6 +71,7 @@ public class GenericQuery {
 
   public static class Builder {
     private BaseDatabaseConnection dbConnection;
+    private PostQueryAction postQueryAction = new NoOpAction();
 
     public Builder(BaseDatabaseConnection dbConnection) {
       this.dbConnection = dbConnection;
@@ -77,12 +82,17 @@ public class GenericQuery {
       return this;
     }
 
+    public Builder setPostQueryAction(PostQueryAction action) {
+      this.postQueryAction = action;
+      return this;
+    }
+
     public GenericQuery from(Table table) {
       return from(new SingleTableReference(table));
     }
 
     public GenericQuery from(TableReference tableReference) {
-      return new GenericQuery(dbConnection, tableReference);
+      return new GenericQuery(dbConnection, tableReference, postQueryAction);
     }
   }
 
@@ -227,11 +237,29 @@ public class GenericQuery {
 
   public Records fetch() throws IOException {
     int retryCount = 0;
+    final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
+    statTracker.recordQueryPrepStart();
     PreparedStatement preparedStatement = getPreparedStatement();
+    statTracker.recordQueryPrepEnd();
 
     while (true) {
       try {
-        return getQueryResults(preparedStatement);
+        statTracker.recordAttempt();
+
+        statTracker.recordQueryExecStart();
+        final Records queryResults = getQueryResults(preparedStatement);
+        statTracker.recordQueryExecEnd();
+
+        final QueryStatistics statistics = statTracker.calculate();
+        queryResults.addStatistics(statistics);
+
+        try {
+          postQueryAction.perform(statistics);
+        } catch (Exception ignoredException) {
+          LOG.error(String.format("Error occurred running post-query action %s", postQueryAction), ignoredException);
+        }
+
+        return queryResults;
       } catch (SQLRecoverableException e) {
         LOG.error(e.toString());
         if (++retryCount > MAX_CONNECTION_RETRIES) {
@@ -262,86 +290,8 @@ public class GenericQuery {
       }
     }
   }
-
   private Records getQueryResults(PreparedStatement preparedStatement) throws SQLException {
-    ResultSet resultSet = null;
-
-    try {
-      resultSet = preparedStatement.executeQuery();
-      Records results = new Records();
-      while (resultSet.next()) {
-        Record record = parseResultSet(resultSet);
-        if (record != null) {
-          results.addRecord(record);
-        }
-      }
-      return results;
-    } catch (SQLRecoverableException e) {
-      dbConnection.resetConnection();
-      throw e;
-    } finally {
-      try {
-        if (resultSet != null) {
-          resultSet.close();
-        }
-        preparedStatement.close();
-      } catch (SQLRecoverableException e) {
-        LOG.error(e.toString());
-        dbConnection.resetConnection();
-      } catch (SQLException e) {
-        LOG.error(e.toString());
-      }
-    }
-  }
-
-  private Record parseResultSet(ResultSet resultSet) throws SQLException {
-    if (selectedColumns.isEmpty()) {
-      return null;
-    }
-
-    Record record = new Record(selectedColumns.size());
-    for (Column column : selectedColumns) {
-      String sqlKeyword = column.getSqlKeyword();
-      Class type = column.getType();
-      Object value;
-
-      if (type == Integer.class) {
-        value = resultSet.getInt(sqlKeyword);
-      } else if (type == Long.class) {
-        value = resultSet.getLong(sqlKeyword);
-      } else if (type == java.sql.Date.class) {
-        java.sql.Date date = resultSet.getDate(sqlKeyword);
-        if (date != null) {
-          value = date.getTime();
-        } else {
-          value = null;
-        }
-      } else if (type == Timestamp.class) {
-        Timestamp timestamp = resultSet.getTimestamp(sqlKeyword);
-        if (timestamp != null) {
-          value = timestamp.getTime();
-        } else {
-          value = null;
-        }
-      } else if (type == Double.class) {
-        value = resultSet.getDouble(sqlKeyword);
-      } else if (type == String.class) {
-        value = resultSet.getString(sqlKeyword);
-      } else if (type == Boolean.class) {
-        value = resultSet.getBoolean(sqlKeyword);
-      } else if (type == byte[].class) {
-        value = resultSet.getBytes(sqlKeyword);
-      } else {
-        value = resultSet.getObject(sqlKeyword);
-      }
-
-      if (resultSet.wasNull()) {
-        value = null;
-      }
-
-      record.addColumn(column, value);
-    }
-    return record;
+    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection) ;
   }
 
   private String getQueryStatement() {

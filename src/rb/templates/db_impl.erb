@@ -17,30 +17,40 @@
 package <%= root_package %>.impl;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Set;
+import java.util.List;
 
 import <%= root_package %>.I<%= db_name%>;
 import <%= JACK_NAMESPACE %>.LazyLoadPersistence;
 import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
+import <%= JACK_NAMESPACE %>.queries.Records;
+import <%= JACK_NAMESPACE %>.queries.Column;
+import <%= JACK_NAMESPACE %>.queries.QueryFetcher;
 
 <% model_defns.each do |model_defn| %>
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 <% end%>
 
 import <%= project_defn.databases_namespace %>.IDatabases;
+import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class <%=db_name%>Impl implements I<%=db_name%> {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
+  private final PostQueryAction postQueryAction;
 
 <% model_defns.each do |model_defn| %>
   private final LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases> <%= model_defn.table_name %>;
 <% end %>
 
-  public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases) {
+  public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
+    this.postQueryAction = postQueryAction;
     
   <% model_defns.each do |model_defn| %>
     this.<%= model_defn.table_name %> = new LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases>(conn, databases) {
@@ -53,7 +63,24 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   }
 
   public GenericQuery.Builder createQuery() {
-    return GenericQuery.create(conn);
+    final GenericQuery.Builder builder = GenericQuery.create(conn);
+    builder.setPostQueryAction(postQueryAction);
+    return builder;
+  }
+
+  @Override
+  public Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException {
+    final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
+    try {
+      for (int i=0; i<params.size(); i++) {
+        final Object param = params.get(i);
+        final int paramIdx = i+1;
+        preparedStatement.setObject(paramIdx, param);
+      }
+      return QueryFetcher.getQueryResults(preparedStatement, columns, conn);
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
   }
 
   <% model_defns.each do |model_defn| %>

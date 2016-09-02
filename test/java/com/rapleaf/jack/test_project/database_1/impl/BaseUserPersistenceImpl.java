@@ -31,6 +31,7 @@ import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
@@ -338,7 +339,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   @Override
   protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new User(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new User(id,
       allFields || selectedFields.contains(User._Fields.handle) ? rs.getString("handle") : "",
       allFields || selectedFields.contains(User._Fields.created_at_millis) ? getLongOrNull(rs, "created_at_millis") : null,
       allFields || selectedFields.contains(User._Fields.num_posts) ? getIntOrNull(rs, "num_posts") : 0,

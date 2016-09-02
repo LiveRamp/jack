@@ -31,6 +31,7 @@ import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
@@ -246,7 +247,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   @Override
   protected Post instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
-    return new Post(rs.getLong("id"),
+    long id = rs.getLong("id");
+    return new Post(id,
       allFields || selectedFields.contains(Post._Fields.title) ? rs.getString("title") : null,
       allFields || selectedFields.contains(Post._Fields.posted_at_millis) ? getDateAsLong(rs, "posted_at_millis") : null,
       allFields || selectedFields.contains(Post._Fields.user_id) ? getIntOrNull(rs, "user_id") : null,

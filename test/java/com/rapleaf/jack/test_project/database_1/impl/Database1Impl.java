@@ -7,11 +7,18 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Set;
+import java.util.List;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.LazyLoadPersistence;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.queries.Records;
+import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.QueryFetcher;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
@@ -19,20 +26,23 @@ import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class Database1Impl implements IDatabase1 {
   
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
+  private final PostQueryAction postQueryAction;
   private final LazyLoadPersistence<ICommentPersistence, IDatabases> comments;
   private final LazyLoadPersistence<IImagePersistence, IDatabases> images;
   private final LazyLoadPersistence<ILockableModelPersistence, IDatabases> lockable_models;
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
-  public Database1Impl(BaseDatabaseConnection conn, IDatabases databases) {
+  public Database1Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
+    this.postQueryAction = postQueryAction;
     this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases) {
       @Override
       protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
@@ -66,7 +76,24 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public GenericQuery.Builder createQuery() {
-    return GenericQuery.create(conn);
+    final GenericQuery.Builder builder = GenericQuery.create(conn);
+    builder.setPostQueryAction(postQueryAction);
+    return builder;
+  }
+
+  @Override
+  public Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException {
+    final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
+    try {
+      for (int i=0; i<params.size(); i++) {
+        final Object param = params.get(i);
+        final int paramIdx = i+1;
+        preparedStatement.setObject(paramIdx, param);
+      }
+      return QueryFetcher.getQueryResults(preparedStatement, columns, conn);
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
   }
 
   public ICommentPersistence comments(){
