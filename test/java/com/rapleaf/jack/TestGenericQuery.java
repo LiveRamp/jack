@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.exception.InvalidIndexHintException;
 import com.rapleaf.jack.queries.Index;
 import com.rapleaf.jack.queries.IndexHints;
 import com.rapleaf.jack.queries.QueryOrder;
@@ -853,10 +854,17 @@ public class TestGenericQuery {
     Index index2 = Index.of("mock_index_2");
 
     String sqlStatement = db.createQuery()
-        .from(User.TBL.with(IndexHints.use(index1), IndexHints.ignore(index2)))
+        .from(User.TBL.with(IndexHints.use(index1), IndexHints.ignoreForGroupBy(index2)))
         .getSqlStatement();
 
     assertTrue(sqlStatement.contains("USE INDEX (" + index1.getName() + ")"));
-    assertTrue(sqlStatement.contains("IGNORE INDEX (" + index2.getName() + ")"));
+    assertTrue(sqlStatement.contains("IGNORE INDEX FOR GROUP BY (" + index2.getName() + ")"));
+
+    try {
+      db.createQuery().from(User.TBL.with(IndexHints.use(index1), IndexHints.force(index2)));
+      fail();
+    } catch (InvalidIndexHintException e) {
+      // expected
+    }
   }
 }

@@ -1,25 +1,21 @@
 package com.rapleaf.jack.queries;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class SingleTableReference implements TableReference {
 
   private final Table table;
   private final Set<IndexHint> indexHints;
 
-  SingleTableReference(final Table table) {
+  SingleTableReference(Table table) {
     this.table = table;
     this.indexHints = Collections.emptySet();
   }
 
-  SingleTableReference(final Table table, final IndexHint indexHint, final IndexHint... indexHints) {
+  SingleTableReference(Table table, Set<IndexHint> indexHints) {
     this.table = table;
-    this.indexHints = Sets.newHashSet(indexHint);
-    this.indexHints.addAll(Arrays.asList(indexHints));
+    this.indexHints = indexHints;
   }
 
   @Override
@@ -36,4 +32,5 @@ public class SingleTableReference implements TableReference {
   public String getSqlStatement() {
     return table.getSqlKeyword() + (indexHints.isEmpty() ? "" : GenericQuery.getClauseFromQueryConditions(indexHints, " ", " ", ""));
   }
+
 }
