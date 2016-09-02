@@ -26,8 +26,8 @@ public class GenericQuery {
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final BaseDatabaseConnection dbConnection;
+  private final List<TableReference> tableReferences;
   private final PostQueryAction postQueryAction;
-  private final List<Table> includedTables;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
@@ -36,10 +36,10 @@ public class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
     this.dbConnection = dbConnection;
+    this.tableReferences = Lists.newArrayList(tableReference);
     this.postQueryAction = postQueryAction;
-    this.includedTables = Lists.newArrayList(table);
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
@@ -72,7 +72,11 @@ public class GenericQuery {
     }
 
     public GenericQuery from(Table table) {
-      return new GenericQuery(dbConnection, table, postQueryAction);
+      return from(new SingleTableReference(table));
+    }
+
+    public GenericQuery from(TableReference tableReference) {
+      return new GenericQuery(dbConnection, tableReference, postQueryAction);
     }
   }
 
@@ -97,19 +101,31 @@ public class GenericQuery {
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
+    return leftJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder leftJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, tableReference);
   }
 
   public JoinConditionBuilder rightJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
+    return rightJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder rightJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, tableReference);
   }
 
   public JoinConditionBuilder innerJoin(Table table) {
-    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
+    return innerJoin(new SingleTableReference(table));
+  }
+
+  public JoinConditionBuilder innerJoin(TableReference tableReference) {
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, tableReference);
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    this.includedTables.add(joinCondition.getTable());
+    this.tableReferences.add(joinCondition.getTableReference());
     this.joinConditions.add(joinCondition);
   }
 
@@ -228,8 +244,9 @@ public class GenericQuery {
       }
     }
   }
+
   private Records getQueryResults(PreparedStatement preparedStatement) throws SQLException {
-    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection) ;
+    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection);
   }
 
   private String getQueryStatement() {
@@ -257,15 +274,15 @@ public class GenericQuery {
     }
 
     if (selectedColumns.isEmpty()) {
-      for (Table table : includedTables) {
-        selectedColumns.addAll(table.getAllColumns());
+      for (TableReference tableReference : tableReferences) {
+        selectedColumns.addAll(tableReference.getTable().getAllColumns());
       }
     }
     return getClauseFromColumns(selectedColumns, "SELECT ", ", ", " ");
   }
 
   private String getFromClause() {
-    return "FROM " + includedTables.get(0).getSqlKeyword() + " ";
+    return "FROM " + tableReferences.get(0).getSqlStatement() + " ";
   }
 
   private String getJoinClause() {

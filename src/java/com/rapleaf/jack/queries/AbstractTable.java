@@ -1,5 +1,6 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -54,4 +55,12 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
   public Class<M> getModelType() {
     return modelType;
   }
+
+  @Override
+  public TableReference with(final IndexHint indexHint, final IndexHint... indexHints) {
+    Set<IndexHint> indexHintList = Sets.newHashSet(indexHint);
+    indexHintList.addAll(Arrays.asList(indexHints));
+    return new SingleTableReference(this, IndexHint.validate(indexHintList));
+  }
+
 }

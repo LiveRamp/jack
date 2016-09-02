@@ -19,4 +19,6 @@ public interface Table<A extends AttributesWithId, M extends ModelWithId> {
 
   public Class<M> getModelType();
 
+  public TableReference with(IndexHint indexHint, IndexHint... indexHints);
+
 }
