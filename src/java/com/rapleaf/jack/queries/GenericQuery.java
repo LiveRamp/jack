@@ -201,7 +201,7 @@ public class GenericQuery {
         statTracker.recordAttempt();
 
         statTracker.recordQueryExecStart();
-        final Records queryResults = getQueryResults(preparedStatement);
+        final Records queryResults = QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection);
         statTracker.recordQueryExecEnd();
 
         final QueryStatistics statistics = statTracker.calculate();
@@ -243,10 +243,6 @@ public class GenericQuery {
         throw new IOException(e);
       }
     }
-  }
-
-  private Records getQueryResults(PreparedStatement preparedStatement) throws SQLException {
-    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection);
   }
 
   private String getQueryStatement() {
