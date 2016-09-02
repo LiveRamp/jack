@@ -41,6 +41,17 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public boolean save(T model) throws IOException;
 
   /**
+   * Update an existing T instance in the persistence. This method allows you to manually specify an update time
+   * and should only be used for testing.
+   *
+   * @param updateTimeMillis
+   * @param model
+   * @return
+   * @throws IOException
+   */
+  boolean save(long updateTimeMillis, T model) throws IOException;
+
+  /**
    * Find the T instance with specified id, or null if there is no such instance.
    *
    * @param id
@@ -56,7 +67,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public List<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
   public List<T> find(ModelQuery query) throws IOException;
-  
+
   public List<T> findWithOrder(ModelQuery query) throws IOException;
 
   public boolean delete(ModelDelete delete) throws IOException;

@@ -27,18 +27,18 @@ import java.util.List;
 import <%= JACK_NAMESPACE %>.IModelPersistence;
 
 public interface <%= model_defn.iface_name %> extends IModelPersistence<<%= model_defn.model_name %>> {
-  public <%= model_defn.model_name %> create(<%= create_signature_full %>) throws IOException;
+  <%= model_defn.model_name %> create(<%= create_signature_full %>) throws IOException;
   <% unless create_signature_small.nil? %>
-  public <%= model_defn.model_name %> create(<%= create_signature_small %>) throws IOException;
+  <%= model_defn.model_name %> create(<%= create_signature_small %>) throws IOException;
   <% end %>
 
-  public <%= model_defn.model_name %> createDefaultInstance() throws IOException;
+  <%= model_defn.model_name %> createDefaultInstance() throws IOException;
 
   <% model_defn.fields.each do |field_defn| %>
-  public List<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> value)  throws IOException;
+  List<<%= model_defn.model_name %>> findBy<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> value)  throws IOException;
   <% end %>
 
-  public <%= model_defn.query_builder_name %> query();
+  <%= model_defn.query_builder_name %> query();
 
-  public <%= model_defn.delete_builder_name %> delete();
+  <%= model_defn.delete_builder_name %> delete();
 }

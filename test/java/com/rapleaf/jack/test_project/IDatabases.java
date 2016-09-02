@@ -10,5 +10,5 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.GenericDatabases;
 
 public interface IDatabases extends GenericDatabases {
-  public IDatabase1 getDatabase1();
+  IDatabase1 getDatabase1();
 }

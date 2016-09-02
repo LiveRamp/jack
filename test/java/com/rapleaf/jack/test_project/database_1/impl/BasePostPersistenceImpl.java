@@ -112,7 +112,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Post> foundList = new ArrayList<Post>();
-    
+
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
     }
@@ -127,7 +127,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       Map.Entry<Enum, Object> entry = iter.next();
       Enum field = entry.getKey();
       Object value = entry.getValue();
-      
+
       String queryValue = value != null ? " = ? " : " IS NULL";
       if (value != null) {
         nonNullValueFields.add((Post._Fields) field);
@@ -256,19 +256,19 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public List<Post> findByTitle(final String value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.title, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Post._Fields.title, value));
   }
 
   public List<Post> findByPostedAtMillis(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.posted_at_millis, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Post._Fields.posted_at_millis, value));
   }
 
   public List<Post> findByUserId(final Integer value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.user_id, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Post._Fields.user_id, value));
   }
 
   public List<Post> findByUpdatedAt(final Long value) throws IOException {
-    return find(new HashMap<Enum, Object>(){{put(Post._Fields.updated_at, value);}});
+    return find(Collections.<Enum, Object>singletonMap(Post._Fields.updated_at, value));
   }
 
   public PostQueryBuilder query() {

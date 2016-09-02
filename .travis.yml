@@ -1,0 +1,18 @@
+language:
+  - java
+
+jdk:
+  - oraclejdk7
+
+notifications:
+  email: false
+
+services:
+  - mysql
+
+install:
+  - rvm mount -r http://rubies.travis-ci.org/ubuntu/12.04/x86_64/ree-1.8.7-2011.12.tar.bz2 --verify-downloads 1
+
+before_script:
+  - export RAILS_ENV=development
+  - test/select-dbms.sh mysql
