@@ -37,20 +37,6 @@ public class GenericQuery {
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
-    this.dbConnection = dbConnection;
-    this.tableReferences = Lists.<TableReference>newArrayList(new SingleTableReference(table));
-    this.postQueryAction = postQueryAction;
-    this.joinConditions = Lists.newArrayList();
-    this.whereConstraints = Lists.newArrayList();
-    this.parameters = Lists.newArrayList();
-    this.orderCriteria = Lists.newArrayList();
-    this.indexHints = Lists.newArrayList();
-    this.selectedColumns = Sets.newHashSet();
-    this.groupByColumns = Sets.newHashSet();
-    this.limitCriteria = Optional.absent();
-  }
-
   private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
     this.dbConnection = dbConnection;
     this.tableReferences = Lists.newArrayList(tableReference);
@@ -290,8 +276,9 @@ public class GenericQuery {
       }
     }
   }
+
   private Records getQueryResults(PreparedStatement preparedStatement) throws SQLException {
-    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection) ;
+    return QueryFetcher.getQueryResults(preparedStatement, selectedColumns, dbConnection);
   }
 
   private String getQueryStatement() {
