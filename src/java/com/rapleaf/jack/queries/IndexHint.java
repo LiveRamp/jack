@@ -16,10 +16,10 @@ public final class IndexHint implements QueryCondition {
   }
 
   public enum Scope {
-    ALL(""),
-    JOIN("FOR JOIN"),
-    ORDER_BY("FOR ORDER BY"),
-    GROUP_BY("FOR GROUP BY");
+    ALL("INDEX"),
+    JOIN("INDEX FOR JOIN"),
+    ORDER_BY("INDEX FOR ORDER BY"),
+    GROUP_BY("INDEX FOR GROUP BY");
 
     private String sqlStatement;
 
@@ -45,7 +45,7 @@ public final class IndexHint implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return type.name() + " INDEX " + scope.getSqlStatement() + " (" + Joiner.on(",").join(indexNames) + ")";
+    return type.name() + " " + scope.getSqlStatement() + " (" + Joiner.on(",").join(indexNames) + ")";
   }
 
 }

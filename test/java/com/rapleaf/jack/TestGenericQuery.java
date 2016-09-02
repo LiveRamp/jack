@@ -855,11 +855,8 @@ public class TestGenericQuery {
     String sqlStatement = db.createQuery()
         .from(User.TBL.with(IndexHints.use(index1), IndexHints.ignore(index2)))
         .getSqlStatement();
-    System.out.println(sqlStatement);
 
-    assertTrue(sqlStatement.contains("USE INDEX"));
-    assertTrue(sqlStatement.contains("IGNORE INDEX"));
-    assertTrue(sqlStatement.contains(index1.getName()));
-    assertTrue(sqlStatement.contains(index2.getName()));
+    assertTrue(sqlStatement.contains("USE INDEX (" + index1.getName() + ")"));
+    assertTrue(sqlStatement.contains("IGNORE INDEX (" + index2.getName() + ")"));
   }
 }
