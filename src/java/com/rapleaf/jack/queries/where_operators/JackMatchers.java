@@ -26,16 +26,16 @@ public class JackMatchers {
     return new IsNotNull<T>();
   }
 
-  public static <T> In<T> in(T value1, T... otherValues) {
-    return new In<T>(value1, otherValues);
+  public static <T> In<T> in(T... values) {
+    return new In<T>(values);
   }
 
   public static <T> In<T> in(Collection<T> values) {
     return new In<T>(values);
   }
 
-  public static <T> NotIn<T> notIn(T value1, T... otherValues) {
-    return new NotIn<T>(value1, otherValues);
+  public static <T> NotIn<T> notIn(T... values) {
+    return new NotIn<T>(values);
   }
 
   public static <T> IWhereOperator<T> notIn(Collection<T> values) {

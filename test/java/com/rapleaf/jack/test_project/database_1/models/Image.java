@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -130,16 +131,16 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public Integer getUserId(){
+  public Integer getUserId() {
     return attributes.getUserId();
   }
 
-  public Image setUserId(Integer newval){
+  public Image setUserId(Integer newval) {
     attributes.setUserId(newval);
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
@@ -151,7 +152,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public void setField(_Fields field, Object value) {
     switch (field) {
       case user_id:
-        setUserId((Integer) value);
+        setUserId((Integer)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -204,7 +205,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -273,9 +274,9 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public String toString() {
     return "<Image"
-      + " id: " + this.getId()
-      + " user_id: " + getUserId()
-      + ">";
+        + " id: " + this.getId()
+        + " user_id: " + getUserId()
+        + ">";
   }
 
   public void unsetAssociations() {
@@ -283,7 +284,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     __assoc_user = null;
   }
 
-  public int compareTo(Image that){
+  public int compareTo(Image that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -310,7 +311,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      Integer user_id = (Integer) fieldsMap.get(Image._Fields.user_id);
+      Integer user_id = (Integer)fieldsMap.get(Image._Fields.user_id);
       this.__user_id = user_id;
     }
 
@@ -319,11 +320,11 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
       this.__user_id = other.getUserId();
     }
 
-    public Integer getUserId(){
+    public Integer getUserId() {
       return __user_id;
     }
 
-    public Attributes setUserId(Integer newval){
+    public Attributes setUserId(Integer newval) {
       this.__user_id = newval;
       cachedHashCode = 0;
       return this;
@@ -332,7 +333,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     public void setField(_Fields field, Object value) {
       switch (field) {
         case user_id:
-          setUserId((Integer) value);
+          setUserId((Integer)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -341,7 +342,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("user_id")) {
-        setUserId((Integer)  value);
+        setUserId((Integer)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -408,8 +409,8 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     
     public String toString() {
       return "<Image.Attributes"
-        + " user_id: " + getUserId()
-        + ">";
+          + " user_id: " + getUserId()
+          + ">";
     }
   }
 
@@ -424,7 +425,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -435,7 +436,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -447,24 +448,14 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
     @Override
     public String toString() {
-      return "<Image.Id: "+this.getId()+">";
+      return "<Image.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<Image> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Image model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<Image> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Image model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<Image> models) {
+    return models.stream()
+        .map(Image::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class LazyLoadPersistence<T extends IModelPersistence, D extends GenericDatabases> implements Serializable {
   @FunctionalInterface
-  public interface Factory<T extends IModelPersistence<?, ?>, D extends GenericDatabases> {
+  public interface Factory<T extends IModelPersistence, D extends GenericDatabases> {
     T create(BaseDatabaseConnection conn, D databases);
   }
 

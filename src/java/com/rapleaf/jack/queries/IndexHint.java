@@ -4,13 +4,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.exception.InvalidIndexHintException;
-import com.rapleaf.jack.util.JackUtility;
 
 public final class IndexHint implements QueryCondition {
 
@@ -39,11 +37,10 @@ public final class IndexHint implements QueryCondition {
   private Scope scope;
   private List<String> indexNames;
 
-  public IndexHint(Type type, Scope scope, Index index, Index... indices) {
+  public IndexHint(Type type, Scope scope, Index... indices) {
     this.type = type;
     this.scope = scope;
-    this.indexNames = Lists.newArrayList(index.getName());
-    this.indexNames.addAll(Collections2.transform(Arrays.asList(indices), JackUtility.INDEX_NAME_EXTRACTOR));
+    this.indexNames = Arrays.stream(indices).map(Index::getName).collect(Collectors.toList());
     Collections.sort(indexNames);
   }
 

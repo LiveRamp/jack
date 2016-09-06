@@ -43,36 +43,11 @@ public class Database1Impl implements IDatabase1 {
     this.conn = conn;
     this.databases = databases;
     this.postQueryAction = postQueryAction;
-    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseCommentPersistenceImpl(conn, databases);
-      }
-    };
-    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IImagePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseImagePersistenceImpl(conn, databases);
-      }
-    };
-    this.lockable_models = new LazyLoadPersistence<ILockableModelPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected ILockableModelPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseLockableModelPersistenceImpl(conn, databases);
-      }
-    };
-    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IPostPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BasePostPersistenceImpl(conn, databases);
-      }
-    };
-    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IUserPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseUserPersistenceImpl(conn, databases);
-      }
-    };
+    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases, BaseCommentPersistenceImpl::new);
+    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases, BaseImagePersistenceImpl::new);
+    this.lockable_models = new LazyLoadPersistence<ILockableModelPersistence, IDatabases>(conn, databases, BaseLockableModelPersistenceImpl::new);
+    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases, BasePostPersistenceImpl::new);
+    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases, BaseUserPersistenceImpl::new);
   }
 
   public GenericQuery.Builder createQuery() {
@@ -85,7 +60,7 @@ public class Database1Impl implements IDatabase1 {
   public Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException {
     final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
     try {
-      for (int i=0; i<params.size(); i++) {
+      for (int i = 0; i < params.size(); i++) {
         final Object param = params.get(i);
         final int paramIdx = i+1;
         preparedStatement.setObject(paramIdx, param);

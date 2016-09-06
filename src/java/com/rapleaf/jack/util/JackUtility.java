@@ -11,8 +11,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.rapleaf.jack.queries.Index;
-
 public final class JackUtility {
 
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -24,10 +22,6 @@ public final class JackUtility {
     FORMATTER_FUNCTION_MAP.put(java.sql.Date.class, new DateFormatter(DATE_FORMATTER));
     FORMATTER_FUNCTION_MAP.put(java.sql.Timestamp.class, new DateFormatter(TIMESTAMP_FORMATTER));
   }
-
-  public static final Function<Object, Long> LONG_CASTER = Long.class::cast;
-
-  public static final Function<Index, String> INDEX_NAME_EXTRACTOR = Index::getName;
 
   private JackUtility() {
   }

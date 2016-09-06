@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -94,7 +95,6 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     super(null);
     attributes = new Attributes(id, lock_version, message, created_at, updated_at);
   }
-  
   public LockableModel(long id, final int lock_version, final String message, final long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, lock_version, message, updated_at);
@@ -157,46 +157,46 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     if (databases != null) {
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public int getLockVersion(){
+  public int getLockVersion() {
     return attributes.getLockVersion();
   }
 
-  public LockableModel setLockVersion(int newval){
+  public LockableModel setLockVersion(int newval) {
     attributes.setLockVersion(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getMessage(){
+  public String getMessage() {
     return attributes.getMessage();
   }
 
-  public LockableModel setMessage(String newval){
+  public LockableModel setMessage(String newval) {
     attributes.setMessage(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public long getCreatedAt(){
+  public long getCreatedAt() {
     return attributes.getCreatedAt();
   }
 
-  public LockableModel setCreatedAt(long newval){
+  public LockableModel setCreatedAt(long newval) {
     attributes.setCreatedAt(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public long getUpdatedAt(){
+  public long getUpdatedAt() {
     return attributes.getUpdatedAt();
   }
 
-  public LockableModel setUpdatedAt(long newval){
+  public LockableModel setUpdatedAt(long newval) {
     attributes.setUpdatedAt(newval);
     cachedHashCode = 0;
     return this;
@@ -205,16 +205,16 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   public void setField(_Fields field, Object value) {
     switch (field) {
       case lock_version:
-        setLockVersion((Integer) value);
+        setLockVersion((Integer)value);
         break;
       case message:
-        setMessage((String) value);
+        setMessage((String)value);
         break;
       case created_at:
-        setCreatedAt((Long) value);
+        setCreatedAt((Long)value);
         break;
       case updated_at:
-        setUpdatedAt((Long) value);
+        setUpdatedAt((Long)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -305,7 +305,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -362,19 +362,19 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
   public String toString() {
     return "<LockableModel"
-      + " id: " + this.getId()
-      + " lock_version: " + getLockVersion()
-      + " message: " + getMessage()
-      + " created_at: " + getCreatedAt()
-      + " updated_at: " + getUpdatedAt()
-      + ">";
+        + " id: " + this.getId()
+        + " lock_version: " + getLockVersion()
+        + " message: " + getMessage()
+        + " created_at: " + getCreatedAt()
+        + " updated_at: " + getUpdatedAt()
+        + ">";
   }
 
   public void unsetAssociations() {
     unsetDatabaseReference();
   }
 
-  public int compareTo(LockableModel that){
+  public int compareTo(LockableModel that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -429,11 +429,11 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      Integer lock_version_tmp = (Integer) fieldsMap.get(LockableModel._Fields.lock_version);
+      Integer lock_version_tmp = (Integer)fieldsMap.get(LockableModel._Fields.lock_version);
       int lock_version = lock_version_tmp == null ? 0 : lock_version_tmp;
-      String message = (String) fieldsMap.get(LockableModel._Fields.message);
-      long created_at = (Long) fieldsMap.get(LockableModel._Fields.created_at);
-      long updated_at = (Long) fieldsMap.get(LockableModel._Fields.updated_at);
+      String message = (String)fieldsMap.get(LockableModel._Fields.message);
+      long created_at = (Long)fieldsMap.get(LockableModel._Fields.created_at);
+      long updated_at = (Long)fieldsMap.get(LockableModel._Fields.updated_at);
       this.__lock_version = lock_version;
       this.__message = message;
       this.__created_at = created_at;
@@ -448,41 +448,41 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       this.__updated_at = other.getUpdatedAt();
     }
 
-    public int getLockVersion(){
+    public int getLockVersion() {
       return __lock_version;
     }
 
-    public Attributes setLockVersion(int newval){
+    public Attributes setLockVersion(int newval) {
       this.__lock_version = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getMessage(){
+    public String getMessage() {
       return __message;
     }
 
-    public Attributes setMessage(String newval){
+    public Attributes setMessage(String newval) {
       this.__message = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public long getCreatedAt(){
+    public long getCreatedAt() {
       return __created_at;
     }
 
-    public Attributes setCreatedAt(long newval){
+    public Attributes setCreatedAt(long newval) {
       this.__created_at = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public long getUpdatedAt(){
+    public long getUpdatedAt() {
       return __updated_at;
     }
 
-    public Attributes setUpdatedAt(long newval){
+    public Attributes setUpdatedAt(long newval) {
       this.__updated_at = newval;
       cachedHashCode = 0;
       return this;
@@ -491,16 +491,16 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     public void setField(_Fields field, Object value) {
       switch (field) {
         case lock_version:
-          setLockVersion((Integer) value);
+          setLockVersion((Integer)value);
           break;
         case message:
-          setMessage((String) value);
+          setMessage((String)value);
           break;
         case created_at:
-          setCreatedAt((Long) value);
+          setCreatedAt((Long)value);
           break;
         case updated_at:
-          setUpdatedAt((Long) value);
+          setUpdatedAt((Long)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -509,19 +509,19 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("lock_version")) {
-        setLockVersion((Integer)  value);
+        setLockVersion((Integer)value);
         return;
       }
       if (fieldName.equals("message")) {
-        setMessage((String)  value);
+        setMessage((String)value);
         return;
       }
       if (fieldName.equals("created_at")) {
-        setCreatedAt((Long)  value);
+        setCreatedAt((Long)value);
         return;
       }
       if (fieldName.equals("updated_at")) {
-        setUpdatedAt((Long)  value);
+        setUpdatedAt((Long)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -633,11 +633,11 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     
     public String toString() {
       return "<LockableModel.Attributes"
-        + " lock_version: " + getLockVersion()
-        + " message: " + getMessage()
-        + " created_at: " + getCreatedAt()
-        + " updated_at: " + getUpdatedAt()
-        + ">";
+          + " lock_version: " + getLockVersion()
+          + " message: " + getMessage()
+          + " created_at: " + getCreatedAt()
+          + " updated_at: " + getUpdatedAt()
+          + ">";
     }
   }
 
@@ -652,7 +652,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -663,7 +663,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -675,24 +675,14 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
     @Override
     public String toString() {
-      return "<LockableModel.Id: "+this.getId()+">";
+      return "<LockableModel.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<LockableModel> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (LockableModel model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<LockableModel> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (LockableModel model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<LockableModel> models) {
+    return models.stream()
+        .map(LockableModel::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {

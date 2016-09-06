@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -176,106 +177,106 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public String getHandle(){
+  public String getHandle() {
     return attributes.getHandle();
   }
 
-  public User setHandle(String newval){
+  public User setHandle(String newval) {
     attributes.setHandle(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getCreatedAtMillis(){
+  public Long getCreatedAtMillis() {
     return attributes.getCreatedAtMillis();
   }
 
-  public User setCreatedAtMillis(Long newval){
+  public User setCreatedAtMillis(Long newval) {
     attributes.setCreatedAtMillis(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public int getNumPosts(){
+  public int getNumPosts() {
     return attributes.getNumPosts();
   }
 
-  public User setNumPosts(int newval){
+  public User setNumPosts(int newval) {
     attributes.setNumPosts(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getSomeDate(){
+  public Long getSomeDate() {
     return attributes.getSomeDate();
   }
 
-  public User setSomeDate(Long newval){
+  public User setSomeDate(Long newval) {
     attributes.setSomeDate(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getSomeDatetime(){
+  public Long getSomeDatetime() {
     return attributes.getSomeDatetime();
   }
 
-  public User setSomeDatetime(Long newval){
+  public User setSomeDatetime(Long newval) {
     attributes.setSomeDatetime(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getBio(){
+  public String getBio() {
     return attributes.getBio();
   }
 
-  public User setBio(String newval){
+  public User setBio(String newval) {
     attributes.setBio(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public byte[] getSomeBinary(){
+  public byte[] getSomeBinary() {
     return attributes.getSomeBinary();
   }
 
-  public User setSomeBinary(byte[] newval){
+  public User setSomeBinary(byte[] newval) {
     attributes.setSomeBinary(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Double getSomeFloat(){
+  public Double getSomeFloat() {
     return attributes.getSomeFloat();
   }
 
-  public User setSomeFloat(Double newval){
+  public User setSomeFloat(Double newval) {
     attributes.setSomeFloat(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Double getSomeDecimal(){
+  public Double getSomeDecimal() {
     return attributes.getSomeDecimal();
   }
 
-  public User setSomeDecimal(Double newval){
+  public User setSomeDecimal(Double newval) {
     attributes.setSomeDecimal(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Boolean isSomeBoolean(){
+  public Boolean isSomeBoolean() {
     return attributes.isSomeBoolean();
   }
 
-  public User setSomeBoolean(Boolean newval){
+  public User setSomeBoolean(Boolean newval) {
     attributes.setSomeBoolean(newval);
     cachedHashCode = 0;
     return this;
@@ -284,34 +285,34 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public void setField(_Fields field, Object value) {
     switch (field) {
       case handle:
-        setHandle((String) value);
+        setHandle((String)value);
         break;
       case created_at_millis:
-        setCreatedAtMillis((Long) value);
+        setCreatedAtMillis((Long)value);
         break;
       case num_posts:
-        setNumPosts((Integer) value);
+        setNumPosts((Integer)value);
         break;
       case some_date:
-        setSomeDate((Long) value);
+        setSomeDate((Long)value);
         break;
       case some_datetime:
-        setSomeDatetime((Long) value);
+        setSomeDatetime((Long)value);
         break;
       case bio:
-        setBio((String) value);
+        setBio((String)value);
         break;
       case some_binary:
-        setSomeBinary((byte[]) value);
+        setSomeBinary((byte[])value);
         break;
       case some_float:
-        setSomeFloat((Double) value);
+        setSomeFloat((Double)value);
         break;
       case some_decimal:
-        setSomeDecimal((Double) value);
+        setSomeDecimal((Double)value);
         break;
       case some_boolean:
-        setSomeBoolean((Boolean) value);
+        setSomeBoolean((Boolean)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -498,7 +499,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -585,18 +586,18 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
   public String toString() {
     return "<User"
-      + " id: " + this.getId()
-      + " handle: " + getHandle()
-      + " created_at_millis: " + getCreatedAtMillis()
-      + " num_posts: " + getNumPosts()
-      + " some_date: " + getSomeDate()
-      + " some_datetime: " + getSomeDatetime()
-      + " bio: " + getBio()
-      + " some_binary: " + getSomeBinary()
-      + " some_float: " + getSomeFloat()
-      + " some_decimal: " + getSomeDecimal()
-      + " some_boolean: " + isSomeBoolean()
-      + ">";
+        + " id: " + this.getId()
+        + " handle: " + getHandle()
+        + " created_at_millis: " + getCreatedAtMillis()
+        + " num_posts: " + getNumPosts()
+        + " some_date: " + getSomeDate()
+        + " some_datetime: " + getSomeDatetime()
+        + " bio: " + getBio()
+        + " some_binary: " + getSomeBinary()
+        + " some_float: " + getSomeFloat()
+        + " some_decimal: " + getSomeDecimal()
+        + " some_boolean: " + isSomeBoolean()
+        + ">";
   }
 
   public void unsetAssociations() {
@@ -606,7 +607,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     __assoc_image = null;
   }
 
-  public int compareTo(User that){
+  public int compareTo(User that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -657,16 +658,16 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      String handle = (String) fieldsMap.get(User._Fields.handle);
-      Long created_at_millis = (Long) fieldsMap.get(User._Fields.created_at_millis);
-      int num_posts = (Integer) fieldsMap.get(User._Fields.num_posts);
-      Long some_date = (Long) fieldsMap.get(User._Fields.some_date);
-      Long some_datetime = (Long) fieldsMap.get(User._Fields.some_datetime);
-      String bio = (String) fieldsMap.get(User._Fields.bio);
-      byte[] some_binary = (byte[]) fieldsMap.get(User._Fields.some_binary);
-      Double some_float = (Double) fieldsMap.get(User._Fields.some_float);
-      Double some_decimal = (Double) fieldsMap.get(User._Fields.some_decimal);
-      Boolean some_boolean = (Boolean) fieldsMap.get(User._Fields.some_boolean);
+      String handle = (String)fieldsMap.get(User._Fields.handle);
+      Long created_at_millis = (Long)fieldsMap.get(User._Fields.created_at_millis);
+      int num_posts = (Integer)fieldsMap.get(User._Fields.num_posts);
+      Long some_date = (Long)fieldsMap.get(User._Fields.some_date);
+      Long some_datetime = (Long)fieldsMap.get(User._Fields.some_datetime);
+      String bio = (String)fieldsMap.get(User._Fields.bio);
+      byte[] some_binary = (byte[])fieldsMap.get(User._Fields.some_binary);
+      Double some_float = (Double)fieldsMap.get(User._Fields.some_float);
+      Double some_decimal = (Double)fieldsMap.get(User._Fields.some_decimal);
+      Boolean some_boolean = (Boolean)fieldsMap.get(User._Fields.some_boolean);
       this.__handle = handle;
       this.__created_at_millis = created_at_millis;
       this.__num_posts = num_posts;
@@ -693,101 +694,101 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
       this.__some_boolean = other.isSomeBoolean();
     }
 
-    public String getHandle(){
+    public String getHandle() {
       return __handle;
     }
 
-    public Attributes setHandle(String newval){
+    public Attributes setHandle(String newval) {
       this.__handle = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getCreatedAtMillis(){
+    public Long getCreatedAtMillis() {
       return __created_at_millis;
     }
 
-    public Attributes setCreatedAtMillis(Long newval){
+    public Attributes setCreatedAtMillis(Long newval) {
       this.__created_at_millis = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public int getNumPosts(){
+    public int getNumPosts() {
       return __num_posts;
     }
 
-    public Attributes setNumPosts(int newval){
+    public Attributes setNumPosts(int newval) {
       this.__num_posts = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getSomeDate(){
+    public Long getSomeDate() {
       return __some_date;
     }
 
-    public Attributes setSomeDate(Long newval){
+    public Attributes setSomeDate(Long newval) {
       this.__some_date = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getSomeDatetime(){
+    public Long getSomeDatetime() {
       return __some_datetime;
     }
 
-    public Attributes setSomeDatetime(Long newval){
+    public Attributes setSomeDatetime(Long newval) {
       this.__some_datetime = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getBio(){
+    public String getBio() {
       return __bio;
     }
 
-    public Attributes setBio(String newval){
+    public Attributes setBio(String newval) {
       this.__bio = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public byte[] getSomeBinary(){
+    public byte[] getSomeBinary() {
       return __some_binary;
     }
 
-    public Attributes setSomeBinary(byte[] newval){
+    public Attributes setSomeBinary(byte[] newval) {
       this.__some_binary = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Double getSomeFloat(){
+    public Double getSomeFloat() {
       return __some_float;
     }
 
-    public Attributes setSomeFloat(Double newval){
+    public Attributes setSomeFloat(Double newval) {
       this.__some_float = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Double getSomeDecimal(){
+    public Double getSomeDecimal() {
       return __some_decimal;
     }
 
-    public Attributes setSomeDecimal(Double newval){
+    public Attributes setSomeDecimal(Double newval) {
       this.__some_decimal = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Boolean isSomeBoolean(){
+    public Boolean isSomeBoolean() {
       return __some_boolean;
     }
 
-    public Attributes setSomeBoolean(Boolean newval){
+    public Attributes setSomeBoolean(Boolean newval) {
       this.__some_boolean = newval;
       cachedHashCode = 0;
       return this;
@@ -796,34 +797,34 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     public void setField(_Fields field, Object value) {
       switch (field) {
         case handle:
-          setHandle((String) value);
+          setHandle((String)value);
           break;
         case created_at_millis:
-          setCreatedAtMillis((Long) value);
+          setCreatedAtMillis((Long)value);
           break;
         case num_posts:
-          setNumPosts((Integer) value);
+          setNumPosts((Integer)value);
           break;
         case some_date:
-          setSomeDate((Long) value);
+          setSomeDate((Long)value);
           break;
         case some_datetime:
-          setSomeDatetime((Long) value);
+          setSomeDatetime((Long)value);
           break;
         case bio:
-          setBio((String) value);
+          setBio((String)value);
           break;
         case some_binary:
-          setSomeBinary((byte[]) value);
+          setSomeBinary((byte[])value);
           break;
         case some_float:
-          setSomeFloat((Double) value);
+          setSomeFloat((Double)value);
           break;
         case some_decimal:
-          setSomeDecimal((Double) value);
+          setSomeDecimal((Double)value);
           break;
         case some_boolean:
-          setSomeBoolean((Boolean) value);
+          setSomeBoolean((Boolean)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -832,43 +833,43 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("handle")) {
-        setHandle((String)  value);
+        setHandle((String)value);
         return;
       }
       if (fieldName.equals("created_at_millis")) {
-        setCreatedAtMillis((Long)  value);
+        setCreatedAtMillis((Long)value);
         return;
       }
       if (fieldName.equals("num_posts")) {
-        setNumPosts((Integer)  value);
+        setNumPosts((Integer)value);
         return;
       }
       if (fieldName.equals("some_date")) {
-        setSomeDate((Long)  value);
+        setSomeDate((Long)value);
         return;
       }
       if (fieldName.equals("some_datetime")) {
-        setSomeDatetime((Long)  value);
+        setSomeDatetime((Long)value);
         return;
       }
       if (fieldName.equals("bio")) {
-        setBio((String)  value);
+        setBio((String)value);
         return;
       }
       if (fieldName.equals("some_binary")) {
-        setSomeBinary((byte[])  value);
+        setSomeBinary((byte[])value);
         return;
       }
       if (fieldName.equals("some_float")) {
-        setSomeFloat((Double)  value);
+        setSomeFloat((Double)value);
         return;
       }
       if (fieldName.equals("some_decimal")) {
-        setSomeDecimal((Double)  value);
+        setSomeDecimal((Double)value);
         return;
       }
       if (fieldName.equals("some_boolean")) {
-        setSomeBoolean((Boolean)  value);
+        setSomeBoolean((Boolean)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -1070,17 +1071,17 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     
     public String toString() {
       return "<User.Attributes"
-        + " handle: " + getHandle()
-        + " created_at_millis: " + getCreatedAtMillis()
-        + " num_posts: " + getNumPosts()
-        + " some_date: " + getSomeDate()
-        + " some_datetime: " + getSomeDatetime()
-        + " bio: " + getBio()
-        + " some_binary: " + getSomeBinary()
-        + " some_float: " + getSomeFloat()
-        + " some_decimal: " + getSomeDecimal()
-        + " some_boolean: " + isSomeBoolean()
-        + ">";
+          + " handle: " + getHandle()
+          + " created_at_millis: " + getCreatedAtMillis()
+          + " num_posts: " + getNumPosts()
+          + " some_date: " + getSomeDate()
+          + " some_datetime: " + getSomeDatetime()
+          + " bio: " + getBio()
+          + " some_binary: " + getSomeBinary()
+          + " some_float: " + getSomeFloat()
+          + " some_decimal: " + getSomeDecimal()
+          + " some_boolean: " + isSomeBoolean()
+          + ">";
     }
   }
 
@@ -1095,7 +1096,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -1106,7 +1107,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -1118,24 +1119,14 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
     @Override
     public String toString() {
-      return "<User.Id: "+this.getId()+">";
+      return "<User.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<User> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (User model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<User> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (User model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<User> models) {
+    return models.stream()
+        .map(User::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
