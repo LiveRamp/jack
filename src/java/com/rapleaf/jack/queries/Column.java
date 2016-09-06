@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-
 import com.rapleaf.jack.queries.where_operators.Between;
 import com.rapleaf.jack.queries.where_operators.EqualTo;
 import com.rapleaf.jack.queries.where_operators.GenericOperator;
@@ -225,7 +222,7 @@ public class Column<T> {
 
   public GenericConstraint notBetween(Column<T> min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<>(min.as(Long.class),(Long)max));
+      return createDateConstraint(new NotBetween<>(min.as(Long.class), (Long)max));
     } else {
       return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
     }
@@ -259,11 +256,11 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint<?> notIn(T... values) {
+  public GenericConstraint notIn(T... values) {
     if (isDateColumn()) {
       return createDateConstraint(new NotIn<>(Arrays.copyOf(values, values.length, Long[].class)));
     } else {
-      return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
+      return new GenericConstraint<T>(this, new NotIn<T>(values));
     }
   }
 
