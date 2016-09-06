@@ -15,23 +15,9 @@ public abstract class WhereOperator<V> implements IWhereOperator<V> {
     this.sqlStatement = sqlStatement;
   }
 
-  protected WhereOperator(String sqlStatement, V parameter) {
+  protected WhereOperator(String sqlStatement, V... parameters) {
     this.sqlStatement = sqlStatement;
-    this.parameters.add(parameter);
-    ensureNoNullParameter();
-  }
-
-  protected WhereOperator(String sqlStatement, V param1, V param2) {
-    this.sqlStatement = sqlStatement;
-    this.parameters.add(param1);
-    this.parameters.add(param2);
-    ensureNoNullParameter();
-  }
-
-  protected WhereOperator(String sqlStatement, V param, V... otherParam) {
-    this.sqlStatement = sqlStatement;
-    this.parameters.add(param);
-    Collections.addAll(this.parameters, otherParam);
+    Collections.addAll(this.parameters, parameters);
     ensureNoNullParameter();
   }
 

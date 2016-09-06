@@ -89,7 +89,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public boolean delete(T model) throws IOException;
+  boolean delete(T model) throws IOException;
 
   /**
    * Destroy record with <i>id</i>.
@@ -98,7 +98,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public boolean delete(long id) throws IOException;
+  boolean delete(long id) throws IOException;
 
   /**
    * Delete all records in this persistence.
@@ -121,9 +121,9 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * disableCaching() does not clear the cache, so the cache contents are preserved for when
    * caching is enabled again.
    */
-  public boolean isCaching();
+  boolean isCaching();
 
-  public void enableCaching();
+  void enableCaching();
 
-  public void disableCaching();
+  void disableCaching();
 }

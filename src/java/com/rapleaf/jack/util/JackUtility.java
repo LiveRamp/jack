@@ -5,8 +5,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-import com.google.common.base.Function;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,24 +18,16 @@ public final class JackUtility {
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
   public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
-  public static final Map<Class, Function<Long, String>> FORMATTER_FUNCTION_MAP = new HashMap<Class, Function<Long, String>>(2) {{
-    put(java.sql.Date.class, new DateFormatter(DATE_FORMATTER));
-    put(java.sql.Timestamp.class, new DateFormatter(TIMESTAMP_FORMATTER));
-  }};
+  public static final Map<Class<?>, Function<Long, String>> FORMATTER_FUNCTION_MAP = new HashMap<>(2);
 
-  public static final Function<Object, Long> LONG_CASTER = new Function<Object, Long>() {
-    @Override
-    public Long apply(final Object value) {
-      return Long.class.cast(value);
-    }
-  };
+  static {
+    FORMATTER_FUNCTION_MAP.put(java.sql.Date.class, new DateFormatter(DATE_FORMATTER));
+    FORMATTER_FUNCTION_MAP.put(java.sql.Timestamp.class, new DateFormatter(TIMESTAMP_FORMATTER));
+  }
 
-  public static final Function<Index, String> INDEX_NAME_EXTRACTOR = new Function<Index, String>() {
-    @Override
-    public String apply(final Index index) {
-      return index.getName();
-    }
-  };
+  public static final Function<Object, Long> LONG_CASTER = Long.class::cast;
+
+  public static final Function<Index, String> INDEX_NAME_EXTRACTOR = Index::getName;
 
   private JackUtility() {
   }

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Optional;
 import org.slf4j.Logger;
@@ -54,8 +55,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   private final String setFieldsPrepStatementSection;
   private final String lockFieldName;
 
-  protected static interface AttrSetter {
-    public void set(PreparedStatement stmt) throws SQLException;
+  @FunctionalInterface
+  protected interface AttrSetter {
+    void set(PreparedStatement stmt) throws SQLException;
   }
 
   private final BaseDatabaseConnection conn;
@@ -63,8 +65,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   private final List<String> fieldNames;
 
-  protected final Map<Long, T> cachedById = new HashMap<Long, T>();
-  protected final Map<String, Map<Long, List<T>>> cachedByForeignKey = new HashMap<String, Map<Long, List<T>>>();
+  protected final Map<Long, T> cachedById = new HashMap<>();
+  protected final Map<String, Map<Long, List<T>>> cachedByForeignKey = new HashMap<>();
 
   private boolean useCache = true;
 
@@ -189,7 +191,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    T model = null;
+    T model;
     while (true) {
       try {
         stmt = conn.getPreparedStatement("SELECT * FROM "
@@ -219,8 +221,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   @Override
   public List<T> find(Set<Long> ids) throws IOException {
-    List<T> foundList = new ArrayList<T>();
-    Set<Long> notCachedIds = new HashSet<Long>();
+    List<T> foundList = new ArrayList<>();
+    Set<Long> notCachedIds = new HashSet<>();
     if (useCache) {
       for (Long id : ids) {
         if (cachedById.containsKey(id)) {
@@ -352,11 +354,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   private Set<Enum> getSelectedFields(ModelQuery query) throws IOException {
     // Extract the list of selected columns from the list of FieldSelector we have
-    Set<Enum> selectedFields = new HashSet<Enum>();
-    for (FieldSelector selector : query.getSelectedFields()) {
-      selectedFields.add(selector.getField());
-    }
-    return selectedFields;
+
+    return query.getSelectedFields().stream().map(FieldSelector::getField).collect(Collectors.toSet());
   }
 
   protected String getIdSetCondition(Set<Long> ids) {

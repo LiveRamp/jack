@@ -19,10 +19,8 @@ public class GenericConstraint<T> implements QueryCondition {
     this.chainedOrConstraints = Lists.newArrayList();
   }
 
-  public GenericConstraint or(GenericConstraint constraint, GenericConstraint... constraints) {
-    List<GenericConstraint> chainedAndConstraints = Lists.newArrayList(constraint);
-    chainedAndConstraints.addAll(Arrays.asList(constraints));
-    this.chainedOrConstraints.add(chainedAndConstraints);
+  public GenericConstraint<T> or(GenericConstraint<?>... constraints) {
+    chainedOrConstraints.add(Arrays.asList(constraints));
     return this;
   }
 
