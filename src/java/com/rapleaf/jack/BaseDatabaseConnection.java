@@ -1,5 +1,7 @@
 package com.rapleaf.jack;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +11,7 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseDatabaseConnection implements Serializable {
+public abstract class BaseDatabaseConnection implements Serializable, Closeable {
 
   private static Logger LOG = LoggerFactory.getLogger(BaseDatabaseConnection.class);
 
@@ -148,6 +150,19 @@ public abstract class BaseDatabaseConnection implements Serializable {
       getConnection().rollback();
     } catch (SQLException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Close the connection to the database.
+   */
+  @Override
+  public void close() throws IOException {
+    try {
+      getConnection().close();
+      conn = null;
+    } catch (SQLException e) {
+      throw new IOException(e);
     }
   }
 }

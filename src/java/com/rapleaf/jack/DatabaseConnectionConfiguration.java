@@ -15,56 +15,56 @@ public class DatabaseConnectionConfiguration {
   private String host;
   private String dbName;
   private Optional<Integer> port;
-  private Optional<Boolean> parrallelTest;
+  private Optional<Boolean> parallelTest;
   private Optional<String> username;
   private Optional<String> password;
 
-  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parrallelTest, Optional<String> username, Optional<String> password) {
+  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parallelTest, Optional<String> username, Optional<String> password) {
     this.adapter = adapter;
     this.host = host;
     this.dbName = dbName;
     this.port = port;
-    this.parrallelTest = parrallelTest;
+    this.parallelTest = parallelTest;
     this.username = username;
     this.password = password;
   }
 
-  public static DatabaseConnectionConfiguration loadFromEnvironment(String dbname_key) {
-    Map<String, Object> env_info;
-    Map<String, Object> db_info;
+  public static DatabaseConnectionConfiguration loadFromEnvironment(String dbNameKey) {
+    Map<String, Object> envInfo;
+    Map<String, Object> dbInfo;
     // load database info from config folder
     try {
-      env_info = (Map<String, Object>)YAML.load(new FileReader("config/environment.yml"));
+      envInfo = (Map<String, Object>)YAML.load(new FileReader("config/environment.yml"));
     } catch (FileNotFoundException e) {
-      env_info = Maps.newHashMap();
+      envInfo = Maps.newHashMap();
     }
-    String db_info_name = (String)env_info.get(dbname_key);
+    String db_info_name = (String)envInfo.get(dbNameKey);
     try {
-      db_info = (Map)((Map)YAML.load(new FileReader("config/database.yml"))).get(db_info_name);
+      dbInfo = (Map)((Map)YAML.load(new FileReader("config/database.yml"))).get(db_info_name);
     } catch (FileNotFoundException e) {
-      db_info = Maps.newHashMap();
+      dbInfo = Maps.newHashMap();
     }
 
-    String adapter = load("adapter", db_info, "adapter", "database",
-        envVar("JACK_DB_ADAPTER", dbname_key), prop("jack.db.adapter", dbname_key), new StringIdentity());
+    String adapter = load("adapter", dbInfo, "adapter", "database",
+        envVar("JACK_DB_ADAPTER", dbNameKey), prop("jack.db.adapter", dbNameKey), new StringIdentity());
 
-    String host = load("host", db_info, "host", "database",
-        envVar("JACK_DB_HOST", dbname_key), prop("jack.db.host", dbname_key), new StringIdentity());
+    String host = load("host", dbInfo, "host", "database",
+        envVar("JACK_DB_HOST", dbNameKey), prop("jack.db.host", dbNameKey), new StringIdentity());
 
-    String dbName = load("database name", db_info, "database", "database",
-        envVar("JACK_DB_NAME", dbname_key), prop("jack.db.name", dbname_key), new StringIdentity());
+    String dbName = load("database name", dbInfo, "database", "database",
+        envVar("JACK_DB_NAME", dbNameKey), prop("jack.db.name", dbNameKey), new StringIdentity());
 
-    Optional<Integer> port = loadOpt(db_info, "port",
-        envVar("JACK_DB_PORT", dbname_key), prop("jack.db.port", dbname_key), new ToInteger());
+    Optional<Integer> port = loadOpt(dbInfo, "port",
+        envVar("JACK_DB_PORT", dbNameKey), prop("jack.db.port", dbNameKey), new ToInteger());
 
-    Optional<Boolean> parallelTesting = loadOpt(env_info, "enable_parallel_tests",
-        envVar("JACK_DB_PARALLEL_TESTS", dbname_key), prop("jack.db.parallel.test", dbname_key), new ToBoolean());
+    Optional<Boolean> parallelTesting = loadOpt(envInfo, "enable_parallel_tests",
+        envVar("JACK_DB_PARALLEL_TESTS", dbNameKey), prop("jack.db.parallel.test", dbNameKey), new ToBoolean());
 
-    Optional<String> username = loadOpt(db_info, "username",
-        envVar("JACK_DB_USERNAME", dbname_key), prop("jack.db.username", dbname_key), new StringIdentity());
+    Optional<String> username = loadOpt(dbInfo, "username",
+        envVar("JACK_DB_USERNAME", dbNameKey), prop("jack.db.username", dbNameKey), new StringIdentity());
 
-    Optional<String> password = loadOpt(db_info, "password",
-        envVar("JACK_DB_PASSWORD", dbname_key), prop("jack.db.password", dbname_key), new StringIdentity());
+    Optional<String> password = loadOpt(dbInfo, "password",
+        envVar("JACK_DB_PASSWORD", dbNameKey), prop("jack.db.password", dbNameKey), new StringIdentity());
 
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
   }
@@ -133,7 +133,7 @@ public class DatabaseConnectionConfiguration {
   }
 
   public Boolean enableParallelTests() {
-    return parrallelTest.isPresent() ? parrallelTest.get() : false;
+    return parallelTest.isPresent() ? parallelTest.get() : false;
   }
 
   public Optional<String> getUsername() {
