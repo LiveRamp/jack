@@ -43,11 +43,11 @@ public class Database1Impl implements IDatabase1 {
     this.conn = conn;
     this.databases = databases;
     this.postQueryAction = postQueryAction;
-    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases, BaseCommentPersistenceImpl::new);
-    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases, BaseImagePersistenceImpl::new);
-    this.lockable_models = new LazyLoadPersistence<ILockableModelPersistence, IDatabases>(conn, databases, BaseLockableModelPersistenceImpl::new);
-    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases, BasePostPersistenceImpl::new);
-    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases, BaseUserPersistenceImpl::new);
+    this.comments = new LazyLoadPersistence<>(conn, databases, BaseCommentPersistenceImpl::new);
+    this.images = new LazyLoadPersistence<>(conn, databases, BaseImagePersistenceImpl::new);
+    this.lockable_models = new LazyLoadPersistence<>(conn, databases, BaseLockableModelPersistenceImpl::new);
+    this.posts = new LazyLoadPersistence<>(conn, databases, BasePostPersistenceImpl::new);
+    this.users = new LazyLoadPersistence<>(conn, databases, BaseUserPersistenceImpl::new);
   }
 
   public GenericQuery.Builder createQuery() {
