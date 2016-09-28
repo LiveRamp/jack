@@ -90,7 +90,8 @@ public class DatabaseConnectionConfiguration {
     if (result.isPresent()) {
       return result.get();
     } else {
-      throw new RuntimeException("Unable to find required configuration " + readableName + ". Please set using one of:\n" +
+      throw new RuntimeException(
+          "Unable to find required configuration " + readableName + ". Please set using one of:\n" +
           "Environment Variable: " + envVar + "\n" +
           "Java System Property: " + javaProp + "\n" +
           "Entry in config/" + mapYmlFile + ".yml: " + mapKey);
@@ -109,7 +110,7 @@ public class DatabaseConnectionConfiguration {
     if (System.getProperty(javaProp) != null) {
       return Optional.fromNullable(fromString.apply(System.getProperty(javaProp)));
     }
-    if (map.containsKey(mapKey)) {
+    if (map != null && map.containsKey(mapKey)) {
       return Optional.fromNullable((T)map.get(mapKey));
     }
     return Optional.absent();
