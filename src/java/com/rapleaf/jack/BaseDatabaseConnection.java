@@ -17,7 +17,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   private static Logger LOG = LoggerFactory.getLogger(BaseDatabaseConnection.class);
 
   public static String DISABLE_PROPERTY = "jack.db.disallow_connections";
-  public static String DISABLE_ENV_VAR = "jack.db.disallow_connections";
+  public static String DISABLE_ENV_VAR = "JACK_DB_DISALLOW_CONNECTIONS";
 
 
   protected transient Connection conn = null;
@@ -27,10 +27,10 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
    * If there is no connection, create a new one.
    */
   public Connection getConnection() {
-    if (!disabled()) {
+    if (!isDisabled()) {
       return getConnectionInternal();
     } else {
-      throw new RuntimeException("Tried to instantiate a connection even though connection have been disabled in this environment");
+      throw new RuntimeException("Tried to instantiate a connection even though connection have been isDisabled in this environment");
     }
   }
 
@@ -146,7 +146,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Makes all changes made since the previous commit/rollback permanent and
    * releases any database locks currently held by this Connection object.
-   * This method should be used only when auto-commit mode has been disabled.
+   * This method should be used only when auto-commit mode has been isDisabled.
    */
   public void commit() {
     try {
@@ -159,7 +159,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Undoes all changes made in the current transaction and releases any
    * database locks currently held by this Connection object. This method should
-   * be used only when auto-commit mode has been disabled.
+   * be used only when auto-commit mode has been isDisabled.
    */
   public void rollback() {
     try {
@@ -182,19 +182,19 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
     }
   }
 
-  private boolean disabled() {
+  private boolean isDisabled() {
     try {
-      Optional<Boolean> disabledBySystemProperty;
+      Boolean disabledBySystemProperty = false;
       try {
-        disabledBySystemProperty = Optional.of(Boolean.parseBoolean(System.getProperty(DISABLE_PROPERTY)));
+        disabledBySystemProperty = Boolean.parseBoolean(System.getProperty(DISABLE_PROPERTY));
       } catch (IllegalArgumentException e) {
-        disabledBySystemProperty = Optional.absent();
+        //property is not set
       }
       Boolean disabledByEnvVar = Boolean.parseBoolean(System.getenv(DISABLE_ENV_VAR));
 
-      return (disabledBySystemProperty.isPresent() && disabledBySystemProperty.get()) || disabledByEnvVar;
+      return disabledBySystemProperty || disabledByEnvVar;
     } catch (Exception e) {
-      LOG.error("Encountered an error trying to determine disabled status: ", e); //migration safety code TODO remove
+      LOG.error("Encountered an error trying to determine isDisabled status: ", e); //migration safety code TODO remove
       return false;
     }
   }
