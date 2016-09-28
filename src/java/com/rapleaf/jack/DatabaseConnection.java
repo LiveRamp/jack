@@ -87,7 +87,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
    */
-  public Connection getConnection() {
+  public Connection getConnectionInternal() {
     try {
       if (conn == null) {
         Class.forName(driverClass);
