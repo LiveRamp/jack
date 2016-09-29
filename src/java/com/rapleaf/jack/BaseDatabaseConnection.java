@@ -29,7 +29,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
     if (!isDisabled()) {
       return getConnectionInternal();
     } else {
-      throw new RuntimeException("Tried to instantiate a connection even though connection have been disabled in this environment");
+      throw new RuntimeException("Tried to instantiate a connection even though connections have been disabled in this environment");
     }
   }
 
