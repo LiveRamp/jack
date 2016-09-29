@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
     if (!isDisabled()) {
       return getConnectionInternal();
     } else {
-      throw new RuntimeException("Tried to instantiate a connection even though connection have been isDisabled in this environment");
+      throw new RuntimeException("Tried to instantiate a connection even though connection have been disabled in this environment");
     }
   }
 
@@ -146,7 +145,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Makes all changes made since the previous commit/rollback permanent and
    * releases any database locks currently held by this Connection object.
-   * This method should be used only when auto-commit mode has been isDisabled.
+   * This method should be used only when auto-commit mode has been disabled.
    */
   public void commit() {
     try {
@@ -159,7 +158,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Undoes all changes made in the current transaction and releases any
    * database locks currently held by this Connection object. This method should
-   * be used only when auto-commit mode has been isDisabled.
+   * be used only when auto-commit mode has been disabled.
    */
   public void rollback() {
     try {
@@ -194,7 +193,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
 
       return disabledBySystemProperty || disabledByEnvVar;
     } catch (Exception e) {
-      LOG.error("Encountered an error trying to determine isDisabled status: ", e); //migration safety code TODO remove
+      LOG.error("Encountered an error trying to determine disabled status: ", e); //migration safety code TODO remove
       return false;
     }
   }
