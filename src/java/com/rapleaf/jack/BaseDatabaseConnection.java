@@ -15,13 +15,26 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
 
   private static Logger LOG = LoggerFactory.getLogger(BaseDatabaseConnection.class);
 
+  public static String DISABLE_PROPERTY = "jack.db.disallow_connections";
+  public static String DISABLE_ENV_VAR = "JACK_DB_DISALLOW_CONNECTIONS";
+
+
   protected transient Connection conn = null;
-  
+
   /**
    * Get a Connection to a database.
    * If there is no connection, create a new one.
    */
-  public abstract Connection getConnection();
+  public Connection getConnection() {
+    if (!isDisabled()) {
+      return getConnectionInternal();
+    } else {
+      throw new RuntimeException("Tried to instantiate a connection even though connection have been disabled in this environment");
+    }
+  }
+
+  protected abstract Connection getConnectionInternal();
+
 
   /**
    * Re-establish the connection in case it has been sitting idle for too
@@ -54,21 +67,22 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   }
 
   /**
-   * Creates a connection using the argument credentials. Useful for when 
-   * MapReduce workers machines need to make database connections, as they 
-   * don't have access to the local config file. Returns true if the new 
+   * Creates a connection using the argument credentials. Useful for when
+   * MapReduce workers machines need to make database connections, as they
+   * don't have access to the local config file. Returns true if the new
    * connection is made and false if a connection already exists.
    */
   public boolean connect() {
     if (conn == null) {
       conn = getConnection();
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 
   /**
-   * Creates a Statement object that can be used to send SQL queries to the RapLeaf 
+   * Creates a Statement object that can be used to send SQL queries to the RapLeaf
    * database.
    */
   public Statement getStatement() {
@@ -80,13 +94,13 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   }
 
   /**
-   * Creates a PreparedStatement object that can be used to send SQL queries to the 
+   * Creates a PreparedStatement object that can be used to send SQL queries to the
    * RapLeaf database.
    */
   public PreparedStatement getPreparedStatement(String statement) {
     try {
       return getConnection().prepareStatement(statement);
-    } catch(SQLException e) {
+    } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
@@ -94,7 +108,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   public PreparedStatement getPreparedStatement(String statement, int options) {
     try {
       return getConnection().prepareStatement(statement, options);
-    } catch(SQLException e) {
+    } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
@@ -105,7 +119,8 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
    * committed as individual transactions. Otherwise, its SQL statements are
    * grouped into transactions that are terminated by a call to either the
    * method commit or the method rollback. By default, new connections are in
-   * auto-commit mode. 
+   * auto-commit mode.
+   *
    * @param autoCommit
    */
   public void setAutoCommit(boolean autoCommit) {
@@ -130,7 +145,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Makes all changes made since the previous commit/rollback permanent and
    * releases any database locks currently held by this Connection object.
-   * This method should be used only when auto-commit mode has been disabled. 
+   * This method should be used only when auto-commit mode has been disabled.
    */
   public void commit() {
     try {
@@ -143,7 +158,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   /**
    * Undoes all changes made in the current transaction and releases any
    * database locks currently held by this Connection object. This method should
-   * be used only when auto-commit mode has been disabled. 
+   * be used only when auto-commit mode has been disabled.
    */
   public void rollback() {
     try {
@@ -163,6 +178,23 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
       conn = null;
     } catch (SQLException e) {
       throw new IOException(e);
+    }
+  }
+
+  private boolean isDisabled() {
+    try {
+      Boolean disabledBySystemProperty = false;
+      try {
+        disabledBySystemProperty = Boolean.parseBoolean(System.getProperty(DISABLE_PROPERTY));
+      } catch (IllegalArgumentException e) {
+        //property is not set
+      }
+      Boolean disabledByEnvVar = Boolean.parseBoolean(System.getenv(DISABLE_ENV_VAR));
+
+      return disabledBySystemProperty || disabledByEnvVar;
+    } catch (Exception e) {
+      LOG.error("Encountered an error trying to determine disabled status: ", e); //migration safety code TODO remove
+      return false;
     }
   }
 }
