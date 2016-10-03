@@ -11,6 +11,13 @@ import org.jvyaml.YAML;
 
 public class DatabaseConnectionConfiguration {
 
+  public static final String ADAPTER_PROP_PREFIX = "jack.db.adapter";
+  public static final String HOST_PROP_PREFIX = "jack.db.host";
+  public static final String NAME_PROP_PREFIX = "jack.db.name";
+  public static final String PORT_PROP_PREFIX = "jack.db.port";
+  public static final String PARALLEL_TEST_PROP_PREFIX = "jack.db.parallel.test";
+  public static final String USERNAME_PROP_PREFIX = "jack.db.username";
+  public static final String PASSWORD_PROP_PREFIX = "jack.db.password";
   private String adapter;
   private String host;
   private String dbName;
@@ -46,35 +53,35 @@ public class DatabaseConnectionConfiguration {
     }
 
     String adapter = load("adapter", dbInfo, "adapter", "database",
-        envVar("JACK_DB_ADAPTER", dbNameKey), prop("jack.db.adapter", dbNameKey), new StringIdentity());
+        envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), new StringIdentity());
 
     String host = load("host", dbInfo, "host", "database",
-        envVar("JACK_DB_HOST", dbNameKey), prop("jack.db.host", dbNameKey), new StringIdentity());
+        envVar(HOST_PROP_PREFIX, dbNameKey), prop(HOST_PROP_PREFIX, dbNameKey), new StringIdentity());
 
     String dbName = load("database name", dbInfo, "database", "database",
-        envVar("JACK_DB_NAME", dbNameKey), prop("jack.db.name", dbNameKey), new StringIdentity());
+        envVar(NAME_PROP_PREFIX, dbNameKey), prop(NAME_PROP_PREFIX, dbNameKey), new StringIdentity());
 
     Optional<Integer> port = loadOpt(dbInfo, "port",
-        envVar("JACK_DB_PORT", dbNameKey), prop("jack.db.port", dbNameKey), new ToInteger());
+        envVar(PORT_PROP_PREFIX, dbNameKey), prop(PORT_PROP_PREFIX, dbNameKey), new ToInteger());
 
     Optional<Boolean> parallelTesting = loadOpt(envInfo, "enable_parallel_tests",
-        envVar("JACK_DB_PARALLEL_TESTS", dbNameKey), prop("jack.db.parallel.test", dbNameKey), new ToBoolean());
+        envVar(PARALLEL_TEST_PROP_PREFIX, dbNameKey), prop(PARALLEL_TEST_PROP_PREFIX, dbNameKey), new ToBoolean());
 
     Optional<String> username = loadOpt(dbInfo, "username",
-        envVar("JACK_DB_USERNAME", dbNameKey), prop("jack.db.username", dbNameKey), new StringIdentity());
+        envVar(USERNAME_PROP_PREFIX, dbNameKey), prop(USERNAME_PROP_PREFIX, dbNameKey), new StringIdentity());
 
     Optional<String> password = loadOpt(dbInfo, "password",
-        envVar("JACK_DB_PASSWORD", dbNameKey), prop("jack.db.password", dbNameKey), new StringIdentity());
+        envVar(PASSWORD_PROP_PREFIX, dbNameKey), prop(PASSWORD_PROP_PREFIX, dbNameKey), new StringIdentity());
 
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
   }
 
-  private static String envVar(String baseEnvVar, String dbname_key) {
-    return baseEnvVar + "_" + dbname_key.toUpperCase();
+  public static String envVar(String propertyPrefix, String dbNameKey) {
+    return propertyPrefix.replace('.','_').toUpperCase() + "_" + dbNameKey.toUpperCase();
   }
 
-  private static String prop(String baseProp, String dbname_key) {
-    return baseProp + "." + dbname_key;
+  private static String prop(String baseProp, String dbNameKey) {
+    return baseProp + "." + dbNameKey;
   }
 
   private static <T> T load(
