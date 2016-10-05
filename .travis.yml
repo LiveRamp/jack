@@ -1,7 +1,9 @@
 language:
   - ruby
+
 rvm:
   - 2.3.0
+
 jdk:
   - oraclejdk7
 
@@ -15,6 +17,8 @@ install: true
 
 before_script:
   - export RAILS_ENV=development
+  # This variable needs to be unset because after rvm installs ruby 2.3, BUNDLE_GEMFILE is set to the
+  # Gemfile under the root path, which fails the dependency installation in the two test projects.
   - unset BUNDLE_GEMFILE
 
 script:
