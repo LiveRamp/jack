@@ -11,5 +11,8 @@ notifications:
 services:
   - mysql
 
+install: true
+
 script:
+  - unset BUNDLE_GEMFILE
   - mvn test -B -Pmysql
