@@ -296,7 +296,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>/bin/sh</executable>
+                  <executable>/bin/bash</executable>
                   <arguments>
                     <argument>test/select-dbms.sh</argument>
                     <argument>mysql</argument>
@@ -325,7 +325,7 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
-                  <executable>/bin/sh</executable>
+                  <executable>/bin/bash</executable>
                   <arguments>
                     <argument>test/select-dbms.sh</argument>
                     <argument>postgres</argument>
