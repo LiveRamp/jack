@@ -13,6 +13,9 @@ services:
 
 install: true
 
-script:
+before_script:
+  - export RAILS_ENV=development
   - unset BUNDLE_GEMFILE
+
+script:
   - mvn test -B -Pmysql
