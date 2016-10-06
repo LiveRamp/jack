@@ -10,6 +10,6 @@ public class Match extends WhereOperator<String> {
   }
 
   public Match(Column<String> column, String prefix, String suffix) {
-    super(String.format("LIKE CONCAT('%s', %s, '%s')", prefix, Preconditions.checkNotNull(column).getSqlKeyword(), suffix));
+    super(String.format("LIKE CONCAT(CONCAT('%s', %s), '%s')", prefix, Preconditions.checkNotNull(column).getSqlKeyword(), suffix));
   }
 }
