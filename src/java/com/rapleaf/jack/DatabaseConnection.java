@@ -14,14 +14,11 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.Map;
 
-import org.jvyaml.YAML;
+import com.google.common.base.Optional;
 
 /**
  * The DatabaseConnection class manages connections to your databases. The
@@ -39,8 +36,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
 
   private final String connectionString;
-  private final String username;
-  private final String password;
+  private final Optional<String> username;
+  private final Optional<String> password;
   private final String driverClass;
   private long expiresAt;
   private long expiration;
@@ -52,20 +49,11 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   }
 
   public DatabaseConnection(String dbname_key, long expiration) {
-    Map<String, String> db_info = null;
-    Map<String, Object> env_info = null;
-    try {
-      // load database info from config folder
-      env_info = (Map<String, Object>)YAML.load(new FileReader("config/environment.yml"));
-      String db_info_name = (String)env_info.get(dbname_key);
-      Map db_info_container = (Map)YAML.load(new FileReader("config/database.yml"));
-      db_info = (Map<String, String>)db_info_container.get(db_info_name);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+
+    DatabaseConnectionConfiguration config = DatabaseConnectionConfiguration.loadFromEnvironment(dbname_key);
 
     // get server credentials from database info
-    String adapter = db_info.get("adapter");
+    String adapter = config.getAdapter();
     String driver;
     if (adapter.equals("mysql") || adapter.equals("mysql_replication") || adapter.equals("mysql2")) {
       driver = "mysql";
@@ -81,14 +69,14 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
     }
     StringBuilder connectionStringBuilder = new StringBuilder("jdbc:");
-    connectionStringBuilder.append(driver).append("://").append(db_info.get("host"));
-    if (db_info.containsKey("port")) {
-      connectionStringBuilder.append(":").append(Integer.parseInt(db_info.get("port")));
+    connectionStringBuilder.append(driver).append("://").append(config.getHost());
+    if (config.getPort().isPresent()) {
+      connectionStringBuilder.append(":").append(config.getPort().get());
     }
-    connectionStringBuilder.append("/").append(getDbName(db_info.get("database"), (Boolean)env_info.get("enable_parallel_tests")));
+    connectionStringBuilder.append("/").append(getDbName(config.getDatabaseName(), config.enableParallelTests()));
     connectionString = connectionStringBuilder.toString();
-    username = db_info.get("username");
-    password = db_info.get("password");
+    username = config.getUsername();
+    password = config.getPassword();
 
     this.expiration = expiration;
     updateExpiration();
@@ -99,11 +87,11 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
    */
-  public Connection getConnection() {
+  public Connection getConnectionInternal() {
     try {
       if (conn == null) {
         Class.forName(driverClass);
-        conn = DriverManager.getConnection(connectionString, username, password);
+        conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
       } else if (isExpired() || conn.isClosed()) {
         resetConnection();
       }

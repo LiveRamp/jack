@@ -1,8 +1,12 @@
 language:
-  - java
+  - ruby
+
+rvm:
+  - 2.3.0
 
 jdk:
   - oraclejdk7
+  - oraclejdk8
 
 notifications:
   email: false
@@ -10,9 +14,13 @@ notifications:
 services:
   - mysql
 
-install:
-  - rvm mount -r http://rubies.travis-ci.org/ubuntu/12.04/x86_64/ree-1.8.7-2011.12.tar.bz2 --verify-downloads 1
+install: true
 
 before_script:
   - export RAILS_ENV=development
-  - test/select-dbms.sh mysql
+  # This variable needs to be unset because after rvm installs ruby 2.3, BUNDLE_GEMFILE is set to the
+  # Gemfile under the root path, which fails the dependency installation in the two test projects.
+  - unset BUNDLE_GEMFILE
+
+script:
+  - mvn test -B -Pmysql

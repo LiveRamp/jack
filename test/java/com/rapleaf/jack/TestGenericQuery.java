@@ -708,6 +708,34 @@ public class TestGenericQuery {
     assertEquals(commentD.getContent(), recordForCommentD.get(Comment.CONTENT));
     assertEquals(userC.getHandle(), recordForCommentD.get(User.HANDLE));
     assertEquals(postC.getTitle(), recordForCommentD.get(Post.TITLE));
+
+    results2 = db.createQuery()
+            .from(Post.TBL)
+            .leftJoin(User.TBL).on(User.ID.equalTo(Post.USER_ID.as(Long.class)))
+            .leftJoin(Comment.TBL).on(Comment.CONTENT.contains(Post.TITLE))
+            .orderBy(User.HANDLE)
+            .orderBy(Post.TITLE, QueryOrder.DESC)
+            .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
+            .fetch();
+
+    assertEquals(3, results2.size());
+    assertEquals(3, results2.get(0).columnCount());
+
+    // the result is: post B, A, C
+    Record recordForPostB = results2.get(0);
+    assertEquals(commentC.getContent(), recordForPostB.get(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForPostB.get(User.HANDLE));
+    assertEquals(postB.getTitle(), recordForPostB.get(Post.TITLE));
+
+    Record recordForPostA = results2.get(1);
+    assertEquals(commentB.getContent(), recordForPostA.get(Comment.CONTENT));
+    assertEquals(userB.getHandle(), recordForPostA.get(User.HANDLE));
+    assertEquals(postA.getTitle(), recordForPostA.get(Post.TITLE));
+
+    Record recordForPostC = results2.get(2);
+    assertEquals(commentD.getContent(), recordForPostC.get(Comment.CONTENT));
+    assertEquals(userC.getHandle(), recordForPostC.get(User.HANDLE));
+    assertEquals(postC.getTitle(), recordForPostC.get(Post.TITLE));
   }
 
   @Test

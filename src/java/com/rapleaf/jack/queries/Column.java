@@ -276,8 +276,16 @@ public class Column<T> {
     return new GenericConstraint<String>(this.as(String.class), new Match(pattern));
   }
 
+  public GenericConstraint matches(Column<String> col, String prefix, String suffix) {
+    return new GenericConstraint<String>(this.as(String.class), new Match(col, prefix, suffix));
+  }
+
   public GenericConstraint contains(String string) {
-    return new GenericConstraint<String>(this.as(String.class), new Match("%" + string + "%"));
+    return matches("%" + string + "%");
+  }
+
+  public GenericConstraint contains(Column<String> col) {
+    return matches(col, "%", "%");
   }
 
   public GenericConstraint startsWith(String start) {
