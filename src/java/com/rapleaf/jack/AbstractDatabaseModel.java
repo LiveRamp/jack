@@ -243,12 +243,17 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   @Override
   public boolean isEmpty() throws IOException {
 
+    PreparedStatement statement = null;
+    ResultSet rs = null;
+    
     try {
-      PreparedStatement statement = conn.getPreparedStatement("SELECT 1 FROM " + tableName + " LIMIT 1");
-      ResultSet rs = statement.executeQuery();
+      statement = conn.getPreparedStatement("SELECT 1 FROM " + tableName + " LIMIT 1");
+      rs = statement.executeQuery();
       return !rs.isBeforeFirst();
     } catch (SQLException e) {
       throw new IOException(e);
+    }finally {
+      closeQuery(rs, statement);
     }
 
   }
