@@ -245,7 +245,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
     PreparedStatement statement = null;
     ResultSet rs = null;
-    
+
     try {
       statement = conn.getPreparedStatement("SELECT 1 FROM " + tableName + " LIMIT 1");
       rs = statement.executeQuery();
