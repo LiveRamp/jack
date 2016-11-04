@@ -6,29 +6,39 @@
  */
 package com.rapleaf.jack.test_project.database_1.impl;
 
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.WhereClause;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
-import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.queries.WhereClause;
+import com.rapleaf.jack.queries.ModelQuery;
+import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
-import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
+import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
+
+
+import com.rapleaf.jack.test_project.IDatabases;
 
 public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> implements ICommentPersistence {
   private final IDatabases databases;

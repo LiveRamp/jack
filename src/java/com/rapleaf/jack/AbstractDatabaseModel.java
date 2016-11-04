@@ -83,6 +83,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     lockFieldName = DEFAULT_LOCK_FIELD_NAME;
   }
 
+
   protected String getInsertStatement(List<String> fieldNames) {
     return String.format("INSERT INTO %s (%s) VALUES(%s);", tableName,
         escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
@@ -237,6 +238,19 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
       executeQuery(foundList, "SELECT * FROM " + tableName + " WHERE " + getIdSetCondition(notCachedIds));
     }
     return foundList;
+  }
+
+  @Override
+  public boolean isEmpty() throws IOException {
+
+    try {
+      PreparedStatement statement = conn.getPreparedStatement("SELECT 1 FROM " + tableName + " LIMIT 1");
+      ResultSet rs = statement.executeQuery();
+      return !rs.isBeforeFirst();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+
   }
 
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {

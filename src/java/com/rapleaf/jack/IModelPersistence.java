@@ -126,4 +126,6 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   public void enableCaching();
 
   public void disableCaching();
+
+  public boolean isEmpty() throws IOException;
 }

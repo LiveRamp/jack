@@ -32,6 +32,19 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
   }
 
   @Test
+  public void testIsEmpty() throws IOException {
+
+    ICommentPersistence comments = dbs.getDatabase1().comments();
+    assertTrue(comments.isEmpty());
+
+    comments.create("comment", 1, 1, 1);
+
+    assertFalse(comments.isEmpty());
+
+  }
+
+
+  @Test
   public void testFindAllByForeignKeyCache() throws Exception {
     ICommentPersistence comments = dbs.getDatabase1().comments();
     int userId = 1;
