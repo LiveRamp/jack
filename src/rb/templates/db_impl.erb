@@ -106,6 +106,22 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     return success;
   }
 
+  public boolean deleteAllLazy() throws IOException {
+    boolean success = true;
+  <% if model_defns.any? %>
+    try {
+  <% end %>
+  <% model_defns.each do |model_defn| %>
+    success &= <%= model_defn.persistence_getter %>.isEmpty() || <%= model_defn.persistence_getter %>.deleteAll();
+  <% end %>
+  <% if model_defns.any? %>
+    } catch (IOException e) {
+      throw e;
+    }
+  <% end %>
+    return success;
+  }
+
   public void disableCaching() {
   <% model_defns.each do |model_defn| %>
     <%= model_defn.table_name %>.disableCaching();
