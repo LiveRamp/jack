@@ -34,8 +34,6 @@ public interface IDb extends Serializable {
    */
   public boolean deleteAll() throws IOException;
 
-  public boolean deleteAllLazy() throws IOException;
-
   public void disableCaching();
   
   public void setAutoCommit(boolean autoCommit);
