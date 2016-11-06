@@ -158,6 +158,11 @@ public class Database1Impl implements IDatabase1 {
     conn.resetConnection();
   }
 
+  @Override
+  public void close() throws IOException {
+    conn.close();
+  }
+
   public IDatabases getDatabases() {
     return databases;
   }
