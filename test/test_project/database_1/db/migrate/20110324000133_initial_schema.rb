@@ -37,11 +37,10 @@ class InitialSchema < ActiveRecord::Migration
       t.timestamp :updated_at
     end
     if mysql?
-      execute("ALTER TABLE posts CHANGE id id bigint DEFAULT NULL auto_increment")
+      execute("ALTER TABLE posts CHANGE id id bigint auto_increment")
     elsif psql?
       execute("ALTER TABLE posts ALTER COLUMN id TYPE bigint")
     end
-    
     
     # renamed associations so we can test the craziness in the models
     create_table :comments do |t|
