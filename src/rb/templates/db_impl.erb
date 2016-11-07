@@ -132,6 +132,11 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     conn.resetConnection();
   }
 
+  @Override
+  public void close() throws IOException {
+    conn.close();
+  }
+
   public IDatabases getDatabases() {
     return databases;
   }

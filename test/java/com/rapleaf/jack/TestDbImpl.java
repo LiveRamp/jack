@@ -18,6 +18,8 @@ import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestDbImpl extends BaseDatabaseModelTestCase {
   private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
@@ -25,6 +27,15 @@ public class TestDbImpl extends BaseDatabaseModelTestCase {
   @Override
   public IDatabases getDBS() {
     return new DatabasesImpl(DATABASE_CONNECTION1);
+  }
+
+  @Test
+  public void testClose() throws Exception {
+    assertFalse(DATABASE_CONNECTION1.conn == null);
+    assertFalse(DATABASE_CONNECTION1.conn.isClosed());
+
+    getDBS().getDatabase1().close();
+    assertTrue(DATABASE_CONNECTION1.conn == null);
   }
 
   @Test
