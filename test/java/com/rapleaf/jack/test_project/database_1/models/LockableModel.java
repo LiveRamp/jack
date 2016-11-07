@@ -33,7 +33,7 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class LockableModel extends ModelWithId<LockableModel, IDatabases> implements Comparable<LockableModel>{
   
-  public static final long serialVersionUID = 2267084843778072603L;
+  public static final long serialVersionUID = -7521271264612804498L;
 
   public static class Tbl extends AbstractTable<LockableModel.Attributes, LockableModel> {
     public final Column<Long> ID;
@@ -85,48 +85,28 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     return cachedTypedId;
   }
 
-  public LockableModel(long id, final int lock_version, final String message, final long created_at, final long updated_at, IDatabases databases) {
+  public LockableModel(long id, final int lock_version, final String message, final Long created_at, final Long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, lock_version, message, created_at, updated_at);
   }
 
-  public LockableModel(long id, final int lock_version, final String message, final long created_at, final long updated_at) {
+  public LockableModel(long id, final int lock_version, final String message, final Long created_at, final Long updated_at) {
     super(null);
     attributes = new Attributes(id, lock_version, message, created_at, updated_at);
   }
   
-  public LockableModel(long id, final int lock_version, final String message, final long updated_at, IDatabases databases) {
+  public LockableModel(long id, final int lock_version, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id, lock_version, message, updated_at);
+    attributes = new Attributes(id, lock_version);
   }
 
-  public LockableModel(long id, final int lock_version, final String message, final long updated_at) {
+  public LockableModel(long id, final int lock_version) {
     super(null);
-    attributes = new Attributes(id, lock_version, message, updated_at);
-  }
-  
-  public LockableModel(long id, final int lock_version, final long created_at, final long updated_at, IDatabases databases) {
-    super(databases);
-    attributes = new Attributes(id, lock_version, created_at, updated_at);
-  }
-
-  public LockableModel(long id, final int lock_version, final long created_at, final long updated_at) {
-    super(null);
-    attributes = new Attributes(id, lock_version, created_at, updated_at);
-  }
-   
-  public LockableModel(long id, final int lock_version, final long updated_at, IDatabases databases) {
-    super(databases);
-    attributes = new Attributes(id, lock_version, updated_at);
-  }
-
-  public LockableModel(long id, final int lock_version, final long updated_at) {
-    super(null);
-    attributes = new Attributes(id, lock_version, updated_at);
+    attributes = new Attributes(id, lock_version);
   }
 
   public static LockableModel newDefaultInstance(long id) {
-    return new LockableModel(id, 0, 0L, 0L);
+    return new LockableModel(id, 0);
   }
 
   public LockableModel(Attributes attributes, IDatabases databases) {
@@ -182,21 +162,21 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
     return this;
   }
 
-  public long getCreatedAt(){
+  public Long getCreatedAt(){
     return attributes.getCreatedAt();
   }
 
-  public LockableModel setCreatedAt(long newval){
+  public LockableModel setCreatedAt(Long newval){
     attributes.setCreatedAt(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public long getUpdatedAt(){
+  public Long getUpdatedAt(){
     return attributes.getUpdatedAt();
   }
 
-  public LockableModel setUpdatedAt(long newval){
+  public LockableModel setUpdatedAt(Long newval){
     attributes.setUpdatedAt(newval);
     cachedHashCode = 0;
     return this;
@@ -248,9 +228,9 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       case message:
         return String.class;
       case created_at:
-        return long.class;
+        return Long.class;
       case updated_at:
-        return long.class;
+        return Long.class;
       default:
         throw new IllegalStateException("Invalid field: " + field);
     }    
@@ -264,10 +244,10 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       return String.class;
     }
     if (fieldName.equals("created_at")) {
-      return long.class;
+      return Long.class;
     }
     if (fieldName.equals("updated_at")) {
-      return long.class;
+      return Long.class;
     }
     throw new IllegalStateException("Invalid field name: " + fieldName);
   }
@@ -381,19 +361,19 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 2267084843778072603L;
+    public static final long serialVersionUID = -7521271264612804498L;
 
     // Fields
     private int __lock_version;
     private String __message;
-    private long __created_at;
-    private long __updated_at;
+    private Long __created_at;
+    private Long __updated_at;
 
     public Attributes(long id) {
       super(id);
     }
 
-    public Attributes(long id, final int lock_version, final String message, final long created_at, final long updated_at) {
+    public Attributes(long id, final int lock_version, final String message, final Long created_at, final Long updated_at) {
       super(id);
       this.__lock_version = lock_version;
       this.__message = message;
@@ -401,30 +381,13 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       this.__updated_at = updated_at;
     }
     
-    public Attributes(long id, final int lock_version, final String message, final long updated_at) {
+    public Attributes(long id, final int lock_version) {
       super(id);
       this.__lock_version = lock_version;
-      this.__message = message;
-      this.__updated_at = updated_at;
-      this.__created_at = System.currentTimeMillis();
-    }
-    
-    public Attributes(long id, final int lock_version, final long created_at, final long updated_at) {
-      super(id);
-      this.__lock_version = lock_version;
-      this.__created_at = created_at;
-      this.__updated_at = updated_at;
-    }
-    
-    public Attributes(long id, final int lock_version, final long updated_at) {
-      super(id);
-      this.__lock_version = lock_version;
-      this.__updated_at = updated_at;
-      this.__created_at = System.currentTimeMillis();
     }
 
     public static Attributes newDefaultInstance(long id) {
-      return new Attributes(id, 0, 0L, 0L);
+      return new Attributes(id, 0);
     }
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
@@ -432,8 +395,8 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       Integer lock_version_tmp = (Integer) fieldsMap.get(LockableModel._Fields.lock_version);
       int lock_version = lock_version_tmp == null ? 0 : lock_version_tmp;
       String message = (String) fieldsMap.get(LockableModel._Fields.message);
-      long created_at = (Long) fieldsMap.get(LockableModel._Fields.created_at);
-      long updated_at = (Long) fieldsMap.get(LockableModel._Fields.updated_at);
+      Long created_at = (Long) fieldsMap.get(LockableModel._Fields.created_at);
+      Long updated_at = (Long) fieldsMap.get(LockableModel._Fields.updated_at);
       this.__lock_version = lock_version;
       this.__message = message;
       this.__created_at = created_at;
@@ -468,21 +431,21 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
       return this;
     }
 
-    public long getCreatedAt(){
+    public Long getCreatedAt(){
       return __created_at;
     }
 
-    public Attributes setCreatedAt(long newval){
+    public Attributes setCreatedAt(Long newval){
       this.__created_at = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public long getUpdatedAt(){
+    public Long getUpdatedAt(){
       return __updated_at;
     }
 
-    public Attributes setUpdatedAt(long newval){
+    public Attributes setUpdatedAt(Long newval){
       this.__updated_at = newval;
       cachedHashCode = 0;
       return this;
@@ -534,9 +497,9 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
         case message:
           return String.class;
         case created_at:
-          return long.class;
+          return Long.class;
         case updated_at:
-          return long.class;
+          return Long.class;
         default:
           throw new IllegalStateException("Invalid field: " + field);
       }    
@@ -550,10 +513,10 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
         return String.class;
       }
       if (fieldName.equals("created_at")) {
-        return long.class;
+        return Long.class;
       }
       if (fieldName.equals("updated_at")) {
-        return long.class;
+        return Long.class;
       }
       throw new IllegalStateException("Invalid field name: " + fieldName);
     }
