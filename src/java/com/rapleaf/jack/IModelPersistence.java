@@ -25,11 +25,12 @@ import com.rapleaf.jack.queries.ModelQuery;
 
 public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
-  public interface RecordSelector<T extends ModelWithId> {
-    public boolean selectRecord(T record);
+  @FunctionalInterface
+  interface RecordSelector<T extends ModelWithId> {
+    boolean selectRecord(T record);
   }
 
-  public ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
+  ModelWithId create(Map<Enum, Object> fieldsMap) throws IOException;
 
   /**
    * Update an existing T instance in the persistence.
@@ -38,7 +39,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public boolean save(T model) throws IOException;
+  boolean save(T model) throws IOException;
 
   /**
    * Update an existing T instance in the persistence. This method allows you to manually specify an update time
@@ -58,29 +59,29 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public T find(long id) throws IOException;
+  T find(long id) throws IOException;
 
-  public List<T> find(Set<Long> ids) throws IOException;
+  List<T> find(Set<Long> ids) throws IOException;
 
-  public List<T> find(Map<Enum, Object> fieldsMap) throws IOException;
+  List<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
-  public List<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
+  List<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
-  public List<T> find(ModelQuery query) throws IOException;
+  List<T> find(ModelQuery query) throws IOException;
 
-  public List<T> findWithOrder(ModelQuery query) throws IOException;
+  List<T> findWithOrder(ModelQuery query) throws IOException;
 
-  public boolean delete(ModelDelete delete) throws IOException;
+  boolean delete(ModelDelete delete) throws IOException;
 
-  public void clearCacheById(long id) throws IOException;
+  void clearCacheById(long id) throws IOException;
 
-  public List<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
+  List<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
 
-  public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
+  List<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
 
-  public void clearCacheByForeignKey(String foreignKey, long id);
+  void clearCacheByForeignKey(String foreignKey, long id);
 
-  public void clearForeignKeyCache();
+  void clearForeignKeyCache();
 
   /**
    * Effectively the same as delete(model.getId()).
@@ -106,13 +107,13 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    * @return
    * @throws IOException
    */
-  public boolean deleteAll() throws IOException;
+  boolean deleteAll() throws IOException;
 
-  public List<T> findAll() throws IOException;
+  List<T> findAll() throws IOException;
 
-  public List<T> findAll(String conditions) throws IOException;
+  List<T> findAll(String conditions) throws IOException;
 
-  public List<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
+  List<T> findAll(String conditions, RecordSelector<T> selector) throws IOException;
 
   /**
    * Caching is on by default, and is toggled with enableCaching() and disableCaching().
@@ -126,4 +127,6 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   void enableCaching();
 
   void disableCaching();
+
+  boolean isEmpty() throws IOException;
 }

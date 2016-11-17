@@ -34,7 +34,7 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class Comment extends ModelWithId<Comment, IDatabases> implements Comparable<Comment>{
   
-  public static final long serialVersionUID = 6622981943098268532L;
+  public static final long serialVersionUID = 4257059476506583666L;
 
   public static class Tbl extends AbstractTable<Comment.Attributes, Comment> {
     public final Column<Long> ID;
@@ -456,7 +456,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = -4935045165360385871L;
+    public static final long serialVersionUID = 1518264994914639903L;
 
     // Fields
     private String __content;

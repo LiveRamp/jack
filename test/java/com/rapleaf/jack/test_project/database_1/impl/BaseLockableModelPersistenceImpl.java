@@ -53,15 +53,12 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     Integer lock_version_tmp = (Integer) fieldsMap.get(LockableModel._Fields.lock_version);
     int lock_version = lock_version_tmp == null ? 0 : lock_version_tmp;
     String message = (String) fieldsMap.get(LockableModel._Fields.message);
-    long created_at = (Long) fieldsMap.get(LockableModel._Fields.created_at);
-    long updated_at = (Long) fieldsMap.get(LockableModel._Fields.updated_at);
+    Long created_at = (Long) fieldsMap.get(LockableModel._Fields.created_at);
+    Long updated_at = (Long) fieldsMap.get(LockableModel._Fields.updated_at);
     return create(lock_version, message, created_at, updated_at);
   }
 
-  public LockableModel create(final int lock_version, final String message, final long updated_at) throws IOException {
-    return this.create(lock_version, message, System.currentTimeMillis(), updated_at);
-  }
-  public LockableModel create(final int lock_version, final String message, final long created_at, final long updated_at) throws IOException {
+  public LockableModel create(final int lock_version, final String message, final Long created_at, final Long updated_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setInt(1, lock_version);
@@ -70,8 +67,16 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
         } else {
           stmt.setString(2, message);
         }
+        if (created_at == null) {
+          stmt.setNull(3, java.sql.Types.DATE);
+        } else {
           stmt.setTimestamp(3, new Timestamp(created_at));
+        }
+        if (updated_at == null) {
+          stmt.setNull(4, java.sql.Types.DATE);
+        } else {
           stmt.setTimestamp(4, new Timestamp(updated_at));
+        }
       }
     }, getInsertStatement(Arrays.<String>asList("lock_version", "message", "created_at", "updated_at")));
     LockableModel newInst = new LockableModel(__id, lock_version, message, created_at, updated_at, databases);
@@ -82,15 +87,13 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
 
-  public LockableModel create(final int lock_version, final long created_at, final long updated_at) throws IOException {
+  public LockableModel create(final int lock_version) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
           stmt.setInt(1, lock_version);
-          stmt.setTimestamp(2, new Timestamp(created_at));
-          stmt.setTimestamp(3, new Timestamp(updated_at));
       }
-    }, getInsertStatement(Arrays.<String>asList("lock_version", "created_at", "updated_at")));
-    LockableModel newInst = new LockableModel(__id, lock_version, null, created_at, updated_at, databases);
+    }, getInsertStatement(Arrays.<String>asList("lock_version")));
+    LockableModel newInst = new LockableModel(__id, lock_version, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
@@ -99,7 +102,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
 
   public LockableModel createDefaultInstance() throws IOException {
-    return create(0, 0L, 0L);
+    return create(0);
   }
 
   public List<LockableModel> find(Map<Enum, Object> fieldsMap) throws IOException {
@@ -224,10 +227,14 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     } else {
       stmt.setString(2, model.getMessage());
     }
-    {
+    if (model.getCreatedAt() == null) {
+      stmt.setNull(3, java.sql.Types.DATE);
+    } else {
       stmt.setTimestamp(3, new Timestamp(model.getCreatedAt()));
     }
-    {
+    if (model.getUpdatedAt() == null) {
+      stmt.setNull(4, java.sql.Types.DATE);
+    } else {
       stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));
     }
     stmt.setLong(5, model.getId());
@@ -240,8 +247,8 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     return new LockableModel(id,
       allFields || selectedFields.contains(LockableModel._Fields.lock_version) ? getIntOrNull(rs, "lock_version") : 0,
       allFields || selectedFields.contains(LockableModel._Fields.message) ? rs.getString("message") : null,
-      allFields || selectedFields.contains(LockableModel._Fields.created_at) ? getDateAsLong(rs, "created_at") : 0L,
-      allFields || selectedFields.contains(LockableModel._Fields.updated_at) ? getDateAsLong(rs, "updated_at") : 0L,
+      allFields || selectedFields.contains(LockableModel._Fields.created_at) ? getDateAsLong(rs, "created_at") : null,
+      allFields || selectedFields.contains(LockableModel._Fields.updated_at) ? getDateAsLong(rs, "updated_at") : null,
       databases
     );
   }
@@ -254,11 +261,11 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.message, value));
   }
 
-  public List<LockableModel> findByCreatedAt(final long value) throws IOException {
+  public List<LockableModel> findByCreatedAt(final Long value) throws IOException {
     return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.created_at, value));
   }
 
-  public List<LockableModel> findByUpdatedAt(final long value) throws IOException {
+  public List<LockableModel> findByUpdatedAt(final Long value) throws IOException {
     return find(Collections.<Enum, Object>singletonMap(LockableModel._Fields.updated_at, value));
   }
 

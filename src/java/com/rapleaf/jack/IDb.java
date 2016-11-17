@@ -14,6 +14,7 @@
 // limitations under the License.
 package com.rapleaf.jack;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -23,11 +24,11 @@ import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.queries.Records;
 
-public interface IDb extends Serializable {
-  
+public interface IDb extends Serializable, Closeable {
+
   /**
    * Delete all records in every persistence within this database.
-   * 
+   *
    * @return true if and only if each persistence successfully
    *         deletes all its records.
    * @throws IOException
@@ -35,16 +36,19 @@ public interface IDb extends Serializable {
   public boolean deleteAll() throws IOException;
 
   public void disableCaching();
-  
+
   public void setAutoCommit(boolean autoCommit);
-  
+
   public boolean getAutoCommit();
-  
+
   public void commit();
-  
+
   public void rollback();
 
   public void resetConnection();
+
+  @Override
+  public void close() throws IOException;
 
   GenericQuery.Builder createQuery();
 

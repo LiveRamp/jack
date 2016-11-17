@@ -91,7 +91,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     try {
   <% end %>
   <% model_defns.each do |model_defn| %>
-    success &= <%= model_defn.persistence_getter %>.deleteAll();
+    success &= <%= model_defn.persistence_getter %>.isEmpty() || <%= model_defn.persistence_getter %>.deleteAll();
   <% end %>
   <% if model_defns.any? %>
     } catch (IOException e) {
@@ -125,6 +125,11 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public void resetConnection() {
     conn.resetConnection();
+  }
+
+  @Override
+  public void close() throws IOException {
+    conn.close();
   }
 
   public IDatabases getDatabases() {
