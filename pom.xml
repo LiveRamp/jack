@@ -7,13 +7,21 @@
   <parent>
     <groupId>com.liveramp</groupId>
     <artifactId>pom-common</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
 
   <properties>
     <db.user>root</db.user>
     <db.pass>""</db.pass>
   </properties>
+
+  <scm>
+    <connection>scm:git:git@github.com:LiveRamp/jack.git</connection>
+    <url>scm:git:git@github.com:LiveRamp/jack.git</url>
+    <developerConnection>scm:git:git@github.com:LiveRamp/jack.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
 
   <repositories>
     <repository>
