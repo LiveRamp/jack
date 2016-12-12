@@ -142,7 +142,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<User> foundList = new ArrayList<User>();
+    List<User> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -150,8 +150,8 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM users WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<User._Fields> nonNullValueFields = new ArrayList<User._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<User._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

@@ -664,7 +664,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
     <% model_defn.associations.each do |assoc| %>

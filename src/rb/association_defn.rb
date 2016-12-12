@@ -93,9 +93,9 @@ class AssociationDefn
         else
           "get#{@foreign_key.camelcase}()"
         end
-        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{foreign_key_id})"
+        "new #{assoc_impl}<>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, #{foreign_key_id})"
       else
-        "new #{assoc_impl}<#{assoc_model.model_name}>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, \"#{@foreign_key}\", getId())"
+        "new #{assoc_impl}<>(databases.#{@assoc_model.database_defn.getter}.#{@assoc_model.persistence_getter}, \"#{@foreign_key}\", getId())"
     end
   end
 

@@ -204,7 +204,7 @@ public class TestModelQuery {
     assertTrue(result.contains(sampleUsers[0]));
 
     // Query by several ids
-    Set<Long> sampleIds = new HashSet<Long>();
+    Set<Long> sampleIds = new HashSet<>();
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[3].getId());
     sampleIds.add(sampleUsers[4].getId());
@@ -215,7 +215,7 @@ public class TestModelQuery {
     assertTrue(result.contains(sampleUsers[4]));
 
     //Query by several ids and constraints
-    Set<Long> sampleIds2 = new HashSet<Long>();
+    Set<Long> sampleIds2 = new HashSet<>();
     sampleIds2.add(sampleUsers[2].getId());
     sampleIds2.add(sampleUsers[3].getId());
 
@@ -388,7 +388,7 @@ public class TestModelQuery {
     assertTrue(orderedResult1.isEmpty());
 
     // A query by several ids ordered by default should return a list ordered by id in an ascending manner.
-    Set<Long> sampleIds = new HashSet<Long>();
+    Set<Long> sampleIds = new HashSet<>();
     sampleIds.add(sampleUsers[0].getId());
     sampleIds.add(sampleUsers[1].getId());
     sampleIds.add(sampleUsers[2].getId());

@@ -103,7 +103,7 @@ public class TestModelDelete {
     userD.save();
 
     // Query by several ids
-    Set<Long> idsToDelete = new HashSet<Long>();
+    Set<Long> idsToDelete = new HashSet<>();
     idsToDelete.add(userA.getId());
     idsToDelete.add(userC.getId());
     // Delete two users by ID

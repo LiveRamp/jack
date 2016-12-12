@@ -39,6 +39,6 @@ public class TestLazyLoadPersistence {
   }
 
   private LazyLoadPersistence<ICommentPersistence, IDatabases> getLazyLoadPersistence() {
-    return new LazyLoadPersistence<ICommentPersistence, IDatabases>(DATABASE_CONNECTION1, dbs, BaseCommentPersistenceImpl::new);
+    return new LazyLoadPersistence<>(DATABASE_CONNECTION1, dbs, BaseCommentPersistenceImpl::new);
   }
 }

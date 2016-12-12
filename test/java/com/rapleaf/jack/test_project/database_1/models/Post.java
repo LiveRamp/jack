@@ -91,8 +91,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, title, posted_at_millis, user_id, updated_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
@@ -103,8 +103,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public Post(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id) {
@@ -121,8 +121,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
 
@@ -144,8 +144,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
 
@@ -695,7 +695,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Post.class, User.class, "user_id"));

@@ -94,7 +94,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public List<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<Image> foundList = new ArrayList<Image>();
+    List<Image> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -102,8 +102,8 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM images WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<Image._Fields> nonNullValueFields = new ArrayList<Image._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<Image._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

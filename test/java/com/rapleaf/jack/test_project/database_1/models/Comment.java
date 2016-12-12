@@ -91,8 +91,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, content, commenter_id, commented_on_id, created_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at) {
@@ -102,8 +102,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, content, commenter_id, commented_on_id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id) {
@@ -114,8 +114,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id, created_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at) {
@@ -126,8 +126,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final int commenter_id, final long commented_on_id) {
@@ -144,8 +144,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+      this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
     }
   }
 
@@ -167,8 +167,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+      this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
     }
   }
 
@@ -762,7 +762,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Comment.class, User.class, "commenter_id"));

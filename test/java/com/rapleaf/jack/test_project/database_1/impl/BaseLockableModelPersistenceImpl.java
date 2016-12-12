@@ -110,7 +110,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   public List<LockableModel> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<LockableModel> foundList = new ArrayList<LockableModel>();
+    List<LockableModel> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -118,8 +118,8 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM lockable_models WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<LockableModel._Fields> nonNullValueFields = new ArrayList<LockableModel._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<LockableModel._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

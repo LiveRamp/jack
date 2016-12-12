@@ -192,7 +192,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    T model;
+    T model = null;
     while (true) {
       try {
         stmt = conn.getPreparedStatement("SELECT * FROM "
@@ -261,7 +261,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
-    List<T> foundList = new ArrayList<T>();
+    List<T> foundList = new ArrayList<>();
     if (!ids.isEmpty()) {
       String statement = query.getSelectClause();
       statement += " FROM ";
@@ -276,7 +276,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   public List<T> find(ModelQuery query) throws IOException {
-    List<T> foundList = new ArrayList<T>();
+    List<T> foundList = new ArrayList<>();
 
     if (query.isOnlyIdQuery()) {
       Optional<Set<Long>> ids = query.getIdSet();
@@ -311,7 +311,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   public List<T> findWithOrder(ModelQuery query) throws IOException {
-    List<T> foundList = new ArrayList<T>();
+    List<T> foundList = new ArrayList<>();
 
     if (query.isOnlyIdQuery()) {
       Optional<Set<Long>> ids = query.getIdSet();
@@ -510,7 +510,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
         return ret;
       }
     } else if (useCache) {
-      foreignKeyCache = new HashMap<Long, List<T>>();
+      foreignKeyCache = new HashMap<>();
       cachedByForeignKey.put(foreignKey, foreignKeyCache);
     }
 
@@ -524,7 +524,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
         stmt = conn.getPreparedStatement(String.format(
             "SELECT * FROM %s WHERE %s = %d;", tableName, foreignKey, id));
         rs = stmt.executeQuery();
-        ret = new ArrayList<T>();
+        ret = new ArrayList<>();
         while (rs.next()) {
           T inst = instanceFromResultSet(rs);
           inst.setCreated(true);
@@ -558,8 +558,8 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids)
       throws IOException {
     Map<Long, List<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
-    List<T> foundList = new ArrayList<T>();
-    Set<Long> notCachedIds = new HashSet<Long>();
+    List<T> foundList = new ArrayList<>();
+    Set<Long> notCachedIds = new HashSet<>();
     if (foreignKeyCache != null && useCache) {
       for (Long id : ids) {
         List<T> results = foreignKeyCache.get(id);
@@ -572,7 +572,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     } else {
       notCachedIds = ids;
       if (useCache) {
-        foreignKeyCache = new HashMap<Long, List<T>>();
+        foreignKeyCache = new HashMap<>();
         cachedByForeignKey.put(foreignKey, foreignKeyCache);
       }
     }
@@ -815,7 +815,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
         rs = stmt.executeQuery();
 
-        List<T> results = new ArrayList<T>();
+        List<T> results = new ArrayList<>();
         while (rs.next()) {
           T inst = instanceFromResultSet(rs);
           inst.setCreated(true);

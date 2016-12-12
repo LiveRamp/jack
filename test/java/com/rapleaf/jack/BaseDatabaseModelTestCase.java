@@ -145,7 +145,7 @@ public abstract class BaseDatabaseModelTestCase {
   @Test
   public void testFindEmptySet() throws Exception {
     IUserPersistence users = dbs.getDatabase1().users();
-    List<User> foundValues = users.find(new HashSet<Long>());
+    List<User> foundValues = users.find(new HashSet<>());
     assertEquals(0, foundValues.size());
   }
 
@@ -162,7 +162,7 @@ public abstract class BaseDatabaseModelTestCase {
 
     users.clearCacheById(bryand.getId());
     users.clearCacheById(notBryand.getId());
-    Set<Long> keysToSearch = new HashSet<Long>();
+    Set<Long> keysToSearch = new HashSet<>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     List<User> foundValues = users.find(keysToSearch);
@@ -224,7 +224,7 @@ public abstract class BaseDatabaseModelTestCase {
     User notBryand = users.create("notBryand", t0, 3, t1, t2, "another relatively long string", someBinary, 1.2d, 3.4d, true);
     users.create("unwanted", t0, 0, t1, t2, "yet another relatively long string", someBinary, 1.2d, 3.4d, true);
 
-    Set<Long> keysToSearch = new HashSet<Long>();
+    Set<Long> keysToSearch = new HashSet<>();
     keysToSearch.add(bryand.getId());
     keysToSearch.add(notBryand.getId());
     List<User> foundValues = users.find(keysToSearch);
@@ -337,7 +337,7 @@ public abstract class BaseDatabaseModelTestCase {
     Comment c4 = comments.create("comment4", otherUserId.intValue(), 1L, 0);
     Comment c5 = comments.create("comment5", 3, 1L, 0);
 
-    Set<Long> commenterIds = new HashSet<Long>();
+    Set<Long> commenterIds = new HashSet<>();
     commenterIds.add(userId);
     commenterIds.add(otherUserId);
     List<Comment> userComments = comments.findAllByForeignKey("commenter_id", commenterIds);
@@ -465,7 +465,7 @@ public abstract class BaseDatabaseModelTestCase {
     Post p2 = posts.create("title2", System.currentTimeMillis(), (int)u1.getId(), 0l);
     Post p3 = posts.create("title3", System.currentTimeMillis(), (int)u1.getId(), 0l);
 
-    assertEquals(new ArrayList<Post>(Arrays.asList(p1, p2, p3)), u1.getPosts());
+    assertEquals(new ArrayList<>(Arrays.asList(p1, p2, p3)), u1.getPosts());
   }
 
   @Test
@@ -624,7 +624,7 @@ public abstract class BaseDatabaseModelTestCase {
 
     assertTrue(post1.compareTo(post2) < 0);
 
-    List<Post> posts = new ArrayList<Post>();
+    List<Post> posts = new ArrayList<>();
     posts.add(post2);
     posts.add(post1);
     posts.add(post3);

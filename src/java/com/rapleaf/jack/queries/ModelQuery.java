@@ -18,9 +18,9 @@ public class ModelQuery {
 
   public ModelQuery() {
     this.whereClause = new WhereClause();
-    this.orderCriteria = new ArrayList<OrderCriterion>();
-    this.selectedFields = new ArrayList<FieldSelector>();
-    this.groupByFields = new ArrayList<Enum>();
+    this.orderCriteria = new ArrayList<>();
+    this.selectedFields = new ArrayList<>();
+    this.groupByFields = new ArrayList<>();
     //By default, no limit criteria
     this.limitCriterion = Optional.absent();
   }

@@ -112,7 +112,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<Post> foundList = new ArrayList<Post>();
+    List<Post> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -120,8 +120,8 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM posts WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<Post._Fields> nonNullValueFields = new ArrayList<Post._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<Post._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

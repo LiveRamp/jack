@@ -116,9 +116,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean);
-    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
-    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+    this.__assoc_posts = new HasManyAssociation<>(databases.getDatabase1().posts(), "user_id", getId());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commenter_id", getId());
+    this.__assoc_image = new HasOneAssociation<>(databases.getDatabase1().images(), "user_id", getId());
   }
 
   public User(long id, final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) {
@@ -129,9 +129,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
   public User(long id, final String handle, final int num_posts, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, handle, num_posts);
-    this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
-    this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+    this.__assoc_posts = new HasManyAssociation<>(databases.getDatabase1().posts(), "user_id", getId());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commenter_id", getId());
+    this.__assoc_image = new HasOneAssociation<>(databases.getDatabase1().images(), "user_id", getId());
   }
 
   public User(long id, final String handle, final int num_posts) {
@@ -148,9 +148,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
-      this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+      this.__assoc_posts = new HasManyAssociation<>(databases.getDatabase1().posts(), "user_id", getId());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commenter_id", getId());
+      this.__assoc_image = new HasOneAssociation<>(databases.getDatabase1().images(), "user_id", getId());
     }
   }
 
@@ -172,9 +172,9 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_posts = new HasManyAssociation<Post>(databases.getDatabase1().posts(), "user_id", getId());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commenter_id", getId());
-      this.__assoc_image = new HasOneAssociation<Image>(databases.getDatabase1().images(), "user_id", getId());
+      this.__assoc_posts = new HasManyAssociation<>(databases.getDatabase1().posts(), "user_id", getId());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commenter_id", getId());
+      this.__assoc_image = new HasOneAssociation<>(databases.getDatabase1().images(), "user_id", getId());
     }
   }
 
@@ -1131,7 +1131,7 @@ public class User extends ModelWithId<User, IDatabases> implements Comparable<Us
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.HAS_MANY, User.class, Post.class, "user_id"));

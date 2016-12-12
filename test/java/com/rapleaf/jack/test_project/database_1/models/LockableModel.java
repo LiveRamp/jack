@@ -651,7 +651,7 @@ public class LockableModel extends ModelWithId<LockableModel, IDatabases> implem
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
     }

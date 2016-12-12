@@ -78,7 +78,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public Image(long id, final Integer user_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, user_id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
   }
 
   public Image(long id, final Integer user_id) {
@@ -89,7 +89,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
   public Image(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
   }
 
   public Image(long id) {
@@ -106,7 +106,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
     }
   }
 
@@ -128,7 +128,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
     }
   }
 
@@ -460,7 +460,7 @@ public class Image extends ModelWithId<Image, IDatabases> implements Comparable<
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Image.class, User.class, "user_id"));
