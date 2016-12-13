@@ -54,7 +54,7 @@ public class QueryFetcher {
     Object getItem(ResultSet resultSet, String sqlKeyword) throws SQLException;
   }
 
-  private static Map<Class<?>, ItemGetter> itemGetters = ImmutableMap.<Class<?>, ItemGetter>builder()
+  private static final Map<Class<?>, ItemGetter> ITEM_GETTERS = ImmutableMap.<Class<?>, ItemGetter>builder()
       .put(Integer.class, ResultSet::getInt)
       .put(Long.class, ResultSet::getLong)
       .put(java.sql.Date.class, QueryFetcher::getDate)
@@ -85,7 +85,7 @@ public class QueryFetcher {
       String sqlKeyword = column.getSqlKeyword();
       Class type = column.getType();
       Object value;
-      ItemGetter itemGetter = itemGetters.containsKey(type) ? itemGetters.get(type) : ResultSet::getObject;
+      ItemGetter itemGetter = ITEM_GETTERS.containsKey(type) ? ITEM_GETTERS.get(type) : ResultSet::getObject;
       value = itemGetter.getItem(resultSet, sqlKeyword);
 
       if (resultSet.wasNull()) {
