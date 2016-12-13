@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,32 @@ public class QueryFetcher {
     }
   }
 
+  @FunctionalInterface
+  private interface ItemGetter {
+    Object getItem(ResultSet resultSet, String sqlKeyword) throws SQLException;
+  }
+
+  private static Map<Class<?>, ItemGetter> itemGetters = ImmutableMap.<Class<?>, ItemGetter>builder()
+      .put(Integer.class, ResultSet::getInt)
+      .put(Long.class, ResultSet::getLong)
+      .put(java.sql.Date.class, QueryFetcher::getDate)
+      .put(Timestamp.class, QueryFetcher::getTimestamp)
+      .put(Double.class, ResultSet::getDouble)
+      .put(String.class, ResultSet::getString)
+      .put(Boolean.class, ResultSet::getBoolean)
+      .put(byte[].class, ResultSet::getBytes)
+      .build();
+
+  private static Long getDate(ResultSet resultSet, String sqlKeyword) throws SQLException {
+    java.sql.Date date = resultSet.getDate(sqlKeyword);
+    return date == null ? null : date.getTime();
+  }
+
+  private static Long getTimestamp(ResultSet resultSet, String sqlKeyword) throws SQLException {
+    Timestamp timestamp = resultSet.getTimestamp(sqlKeyword);
+    return timestamp == null ? null : timestamp.getTime();
+  }
+
   private static Record parseResultSet(ResultSet resultSet, Set<Column> selectedColumns) throws SQLException {
     if (selectedColumns.isEmpty()) {
       return null;
@@ -57,36 +85,8 @@ public class QueryFetcher {
       String sqlKeyword = column.getSqlKeyword();
       Class type = column.getType();
       Object value;
-
-      if (type == Integer.class) {
-        value = resultSet.getInt(sqlKeyword);
-      } else if (type == Long.class) {
-        value = resultSet.getLong(sqlKeyword);
-      } else if (type == java.sql.Date.class) {
-        java.sql.Date date = resultSet.getDate(sqlKeyword);
-        if (date != null) {
-          value = date.getTime();
-        } else {
-          value = null;
-        }
-      } else if (type == Timestamp.class) {
-        Timestamp timestamp = resultSet.getTimestamp(sqlKeyword);
-        if (timestamp != null) {
-          value = timestamp.getTime();
-        } else {
-          value = null;
-        }
-      } else if (type == Double.class) {
-        value = resultSet.getDouble(sqlKeyword);
-      } else if (type == String.class) {
-        value = resultSet.getString(sqlKeyword);
-      } else if (type == Boolean.class) {
-        value = resultSet.getBoolean(sqlKeyword);
-      } else if (type == byte[].class) {
-        value = resultSet.getBytes(sqlKeyword);
-      } else {
-        value = resultSet.getObject(sqlKeyword);
-      }
+      ItemGetter itemGetter = itemGetters.containsKey(type) ? itemGetters.get(type) : ResultSet::getObject;
+      value = itemGetter.getItem(resultSet, sqlKeyword);
 
       if (resultSet.wasNull()) {
         value = null;
