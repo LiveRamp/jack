@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.exception.InvalidIndexHintException;
 
@@ -37,10 +38,11 @@ public final class IndexHint implements QueryCondition {
   private Scope scope;
   private List<String> indexNames;
 
-  public IndexHint(Type type, Scope scope, Index... indices) {
+  public IndexHint(Type type, Scope scope, Index index, Index... otherIndices) {
     this.type = type;
     this.scope = scope;
-    this.indexNames = Arrays.stream(indices).map(Index::getName).collect(Collectors.toList());
+    this.indexNames = Lists.newArrayList(index.getName());
+    this.indexNames.addAll(Arrays.stream(otherIndices).map(Index::getName).collect(Collectors.toList()));
     Collections.sort(indexNames);
   }
 

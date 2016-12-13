@@ -4,8 +4,8 @@ import java.util.Collection;
 
 public class NotIn<V> extends WhereOperator<V> {
 
-  public NotIn(V... values) {
-    super(null, values);
+  public NotIn(V value, V... otherValues) {
+    super(null, value, otherValues);
   }
 
   public NotIn(Collection<V> values) {

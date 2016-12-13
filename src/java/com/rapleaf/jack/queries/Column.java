@@ -240,11 +240,11 @@ public class Column<T> {
     return new GenericConstraint<>(this, new NotBetween<>(min, max));
   }
 
-  public GenericConstraint<?> in(T... values) {
+  public GenericConstraint<?> in(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(new In<>(Arrays.copyOf(values, values.length, Long[].class)));
+      return createDateConstraint(new In<>((Long)value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
-      return new GenericConstraint<>(this, new In<>(values));
+      return new GenericConstraint<>(this, new In<>(value, otherValues));
     }
   }
 
@@ -256,11 +256,11 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint notIn(T... values) {
+  public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotIn<>(Arrays.copyOf(values, values.length, Long[].class)));
+      return createDateConstraint(new NotIn<>((Long) value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
-      return new GenericConstraint<>(this, new NotIn<>(values));
+      return new GenericConstraint<>(this, new NotIn<>(value, otherValues));
     }
   }
 

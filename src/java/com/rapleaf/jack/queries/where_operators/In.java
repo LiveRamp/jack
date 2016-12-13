@@ -4,8 +4,8 @@ import java.util.Collection;
 
 public class In<V> extends WhereOperator<V> {
 
-  public In(V... values) {
-    super(null, values);
+  public In(V value, V... otherValues) {
+    super(null, value, otherValues);
   }
 
   public In(Collection<V> collection) {
