@@ -174,8 +174,10 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   @Override
   public void close() throws IOException {
     try {
-      getConnection().close();
-      conn = null;
+      if (conn != null) {
+        getConnection().close();
+        conn = null;
+      }
     } catch (SQLException e) {
       throw new IOException(e);
     }
