@@ -1,4 +1,4 @@
-package com.rapleaf.jack.runner;
+package com.rapleaf.jack.transaction;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -7,11 +7,14 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.ConnectionCreationFailureException;
 
-public class SqlRunner<DB extends IDb> implements Closeable {
+public class Transactor<DB extends IDb> implements Closeable {
+  private static final Logger LOG = LoggerFactory.getLogger(Transactor.class);
 
   private final Callable<DB> dbConstructor;
   private final int maxConnections;
@@ -19,7 +22,7 @@ public class SqlRunner<DB extends IDb> implements Closeable {
   private final LinkedList<DB> allConnections;
   private final LinkedList<DB> idleConnections;
 
-  private SqlRunner(Callable<DB> callable, int maxConnections, Duration timeout) {
+  private Transactor(Callable<DB> callable, int maxConnections, Duration timeout) {
     this.dbConstructor = callable;
     this.maxConnections = maxConnections;
     this.timeout = timeout;
@@ -64,19 +67,24 @@ public class SqlRunner<DB extends IDb> implements Closeable {
     synchronized (idleConnections) {
       while (idleConnections.isEmpty() && allConnections.size() >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
         try {
-          wait(timeout.getMillis());
+          LOG.info("Wait for connection");
+          idleConnections.wait(timeout.getMillis());
+          LOG.info("Wait timed out");
         } catch (InterruptedException e) {
           throw new ConnectionCreationFailureException("Transaction pending interrupted ", e);
         }
       }
 
       if (!idleConnections.isEmpty()) {
+        LOG.info("Use idle connection (total {})", idleConnections.size());
         return idleConnections.remove();
       } else if (allConnections.size() < maxConnections) {
+        LOG.info("Create new connection (total {})", allConnections.size());
         try {
           DB newConnection = dbConstructor.call();
           newConnection.setAutoCommit(false);
           newConnection.disableCaching();
+          newConnection.printIdentifier();
           allConnections.add(newConnection);
           return newConnection;
         } catch (Exception e) {
@@ -105,7 +113,7 @@ public class SqlRunner<DB extends IDb> implements Closeable {
   }
 
   public static class Builder<DB extends IDb> {
-    private final Callable<DB> dbConstructor;
+    private Callable<DB> dbConstructor;
     private int maxConnections = 1;
     private Duration timeout = Duration.standardMinutes(1L);
 
@@ -113,19 +121,24 @@ public class SqlRunner<DB extends IDb> implements Closeable {
       this.dbConstructor = dbConstructor;
     }
 
-    public Builder setMaxConnections(int maxConnections) {
+    public Builder<DB> setDbConstructor(Callable<DB> dbConstructor) {
+      this.dbConstructor = dbConstructor;
+      return this;
+    }
+
+    public Builder<DB> setMaxConnections(int maxConnections) {
       Preconditions.checkArgument(maxConnections > 0);
       this.maxConnections = maxConnections;
       return this;
     }
 
-    public Builder setTimeout(Duration timeout) {
+    public Builder<DB> setTimeout(Duration timeout) {
       this.timeout = timeout;
       return this;
     }
 
-    public SqlRunner<DB> get() {
-      return new SqlRunner<>(dbConstructor, maxConnections, timeout);
+    public Transactor<DB> get() {
+      return new Transactor<>(dbConstructor, maxConnections, timeout);
     }
   }
 

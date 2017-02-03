@@ -6,13 +6,19 @@
  */
 package com.rapleaf.jack.test_project;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.DatabaseConnection;
-import com.rapleaf.jack.runner.SqlRunner;
+import com.rapleaf.jack.exception.ConnectionCreationFailureException;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.tracking.NoOpAction;
 import com.rapleaf.jack.tracking.PostQueryAction;
+import com.rapleaf.jack.transaction.Transactor;
 
 public class DatabasesImpl implements IDatabases {
   private IDatabase1 database1;
@@ -44,8 +50,65 @@ public class DatabasesImpl implements IDatabases {
   }
 
   @Override
-  public SqlRunner.Builder<IDatabase1> getDatabase1SqlRunner() {
-    return SqlRunner.create(this::getDatabase1);
+  public Transactor.Builder<IDatabase1> getDatabase1Transactor() {
+    return Transactor.create(new DatabasesImpl()::getDatabase1);
+  }
+
+  public static void main(String[] args) {
+    Transactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
+    ExecutorService executorService = Executors.newFixedThreadPool(5);
+    Future future1 = executorService.submit(() -> {
+      try {
+        transactor.execute(db -> {
+          System.out.println("Start first runnable, sleeping for 5 seconds...");
+          try {
+            Thread.sleep(5000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.out.println("First runnable wakes up");
+          db.users().deleteAll();
+          db.users().createDefaultInstance();
+          System.out.println(db.users().findAll());
+        });
+      } catch (ConnectionCreationFailureException e) {
+        e.printStackTrace();
+      }
+    });
+
+    Future future2 = executorService.submit(() -> {
+      try {
+        transactor.execute(db -> {
+          System.out.println("Start second runnable, sleeping for 3 seconds...");
+          try {
+            Thread.sleep(3000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.out.println("Second runnable wakes up");
+          db.users().deleteAll();
+          db.users().createDefaultInstance();
+          System.out.println(db.users().findAll());
+        });
+      } catch (ConnectionCreationFailureException e) {
+        e.printStackTrace();
+      }
+    });
+
+    while (true) {
+      if (future1.isDone() && future2.isDone()) {
+        try {
+          System.out.println(future1.get());
+          System.out.println(future2.get());
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        } catch (ExecutionException e) {
+          e.printStackTrace();
+        }
+        executorService.shutdown();
+        break;
+      }
+    }
   }
 
 }
