@@ -91,6 +91,7 @@ public class SqlRunner<DB extends IDb> implements Closeable {
   private void returnConnection(DB dbConnection) {
     synchronized (idleConnections) {
       idleConnections.add(dbConnection);
+      idleConnections.notify();
     }
   }
 
