@@ -6,13 +6,11 @@
  */
 package com.rapleaf.jack.test_project;
 
-import org.joda.time.Duration;
-
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.runner.SqlRunner;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
-import com.rapleaf.jack.test_project.database_1.transaction.Database1TransactionGroup;
 import com.rapleaf.jack.tracking.NoOpAction;
 import com.rapleaf.jack.tracking.PostQueryAction;
 
@@ -46,8 +44,8 @@ public class DatabasesImpl implements IDatabases {
   }
 
   @Override
-  public Database1TransactionGroup getDatabase1TransactionGroup() {
-    return new Database1TransactionGroup(this::getDatabase1, 30, Duration.standardMinutes(1));
+  public SqlRunner.Builder<IDatabase1> getDatabase1SqlRunner() {
+    return SqlRunner.create(this::getDatabase1);
   }
 
 }

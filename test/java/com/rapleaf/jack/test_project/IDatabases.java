@@ -8,9 +8,9 @@ package com.rapleaf.jack.test_project;
 
 import com.rapleaf.jack.GenericDatabases;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
-import com.rapleaf.jack.test_project.database_1.transaction.Database1TransactionGroup;
+import com.rapleaf.jack.runner.SqlRunner;
 
 public interface IDatabases extends GenericDatabases {
   IDatabase1 getDatabase1();
-  Database1TransactionGroup getDatabase1TransactionGroup();
+  SqlRunner.Builder<IDatabase1> getDatabase1SqlRunner();
 }
