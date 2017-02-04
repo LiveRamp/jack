@@ -1,6 +1,5 @@
 package com.rapleaf.jack.transaction;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
@@ -13,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.ConnectionCreationFailureException;
 
-public class Transactor<DB extends IDb> implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(Transactor.class);
+public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
+  private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private final Callable<DB> dbConstructor;
   private final int maxConnections;
@@ -22,7 +21,7 @@ public class Transactor<DB extends IDb> implements Closeable {
   private final LinkedList<DB> allConnections;
   private final LinkedList<DB> idleConnections;
 
-  private Transactor(Callable<DB> callable, int maxConnections, Duration timeout) {
+  private TransactorImpl(Callable<DB> callable, int maxConnections, Duration timeout) {
     this.dbConstructor = callable;
     this.maxConnections = maxConnections;
     this.timeout = timeout;
@@ -34,6 +33,7 @@ public class Transactor<DB extends IDb> implements Closeable {
     return new Builder<>(dbConstructor);
   }
 
+  @Override
   public <T> T query(IQuery<DB, T> query) throws ConnectionCreationFailureException {
     DB connection = getConnection();
     try {
@@ -48,6 +48,7 @@ public class Transactor<DB extends IDb> implements Closeable {
     }
   }
 
+  @Override
   public void execute(IExecution<DB> execution) throws ConnectionCreationFailureException {
     DB connection = getConnection();
     try {
@@ -112,7 +113,7 @@ public class Transactor<DB extends IDb> implements Closeable {
     }
   }
 
-  public static class Builder<DB extends IDb> {
+  public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
     private Callable<DB> dbConstructor;
     private int maxConnections = 1;
     private Duration timeout = Duration.standardMinutes(1L);
@@ -137,8 +138,9 @@ public class Transactor<DB extends IDb> implements Closeable {
       return this;
     }
 
-    public Transactor<DB> get() {
-      return new Transactor<>(dbConstructor, maxConnections, timeout);
+    @Override
+    public TransactorImpl<DB> get() {
+      return new TransactorImpl<>(dbConstructor, maxConnections, timeout);
     }
   }
 
