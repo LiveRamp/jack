@@ -85,7 +85,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
           DB newConnection = dbConstructor.call();
           newConnection.setAutoCommit(false);
           newConnection.disableCaching();
-          newConnection.printIdentifier();
           allConnections.add(newConnection);
           return newConnection;
         } catch (Exception e) {
