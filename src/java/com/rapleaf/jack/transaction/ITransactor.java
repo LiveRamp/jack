@@ -4,13 +4,12 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.ConnectionCreationFailureException;
 
 public interface ITransactor<DB extends IDb> extends Closeable {
 
-  <T> T query(IQuery<DB, T> query) throws ConnectionCreationFailureException;
+  <T> T query(IQuery<DB, T> query);
 
-  void execute(IExecution<DB> execution) throws ConnectionCreationFailureException;
+  void execute(IExecution<DB> execution);
 
   @Override
   void close() throws IOException;

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.ConnectionCreationFailureException;
+import com.rapleaf.jack.exception.NoAvailableConnectionException;
 
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
@@ -34,8 +35,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public <T> T query(IQuery<DB, T> query) throws ConnectionCreationFailureException {
-    DB connection = getConnection();
+  public <T> T query(IQuery<DB, T> query) {
+    DB connection = tryConnection();
     try {
       T value = query.query(connection);
       connection.commit();
@@ -49,8 +50,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public void execute(IExecution<DB> execution) throws ConnectionCreationFailureException {
-    DB connection = getConnection();
+  public void execute(IExecution<DB> execution) {
+    DB connection = tryConnection();
     try {
       execution.execute(connection);
       connection.commit();
@@ -62,7 +63,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     }
   }
 
-  private DB getConnection() throws ConnectionCreationFailureException {
+  private DB tryConnection() {
     long timeoutThreshold = System.currentTimeMillis() + timeout.getMillis();
 
     synchronized (idleConnections) {
@@ -72,7 +73,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
           idleConnections.wait(timeout.getMillis());
           LOG.info("Wait timed out");
         } catch (InterruptedException e) {
-          throw new ConnectionCreationFailureException("Transaction pending interrupted ", e);
+          throw new RuntimeException("Transaction pending for connection is interrupted ", e);
         }
       }
 
@@ -88,12 +89,12 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
           allConnections.add(newConnection);
           return newConnection;
         } catch (Exception e) {
-          throw new ConnectionCreationFailureException("DB construction failed", e);
+          throw new ConnectionCreationFailureException("DB connection creation failed", e);
         }
       }
     }
 
-    throw new ConnectionCreationFailureException("Transaction creation timeout after " + timeout.getStandardSeconds() + " seconds");
+    throw new NoAvailableConnectionException("No available connection after waiting for " + timeout.getStandardSeconds() + " seconds");
   }
 
   private void returnConnection(DB dbConnection) {
