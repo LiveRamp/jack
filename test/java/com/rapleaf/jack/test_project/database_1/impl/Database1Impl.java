@@ -39,15 +39,6 @@ public class Database1Impl implements IDatabase1 {
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
-  public void printIdentifier() {
-    try {
-      System.out.println(conn.getConnection().getCatalog());
-      System.out.println(conn.getConnection().getMetaData());
-    } catch (SQLException e) {
-      System.err.println(e.toString());
-    }
-  }
-
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
