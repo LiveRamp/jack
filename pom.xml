@@ -13,6 +13,7 @@
   <properties>
     <db.user>root</db.user>
     <db.pass>""</db.pass>
+    <maven.compiler.source>1.8</maven.compiler.source>
   </properties>
 
   <scm>
