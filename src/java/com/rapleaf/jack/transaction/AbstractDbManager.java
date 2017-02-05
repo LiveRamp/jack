@@ -47,7 +47,6 @@ abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
       if (!isConnectionMaximized()) {
         try {
           DB newConnection = dbConstructor.call();
-          newConnection.setAutoCommit(false);
           newConnection.disableCaching();
           allConnections.add(newConnection);
           return newConnection;
