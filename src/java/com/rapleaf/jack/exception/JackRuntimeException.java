@@ -1,8 +1,8 @@
 package com.rapleaf.jack.exception;
 
 public class JackRuntimeException extends RuntimeException {
-  public JackRuntimeException() {
-    super();
+  public JackRuntimeException(Exception exception) {
+    super(exception);
   }
 
   public JackRuntimeException(String message) {
