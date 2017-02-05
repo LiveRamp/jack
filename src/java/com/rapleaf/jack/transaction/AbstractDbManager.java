@@ -14,12 +14,14 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
 
   private final Callable<DB> dbConstructor;
+  protected final int maxConnections;
   private final Duration timeout;
   protected final LinkedList<DB> allConnections;
   private final LinkedList<DB> idleConnections;
 
-  AbstractDbManager(Callable<DB> callable, Duration timeout) {
+  AbstractDbManager(Callable<DB> callable, int maxConnections, Duration timeout) {
     this.dbConstructor = callable;
+    this.maxConnections = maxConnections;
     this.timeout = timeout;
     this.allConnections = new LinkedList<>();
     this.idleConnections = new LinkedList<>();
@@ -30,7 +32,7 @@ abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
     long timeoutThreshold = timestamp + timeout.getMillis();
 
     synchronized (idleConnections) {
-      while (idleConnections.isEmpty() && isConnectionMaximized() && System.currentTimeMillis() < timeoutThreshold) {
+      while (idleConnections.isEmpty() && allConnections.size() >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
         try {
           idleConnections.wait(timeout.getMillis());
         } catch (InterruptedException e) {

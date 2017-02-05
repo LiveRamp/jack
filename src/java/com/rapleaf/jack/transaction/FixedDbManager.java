@@ -8,11 +8,8 @@ import com.rapleaf.jack.IDb;
 
 class FixedDbManager<DB extends IDb> extends AbstractDbManager<DB> {
 
-  private final int maxConnections;
-
   FixedDbManager(Callable<DB> callable, int maxConnections, Duration timeout) {
-    super(callable, timeout);
-    this.maxConnections = maxConnections;
+    super(callable, maxConnections, timeout);
   }
 
   @Override

@@ -15,7 +15,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private TransactorImpl(Callable<DB> callable, int maxConnections, Duration timeout) {
     this.dbManager = maxConnections <= 0 ?
-        new FlexibleDbManager<DB>(callable, timeout) :
+        new FlexibleDbManager<DB>(callable, maxConnections, timeout) :
         new FixedDbManager<DB>(callable, maxConnections, timeout);
   }
 
