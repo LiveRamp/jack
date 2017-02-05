@@ -24,7 +24,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public <T> T query(IQuery<DB, T> query) {
+  public <T> T execute(IQuery<DB, T> query) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
     connection.setAutoCommit(true);
@@ -38,7 +38,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public <T> T transQuery(IQuery<DB, T> query) {
+  public <T> T executeAsTransaction(IQuery<DB, T> query) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
     connection.setAutoCommit(false);
@@ -69,7 +69,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public void transExecute(IExecution<DB> execution) {
+  public void executeAsTransaction(IExecution<DB> execution) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
     connection.setAutoCommit(false);
