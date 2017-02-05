@@ -5,14 +5,11 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.TransactionFailureException;
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
-  private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private final IDbManager<DB> dbManager;
 
@@ -30,18 +27,30 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   public <T> T query(IQuery<DB, T> query) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
+    connection.setAutoCommit(true);
     try {
-      System.out.printf("[%d] Transaction commit complete\n", timestamp);
+      return query.query(connection);
+    } catch (Exception e) {
+      throw new SqlExecutionFailureException(e);
+    } finally {
+      dbManager.returnConnection(connection);
+    }
+  }
+
+  @Override
+  public <T> T transQuery(IQuery<DB, T> query) {
+    long timestamp = System.currentTimeMillis();
+    DB connection = dbManager.getConnection(timestamp);
+    connection.setAutoCommit(false);
+    try {
       T value = query.query(connection);
       connection.commit();
       return value;
     } catch (Exception e) {
-      System.out.printf("[%d] Transaction failed\n", timestamp);
       connection.rollback();
-      throw new TransactionFailureException(e);
+      throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);
-      System.out.printf("[%d] Transaction returned\n", timestamp);
     }
   }
 
@@ -49,17 +58,29 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   public void execute(IExecution<DB> execution) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
+    connection.setAutoCommit(true);
+    try {
+      execution.execute(connection);
+    } catch (Exception e) {
+      throw new SqlExecutionFailureException(e);
+    } finally {
+      dbManager.returnConnection(connection);
+    }
+  }
+
+  @Override
+  public void transExecute(IExecution<DB> execution) {
+    long timestamp = System.currentTimeMillis();
+    DB connection = dbManager.getConnection(timestamp);
+    connection.setAutoCommit(false);
     try {
       execution.execute(connection);
       connection.commit();
-      System.out.printf("[%d] Transaction commit complete\n", timestamp);
     } catch (Exception e) {
       connection.rollback();
-      System.out.printf("[%d] Transaction failed\n", timestamp);
-      throw new RuntimeException(e);
+      throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);
-      System.out.printf("[%d] Transaction returned\n", timestamp);
     }
   }
 

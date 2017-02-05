@@ -5,16 +5,13 @@ import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 import org.joda.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.ConnectionCreationFailureException;
 import com.rapleaf.jack.exception.NoAvailableConnectionException;
-import com.rapleaf.jack.exception.TransactionFailureException;
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractDbManager.class);
 
   private final Callable<DB> dbConstructor;
   private final Duration timeout;
@@ -35,25 +32,17 @@ abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
     synchronized (idleConnections) {
       while (idleConnections.isEmpty() && isConnectionMaximized() && System.currentTimeMillis() < timeoutThreshold) {
         try {
-          LOG.info("Wait for connection");
-          System.out.printf("[%d] Wait for connection\n", timestamp);
           idleConnections.wait(timeout.getMillis());
-          LOG.info("Wait timed out");
-          System.out.printf("[%d] Wait timed out\n", timestamp);
         } catch (InterruptedException e) {
-          throw new TransactionFailureException("Transaction pending for connection is interrupted ", e);
+          throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
         }
       }
 
       if (!idleConnections.isEmpty()) {
-        LOG.info("Use idle connection (total {})", idleConnections.size());
-        System.out.printf("[%d] Use idle connection (total %d)\n", timestamp, idleConnections.size());
         return idleConnections.remove();
       }
 
       if (!isConnectionMaximized()) {
-        LOG.info("Create new connection (current {})", allConnections.size());
-        System.out.printf("[%d] Create new connection (current %d)\n", timestamp, allConnections.size());
         try {
           DB newConnection = dbConstructor.call();
           newConnection.setAutoCommit(false);
@@ -73,7 +62,6 @@ abstract class AbstractDbManager<DB extends IDb> implements IDbManager<DB> {
   public void returnConnection(DB connection) {
     synchronized (idleConnections) {
       idleConnections.add(connection);
-      System.out.printf("Current connections %d\n", idleConnections.size());
       idleConnections.notify();
     }
   }
