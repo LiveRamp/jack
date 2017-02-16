@@ -23,6 +23,10 @@ public class DatabaseConnectionConfiguration {
   public static final String PASSWORD_PROP_PREFIX = "jack.db.password";
   public static final String DATABASE_YML_PROP = "jack.db.database.yml";
   public static final String ENVIRONMENT_YML_PROP = "jack.db.environment.yml";
+  public static final String DATABASE_PATH_PROP = "jack.db.database.config.path";
+  public static final String ENVIRONMENT_PATH_PROP = "jack.db.database.config.path";
+
+
   private String adapter;
   private String host;
   private String dbName;
@@ -50,6 +54,8 @@ public class DatabaseConnectionConfiguration {
     envInfo = fetchInfoMap(
         new FileReaderProvider("config/environment.yml"),
         new FileReaderProvider("environment.yml"),
+        new FileReaderProvider(System.getProperty(ENVIRONMENT_PATH_PROP)),
+        new FileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
         new PropertyProvider(ENVIRONMENT_YML_PROP),
         new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)));
 
@@ -58,6 +64,8 @@ public class DatabaseConnectionConfiguration {
     dbInfo = (Map<String, Object>)fetchInfoMap(
         new FileReaderProvider("config/database.yml"),
         new FileReaderProvider("database.yml"),
+        new FileReaderProvider(System.getProperty(DATABASE_PATH_PROP)),
+        new FileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
         new PropertyProvider(DATABASE_YML_PROP),
         new EnvVarProvider(envVar(DATABASE_YML_PROP))).get(db_info_name);
 
@@ -88,7 +96,10 @@ public class DatabaseConnectionConfiguration {
   private static Map<String, Object> fetchInfoMap(ReaderProvider... readers) {
     for (ReaderProvider reader : readers) {
       try {
-        return (Map<String, Object>)YAML.load(reader.get());
+        Optional<Reader> readerOptional = reader.get();
+        if (readerOptional.isPresent()) {
+          return (Map<String, Object>)YAML.load(readerOptional.get());
+        }
       } catch (Exception e) {
         //move to next reader
       }
@@ -97,7 +108,7 @@ public class DatabaseConnectionConfiguration {
   }
 
   private interface ReaderProvider {
-    Reader get() throws Exception;
+    Optional<Reader> get() throws Exception;
   }
 
   public static String envVar(String propertyPrefix, String dbNameKey) {
@@ -207,8 +218,12 @@ public class DatabaseConnectionConfiguration {
     }
 
     @Override
-    public InputStreamReader get() throws Exception {
-      return new FileReader(file);
+    public Optional<Reader> get() throws Exception {
+      if (file != null) {
+        return Optional.of(new FileReader(file));
+      } else {
+        return Optional.absent();
+      }
     }
   }
 
@@ -221,11 +236,11 @@ public class DatabaseConnectionConfiguration {
     }
 
     @Override
-    public Reader get() throws Exception {
+    public Optional<Reader> get() throws Exception {
       if (System.getenv(envVar) != null) {
-        return new StringReader(System.getenv(envVar));
+        return Optional.of(new StringReader(System.getenv(envVar)));
       } else {
-        throw new IllegalStateException("Env Var " + envVar + " not set");
+        return Optional.absent();
       }
     }
   }
@@ -239,11 +254,11 @@ public class DatabaseConnectionConfiguration {
     }
 
     @Override
-    public Reader get() throws Exception {
+    public Optional<Reader> get() throws Exception {
       if (System.getProperty(property) != null) {
-        return new StringReader(System.getProperty(property));
+        return Optional.of(new StringReader(System.getProperty(property)));
       } else {
-        throw new IllegalStateException("Property " + property + " not set");
+        return Optional.absent();
       }
     }
   }
