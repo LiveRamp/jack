@@ -2,6 +2,9 @@ package com.rapleaf.jack;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Map;
 
 import com.google.common.base.Function;
@@ -18,6 +21,8 @@ public class DatabaseConnectionConfiguration {
   public static final String PARALLEL_TEST_PROP_PREFIX = "jack.db.parallel.test";
   public static final String USERNAME_PROP_PREFIX = "jack.db.username";
   public static final String PASSWORD_PROP_PREFIX = "jack.db.password";
+  public static final String DATABASE_YML_PROP = "jack.db.database.yml";
+  public static final String ENVIRONMENT_YML_PROP = "jack.db.environment.yml";
   private String adapter;
   private String host;
   private String dbName;
@@ -39,18 +44,22 @@ public class DatabaseConnectionConfiguration {
   public static DatabaseConnectionConfiguration loadFromEnvironment(String dbNameKey) {
     Map<String, Object> envInfo;
     Map<String, Object> dbInfo;
-    // load database info from config folder
-    try {
-      envInfo = (Map<String, Object>)YAML.load(new FileReader("config/environment.yml"));
-    } catch (FileNotFoundException e) {
-      envInfo = Maps.newHashMap();
-    }
+    // load database info from config folder with highest priority
+    // then try working directory, then see if the entire file has been passed
+    // as a system property or env var
+    envInfo = fetchInfoMap(
+        new FileReaderProvider("config/environment.yml"),
+        new FileReaderProvider("environment.yml"),
+        new PropertyProvider(ENVIRONMENT_YML_PROP),
+        new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)));
+
     String db_info_name = (String)envInfo.get(dbNameKey);
-    try {
-      dbInfo = (Map)((Map)YAML.load(new FileReader("config/database.yml"))).get(db_info_name);
-    } catch (FileNotFoundException e) {
-      dbInfo = Maps.newHashMap();
-    }
+
+    dbInfo = fetchInfoMap(
+        new FileReaderProvider("config/database.yml"),
+        new FileReaderProvider("database.yml"),
+        new PropertyProvider(DATABASE_YML_PROP),
+        new EnvVarProvider(envVar(DATABASE_YML_PROP)));
 
     String adapter = load("adapter", dbInfo, "adapter", "database",
         envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), new StringIdentity());
@@ -76,8 +85,27 @@ public class DatabaseConnectionConfiguration {
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
   }
 
+  private static Map<String, Object> fetchInfoMap(ReaderProvider... readers) {
+    for (ReaderProvider reader : readers) {
+      try {
+        return (Map<String, Object>)YAML.load(reader.get());
+      } catch (Exception e) {
+        //move to next reader
+      }
+    }
+    return Maps.newHashMap();
+  }
+
+  private interface ReaderProvider {
+    Reader get() throws Exception;
+  }
+
   public static String envVar(String propertyPrefix, String dbNameKey) {
-    return propertyPrefix.replace('.','_').toUpperCase() + "_" + dbNameKey.toUpperCase();
+    return propertyPrefix.replace('.', '_').toUpperCase() + "_" + dbNameKey.toUpperCase();
+  }
+
+  public static String envVar(String property) {
+    return envVar(property, "");
   }
 
   private static String prop(String baseProp, String dbNameKey) {
@@ -99,9 +127,9 @@ public class DatabaseConnectionConfiguration {
     } else {
       throw new RuntimeException(
           "Unable to find required configuration " + readableName + ". Please set using one of:\n" +
-          "Environment Variable: " + envVar + "\n" +
-          "Java System Property: " + javaProp + "\n" +
-          "Entry in config/" + mapYmlFile + ".yml: " + mapKey);
+              "Environment Variable: " + envVar + "\n" +
+              "Java System Property: " + javaProp + "\n" +
+              "Entry in config/" + mapYmlFile + ".yml: " + mapKey);
     }
   }
 
@@ -167,6 +195,56 @@ public class DatabaseConnectionConfiguration {
   private static class ToBoolean implements Function<String, Boolean> {
     public Boolean apply(String s) {
       return Boolean.parseBoolean(s);
+    }
+  }
+
+  private static class FileReaderProvider implements ReaderProvider {
+
+    private String file;
+
+    public FileReaderProvider(String file) {
+      this.file = file;
+    }
+
+    @Override
+    public InputStreamReader get() throws Exception {
+      return new FileReader(file);
+    }
+  }
+
+  private static class EnvVarProvider implements ReaderProvider {
+
+    private String envVar;
+
+    public EnvVarProvider(String envVar) {
+      this.envVar = envVar;
+    }
+
+    @Override
+    public Reader get() throws Exception {
+      if (System.getenv(envVar) != null) {
+        return new StringReader(System.getenv(envVar));
+      } else {
+        throw new IllegalStateException("Env Var " + envVar + " not set");
+      }
+    }
+  }
+
+  private static class PropertyProvider implements ReaderProvider {
+
+    private String property;
+
+    public PropertyProvider(String property) {
+      this.property = property;
+    }
+
+    @Override
+    public Reader get() throws Exception {
+      if (System.getProperty(property) != null) {
+        return new StringReader(System.getProperty(property));
+      } else {
+        throw new IllegalStateException("Property " + property + " not set");
+      }
     }
   }
 }
