@@ -55,11 +55,11 @@ public class DatabaseConnectionConfiguration {
 
     String db_info_name = (String)envInfo.get(dbNameKey);
 
-    dbInfo = fetchInfoMap(
+    dbInfo = (Map<String, Object>)fetchInfoMap(
         new FileReaderProvider("config/database.yml"),
         new FileReaderProvider("database.yml"),
         new PropertyProvider(DATABASE_YML_PROP),
-        new EnvVarProvider(envVar(DATABASE_YML_PROP)));
+        new EnvVarProvider(envVar(DATABASE_YML_PROP))).get(db_info_name);
 
     String adapter = load("adapter", dbInfo, "adapter", "database",
         envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), new StringIdentity());
