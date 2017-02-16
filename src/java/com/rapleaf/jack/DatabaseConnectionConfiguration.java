@@ -24,7 +24,7 @@ public class DatabaseConnectionConfiguration {
   public static final String DATABASE_YML_PROP = "jack.db.database.yml";
   public static final String ENVIRONMENT_YML_PROP = "jack.db.environment.yml";
   public static final String DATABASE_PATH_PROP = "jack.db.database.config.path";
-  public static final String ENVIRONMENT_PATH_PROP = "jack.db.database.config.path";
+  public static final String ENVIRONMENT_PATH_PROP = "jack.db.environment.config.path";
 
 
   private String adapter;
