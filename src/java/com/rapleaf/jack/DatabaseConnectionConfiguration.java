@@ -112,11 +112,11 @@ public class DatabaseConnectionConfiguration {
   }
 
   public static String envVar(String propertyPrefix, String dbNameKey) {
-    return propertyPrefix.replace('.', '_').toUpperCase() + "_" + dbNameKey.toUpperCase();
+    return envVar(propertyPrefix) + "_" + dbNameKey.toUpperCase();
   }
 
   public static String envVar(String property) {
-    return envVar(property, "");
+    return property.replace('.', '_').toUpperCase();
   }
 
   private static String prop(String baseProp, String dbNameKey) {
