@@ -16,6 +16,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TestMockTransactorImpl {
@@ -130,6 +131,12 @@ public class TestMockTransactorImpl {
     }
 
     dbMethodOrder.verify(dbManager, times(1)).returnConnection(db);
+  }
+
+  @Test
+  public void testMockClose() throws Exception {
+    transactor.close();
+    verify(dbManager, times(1)).close();
   }
 
 }
