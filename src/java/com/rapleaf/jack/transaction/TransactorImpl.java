@@ -1,6 +1,5 @@
 package com.rapleaf.jack.transaction;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +9,11 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
+
+  private static int DEFAULT_CORE_CONNECTIONS = 1;
+  private static int DEFAULT_MAX_CONNECTIONS = 1;
+  private static Duration DEFAULT_WAITING_TIMEOUT = Duration.standardMinutes(10);
+  private static Duration DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(30);
 
   private final IDbManager<DB> dbManager;
 
@@ -83,15 +87,16 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
     dbManager.close();
   }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
     private Callable<DB> dbConstructor;
-    private int coreConnections = 1;
-    private int maxConnections = 1;
-    private Duration timeout = Duration.standardSeconds(1L);
+    private int coreConnections = DEFAULT_CORE_CONNECTIONS;
+    private int maxConnections = DEFAULT_MAX_CONNECTIONS;
+    private Duration waitingTimeout = DEFAULT_WAITING_TIMEOUT;
+    private Duration keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
 
     private Builder(Callable<DB> dbConstructor) {
       this.dbConstructor = dbConstructor;
@@ -119,14 +124,19 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return this;
     }
 
-    public Builder<DB> setTimeout(Duration timeout) {
-      this.timeout = timeout;
+    public Builder<DB> setConnectionWaitingTimeout(Duration waitingTimeout) {
+      this.waitingTimeout = waitingTimeout;
+      return this;
+    }
+
+    public Builder<DB> setConnectionKeepAliveTime(Duration keepAliveTime) {
+      this.keepAliveTime = keepAliveTime;
       return this;
     }
 
     @Override
     public TransactorImpl<DB> get() {
-      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, coreConnections, maxConnections, timeout));
+      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, coreConnections, maxConnections, waitingTimeout, keepAliveTime));
     }
   }
 

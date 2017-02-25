@@ -1,7 +1,6 @@
 package com.rapleaf.jack.transaction;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 import com.rapleaf.jack.IDb;
 
@@ -16,7 +15,7 @@ public interface ITransactor<DB extends IDb> extends Closeable {
   void executeAsTransaction(IExecution<DB> execution);
 
   @Override
-  void close() throws IOException;
+  void close();
 
   interface Builder<DB extends IDb, Impl extends ITransactor<DB>> {
     Impl get();
