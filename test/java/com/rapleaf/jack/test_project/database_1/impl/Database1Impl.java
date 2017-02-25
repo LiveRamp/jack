@@ -167,4 +167,8 @@ public class Database1Impl implements IDatabase1 {
     return databases;
   }
 
+  public BaseDatabaseConnection getConnection() {
+    return conn;
+  }
+
 }
