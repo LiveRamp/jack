@@ -17,7 +17,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private final IDbManager<DB> dbManager;
 
-  private TransactorImpl(IDbManager<DB> dbManager) {
+  TransactorImpl(IDbManager<DB> dbManager) {
     this.dbManager = dbManager;
   }
 
