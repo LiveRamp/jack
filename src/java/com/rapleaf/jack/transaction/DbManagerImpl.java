@@ -19,6 +19,7 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
 
   private final Callable<DB> dbConstructor;
+  private final int coreConnections;
   private final int maxConnections;
   private final Duration timeout;
 
@@ -29,14 +30,15 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   private final Lock lock = new ReentrantLock();
   private final Condition newConnection = lock.newCondition();
 
-  private DbManagerImpl(Callable<DB> dbConstructor, int maxConnections, Duration timeout) {
+  private DbManagerImpl(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration timeout) {
     this.dbConstructor = dbConstructor;
+    this.coreConnections = coreConnections;
     this.maxConnections = maxConnections;
     this.timeout = timeout;
   }
 
-  public static <DB extends IDb> DbManagerImpl<DB> create(Callable<DB> dbConstructor, int maxConnections, Duration timeout) {
-    return new DbManagerImpl<DB>(dbConstructor, maxConnections, timeout);
+  public static <DB extends IDb> DbManagerImpl<DB> create(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration timeout) {
+    return new DbManagerImpl<DB>(dbConstructor, coreConnections, maxConnections, timeout);
   }
 
   @Override
@@ -46,28 +48,30 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     try {
       if (lock.tryLock(timeout.getMillis(), TimeUnit.MILLISECONDS)) {
         try {
-          // check for close before waiting
           if (closed) {
             throw new IllegalStateException("DB manager has been closed.");
           }
 
-          // when no connection is available, no new connection can be created and within timeout threshold
-          while (idleConnections.isEmpty() && allConnections.size() >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
-            try {
-              newConnection.awaitUntil(new Date(timeoutThreshold));
-            } catch (InterruptedException e) {
-              throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
+          // wait or check for available connections when more than coreConnections connections have been created
+          if (allConnections.size() >= coreConnections) {
+            // when no connection is available, no new connection can be created and within timeout threshold
+            while (idleConnections.isEmpty() && allConnections.size() >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
+              try {
+                newConnection.awaitUntil(new Date(timeoutThreshold));
+              } catch (InterruptedException e) {
+                throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
+              }
             }
-          }
 
-          // check for close after waiting
-          if (closed) {
-            throw new IllegalStateException("DB manager has been closed.");
-          }
+            // check for close after waiting
+            if (closed) {
+              throw new IllegalStateException("DB manager has been closed.");
+            }
 
-          // when no connection is available and no new connection can be created
-          if (!idleConnections.isEmpty()) {
-            return idleConnections.remove();
+            // when no connection is available and no new connection can be created
+            if (!idleConnections.isEmpty()) {
+              return idleConnections.remove();
+            }
           }
 
           // when no connection is available but new connection can be created

@@ -89,6 +89,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
     private Callable<DB> dbConstructor;
+    private int coreConnections = 1;
     private int maxConnections = 1;
     private Duration timeout = Duration.standardSeconds(1L);
 
@@ -98,6 +99,12 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     public Builder<DB> setDbConstructor(Callable<DB> dbConstructor) {
       this.dbConstructor = dbConstructor;
+      return this;
+    }
+
+    public Builder<DB> setCoreConnections(int coreConnections) {
+      Preconditions.checkArgument(coreConnections >= 0);
+      this.coreConnections = coreConnections;
       return this;
     }
 
@@ -119,7 +126,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     @Override
     public TransactorImpl<DB> get() {
-      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, maxConnections, timeout));
+      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, coreConnections, maxConnections, timeout));
     }
   }
 
