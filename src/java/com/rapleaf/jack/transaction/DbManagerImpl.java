@@ -89,9 +89,10 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
           lock.unlock();
         }
       }
+
       throw new NoAvailableConnectionException("No available connection after waiting for " + timeout.getStandardSeconds() + " seconds");
     } catch (InterruptedException e) {
-      throw new ConnectionCreationFailureException("DB connection creation has been interrupted.", e);
+      throw new ConnectionCreationFailureException("Waiting for DB connection interrupted.", e);
     }
   }
 
