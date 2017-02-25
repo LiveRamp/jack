@@ -13,10 +13,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private final IDbManager<DB> dbManager;
 
-  private TransactorImpl(Callable<DB> callable, int maxConnections, Duration timeout) {
-    this.dbManager = maxConnections <= 0 ?
-        new FlexibleDbManager<DB>(callable, maxConnections, timeout) :
-        new FixedDbManager<DB>(callable, maxConnections, timeout);
+  private TransactorImpl(IDbManager<DB> dbManager) {
+    this.dbManager = dbManager;
   }
 
   public static <DB extends IDb> Builder<DB> create(Callable<DB> dbConstructor) {
@@ -121,7 +119,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     @Override
     public TransactorImpl<DB> get() {
-      return new TransactorImpl<>(dbConstructor, maxConnections, timeout);
+      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, maxConnections, timeout));
     }
   }
 
