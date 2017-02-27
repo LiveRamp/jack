@@ -29,63 +29,59 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   @Override
   public <T> T execute(IQuery<DB, T> query) {
-    long timestamp = System.currentTimeMillis();
-    DB connection = dbManager.getConnection(timestamp);
-    connection.setAutoCommit(true);
-    try {
-      return query.query(connection);
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      dbManager.returnConnection(connection);
-    }
+    return execute(query, false);
   }
 
   @Override
   public <T> T executeAsTransaction(IQuery<DB, T> query) {
-    long timestamp = System.currentTimeMillis();
-    DB connection = dbManager.getConnection(timestamp);
-    connection.setAutoCommit(false);
-    try {
-      T value = query.query(connection);
-      connection.commit();
-      return value;
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      connection.rollback();
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      dbManager.returnConnection(connection);
-    }
+    return execute(query, true);
   }
 
   @Override
   public void execute(IExecution<DB> execution) {
+    execute(execution, false);
+  }
+
+  @Override
+  public void executeAsTransaction(IExecution<DB> execution) {
+    execute(execution, true);
+  }
+
+  private <T> T execute(IQuery<DB, T> query, boolean asTransaction) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
-    connection.setAutoCommit(true);
+    connection.setAutoCommit(!asTransaction);
     try {
-      execution.execute(connection);
+      T value = query.query(connection);
+      if (asTransaction) {
+        connection.commit();
+      }
+      return value;
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
+      if (asTransaction) {
+        connection.rollback();
+      }
       throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);
     }
   }
 
-  @Override
-  public void executeAsTransaction(IExecution<DB> execution) {
+  private void execute(IExecution<DB> execution, boolean asTransaction) {
     long timestamp = System.currentTimeMillis();
     DB connection = dbManager.getConnection(timestamp);
-    connection.setAutoCommit(false);
+    connection.setAutoCommit(!asTransaction);
     try {
       execution.execute(connection);
-      connection.commit();
+      if (asTransaction) {
+        connection.commit();
+      }
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
-      connection.rollback();
+      if (asTransaction) {
+        connection.rollback();
+      }
       throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);

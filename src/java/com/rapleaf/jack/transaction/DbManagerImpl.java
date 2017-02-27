@@ -29,7 +29,7 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(DbManagerImpl.class);
   private static final Duration MAX_IDLE_CONNECTION_CHECK_TIME = Duration.standardSeconds(10);
-  public static final Duration AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD = Duration.ZERO;
+  static final Duration AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD = Duration.ZERO;
 
   private final Callable<DB> dbConstructor;
   private final int coreConnections;
