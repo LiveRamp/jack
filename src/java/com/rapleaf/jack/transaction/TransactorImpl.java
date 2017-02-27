@@ -4,11 +4,14 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
+  private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private static int DEFAULT_CORE_CONNECTIONS = 1;
   private static int DEFAULT_MAX_CONNECTIONS = 1;
@@ -33,6 +36,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     try {
       return query.query(connection);
     } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
       throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);
@@ -49,6 +53,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       connection.commit();
       return value;
     } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
       connection.rollback();
       throw new SqlExecutionFailureException(e);
     } finally {
@@ -64,6 +69,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     try {
       execution.execute(connection);
     } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
       throw new SqlExecutionFailureException(e);
     } finally {
       dbManager.returnConnection(connection);
@@ -79,6 +85,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       execution.execute(connection);
       connection.commit();
     } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
       connection.rollback();
       throw new SqlExecutionFailureException(e);
     } finally {
