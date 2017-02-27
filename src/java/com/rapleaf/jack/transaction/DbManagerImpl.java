@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -215,6 +216,11 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     LOG.debug("DB manager close completed");
   }
 
+  @Override
+  public boolean isClosed() {
+    return closed;
+  }
+
   private Runnable checkIdleConnection() {
     return () -> {
       // unsafe initial timestamp and connection check without locking
@@ -243,6 +249,16 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
         LOG.error("Waiting for lock to close idle connection is interrupted", e);
       }
     };
+  }
+
+  @VisibleForTesting
+  int getIdleConnections() {
+    return idleConnections.size();
+  }
+
+  @VisibleForTesting
+  int getBusyConnections() {
+    return busyConnections.size();
   }
 
 }

@@ -17,4 +17,6 @@ interface IDbManager<DB extends IDb> extends Closeable {
 
   void close(Duration timeout);
 
+  boolean isClosed();
+
 }
