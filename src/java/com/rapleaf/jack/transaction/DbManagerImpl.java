@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,24 +27,23 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(DbManagerImpl.class);
-
-  private final Duration MAX_IDLE_CONNECTION_CHECK_TIME = Duration.standardSeconds(10);
+  private static final Duration MAX_IDLE_CONNECTION_CHECK_TIME = Duration.standardSeconds(10);
+  private static final long AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD = 0L;
 
   private final Callable<DB> dbConstructor;
   private final int coreConnections;
   private final int maxConnections;
   private final Duration waitingTimeout;
   private final Duration keepAliveTime;
+  private final ScheduledExecutorService idleConnectionTerminator;
 
   private final Set<DB> busyConnections = Sets.newHashSet();
   private final Queue<DB> idleConnections = Lists.newLinkedList();
-
-  private long lastActiveTimestamp = System.currentTimeMillis();
-  private final ScheduledExecutorService idleConnectionTerminator = Executors.newSingleThreadScheduledExecutor();
-
-  private boolean closed = false;
   private final Lock lock = new ReentrantLock();
   private final Condition returnConnection = lock.newCondition();
+
+  private long lastActiveTimestamp = System.currentTimeMillis();
+  private boolean closed = false;
 
   private DbManagerImpl(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration waitingTimeout, Duration keepAliveTime) {
     this.dbConstructor = dbConstructor;
@@ -51,6 +51,12 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     this.maxConnections = maxConnections;
     this.waitingTimeout = waitingTimeout;
     this.keepAliveTime = keepAliveTime;
+    if (keepAliveTime.getMillis() > AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD) {
+      // use daemon thread so that the executor service won't block JVM exit
+      this.idleConnectionTerminator = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(true).build());
+    } else {
+      this.idleConnectionTerminator = null;
+    }
   }
 
   public static <DB extends IDb> DbManagerImpl<DB> create(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration waitingTimeout, Duration keepAliveTime) {
@@ -64,48 +70,33 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     try {
       if (lock.tryLock(waitingTimeout.getMillis(), TimeUnit.MILLISECONDS)) {
         try {
-          if (closed) {
-            LOG.error("Cannot get DB connection because DB manager has been closed");
-            throw new IllegalStateException("Cannot get DB connection because DB manager has been closed");
+          // check for close before waiting
+          checkCloseStatus();
+
+          int totalConnections = busyConnections.size() + idleConnections.size();
+
+          // wait for connection to be returned when no connection is available, no new connection can be created and within timeout threshold
+          while (idleConnections.isEmpty() && totalConnections >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
+            try {
+              if (returnConnection.awaitUntil(new Date(timeoutThreshold))) {
+                break;
+              }
+            } catch (InterruptedException e) {
+              LOG.error("Transaction pending for connection is interrupted ", e);
+              throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
+            }
           }
 
-          // wait or check for available connections when more than coreConnections connections have been created
-          if (busyConnections.size() + idleConnections.size() >= coreConnections) {
-            // when no connection is available, no new connection can be created and within timeout threshold
-            while (idleConnections.isEmpty() && System.currentTimeMillis() < timeoutThreshold) {
-              try {
-                returnConnection.awaitUntil(new Date(timeoutThreshold));
-              } catch (InterruptedException e) {
-                LOG.error("Transaction pending for connection is interrupted ", e);
-                throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
-              }
-            }
+          // check for close after waiting
+          checkCloseStatus();
 
-            // check for close after waiting
-            if (closed) {
-              LOG.error("Cannot get DB connection because DB manager has been closed");
-              throw new IllegalStateException("Cannot get DB connection because DB manager has been closed");
-            }
-
-            // when no connection is available and no new connection can be created
-            if (!idleConnections.isEmpty()) {
-              DB connection = idleConnections.remove();
-              busyConnections.add(connection);
-              return connection;
-            }
+          if (!idleConnections.isEmpty()) {
+            return getIdleConnection();
           }
 
           // when no connection is available but new connection can be created
-          if (busyConnections.size() + idleConnections.size() < maxConnections) {
-            try {
-              DB newConnection = dbConstructor.call();
-              newConnection.disableCaching();
-              busyConnections.add(newConnection);
-              return newConnection;
-            } catch (Exception e) {
-              LOG.error("DB connection creation failed", e);
-              throw new ConnectionCreationFailureException("DB connection creation failed", e);
-            }
+          if (totalConnections < maxConnections) {
+            return createNewConnection();
           }
         } finally {
           lock.unlock();
@@ -120,6 +111,31 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     }
   }
 
+  private void checkCloseStatus() {
+    if (closed) {
+      LOG.error("Cannot get DB connection because DB manager has been closed");
+      throw new IllegalStateException("Cannot get DB connection because DB manager has been closed");
+    }
+  }
+
+  private DB getIdleConnection() {
+    DB connection = idleConnections.remove();
+    busyConnections.add(connection);
+    return connection;
+  }
+
+  private DB createNewConnection() {
+    try {
+      DB newConnection = dbConstructor.call();
+      newConnection.disableCaching();
+      busyConnections.add(newConnection);
+      return newConnection;
+    } catch (Exception e) {
+      LOG.error("DB connection creation failed", e);
+      throw new ConnectionCreationFailureException("DB connection creation failed", e);
+    }
+  }
+
   @Override
   public void returnConnection(DB connection) {
     lock.lock();
@@ -128,7 +144,9 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
       idleConnections.add(connection);
       returnConnection.signalAll();
       lastActiveTimestamp = System.currentTimeMillis();
-      idleConnectionTerminator.schedule(checkIdleConnection(), keepAliveTime.getMillis(), TimeUnit.MILLISECONDS);
+      if (idleConnectionTerminator != null) {
+        idleConnectionTerminator.schedule(checkIdleConnection(), keepAliveTime.getMillis(), TimeUnit.MILLISECONDS);
+      }
     } finally {
       lock.unlock();
     }
@@ -144,7 +162,9 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
 
     Exception lastException = null;
     int failed = 0;
-    idleConnectionTerminator.shutdownNow();
+    if (idleConnectionTerminator != null) {
+      idleConnectionTerminator.shutdownNow();
+    }
 
     lock.lock();
     try {
@@ -208,13 +228,17 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
       try {
         // abort if the lock cannot be acquired in MAX_IDLE_CONNECTION_CHECK_TIME
         if (lock.tryLock(MAX_IDLE_CONNECTION_CHECK_TIME.getMillis(), TimeUnit.MILLISECONDS)) {
-          while (idleConnections.size() > coreConnections) {
-            try {
-              idleConnections.remove().close();
-            } catch (IOException e) {
-              LOG.error("Failed to close idle connection", e);
-              throw new ConnectionClosureFailureException("Failed to close idle connection", e);
+          try {
+            while (idleConnections.size() > coreConnections) {
+              try {
+                idleConnections.remove().close();
+              } catch (IOException e) {
+                LOG.error("Failed to close idle connection", e);
+                throw new ConnectionClosureFailureException("Failed to close idle connection", e);
+              }
             }
+          } finally {
+            lock.unlock();
           }
         }
       } catch (InterruptedException e) {

@@ -136,7 +136,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return this;
     }
 
-    public Builder<DB> setConnectionKeepAliveTime(Duration keepAliveTime) {
+    public Builder<DB> setAutoCloseIdleConnection(Duration keepAliveTime) {
       this.keepAliveTime = keepAliveTime;
       return this;
     }
