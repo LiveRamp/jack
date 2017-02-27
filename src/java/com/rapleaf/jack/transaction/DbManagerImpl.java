@@ -78,9 +78,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
           // wait for connection to be returned when no connection is available, no new connection can be created and within timeout threshold
           while (idleConnections.isEmpty() && totalConnections >= maxConnections && System.currentTimeMillis() < timeoutThreshold) {
             try {
-              if (returnConnection.awaitUntil(new Date(timeoutThreshold))) {
-                break;
-              }
+              returnConnection.awaitUntil(new Date(timeoutThreshold));
             } catch (InterruptedException e) {
               LOG.error("Transaction pending for connection is interrupted ", e);
               throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
