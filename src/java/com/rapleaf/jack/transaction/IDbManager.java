@@ -2,6 +2,8 @@ package com.rapleaf.jack.transaction;
 
 import java.io.Closeable;
 
+import org.joda.time.Duration;
+
 import com.rapleaf.jack.IDb;
 
 interface IDbManager<DB extends IDb> extends Closeable {
@@ -12,5 +14,7 @@ interface IDbManager<DB extends IDb> extends Closeable {
 
   @Override
   void close();
+
+  void close(Duration timeout);
 
 }

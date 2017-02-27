@@ -136,6 +136,12 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
 
   @Override
   public void close() {
+    close(Duration.ZERO);
+  }
+
+  public void close(Duration timeout) {
+    LOG.debug("DB manager close started");
+
     Exception lastException = null;
     int failed = 0;
     idleConnectionTerminator.shutdownNow();
@@ -143,13 +149,29 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     lock.lock();
     try {
       closed = true;
-      while (busyConnections.size() > 0) {
+
+      if (timeout.getMillis() > 0 && busyConnections.size() > 0) {
         try {
-          returnConnection.await();
+          returnConnection.await(timeout.getMillis(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
           LOG.warn("Waiting for return of DB connection to close DB manager interrupted");
         }
       }
+
+      if (busyConnections.size() > 0) {
+        LOG.warn("Closing {} DB connection that are still in use", busyConnections.size());
+      }
+
+      for (DB connection : busyConnections) {
+        try {
+          connection.close();
+        } catch (Exception e) {
+          LOG.error("DB closure failed", e);
+          ++failed;
+          lastException = e;
+        }
+      }
+      busyConnections.clear();
 
       for (DB connection : idleConnections) {
         try {
@@ -160,6 +182,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
           lastException = e;
         }
       }
+      idleConnections.clear();
 
       if (lastException != null) {
         throw new ConnectionClosureFailureException(
