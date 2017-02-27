@@ -2,8 +2,6 @@ package com.rapleaf.jack.transaction;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -14,7 +12,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.ConnectionClosureFailureException;
@@ -23,6 +25,7 @@ import com.rapleaf.jack.exception.NoAvailableConnectionException;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
+  private static final Logger LOG = LoggerFactory.getLogger(DbManagerImpl.class);
 
   private final Duration MAX_IDLE_CONNECTION_CHECK_TIME = Duration.standardSeconds(10);
 
@@ -32,8 +35,8 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   private final Duration waitingTimeout;
   private final Duration keepAliveTime;
 
-  private final Set<DB> busyConnections = new HashSet<>();
-  private final Queue<DB> idleConnections = new LinkedList<>();
+  private final Set<DB> busyConnections = Sets.newHashSet();
+  private final Queue<DB> idleConnections = Lists.newLinkedList();
 
   private long lastActiveTimestamp = System.currentTimeMillis();
   private final ScheduledExecutorService idleConnectionTerminator = Executors.newSingleThreadScheduledExecutor();
@@ -62,7 +65,8 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
       if (lock.tryLock(waitingTimeout.getMillis(), TimeUnit.MILLISECONDS)) {
         try {
           if (closed) {
-            throw new IllegalStateException("DB manager has been closed.");
+            LOG.error("Cannot get DB connection because DB manager has been closed");
+            throw new IllegalStateException("Cannot get DB connection because DB manager has been closed");
           }
 
           // wait or check for available connections when more than coreConnections connections have been created
@@ -72,13 +76,15 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
               try {
                 returnConnection.awaitUntil(new Date(timeoutThreshold));
               } catch (InterruptedException e) {
+                LOG.error("Transaction pending for connection is interrupted ", e);
                 throw new SqlExecutionFailureException("Transaction pending for connection is interrupted ", e);
               }
             }
 
             // check for close after waiting
             if (closed) {
-              throw new IllegalStateException("DB manager has been closed.");
+              LOG.error("Cannot get DB connection because DB manager has been closed");
+              throw new IllegalStateException("Cannot get DB connection because DB manager has been closed");
             }
 
             // when no connection is available and no new connection can be created
@@ -97,6 +103,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
               busyConnections.add(newConnection);
               return newConnection;
             } catch (Exception e) {
+              LOG.error("DB connection creation failed", e);
               throw new ConnectionCreationFailureException("DB connection creation failed", e);
             }
           }
@@ -105,8 +112,10 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
         }
       }
 
+      LOG.error("No available connection after waiting for {} seconds", waitingTimeout.getStandardSeconds());
       throw new NoAvailableConnectionException("No available connection after waiting for " + waitingTimeout.getStandardSeconds() + " seconds");
     } catch (InterruptedException e) {
+      LOG.error("Waiting for DB connection interrupted", e);
       throw new ConnectionCreationFailureException("Waiting for DB connection interrupted.", e);
     }
   }
@@ -138,8 +147,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
         try {
           returnConnection.await();
         } catch (InterruptedException e) {
-          // ignore exception and close everything
-          break;
+          LOG.warn("Waiting for return of DB connection to close DB manager interrupted");
         }
       }
 
@@ -147,6 +155,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
         try {
           connection.close();
         } catch (Exception e) {
+          LOG.error("DB closure failed", e);
           ++failed;
           lastException = e;
         }
@@ -161,6 +170,8 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     } finally {
       lock.unlock();
     }
+
+    LOG.debug("DB manager close completed");
   }
 
   private Runnable checkIdleConnection() {
@@ -178,12 +189,13 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
             try {
               idleConnections.remove().close();
             } catch (IOException e) {
+              LOG.error("Failed to close idle connection", e);
               throw new ConnectionClosureFailureException("Failed to close idle connection", e);
             }
           }
         }
       } catch (InterruptedException e) {
-        // ignore
+        LOG.error("Waiting for lock to close idle connection is interrupted", e);
       }
     };
   }
