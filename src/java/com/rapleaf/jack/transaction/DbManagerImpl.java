@@ -39,7 +39,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
 
   private final Set<DB> busyConnections = Sets.newHashSet();
   private final Queue<DB> idleConnections = Lists.newLinkedList();
-  private final Lock lock = new ReentrantLock();
+  private final Lock lock = new ReentrantLock(true);
   private final Condition returnConnection = lock.newCondition();
 
   private long lastActiveTimestamp = System.currentTimeMillis();
