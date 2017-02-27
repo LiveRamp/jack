@@ -15,8 +15,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private static int DEFAULT_CORE_CONNECTIONS = 1;
   private static int DEFAULT_MAX_CONNECTIONS = 1;
-  private static Duration DEFAULT_WAITING_TIMEOUT = Duration.standardMinutes(10);
-  private static Duration DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(30);
+  private static Duration DEFAULT_WAITING_TIMEOUT = Duration.standardMinutes(1);
 
   private final IDbManager<DB> dbManager;
 
@@ -103,7 +102,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     private int coreConnections = DEFAULT_CORE_CONNECTIONS;
     private int maxConnections = DEFAULT_MAX_CONNECTIONS;
     private Duration waitingTimeout = DEFAULT_WAITING_TIMEOUT;
-    private Duration keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
+    private Duration keepAliveTime = DbManagerImpl.AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD;
 
     private Builder(Callable<DB> dbConstructor) {
       this.dbConstructor = dbConstructor;
@@ -114,14 +113,10 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return this;
     }
 
-    public Builder<DB> setCoreConnections(int coreConnections) {
-      Preconditions.checkArgument(coreConnections >= 0);
+    public Builder<DB> setConnections(int coreConnections, int maxConnections) {
+      Preconditions.checkArgument(coreConnections >= 0, "Core connections must be larger than zero");
+      Preconditions.checkArgument(maxConnections >= Math.max(1, coreConnections), "Max connections must be larger than one or core connections");
       this.coreConnections = coreConnections;
-      return this;
-    }
-
-    public Builder<DB> setMaxConnections(int maxConnections) {
-      Preconditions.checkArgument(maxConnections > 0);
       this.maxConnections = maxConnections;
       return this;
     }
@@ -143,7 +138,11 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     @Override
     public TransactorImpl<DB> get() {
-      return new TransactorImpl<DB>(DbManagerImpl.create(dbConstructor, coreConnections, maxConnections, waitingTimeout, keepAliveTime));
+      return Builder.get(this);
+    }
+
+    private static <DB extends IDb> TransactorImpl<DB> get(TransactorImpl.Builder<DB> builder) {
+      return new TransactorImpl<DB>(DbManagerImpl.create(builder.dbConstructor, builder.coreConnections, builder.maxConnections, builder.waitingTimeout, builder.keepAliveTime));
     }
   }
 

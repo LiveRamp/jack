@@ -29,7 +29,7 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(DbManagerImpl.class);
   private static final Duration MAX_IDLE_CONNECTION_CHECK_TIME = Duration.standardSeconds(10);
-  private static final long AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD = 0L;
+  public static final Duration AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD = Duration.ZERO;
 
   private final Callable<DB> dbConstructor;
   private final int coreConnections;
@@ -52,7 +52,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     this.maxConnections = maxConnections;
     this.waitingTimeout = waitingTimeout;
     this.keepAliveTime = keepAliveTime;
-    if (keepAliveTime.getMillis() > AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD) {
+    if (keepAliveTime.isLongerThan(AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD)) {
       // use daemon thread so that the executor service won't block JVM exit
       this.idleConnectionTerminator = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(true).build());
     } else {
@@ -60,7 +60,7 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
     }
   }
 
-  public static <DB extends IDb> DbManagerImpl<DB> create(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration waitingTimeout, Duration keepAliveTime) {
+  static <DB extends IDb> DbManagerImpl<DB> create(Callable<DB> dbConstructor, int coreConnections, int maxConnections, Duration waitingTimeout, Duration keepAliveTime) {
     return new DbManagerImpl<DB>(dbConstructor, coreConnections, maxConnections, waitingTimeout, keepAliveTime);
   }
 
@@ -139,7 +139,9 @@ class DbManagerImpl<DB extends IDb> implements IDbManager<DB> {
   public void returnConnection(DB connection) {
     lock.lock();
     try {
-      busyConnections.remove(connection);
+      if (!busyConnections.remove(connection)) {
+        throw new IllegalArgumentException("Returned connection does not come from this DB manager");
+      }
       idleConnections.add(connection);
       returnConnection.signalAll();
       lastActiveTimestamp = System.currentTimeMillis();
