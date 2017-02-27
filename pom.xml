@@ -111,6 +111,7 @@
     </dependency>
 
     <dependency>
+      <scope>test</scope>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>1.10.19</version>
