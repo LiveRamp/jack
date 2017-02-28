@@ -3,6 +3,7 @@ package com.rapleaf.jack.transaction;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
@@ -21,6 +22,20 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   private final ObjectPool<DB> connectionPool;
 
+  /**
+   * Create a new DbPoolManager.
+   *
+   * @param dbConstructor       A callable that is used to create new db connections in the connection pool.
+   * @param maxTotalConnections The maximum number of connections that can be created in the pool. Negative values
+   *                            mean that there is no limit.
+   * @param minIdleConnections  The minimum number of idle connections to keep in the pool.
+   * @param maxWaitTime         The maximum amount of time that the {@link DbPoolManager#getConnection} method
+   *                            should block before throwing an exception when the pool is exhausted. Negative values
+   *                            mean that the block can be infinite.
+   * @param keepAliveTime       The minimum amount of time the connection may sit idle in the pool before it is
+   *                            eligible for eviction (with the extra condition that at least {@code minIdleConnections}
+   *                            connections remain in the pool).
+   */
   DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime) {
     GenericObjectPoolConfig config = new GenericObjectPoolConfig();
     config.setFairness(true);
@@ -67,6 +82,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void close() {
     connectionPool.close();
+  }
+
+  @VisibleForTesting
+  ObjectPool<DB> getConnectionPool() {
+    return connectionPool;
   }
 
   private static class DbPoolFactory<DB extends IDb> implements PooledObjectFactory<DB> {

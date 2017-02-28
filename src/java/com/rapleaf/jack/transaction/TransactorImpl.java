@@ -2,6 +2,7 @@ package com.rapleaf.jack.transaction;
 
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,10 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
-  private static int DEFAULT_MAX_TOTAL_CONNECTIONS = 1;
-  private static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
-  private static Duration DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30);
-  private static Duration DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(30);
+  public static int DEFAULT_MAX_TOTAL_CONNECTIONS = 1;
+  public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
+  public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
+  public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
 
   private final IDbManager<DB> dbManager;
 
@@ -96,43 +97,92 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
 
     private final Callable<DB> dbConstructor;
-    private int maxTotalConnections = DEFAULT_MAX_TOTAL_CONNECTIONS;
-    private int minIdleConnections = DEFAULT_MIN_IDLE_CONNECTIONS;
-    private long maxWaitMillis = DEFAULT_MAX_WAIT_TIME.getMillis();
-    private long keepAliveMillis = DEFAULT_KEEP_ALIVE_TIME.getMillis();
+    private int maxTotalConnections;
+    private int minIdleConnections;
+    private long maxWaitMillis;
+    private long keepAliveMillis;
 
     Builder(Callable<DB> dbConstructor) {
+      initialize();
       this.dbConstructor = dbConstructor;
     }
 
+    /**
+     * (Re)initialize the parameters to allow builder reuse.
+     */
+    private void initialize() {
+      this.maxTotalConnections = DEFAULT_MAX_TOTAL_CONNECTIONS;
+      this.minIdleConnections = DEFAULT_MIN_IDLE_CONNECTIONS;
+      this.maxWaitMillis = DEFAULT_MAX_WAIT_TIME;
+      this.keepAliveMillis = DEFAULT_KEEP_ALIVE_TIME;
+    }
+
+    /**
+     * @param maxTotalConnections The maximum number of connections that can be created in the pool. Negative values
+     *                            mean infinite number of connections are allowed.
+     * @throws IllegalArgumentException if the value is zero.
+     */
     public Builder<DB> setMaxTotalConnections(int maxTotalConnections) {
+      Preconditions.checkArgument(maxTotalConnections != 0, "Max total connections cannot be zero");
       this.maxTotalConnections = maxTotalConnections;
       return this;
     }
 
+    /**
+     * Allow infinite number of connections.
+     */
+    public Builder<DB> enableInfiniteConnections() {
+      this.maxTotalConnections = -1;
+      return this;
+    }
+
+    /**
+     * @param minIdleConnections The minimum number of idle connections to keep in the pool. Zero or negative values
+     *                           will be ignored.
+     */
     public Builder<DB> setMinIdleConnections(int minIdleConnections) {
       this.minIdleConnections = minIdleConnections;
       return this;
     }
 
+    /**
+     * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
+     *                    should block before throwing an exception when the pool is exhausted. Negative values
+     *                    mean that the block can be infinite.
+     */
     public Builder<DB> setMaxWaitTime(Duration maxWaitTime) {
       this.maxWaitMillis = maxWaitTime.getMillis();
       return this;
     }
 
-    public Builder<DB> setKeepAliveTime(Duration keepAliveTime) {
-      this.keepAliveMillis = keepAliveTime.getMillis();
-      return this;
-    }
-
+    /**
+     * Allow infinite block for the {@link DbPoolManager#getConnection} method.
+     */
     public Builder<DB> enableInfiniteWait() {
       this.maxWaitMillis = -1L;
       return this;
     }
 
+    /***
+     * @param keepAliveTime The minimum amount of time the connection may sit idle in the pool before it is
+     *                      eligible for eviction (with the extra condition that at least {@code minIdleConnections}
+     *                      connections remain in the pool).
+     */
+    public Builder<DB> setKeepAliveTime(Duration keepAliveTime) {
+      this.keepAliveMillis = keepAliveTime.getMillis();
+      return this;
+    }
+
+    /**
+     * Returns a new transactor impl using the parameters specified during the building
+     * process. After building, builder parameters are re-initialized and not shared
+     * amongst built instances.
+     */
     @Override
     public TransactorImpl<DB> get() {
-      return Builder.build(this);
+      TransactorImpl<DB> transactor = Builder.build(this);
+      initialize();
+      return transactor;
     }
 
     private static <DB extends IDb> TransactorImpl<DB> build(Builder<DB> builder) {
