@@ -2,7 +2,6 @@ package com.rapleaf.jack.transaction;
 
 import java.util.concurrent.Callable;
 
-import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +12,10 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
-  private static int DEFAULT_CORE_CONNECTIONS = 1;
-  private static int DEFAULT_MAX_CONNECTIONS = 1;
-  private static Duration DEFAULT_WAITING_TIMEOUT = Duration.standardMinutes(1);
+  private static int DEFAULT_MAX_TOTAL_CONNECTIONS = 1;
+  private static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
+  private static Duration DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30);
+  private static Duration DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(30);
 
   private final IDbManager<DB> dbManager;
 
@@ -94,51 +94,51 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
-    private Callable<DB> dbConstructor;
-    private int coreConnections = DEFAULT_CORE_CONNECTIONS;
-    private int maxConnections = DEFAULT_MAX_CONNECTIONS;
-    private Duration waitingTimeout = DEFAULT_WAITING_TIMEOUT;
-    private Duration keepAliveTime = DbManagerImpl.AUTO_CLOSE_IDLE_CONNECTION_THRESHOLD;
 
-    private Builder(Callable<DB> dbConstructor) {
+    private final Callable<DB> dbConstructor;
+    private int maxTotalConnections = DEFAULT_MAX_TOTAL_CONNECTIONS;
+    private int minIdleConnections = DEFAULT_MIN_IDLE_CONNECTIONS;
+    private long maxWaitMillis = DEFAULT_MAX_WAIT_TIME.getMillis();
+    private long keepAliveMillis = DEFAULT_KEEP_ALIVE_TIME.getMillis();
+
+    Builder(Callable<DB> dbConstructor) {
       this.dbConstructor = dbConstructor;
     }
 
-    public Builder<DB> setDbConstructor(Callable<DB> dbConstructor) {
-      this.dbConstructor = dbConstructor;
+    public Builder<DB> setMaxTotalConnections(int maxTotalConnections) {
+      this.maxTotalConnections = maxTotalConnections;
       return this;
     }
 
-    public Builder<DB> setConnections(int coreConnections, int maxConnections) {
-      Preconditions.checkArgument(coreConnections >= 0, "Core connections must be larger than zero");
-      Preconditions.checkArgument(maxConnections >= Math.max(1, coreConnections), "Max connections must be larger than one or core connections");
-      this.coreConnections = coreConnections;
-      this.maxConnections = maxConnections;
+    public Builder<DB> setMinIdleConnections(int minIdleConnections) {
+      this.minIdleConnections = minIdleConnections;
       return this;
     }
 
-    public Builder<DB> setInfiniteConnections() {
-      this.maxConnections = 0;
+    public Builder<DB> setMaxWaitTime(Duration maxWaitTime) {
+      this.maxWaitMillis = maxWaitTime.getMillis();
       return this;
     }
 
-    public Builder<DB> setConnectionWaitingTimeout(Duration waitingTimeout) {
-      this.waitingTimeout = waitingTimeout;
+    public Builder<DB> setKeepAliveTime(Duration keepAliveTime) {
+      this.keepAliveMillis = keepAliveTime.getMillis();
       return this;
     }
 
-    public Builder<DB> setAutoCloseIdleConnection(Duration keepAliveTime) {
-      this.keepAliveTime = keepAliveTime;
+    public Builder<DB> enableInfiniteWait() {
+      this.maxWaitMillis = -1L;
       return this;
     }
 
     @Override
     public TransactorImpl<DB> get() {
-      return Builder.get(this);
+      return Builder.build(this);
     }
 
-    private static <DB extends IDb> TransactorImpl<DB> get(TransactorImpl.Builder<DB> builder) {
-      return new TransactorImpl<DB>(DbManagerImpl.create(builder.dbConstructor, builder.coreConnections, builder.maxConnections, builder.waitingTimeout, builder.keepAliveTime));
+    private static <DB extends IDb> TransactorImpl<DB> build(Builder<DB> builder) {
+      DbPoolManager<DB> dbPoolManager = new DbPoolManager<DB>(builder.dbConstructor, builder.maxTotalConnections,
+          builder.minIdleConnections, builder.maxWaitMillis, builder.keepAliveMillis);
+      return new TransactorImpl<DB>(dbPoolManager);
     }
   }
 
