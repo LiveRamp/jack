@@ -78,22 +78,22 @@ public class TestDbPoolManager extends JackTestCase {
     getAndReturnAllConnections();
 
     // wait for eviction
-    Thread.sleep(keepAliveTime * 5);
+    sleep(1);
 
     assertIdleConnections(minIdleConnections);
   }
 
   @Test(timeout = 10 * 1000L) // 10s
   public void testKeepAliveTime() throws Exception {
-    maxConnections = 7;
+    maxConnections = 15;
     minIdleConnections = 5;
-    keepAliveTime = Duration.standardSeconds(1).getMillis();
+    keepAliveTime = Duration.standardSeconds(3).getMillis();
     initializeDbPoolManager();
     getAndReturnAllConnections();
 
     // all idle connections should be available
     assertIdleConnections(maxConnections);
-    assertEvictionTime();
+    assertEvictionTime((int)keepAliveTime / 1000, 2);
   }
 
   @Test(timeout = 10 * 1000L) // 10s
@@ -108,25 +108,7 @@ public class TestDbPoolManager extends JackTestCase {
      * 1. first thread gets the only connection, and takes firstThreadProcessTime seconds to return the connection
      */
     int firstThreadProcessTime = 3;
-    Future future1 = executorService.submit(() -> {
-      LOG.info("First task started");
-
-      // get connection
-      IDatabase1 connections = dbPoolManager.getConnection();
-      assertIdleConnections(0);
-
-      // return connection after sleep
-      long startTime = System.currentTimeMillis();
-      sleep(firstThreadProcessTime);
-      dbPoolManager.returnConnection(connections);
-
-      // check connection use time
-      int returnTime = getSecondsSince(startTime);
-      LOG.info("First task returned DB connection in {} seconds", returnTime);
-      assertTrue(returnTime >= firstThreadProcessTime);
-
-      LOG.info("First task completed");
-    });
+    Future future1 = startFirstThread(firstThreadProcessTime);
 
     /*
      * 2. second thread starts after secondThreadStartDelay seconds, and gets the connection after waiting for
@@ -173,25 +155,7 @@ public class TestDbPoolManager extends JackTestCase {
      * 1. first thread gets the only connection, and takes firstThreadProcessTime seconds to return the connection
      */
     int firstThreadProcessTime = 3;
-    Future future1 = executorService.submit(() -> {
-      LOG.info("First task started");
-
-      // get connection
-      IDatabase1 connections = dbPoolManager.getConnection();
-      assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
-
-      // return connection after sleep
-      long startTime = System.currentTimeMillis();
-      sleep(firstThreadProcessTime);
-      dbPoolManager.returnConnection(connections);
-
-      // check connection use time
-      int returnTime = getSecondsSince(startTime);
-      LOG.info("First task returned DB connection in {} seconds", returnTime);
-      assertTrue(returnTime >= firstThreadProcessTime);
-
-      LOG.info("First task completed");
-    });
+    Future future1 = startFirstThread(firstThreadProcessTime);
 
     /*
      * 2. second thread starts after secondThreadStartDelay seconds, and gets the connection after waiting for
@@ -274,17 +238,42 @@ public class TestDbPoolManager extends JackTestCase {
     assertTrue(value >= expectedMin && value <= expectedMax);
   }
 
-  private void assertEvictionTime() {
+  private void assertEvictionTime(int expectedSeconds, int error) {
     long startTime = System.currentTimeMillis();
     while (true) {
+      LOG.info("Active connections: {}", dbPoolManager.getConnectionPool().getNumIdle());
       if (dbPoolManager.getConnectionPool().getNumIdle() == minIdleConnections) {
-        long waitMillis = System.currentTimeMillis() - startTime;
-        LOG.info("Idle connections are evicted after {} millis", waitMillis);
+        int waitSeconds = getSecondsSince(startTime);
+        LOG.info("Idle connections are evicted after {} seconds", waitSeconds);
         // allow two seconds delay
-        assertInRange(waitMillis, keepAliveTime, keepAliveTime + 2000);
+        assertInRange(waitSeconds, expectedSeconds, expectedSeconds + error);
         break;
+      } else {
+        sleep(1);
       }
     }
+  }
+
+  private Future startFirstThread(int threadProcessTime) {
+    return executorService.submit(() -> {
+      LOG.info("First task started");
+
+      // get connection
+      IDatabase1 connections = dbPoolManager.getConnection();
+      assertIdleConnections(0);
+
+      // return connection after sleep
+      long startTime = System.currentTimeMillis();
+      sleep(threadProcessTime);
+      dbPoolManager.returnConnection(connections);
+
+      // check connection use time
+      int returnTime = getSecondsSince(startTime);
+      LOG.info("First task returned DB connection in {} seconds", returnTime);
+      assertTrue(returnTime >= threadProcessTime);
+
+      LOG.info("First task completed");
+    });
   }
 
 }

@@ -51,11 +51,25 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     config.setTestOnCreate(false);
     config.setTestOnBorrow(false);
     config.setTestOnReturn(false);
+    config.setTestWhileIdle(false);
+
     config.setMaxTotal(maxTotalConnections);
+    config.setMaxIdle(maxTotalConnections);
     config.setMinIdle(minIdleConnections);
     config.setMaxWaitMillis(maxWaitTime);
-    config.setTimeBetweenEvictionRunsMillis(keepAliveTime);
+
+    // run eviction thread every keepAliveTime + 500 millis
+    // add 500 millis to ensure the first round of eviction starts after
+    // some connections have reached keep alive time
+    config.setTimeBetweenEvictionRunsMillis(keepAliveTime + 500);
+
+    // an idle connection can be evicted after keepAliveTime millis
     config.setSoftMinEvictableIdleTimeMillis(keepAliveTime);
+
+    // after keepAliveTime, only minIdleConnections will be kept in the pool
+    // this config may need further adjustment
+    config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
+
     this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
   }
 
