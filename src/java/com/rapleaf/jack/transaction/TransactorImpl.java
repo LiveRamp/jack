@@ -13,11 +13,6 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
-  public static int DEFAULT_MAX_TOTAL_CONNECTIONS = 1;
-  public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
-  public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
-  public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
-
   private final IDbManager<DB> dbManager;
 
   TransactorImpl(IDbManager<DB> dbManager) {
@@ -49,8 +44,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   private <T> T execute(IQuery<DB, T> query, boolean asTransaction) {
-    long timestamp = System.currentTimeMillis();
-    DB connection = dbManager.getConnection(timestamp);
+    DB connection = dbManager.getConnection();
     connection.setAutoCommit(!asTransaction);
     try {
       T value = query.query(connection);
@@ -70,8 +64,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   private void execute(IExecution<DB> execution, boolean asTransaction) {
-    long timestamp = System.currentTimeMillis();
-    DB connection = dbManager.getConnection(timestamp);
+    DB connection = dbManager.getConnection();
     connection.setAutoCommit(!asTransaction);
     try {
       execution.execute(connection);
@@ -111,10 +104,10 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * (Re)initialize the parameters to allow builder reuse.
      */
     private void initialize() {
-      this.maxTotalConnections = DEFAULT_MAX_TOTAL_CONNECTIONS;
-      this.minIdleConnections = DEFAULT_MIN_IDLE_CONNECTIONS;
-      this.maxWaitMillis = DEFAULT_MAX_WAIT_TIME;
-      this.keepAliveMillis = DEFAULT_KEEP_ALIVE_TIME;
+      this.maxTotalConnections = DbPoolManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
+      this.minIdleConnections = DbPoolManager.DEFAULT_MIN_IDLE_CONNECTIONS;
+      this.maxWaitMillis = DbPoolManager.DEFAULT_MAX_WAIT_TIME;
+      this.keepAliveMillis = DbPoolManager.DEFAULT_KEEP_ALIVE_TIME;
     }
 
     /**

@@ -7,19 +7,19 @@ import org.junit.Test;
 import org.mockito.InOrder;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TestMockTransactorImpl {
+public class TestMockTransactorImpl extends JackTestCase {
 
   private IDatabase1 db;
   private IDbManager<IDatabase1> dbManager;
@@ -31,7 +31,7 @@ public class TestMockTransactorImpl {
     db = mock(IDatabase1.class);
     dbManager = mock(IDbManager.class);
     transactor = new TransactorImpl<>(dbManager);
-    when(dbManager.getConnection(anyLong())).thenReturn(db);
+    when(dbManager.getConnection()).thenReturn(db);
     when(db.deleteAll()).thenReturn(true);
   }
 
@@ -118,7 +118,7 @@ public class TestMockTransactorImpl {
     boolean autoCommit = !asTransaction;
 
     InOrder dbMethodOrder = inOrder(dbManager, db);
-    dbMethodOrder.verify(dbManager, times(1)).getConnection(anyLong());
+    dbMethodOrder.verify(dbManager, times(1)).getConnection();
     dbMethodOrder.verify(db, times(1)).setAutoCommit(autoCommit);
     dbMethodOrder.verify(db, times(1)).deleteAll();
 

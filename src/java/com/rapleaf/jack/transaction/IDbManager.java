@@ -6,7 +6,7 @@ import com.rapleaf.jack.IDb;
 
 interface IDbManager<DB extends IDb> extends Closeable {
 
-  DB getConnection(long timestamp);
+  DB getConnection();
 
   void returnConnection(DB connection);
 

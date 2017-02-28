@@ -10,6 +10,7 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,11 @@ import com.rapleaf.jack.exception.NoAvailableConnectionException;
 
 class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(DbPoolManager.class);
+
+  public static int DEFAULT_MAX_TOTAL_CONNECTIONS = 1;
+  public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
+  public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
+  public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
 
   private final ObjectPool<DB> connectionPool;
 
@@ -54,7 +60,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   }
 
   @Override
-  public DB getConnection(long timestamp) {
+  public DB getConnection() {
     try {
       return connectionPool.borrowObject();
     } catch (NoSuchElementException e) {
