@@ -57,26 +57,16 @@ public class TestDbPoolManager extends JackTestCase {
     maxConnections = 5;
     maxWaitTime = 0L;
     initializeDbPoolManager();
+    getAllConnections();
+    assertIdleConnections(0);
+    assertActiveConnections(maxConnections);
 
-    for (int i = 0; i < maxConnections; ++i) {
+    try {
       dbPoolManager.getConnection();
+      fail();
+    } catch (NoAvailableConnectionException e) {
+      // expected
     }
-    assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
-    assertEquals(maxConnections, dbPoolManager.getConnectionPool().getNumActive());
-  }
-
-  @Test(expected = NoAvailableConnectionException.class)
-  public void testImmediateNoAvailableConnectionException() throws Exception {
-    maxConnections = 5;
-    maxWaitTime = 0L;
-    initializeDbPoolManager();
-
-    for (int i = 0; i < maxConnections; ++i) {
-      dbPoolManager.getConnection();
-    }
-    assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
-    assertEquals(maxConnections, dbPoolManager.getConnectionPool().getNumActive());
-    dbPoolManager.getConnection();
   }
 
   @Test
@@ -85,24 +75,25 @@ public class TestDbPoolManager extends JackTestCase {
     minIdleConnections = 2;
     keepAliveTime = 2;
     initializeDbPoolManager();
-
-    // create and return maxConnections
-    List<IDatabase1> connections = Lists.newLinkedList();
-    for (int i = 0; i < maxConnections; ++i) {
-      connections.add(dbPoolManager.getConnection());
-    }
-    assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
-    for (IDatabase1 connection : connections) {
-      dbPoolManager.returnConnection(connection);
-    }
+    getAndReturnAllConnections();
 
     // wait for eviction
     Thread.sleep(keepAliveTime * 5);
 
-    // at least minIdleConnections connections in the pool
-    int idleConnections = dbPoolManager.getConnectionPool().getNumIdle();
-    LOG.info("Idle connections: {}", idleConnections);
-    assertTrue(idleConnections >= minIdleConnections && idleConnections < maxConnections);
+    assertIdleConnections(minIdleConnections);
+  }
+
+  @Test(timeout = 10 * 1000L) // 10s
+  public void testKeepAliveTime() throws Exception {
+    maxConnections = 7;
+    minIdleConnections = 5;
+    keepAliveTime = Duration.standardSeconds(1).getMillis();
+    initializeDbPoolManager();
+    getAndReturnAllConnections();
+
+    // all idle connections should be available
+    assertIdleConnections(maxConnections);
+    assertEvictionTime();
   }
 
   @Test(timeout = 10 * 1000L) // 10s
@@ -113,48 +104,53 @@ public class TestDbPoolManager extends JackTestCase {
 
     executorService = Executors.newFixedThreadPool(2);
 
-    // get and return the connection after three seconds
-    int returnAfterSeconds = 4;
+    /*
+     * 1. first thread gets the only connection, and takes firstThreadProcessTime seconds to return the connection
+     */
+    int firstThreadProcessTime = 3;
     Future future1 = executorService.submit(() -> {
       LOG.info("First task started");
 
       // get connection
       IDatabase1 connections = dbPoolManager.getConnection();
-      assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
+      assertIdleConnections(0);
 
       // return connection after sleep
       long startTime = System.currentTimeMillis();
-      sleep(returnAfterSeconds);
+      sleep(firstThreadProcessTime);
       dbPoolManager.returnConnection(connections);
-      long endTime = System.currentTimeMillis();
 
       // check connection use time
-      int returnTime = Duration.millis(endTime - startTime).toStandardSeconds().getSeconds();
+      int returnTime = getSecondsSince(startTime);
       LOG.info("First task returned DB connection in {} seconds", returnTime);
-      assertTrue(returnTime >= returnAfterSeconds);
+      assertTrue(returnTime >= firstThreadProcessTime);
 
       LOG.info("First task completed");
     });
 
-    int sleepSeconds = 1;
-    int expectedWaitSeconds = returnAfterSeconds - sleepSeconds;
-    sleep(sleepSeconds);
+    /*
+     * 2. second thread starts after secondThreadStartDelay seconds, and gets the connection after waiting for
+     *    about firstThreadProcessTime - secondThreadStartDelay seconds
+     */
+    int secondThreadStartDelay = 1;
+    sleep(secondThreadStartDelay);
+
+    int expectedWaitSeconds = firstThreadProcessTime - secondThreadStartDelay;
 
     Future future2 = executorService.submit(() -> {
       LOG.info("Second task started");
 
       // no connection at first
-      assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
+      assertIdleConnections(0);
 
       // wait for connection
       long startTime = System.currentTimeMillis();
       dbPoolManager.getConnection();
-      long endTime = System.currentTimeMillis();
 
       // check wait time
-      int waitSeconds = Duration.millis(endTime - startTime).toStandardSeconds().getSeconds();
+      int waitSeconds = getSecondsSince(startTime);
       LOG.info("Second task DB waited for connection: {} seconds", waitSeconds);
-      assertTrue(waitSeconds >= (expectedWaitSeconds - 2) && waitSeconds <= (expectedWaitSeconds + 2));
+      assertRoughEqual(waitSeconds, expectedWaitSeconds, 2);
 
       LOG.info("Second task completed");
     });
@@ -168,13 +164,15 @@ public class TestDbPoolManager extends JackTestCase {
   @Test(timeout = 10 * 1000L) // 10s
   public void testNoAvailableConnectionAfterWait() throws Exception {
     maxConnections = 1;
-    maxWaitTime = Duration.standardSeconds(2).getMillis();
+    maxWaitTime = Duration.standardSeconds(1).getMillis();
     initializeDbPoolManager();
 
     executorService = Executors.newFixedThreadPool(2);
 
-    // get and return the connection after three seconds
-    int returnAfterSeconds = 5;
+    /*
+     * 1. first thread gets the only connection, and takes firstThreadProcessTime seconds to return the connection
+     */
+    int firstThreadProcessTime = 3;
     Future future1 = executorService.submit(() -> {
       LOG.info("First task started");
 
@@ -184,20 +182,23 @@ public class TestDbPoolManager extends JackTestCase {
 
       // return connection after sleep
       long startTime = System.currentTimeMillis();
-      sleep(returnAfterSeconds);
+      sleep(firstThreadProcessTime);
       dbPoolManager.returnConnection(connections);
-      long endTime = System.currentTimeMillis();
 
       // check connection use time
-      int returnTime = Duration.millis(endTime - startTime).toStandardSeconds().getSeconds();
+      int returnTime = getSecondsSince(startTime);
       LOG.info("First task returned DB connection in {} seconds", returnTime);
-      assertTrue(returnTime >= returnAfterSeconds);
+      assertTrue(returnTime >= firstThreadProcessTime);
 
       LOG.info("First task completed");
     });
 
-    int sleepSeconds = 1;
-    sleep(sleepSeconds);
+    /*
+     * 2. second thread starts after secondThreadStartDelay seconds, and gets the connection after waiting for
+     *    about firstThreadProcessTime - secondThreadStartDelay seconds
+     */
+    int secondThreadStartDelay = 1;
+    sleep(secondThreadStartDelay);
 
     Future future2 = executorService.submit(() -> {
       LOG.info("Second task started");
@@ -212,10 +213,9 @@ public class TestDbPoolManager extends JackTestCase {
         fail();
       } catch (NoAvailableConnectionException e) {
         // check exception is thrown after wait time
-        long endTime = System.currentTimeMillis();
-        long waitMillis = endTime - startTime;
-        LOG.info("Second task DB waited for connection: {} seconds", maxWaitTime / 1000);
-        assertTrue(waitMillis >= (maxWaitTime - 50) && waitMillis <= (maxWaitTime + 50));
+        int waitSeconds = getSecondsSince(startTime);
+        LOG.info("Second task DB waited for connection: {} seconds", waitSeconds);
+        assertRoughEqual(waitSeconds, maxWaitTime / 1000, 1);
       }
 
       LOG.info("Second task completed");
@@ -227,38 +227,6 @@ public class TestDbPoolManager extends JackTestCase {
     executorService.shutdownNow();
   }
 
-  @Test(timeout = 10 * 1000L) // 10s
-  public void testKeepAliveTime() throws Exception {
-    maxConnections = 7;
-    minIdleConnections = 5;
-    keepAliveTime = Duration.standardSeconds(2).getMillis();
-    initializeDbPoolManager();
-
-    // create and return maxConnections
-    List<IDatabase1> connections = Lists.newLinkedList();
-    for (int i = 0; i < maxConnections; ++i) {
-      connections.add(dbPoolManager.getConnection());
-    }
-    assertEquals(0, dbPoolManager.getConnectionPool().getNumIdle());
-    for (IDatabase1 connection : connections) {
-      dbPoolManager.returnConnection(connection);
-      LOG.info("Idle connections: {}", dbPoolManager.getConnectionPool().getNumIdle());
-    }
-
-    // all idle connections should be available
-    assertEquals(maxConnections, dbPoolManager.getConnectionPool().getNumIdle());
-
-    long startTime = System.currentTimeMillis();
-    while (true) {
-      if (dbPoolManager.getConnectionPool().getNumIdle() == minIdleConnections) {
-        break;
-      }
-    }
-    long evictSeconds = System.currentTimeMillis() - startTime;
-    LOG.info("Idle connections are evicted after {} seconds", evictSeconds / 1000);
-    assertTrue(evictSeconds <= (keepAliveTime + 3000) && evictSeconds >= (keepAliveTime - 3000));
-  }
-
   private void sleep(int seconds) {
     try {
       Thread.sleep(Duration.standardSeconds(seconds).getMillis());
@@ -266,4 +234,57 @@ public class TestDbPoolManager extends JackTestCase {
       throw new RuntimeException(e);
     }
   }
+
+  private void getAllConnections() {
+    for (int i = 0; i < maxConnections; ++i) {
+      dbPoolManager.getConnection();
+    }
+  }
+
+  private void getAndReturnAllConnections() {
+    List<IDatabase1> connections = Lists.newLinkedList();
+    for (int i = 0; i < maxConnections; ++i) {
+      connections.add(dbPoolManager.getConnection());
+    }
+    assertIdleConnections(0);
+    assertActiveConnections(maxConnections);
+
+    for (IDatabase1 connection : connections) {
+      dbPoolManager.returnConnection(connection);
+    }
+  }
+
+  private int getSecondsSince(long startTime) {
+    return Duration.millis(System.currentTimeMillis() - startTime).toStandardSeconds().getSeconds();
+  }
+
+  private void assertIdleConnections(int idleConnections) {
+    assertEquals(idleConnections, dbPoolManager.getConnectionPool().getNumIdle());
+  }
+
+  private void assertActiveConnections(int activeConnections) {
+    assertEquals(activeConnections, dbPoolManager.getConnectionPool().getNumActive());
+  }
+
+  private void assertRoughEqual(long value, long expected, long error) {
+    assertTrue(value <= (expected + error) && value >= (expected - error));
+  }
+
+  private void assertInRange(long value, long expectedMin, long expectedMax) {
+    assertTrue(value >= expectedMin && value <= expectedMax);
+  }
+
+  private void assertEvictionTime() {
+    long startTime = System.currentTimeMillis();
+    while (true) {
+      if (dbPoolManager.getConnectionPool().getNumIdle() == minIdleConnections) {
+        long waitMillis = System.currentTimeMillis() - startTime;
+        LOG.info("Idle connections are evicted after {} millis", waitMillis);
+        // allow two seconds delay
+        assertInRange(waitMillis, keepAliveTime, keepAliveTime + 2000);
+        break;
+      }
+    }
+  }
+
 }
