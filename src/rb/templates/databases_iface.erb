@@ -17,13 +17,15 @@
 package <%= project_defn.databases_namespace %>;
 
 <% project_defn.databases.each do |db| %>
+
 import <%= db.namespace %>.I<%= db.name %>;
 <% end %>
-
 import <%= JACK_NAMESPACE %>.GenericDatabases;
+import <%= JACK_NAMESPACE %>.transaction.ITransactor;
 
 public interface IDatabases extends GenericDatabases {
   <% project_defn.databases.each do |db| %>
   I<%= db.name %> <%= db.getter %>;
+  ITransactor.Builder<I<%= db.name %>, ?> get<%= db.name %>Transactor();
   <% end %>
 }

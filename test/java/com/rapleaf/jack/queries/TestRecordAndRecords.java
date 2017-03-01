@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -8,8 +8,6 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rapleaf.jack.queries.Record;
-import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -250,5 +248,4 @@ public class TestRecordAndRecords {
     Comment comment = record.getModel(Comment.TBL, db.getDatabases());
     assertNull(comment);
   }
-
 }

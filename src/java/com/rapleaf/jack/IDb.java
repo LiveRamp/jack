@@ -53,4 +53,5 @@ public interface IDb extends Serializable, Closeable {
   GenericQuery.Builder createQuery();
 
   Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
+
 }

@@ -1,4 +1,4 @@
-package com.rapleaf.jack;
+package com.rapleaf.jack.queries;
 
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -9,11 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.exception.InvalidIndexHintException;
-import com.rapleaf.jack.queries.Index;
-import com.rapleaf.jack.queries.IndexHints;
-import com.rapleaf.jack.queries.QueryOrder;
-import com.rapleaf.jack.queries.Record;
-import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
@@ -710,13 +705,13 @@ public class TestGenericQuery {
     assertEquals(postC.getTitle(), recordForCommentD.get(Post.TITLE));
 
     results2 = db.createQuery()
-            .from(Post.TBL)
-            .leftJoin(User.TBL).on(User.ID.equalTo(Post.USER_ID.as(Long.class)))
-            .leftJoin(Comment.TBL).on(Comment.CONTENT.contains(Post.TITLE))
-            .orderBy(User.HANDLE)
-            .orderBy(Post.TITLE, QueryOrder.DESC)
-            .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
-            .fetch();
+        .from(Post.TBL)
+        .leftJoin(User.TBL).on(User.ID.equalTo(Post.USER_ID.as(Long.class)))
+        .leftJoin(Comment.TBL).on(Comment.CONTENT.contains(Post.TITLE))
+        .orderBy(User.HANDLE)
+        .orderBy(Post.TITLE, QueryOrder.DESC)
+        .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
+        .fetch();
 
     assertEquals(3, results2.size());
     assertEquals(3, results2.get(0).columnCount());
