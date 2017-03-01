@@ -172,7 +172,12 @@ public class TestDbTransactorImpl extends JackTestCase {
     Future future1 = executorService.submit(() -> transactor.execute(db -> {
       assertEquals(handle1, db.users().find(user.getId()).getHandle());
       db.users().find(user.getId()).setHandle(handle2).save();
+      // block the connection
+      sleepMillis(1000);
     }));
+
+    // ensure thread 2 starts after thread 1
+    sleepMillis(500);
 
     // since there is only one db connection, thread 2 will only start
     // after thread 1 has completed.
