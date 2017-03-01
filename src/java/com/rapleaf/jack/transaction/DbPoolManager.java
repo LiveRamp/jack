@@ -73,6 +73,12 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
   }
 
+  /**
+   * @throws NoAvailableConnectionException     if there is no available connections. Users can either
+   *                                            increase the max total connections or max wait time.
+   * @throws IllegalStateException              if the DB manager has already been closed.
+   * @throws ConnectionCreationFailureException if new DB connections cannot be created.
+   */
   @Override
   public DB getConnection() {
     try {
