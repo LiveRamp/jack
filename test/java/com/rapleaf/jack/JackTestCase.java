@@ -4,10 +4,10 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.joda.time.Duration;
 import org.junit.Before;
 
 public class JackTestCase {
-
   private static final String SEPARATOR = "--------------------";
 
   public JackTestCase() {
@@ -34,4 +34,19 @@ public class JackTestCase {
     return getClass().getSimpleName();
   }
 
+  protected void sleepSeconds(int seconds) {
+    try {
+      Thread.sleep(Duration.standardSeconds(seconds).getMillis());
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  protected void sleepMillis(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

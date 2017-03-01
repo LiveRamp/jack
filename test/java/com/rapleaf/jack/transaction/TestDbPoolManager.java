@@ -78,7 +78,7 @@ public class TestDbPoolManager extends JackTestCase {
     getAndReturnAllConnections();
 
     // wait for eviction
-    sleep(1);
+    sleepSeconds(1);
 
     assertIdleConnections(minIdleConnections);
   }
@@ -115,7 +115,7 @@ public class TestDbPoolManager extends JackTestCase {
      *    about firstThreadProcessTime - secondThreadStartDelay seconds
      */
     int secondThreadStartDelay = 1;
-    sleep(secondThreadStartDelay);
+    sleepSeconds(secondThreadStartDelay);
 
     int expectedWaitSeconds = firstThreadProcessTime - secondThreadStartDelay;
 
@@ -162,7 +162,7 @@ public class TestDbPoolManager extends JackTestCase {
      *    about firstThreadProcessTime - secondThreadStartDelay seconds
      */
     int secondThreadStartDelay = 1;
-    sleep(secondThreadStartDelay);
+    sleepSeconds(secondThreadStartDelay);
 
     Future future2 = executorService.submit(() -> {
       LOG.info("Second task started");
@@ -189,14 +189,6 @@ public class TestDbPoolManager extends JackTestCase {
     future2.get();
 
     executorService.shutdownNow();
-  }
-
-  private void sleep(int seconds) {
-    try {
-      Thread.sleep(Duration.standardSeconds(seconds).getMillis());
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void getAllConnections() {
@@ -249,7 +241,7 @@ public class TestDbPoolManager extends JackTestCase {
         assertInRange(waitSeconds, expectedSeconds, expectedSeconds + error);
         break;
       } else {
-        sleep(1);
+        sleepSeconds(1);
       }
     }
   }
@@ -262,9 +254,9 @@ public class TestDbPoolManager extends JackTestCase {
       IDatabase1 connections = dbPoolManager.getConnection();
       assertIdleConnections(0);
 
-      // return connection after sleep
+      // return connection after sleepSeconds
       long startTime = System.currentTimeMillis();
-      sleep(threadProcessTime);
+      sleepSeconds(threadProcessTime);
       dbPoolManager.returnConnection(connections);
 
       // check connection use time
