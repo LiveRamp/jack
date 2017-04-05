@@ -33,7 +33,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
 
   public static final String MYSQL_JDBC_DRIVER = "com.mysql.jdbc.Driver";
   public static final String POSTGRESQL_JDBC_DRIVER = "org.postgresql.Driver";
-  public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
+  public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc42.Driver";
 
   private final String connectionString;
   private final Optional<String> username;
