@@ -69,6 +69,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       }
       throw new SqlExecutionFailureException(e);
     } finally {
+      if (asTransaction) {
+        connection.setAutoCommit(true);
+      }
       dbManager.returnConnection(connection);
     }
   }
@@ -88,6 +91,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       }
       throw new SqlExecutionFailureException(e);
     } finally {
+      if (asTransaction) {
+        connection.setAutoCommit(true);
+      }
       dbManager.returnConnection(connection);
     }
   }
