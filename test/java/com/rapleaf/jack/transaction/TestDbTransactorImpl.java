@@ -28,7 +28,7 @@ public class TestDbTransactorImpl extends JackTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactorBuilder.get().execute(IDb::deleteAll);
+    transactorBuilder.get().query(IDb::deleteAll);
   }
 
   @After
@@ -41,7 +41,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String expectedBio = "test";
-    String actualBio = transactor.execute(db -> {
+    String actualBio = transactor.query(db -> {
       User user = db.users().createDefaultInstance();
       user.setBio(expectedBio).save();
       return user.getBio();
@@ -55,7 +55,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String expectedBio = "test";
-    String actualBio = transactor.executeAsTransaction(db -> {
+    String actualBio = transactor.queryAsTransaction(db -> {
       User user = db.users().createDefaultInstance();
       user.setBio(expectedBio).save();
       return user.getBio();
@@ -78,15 +78,13 @@ public class TestDbTransactorImpl extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String originalBio = "original";
-    User user = transactor.executeAsTransaction(db -> {
+    User user = transactor.queryAsTransaction(db -> {
       User u = db.users().createDefaultInstance();
       u.setBio(originalBio).save();
       return u;
     });
 
-    assertEquals(originalBio, transactor.execute(db -> {
-      return db.users().find(user.getId()).getBio();
-    }));
+    assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
 
     try {
       transactor.executeAsTransaction((IExecution<IDatabase1>)db -> {
@@ -99,9 +97,7 @@ public class TestDbTransactorImpl extends JackTestCase {
       fail();
     } catch (SqlExecutionFailureException e) {
       // after rollback, there is no change
-      assertEquals(originalBio, transactor.execute(db -> {
-        return db.users().find(user.getId()).getBio();
-      }));
+      assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
     }
   }
 
@@ -147,9 +143,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     future4.get();
     executorService.shutdownNow();
 
-    int actualCount = transactor.execute(db -> {
-      return db.createQuery().from(User.TBL).fetch().size();
-    });
+    int actualCount = transactor.query(db -> db.createQuery().from(User.TBL).fetch().size());
     assertEquals(createCount1 + createCount2, actualCount);
   }
 
@@ -163,7 +157,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     String handle2 = "handle 2";
     String handle3 = "handle 3";
 
-    User user = transactor.execute(db -> {
+    User user = transactor.query(db -> {
       User u = db.users().createDefaultInstance();
       u.setHandle(handle1).save();
       return u;
@@ -190,9 +184,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     future2.get();
     executorService.shutdownNow();
 
-    assertEquals(handle3, transactor.execute(db -> {
-      return db.users().find(user.getId()).getHandle();
-    }));
+    assertEquals(handle3, transactor.query(db -> db.users().find(user.getId()).getHandle()));
   }
 
   @Test
