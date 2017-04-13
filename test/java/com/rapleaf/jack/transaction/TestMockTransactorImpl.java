@@ -37,27 +37,27 @@ public class TestMockTransactorImpl extends JackTestCase {
 
   @Test
   public void testMockExecution() throws Exception {
-    transactor.execute(IDb::deleteAll);
+    transactor.query(IDb::deleteAll);
     verifyExecuteMethod(false, false);
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void testMockQuery() throws Exception {
-    boolean deleteAll = transactor.execute(IDb::deleteAll);
+    boolean deleteAll = transactor.query(IDb::deleteAll);
     assertTrue(deleteAll);
     verifyExecuteMethod(false, false);
   }
 
   @Test
   public void testMockExecutionAsTransaction() throws Exception {
-    transactor.executeAsTransaction(IDb::deleteAll);
+    transactor.queryAsTransaction(IDb::deleteAll);
     verifyExecuteMethod(true, false);
   }
 
   @Test
   public void testMockQueryAsTransaction() throws Exception {
-    boolean deleteAll = transactor.executeAsTransaction(IDb::deleteAll);
+    boolean deleteAll = transactor.queryAsTransaction(IDb::deleteAll);
     assertTrue(deleteAll);
     verifyExecuteMethod(true, false);
   }
@@ -78,7 +78,7 @@ public class TestMockTransactorImpl extends JackTestCase {
   @Test
   public void testMockQueryWithException() throws Exception {
     try {
-      boolean result = transactor.execute((IQuery<IDatabase1, Boolean>)db -> {
+      boolean result = transactor.query(db -> {
         db.deleteAll();
         throw new IOException();
       });
@@ -104,7 +104,7 @@ public class TestMockTransactorImpl extends JackTestCase {
   @Test
   public void testMockQueryAsTransactionWithException() throws Exception {
     try {
-      boolean result = transactor.executeAsTransaction((IQuery<IDatabase1, Boolean>)db -> {
+      boolean result = transactor.queryAsTransaction(db -> {
         db.deleteAll();
         throw new IOException();
       });

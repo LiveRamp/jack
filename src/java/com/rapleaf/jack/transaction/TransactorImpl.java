@@ -33,14 +33,26 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return new Builder<>(dbConstructor);
   }
 
+  @Deprecated
   @Override
   public <T> T execute(IQuery<DB, T> query) {
-    return execute(query, false);
+    return query(query);
   }
 
   @Override
+  public <T> T query(IQuery<DB, T> query) {
+    return query(query, false);
+  }
+
+  @Deprecated
+  @Override
   public <T> T executeAsTransaction(IQuery<DB, T> query) {
-    return execute(query, true);
+    return queryAsTransaction(query);
+  }
+
+  @Override
+  public <T> T queryAsTransaction(IQuery<DB, T> query) {
+    return query(query, true);
   }
 
   @Override
@@ -53,7 +65,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     execute(execution, true);
   }
 
-  private <T> T execute(IQuery<DB, T> query, boolean asTransaction) {
+  private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
     DB connection = dbManager.getConnection();
     connection.setAutoCommit(!asTransaction);
     try {
