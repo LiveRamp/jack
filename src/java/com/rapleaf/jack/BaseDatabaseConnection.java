@@ -54,7 +54,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
     LOG.warn("Resetting database connection to attempt to recover from exception: {}", cause);
     if (conn != null) {
       try {
-        if (!conn.getAutoCommit()) {
+        if (!conn.isClosed() && !conn.getAutoCommit()) {
           throw new RuntimeException("Cannot safely reset connection. May be in the middle of a transaction.", cause);
         }
         conn.close();
