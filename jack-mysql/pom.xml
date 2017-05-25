@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>jack</artifactId>
+  <artifactId>jack-mysql</artifactId>
   <version>1.1-SNAPSHOT</version>
 
   <parent>
     <groupId>com.liveramp</groupId>
-    <artifactId>pom-common</artifactId>
+    <artifactId>jack</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
 
@@ -23,13 +23,6 @@
     <developerConnection>scm:git:git@github.com:LiveRamp/jack.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-
-  <modules>
-    <module>jack-core</module>
-    <module>jack-mysql</module>
-    <module>jack-postgresql</module>
-    <module>jack-redshift</module>
-  </modules>
 
   <repositories>
     <repository>
@@ -84,6 +77,12 @@
       <groupId>net.java.dev</groupId>
       <artifactId>jvyaml</artifactId>
       <version>0.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.22</version>
     </dependency>
 
     <dependency>

@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>jack</artifactId>
+  <artifactId>jack-redshift</artifactId>
   <version>1.1-SNAPSHOT</version>
 
   <parent>
     <groupId>com.liveramp</groupId>
-    <artifactId>pom-common</artifactId>
+    <artifactId>jack</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
 
@@ -23,13 +23,6 @@
     <developerConnection>scm:git:git@github.com:LiveRamp/jack.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-
-  <modules>
-    <module>jack-core</module>
-    <module>jack-mysql</module>
-    <module>jack-postgresql</module>
-    <module>jack-redshift</module>
-  </modules>
 
   <repositories>
     <repository>
@@ -84,6 +77,12 @@
       <groupId>net.java.dev</groupId>
       <artifactId>jvyaml</artifactId>
       <version>0.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.amazon.redshift</groupId>
+      <artifactId>jdbc41</artifactId>
+      <version>1.1.17.1017</version>
     </dependency>
 
     <dependency>
@@ -289,66 +288,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>mysql</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>exec-maven-plugin</artifactId>
-            <groupId>org.codehaus.mojo</groupId>
-            <executions>
-              <!--run method+interface patcher-->
-              <execution>
-                <id>use-mysql</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>/bin/bash</executable>
-                  <arguments>
-                    <argument>test/select-dbms.sh</argument>
-                    <argument>mysql</argument>
-                  </arguments>
-                </configuration>
-
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>postgres</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>exec-maven-plugin</artifactId>
-            <groupId>org.codehaus.mojo</groupId>
-            <executions>
-              <!--run method+interface patcher-->
-              <execution>
-                <id>use-postgres</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>/bin/bash</executable>
-                  <arguments>
-                    <argument>test/select-dbms.sh</argument>
-                    <argument>postgres</argument>
-                  </arguments>
-                </configuration>
-
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
