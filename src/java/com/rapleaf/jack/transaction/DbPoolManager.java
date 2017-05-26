@@ -1,5 +1,6 @@
 package com.rapleaf.jack.transaction;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
@@ -130,7 +131,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     }
 
     @Override
-    public void destroyObject(PooledObject<DB> connection) throws Exception {
+    public void destroyObject(PooledObject<DB> connection) throws IOException {
       connection.getObject().close();
     }
 
