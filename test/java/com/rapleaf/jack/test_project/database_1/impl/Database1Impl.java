@@ -93,15 +93,11 @@ public class Database1Impl implements IDatabase1 {
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
-    try {
     success &= comments().isEmpty() || comments().deleteAll();
     success &= images().isEmpty() || images().deleteAll();
     success &= lockableModels().isEmpty() || lockableModels().deleteAll();
     success &= posts().isEmpty() || posts().deleteAll();
     success &= users().isEmpty() || users().deleteAll();
-    } catch (IOException e) {
-      throw e;
-    }
     return success;
   }
 
