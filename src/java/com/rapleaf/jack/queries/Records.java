@@ -2,6 +2,7 @@ package com.rapleaf.jack.queries;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
@@ -120,6 +121,10 @@ public class Records implements Iterable<Record> {
 
   public QueryStatistics getQueryStatistics() {
     return queryStatistics;
+  }
+
+  public Stream<Record> stream() {
+    return records.stream();
   }
 
   @Override

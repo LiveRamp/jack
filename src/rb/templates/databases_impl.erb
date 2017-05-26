@@ -22,8 +22,9 @@ import <%= JACK_NAMESPACE %>.DatabaseConnection;
 import <%= db.namespace %>.I<%= db.name %>;
 import <%= db.namespace %>.impl.<%= db.name %>Impl;
 <% end %>
-import com.rapleaf.jack.tracking.PostQueryAction;
-import com.rapleaf.jack.tracking.NoOpAction;
+import <%= JACK_NAMESPACE %>.tracking.PostQueryAction;
+import <%= JACK_NAMESPACE %>.tracking.NoOpAction;
+import <%= JACK_NAMESPACE %>.transaction.TransactorImpl;
 
 public class DatabasesImpl implements IDatabases {
 
@@ -52,14 +53,19 @@ public class DatabasesImpl implements IDatabases {
     this.postQueryAction = postQueryAction;
   }
 
-
   <% project_defn.databases.each do |db| %>
 
+  @Override
   public I<%= db.name %> <%= db.getter %> {
     if (<%= db.name.underscore %> == null) {
       this.<%= db.name.underscore %> = new <%= db.name %>Impl(new DatabaseConnection("<%= db.name.underscore %>"), this, this.postQueryAction);
     }
     return <%= db.name.underscore %>;
+  }
+
+  @Override
+  public TransactorImpl.Builder<I<%= db.name %>> get<%= db.name %>Transactor() {
+    return TransactorImpl.create(() -> new DatabasesImpl().get<%= db.name %>());
   }
   <% end %>
 }

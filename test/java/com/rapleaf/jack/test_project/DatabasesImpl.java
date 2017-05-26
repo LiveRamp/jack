@@ -12,6 +12,7 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.tracking.PostQueryAction;
 import com.rapleaf.jack.tracking.NoOpAction;
+import com.rapleaf.jack.transaction.TransactorImpl;
 
 public class DatabasesImpl implements IDatabases {
   private IDatabase1 database1;
@@ -35,10 +36,16 @@ public class DatabasesImpl implements IDatabases {
     this.postQueryAction = postQueryAction;
   }
 
+  @Override
   public IDatabase1 getDatabase1() {
     if (database1 == null) {
       this.database1 = new Database1Impl(new DatabaseConnection("database1"), this, this.postQueryAction);
     }
     return database1;
+  }
+
+  @Override
+  public TransactorImpl.Builder<IDatabase1> getDatabase1Transactor() {
+    return TransactorImpl.create(() -> new DatabasesImpl().getDatabase1());
   }
 }
