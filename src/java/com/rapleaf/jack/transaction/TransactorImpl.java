@@ -207,9 +207,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     }
 
     private static <DB extends IDb> TransactorImpl<DB> build(Builder<DB> builder) {
-      DbPoolManager<DB> dbPoolManager = new DbPoolManager<DB>(builder.dbConstructor, builder.maxTotalConnections,
+      DbPoolManager<DB> dbPoolManager = new DbPoolManager<>(builder.dbConstructor, builder.maxTotalConnections,
           builder.minIdleConnections, builder.maxWaitMillis, builder.keepAliveMillis);
-      return new TransactorImpl<DB>(dbPoolManager);
+      return new TransactorImpl<>(dbPoolManager);
     }
   }
 

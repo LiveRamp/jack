@@ -70,7 +70,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     // this config may need further adjustment
     config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
 
-    this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
+    this.connectionPool = new GenericObjectPool<>(new DbPoolFactory<>(dbConstructor), config);
   }
 
   /**
@@ -126,7 +126,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     public PooledObject<DB> makeObject() throws Exception {
       DB connection = dbConstructor.call();
       connection.disableCaching();
-      return new DefaultPooledObject<DB>(connection);
+      return new DefaultPooledObject<>(connection);
     }
 
     @Override
