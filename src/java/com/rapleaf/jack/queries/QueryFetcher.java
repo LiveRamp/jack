@@ -33,17 +33,7 @@ public class QueryFetcher {
       dbConnection.resetConnection();
       throw e;
     } finally {
-      try {
-        if (resultSet != null) {
-          resultSet.close();
-        }
-        preparedStatement.close();
-      } catch (SQLRecoverableException e) {
-        LOG.error(e.toString());
-        dbConnection.resetConnection();
-      } catch (SQLException e) {
-        LOG.error(e.toString());
-      }
+      closeQuery(resultSet, preparedStatement, dbConnection);
     }
   }
 
@@ -96,4 +86,19 @@ public class QueryFetcher {
     }
     return record;
   }
+
+  private static void closeQuery(ResultSet resultSet, PreparedStatement preparedStatement, BaseDatabaseConnection dbConnection) {
+    try {
+      if (resultSet != null) {
+        resultSet.close();
+      }
+      preparedStatement.close();
+    } catch (SQLRecoverableException e) {
+      LOG.error(e.toString());
+      dbConnection.resetConnection();
+    } catch (SQLException e) {
+      LOG.error(e.toString());
+    }
+  }
+
 }
