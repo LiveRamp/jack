@@ -1,8 +1,6 @@
-package com.liveramp.java_support.json;
+package com.rapleaf.jack.store.json;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
