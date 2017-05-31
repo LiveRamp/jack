@@ -24,6 +24,7 @@ import java.util.List;
 
 import <%= root_package %>.I<%= db_name%>;
 import <%= JACK_NAMESPACE %>.LazyLoadPersistence;
+import <%= JACK_NAMESPACE %>.queries.GenericInsertion;
 import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 import <%= JACK_NAMESPACE %>.queries.Records;
@@ -60,6 +61,10 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
       }
     };
   <% end %>
+  }
+
+  public GenericInsertion.Builder createInsertion() {
+    return GenericInsertion.create(conn);
   }
 
   public GenericQuery.Builder createQuery() {
