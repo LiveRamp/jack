@@ -81,7 +81,7 @@ public class GenericInsertion {
 
     while (true) {
       try {
-        return CreationFetcher.getCreationResults(preparedStatement, dbConnection);
+        return InsertionFetcher.getCreationResults(preparedStatement, dbConnection);
       } catch (SQLRecoverableException e) {
         LOG.error(e.toString());
         if (++retryCount > MAX_CONNECTION_RETRIES) {

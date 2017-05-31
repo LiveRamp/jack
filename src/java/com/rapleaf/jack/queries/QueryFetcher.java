@@ -7,14 +7,9 @@ import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.rapleaf.jack.BaseDatabaseConnection;
 
-public class QueryFetcher {
-
-  private static final Logger LOG = LoggerFactory.getLogger(QueryFetcher.class);
+public class QueryFetcher extends BaseFetcher {
 
   public static Records getQueryResults(PreparedStatement preparedStatement, Set<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
     ResultSet resultSet = null;
@@ -85,20 +80,6 @@ public class QueryFetcher {
       record.addColumn(column, value);
     }
     return record;
-  }
-
-  private static void closeQuery(ResultSet resultSet, PreparedStatement preparedStatement, BaseDatabaseConnection dbConnection) {
-    try {
-      if (resultSet != null) {
-        resultSet.close();
-      }
-      preparedStatement.close();
-    } catch (SQLRecoverableException e) {
-      LOG.error(e.toString());
-      dbConnection.resetConnection();
-    } catch (SQLException e) {
-      LOG.error(e.toString());
-    }
   }
 
 }
