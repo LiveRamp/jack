@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestDbImpl extends BaseDatabaseModelTestCase {
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
+  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
 
   @Override
   public IDatabases getDBS() {

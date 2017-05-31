@@ -16,7 +16,9 @@ package com.rapleaf.jack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.base.Optional;
 
@@ -28,48 +30,47 @@ import com.google.common.base.Optional;
  * All public methods methods of DatabaseConnection throw RuntimeExceptions
  * (rather than IO or SQL exceptions).
  */
-public class DatabaseConnection extends BaseDatabaseConnection {
+class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
 
-  public static final String MYSQL_JDBC_DRIVER = "com.mysql.jdbc.Driver";
-  public static final String POSTGRESQL_JDBC_DRIVER = "org.postgresql.Driver";
-  public static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
+  static final String MYSQL_JDBC_DRIVER = "com.mysql.jdbc.Driver";
+  static final String POSTGRESQL_JDBC_DRIVER = "org.postgresql.Driver";
+  static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
+
+  static final Map VALID_ADAPTER_CONSTANTS = Collections.unmodifiableMap(new HashMap() {
+    private static final long serialVersionUID = 1L;
+
+    {
+      put("mysql", MYSQL_JDBC_DRIVER);
+      put("mysql2", MYSQL_JDBC_DRIVER);
+      put("mysql_replication", MYSQL_JDBC_DRIVER);
+      put("postgresql", POSTGRESQL_JDBC_DRIVER);
+      put("redshift", REDSHIFT_JDBC_DRIVER);
+    }
+  });
 
   private final String connectionString;
   private final Optional<String> username;
   private final Optional<String> password;
-  private final String driverClass;
+
+  protected String driverClass;
   private long expiresAt;
   private long expiration;
 
-  private static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
+  static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
 
-  public DatabaseConnection(String dbname_key) throws RuntimeException {
-    this(dbname_key, DEFAULT_EXPIRATION);
-  }
-
-  public DatabaseConnection(String dbname_key, long expiration) {
+  public DatabaseConnection(String dbname_key, long expiration, String driverClass) {
 
     DatabaseConnectionConfiguration config = DatabaseConnectionConfiguration.loadFromEnvironment(dbname_key);
-
     // get server credentials from database info
     String adapter = config.getAdapter();
-    String driver;
-    if (adapter.equals("mysql") || adapter.equals("mysql_replication") || adapter.equals("mysql2")) {
-      driver = "mysql";
-      driverClass = MYSQL_JDBC_DRIVER;
-    } else if (adapter.equals("postgresql")) {
-      driver = "postgresql";
-      driverClass = POSTGRESQL_JDBC_DRIVER;
-    } else if (adapter.equals("redshift")) {
-      driver = "redshift";
-      driverClass = REDSHIFT_JDBC_DRIVER;
-    } else {
-      driverClass = null;
+    if (!VALID_ADAPTER_CONSTANTS.keySet().contains(adapter) || !VALID_ADAPTER_CONSTANTS.get(adapter).equals(driverClass)) {
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
     }
+    this.driverClass = driverClass;
+
     StringBuilder connectionStringBuilder = new StringBuilder("jdbc:");
-    connectionStringBuilder.append(driver).append("://").append(config.getHost());
+    connectionStringBuilder.append(adapter).append("://").append(config.getHost());
     if (config.getPort().isPresent()) {
       connectionStringBuilder.append(":").append(config.getPort().get());
     }
@@ -87,6 +88,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
    */
+
   public Connection getConnectionInternal() {
     try {
       if (conn == null) {
@@ -102,21 +104,6 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     }
   }
 
-  @Override
-  public PreparedStatement getPreparedStatement(String statement) {
-    if (driverClass.equals(REDSHIFT_JDBC_DRIVER)) {
-      statement = statement.replaceAll("`", "\"");
-    }
-    return super.getPreparedStatement(statement);
-  }
-
-  @Override
-  public PreparedStatement getPreparedStatement(String statement, int options) {
-    if (driverClass.equals(REDSHIFT_JDBC_DRIVER)) {
-      statement = statement.replaceAll("`", "\"");
-    }
-    return super.getPreparedStatement(statement, options);
-  }
 
   /**
    * When using a parallel test environment, we append an integer that lives in

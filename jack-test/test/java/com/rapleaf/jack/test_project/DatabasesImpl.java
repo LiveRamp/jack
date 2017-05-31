@@ -6,8 +6,7 @@
  */
 package com.rapleaf.jack.test_project;
 
-import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.DatabaseConnection;
+import com.rapleaf.jack.*;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.tracking.PostQueryAction;
@@ -39,7 +38,7 @@ public class DatabasesImpl implements IDatabases {
   @Override
   public IDatabase1 getDatabase1() {
     if (database1 == null) {
-      this.database1 = new Database1Impl(new DatabaseConnection("database1"), this, this.postQueryAction);
+      this.database1 = new Database1Impl(new MysqlDatabaseConnection("database1"), this, this.postQueryAction);
     }
     return database1;
   }

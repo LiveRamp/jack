@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
  * test cases here unless you have a really good reason to do so.
  */
 public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
+  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
 
   @Override
   public IDatabases getDBS() {

@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,9 +27,6 @@ import static com.rapleaf.jack.queries.AggregatedColumn.SUM;
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static com.rapleaf.jack.queries.QueryOrder.DESC;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class TestGenericQuery {
   private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
@@ -70,7 +68,7 @@ public class TestGenericQuery {
     results1 = db.createQuery()
         .from(User.TBL)
         .fetch();
-    assertFalse(results1.isEmpty());
+    Assert.assertFalse(results1.isEmpty());
     assertEquals(11, results1.get(0).columnCount());
 
     // query with only select clause should return all records with the specified columns
@@ -86,7 +84,7 @@ public class TestGenericQuery {
         .from(User.TBL)
         .where(User.ID.equalTo(999L))
         .fetch();
-    assertTrue(results1.isEmpty());
+    Assert.assertTrue(results1.isEmpty());
 
     // query with and clause
     results1 = db.createQuery()
@@ -95,7 +93,7 @@ public class TestGenericQuery {
             User.HANDLE.equalTo("B"))
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userB.getId() == results1.get(0).get(User.ID));
+    Assert.assertTrue(userB.getId() == results1.get(0).get(User.ID));
 
     // query with or clause
     results1 = db.createQuery()
@@ -220,17 +218,17 @@ public class TestGenericQuery {
 
     // StartsWith
     results1 = db.createQuery().from(User.TBL).where(User.BIO.startsWith("er")).fetch();
-    assertTrue(results1.isEmpty());
+    Assert.assertTrue(results1.isEmpty());
 
     // In with empty collection
     results1 = db.createQuery().from(User.TBL).where(User.SOME_DATETIME.in(Collections.<Long>emptySet()))
         .fetch();
-    assertTrue(results1.isEmpty());
+    Assert.assertTrue(results1.isEmpty());
 
     // NotIn with empty collection
     try {
       db.createQuery().from(User.TBL).where(User.SOME_DATETIME.notIn(Collections.<Long>emptySet())).fetch();
-      fail("Using a NotIn operator with an empty collection should throw an exception.");
+      Assert.fail("Using a NotIn operator with an empty collection should throw an exception.");
     } catch (IllegalArgumentException e) {
       //This is expected
     }
@@ -263,7 +261,7 @@ public class TestGenericQuery {
     // If a null parameter is passed, an exception should be thrown
     try {
       db.createQuery().from(User.TBL).where(User.HANDLE.in(null, "brandon")).fetch();
-      fail("an In query with one null parameter should throw an exception");
+      Assert.fail("an In query with one null parameter should throw an exception");
     } catch (IllegalArgumentException e) {
       // This exception is expected
     }
@@ -295,7 +293,7 @@ public class TestGenericQuery {
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).get(User.ID));
+    Assert.assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -303,7 +301,7 @@ public class TestGenericQuery {
         .select(User.ID, User.SOME_DATETIME)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).get(User.ID));
+    Assert.assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -355,7 +353,7 @@ public class TestGenericQuery {
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).get(User.ID));
+    Assert.assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -363,7 +361,7 @@ public class TestGenericQuery {
         .select(User.ID, User.SOME_DATE)
         .fetch();
     assertEquals(1, results1.size());
-    assertTrue(userA.getId() == results1.get(0).get(User.ID));
+    Assert.assertTrue(userA.getId() == results1.get(0).get(User.ID));
 
     results1 = db.createQuery()
         .from(User.TBL)
@@ -424,7 +422,7 @@ public class TestGenericQuery {
             User.BIO.equalTo("CEO"))
         .orderBy(User.ID)
         .fetch();
-    assertTrue(results1.isEmpty());
+    Assert.assertTrue(results1.isEmpty());
 
     // A simple query with single result should return a list with one element.
     results1 = db.createQuery()
@@ -462,7 +460,7 @@ public class TestGenericQuery {
     assertEquals("C", results1.get(0).get(User.HANDLE));
     assertEquals("E", results1.get(1).get(User.HANDLE));
     assertEquals("D", results1.get(2).get(User.HANDLE));
-    assertTrue(results1.equals(results2));
+    Assert.assertTrue(results1.equals(results2));
 
     // A chained query ordered by a specified field in a descending manner should be ordered accordingly.
     // expected result: [userD, userE, userC]
@@ -531,7 +529,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
     for (int i = 0; i < results1.size(); i++) {
-      assertTrue(results1.get(i).get(User.NUM_POSTS) == i);
+      Assert.assertTrue(results1.get(i).get(User.NUM_POSTS) == i);
     }
 
     results1 = db.createQuery()
@@ -542,7 +540,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(3, results1.size());
     for (int i = 0; i < results1.size(); i++) {
-      assertTrue(results1.get(i).get(User.NUM_POSTS) == i + 6);
+      Assert.assertTrue(results1.get(i).get(User.NUM_POSTS) == i + 6);
     }
 
     results1 = db.createQuery()
@@ -575,7 +573,7 @@ public class TestGenericQuery {
           .from(User.TBL)
           .groupBy(User.HANDLE)
           .fetch();
-      fail();
+      Assert.fail();
     } catch (RuntimeException e) {
       // expected
     }
@@ -588,9 +586,9 @@ public class TestGenericQuery {
           .select(User.HANDLE, User.BIO, MAX(User.NUM_POSTS))
           .groupBy(User.HANDLE)
           .fetch();
-      fail();
+      Assert.fail();
     } catch (RuntimeException e) {
-      assertTrue(e.toString().contains("bio"));
+      Assert.assertTrue(e.toString().contains("bio"));
     }
 
     // Test Max
@@ -601,10 +599,10 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).get(User.HANDLE).equals("0"));
-    assertTrue(results2.get(0).get(MAX(User.NUM_POSTS)) == 98);
-    assertTrue(results2.get(1).get(User.HANDLE).equals("1"));
-    assertTrue(results2.get(1).get(MAX(User.NUM_POSTS)) == 99);
+    Assert.assertTrue(results2.get(0).get(User.HANDLE).equals("0"));
+    Assert.assertTrue(results2.get(0).get(MAX(User.NUM_POSTS)) == 98);
+    Assert.assertTrue(results2.get(1).get(User.HANDLE).equals("1"));
+    Assert.assertTrue(results2.get(1).get(MAX(User.NUM_POSTS)) == 99);
 
     // Test Min
     results2 = db.createQuery()
@@ -613,8 +611,8 @@ public class TestGenericQuery {
         .groupBy(User.HANDLE)
         .orderBy(User.HANDLE)
         .fetch();
-    assertTrue(results2.get(0).get(MIN(User.NUM_POSTS)) == 0);
-    assertTrue(results2.get(1).get(MIN(User.NUM_POSTS)) == 1);
+    Assert.assertTrue(results2.get(0).get(MIN(User.NUM_POSTS)) == 0);
+    Assert.assertTrue(results2.get(1).get(MIN(User.NUM_POSTS)) == 1);
 
     // Test Count
     results2 = db.createQuery()
@@ -623,15 +621,15 @@ public class TestGenericQuery {
         .groupBy(User.HANDLE)
         .orderBy(User.HANDLE)
         .fetch();
-    assertTrue(results2.get(0).get(COUNT(User.NUM_POSTS)) == 50);
-    assertTrue(results2.get(1).get(COUNT(User.NUM_POSTS)) == 50);
+    Assert.assertTrue(results2.get(0).get(COUNT(User.NUM_POSTS)) == 50);
+    Assert.assertTrue(results2.get(1).get(COUNT(User.NUM_POSTS)) == 50);
 
     // Count should work on columns that are not of type int
     results2 = db.createQuery()
         .from(User.TBL)
         .select(COUNT(User.HANDLE))
         .fetch();
-    assertTrue(results2.get(0).get(COUNT(User.HANDLE)) == 100);
+    Assert.assertTrue(results2.get(0).get(COUNT(User.HANDLE)) == 100);
 
     // Test Sum
     results2 = db.createQuery()
@@ -641,8 +639,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).get(SUM(User.NUM_POSTS)) == 2450);
-    assertTrue(results2.get(1).get(SUM(User.NUM_POSTS)) == 2500);
+    Assert.assertTrue(results2.get(0).get(SUM(User.NUM_POSTS)) == 2450);
+    Assert.assertTrue(results2.get(1).get(SUM(User.NUM_POSTS)) == 2500);
 
     // Test Avg
     results2 = db.createQuery()
@@ -652,8 +650,8 @@ public class TestGenericQuery {
         .orderBy(User.HANDLE)
         .fetch();
     assertEquals(2, results2.size());
-    assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)).intValue() == 49);
-    assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)).longValue() == 50);
+    Assert.assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)).intValue() == 49);
+    Assert.assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)).longValue() == 50);
   }
 
   @Test
@@ -676,7 +674,7 @@ public class TestGenericQuery {
         .leftJoin(User.TBL).on(User.ID.equalTo(Comment.COMMENTER_ID.as(Long.class)))
         .leftJoin(Post.TBL).on(Post.ID.equalTo(Comment.COMMENTED_ON_ID))
         .orderBy(User.HANDLE)
-        .orderBy(Post.TITLE, QueryOrder.DESC)
+        .orderBy(Post.TITLE, DESC)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
         .fetch();
 
@@ -709,7 +707,7 @@ public class TestGenericQuery {
         .leftJoin(User.TBL).on(User.ID.equalTo(Post.USER_ID.as(Long.class)))
         .leftJoin(Comment.TBL).on(Comment.CONTENT.contains(Post.TITLE))
         .orderBy(User.HANDLE)
-        .orderBy(Post.TITLE, QueryOrder.DESC)
+        .orderBy(Post.TITLE, DESC)
         .select(User.HANDLE, Comment.CONTENT, Post.TITLE)
         .fetch();
 
@@ -749,7 +747,7 @@ public class TestGenericQuery {
     // table alias cannot be null
     try {
       User.Tbl illegalTable = User.Tbl.as(null);
-      fail();
+      Assert.fail();
     } catch (IllegalArgumentException e) {
       // expected
     }
@@ -757,7 +755,7 @@ public class TestGenericQuery {
     // table alias cannot be empty
     try {
       User.Tbl illegalTable = User.Tbl.as("");
-      fail();
+      Assert.fail();
     } catch (IllegalArgumentException e) {
       // expected
     }
@@ -772,7 +770,7 @@ public class TestGenericQuery {
         .fetch();
     assertEquals(5, results1.size());
     assertEquals(11, results1.get(0).columnCount());
-    assertTrue(results1.get(0).get(handlers.ID) == userD.getId());
+    Assert.assertTrue(results1.get(0).get(handlers.ID) == userD.getId());
 
     // test self join with table alias
     results1 = db.createQuery()
@@ -782,16 +780,16 @@ public class TestGenericQuery {
         .select(handlers.HANDLE, handlers.BIO, bios.HANDLE, bios.BIO)
         .fetch();
     assertEquals(5, results1.size());
-    assertTrue(results1.get(0).get(bios.HANDLE).equals("D"));
-    assertTrue(results1.get(0).get(handlers.HANDLE).equals("G"));
-    assertTrue(results1.get(1).get(bios.HANDLE).equals("E"));
-    assertTrue(results1.get(1).get(handlers.HANDLE).equals("H"));
-    assertTrue(results1.get(2).get(bios.HANDLE).equals("F"));
-    assertTrue(results1.get(2).get(handlers.HANDLE).equals("D"));
-    assertTrue(results1.get(3).get(bios.HANDLE).equals("G"));
-    assertTrue(results1.get(3).get(handlers.HANDLE).equals("E"));
-    assertTrue(results1.get(4).get(bios.HANDLE).equals("H"));
-    assertTrue(results1.get(4).get(handlers.HANDLE).equals("F"));
+    Assert.assertTrue(results1.get(0).get(bios.HANDLE).equals("D"));
+    Assert.assertTrue(results1.get(0).get(handlers.HANDLE).equals("G"));
+    Assert.assertTrue(results1.get(1).get(bios.HANDLE).equals("E"));
+    Assert.assertTrue(results1.get(1).get(handlers.HANDLE).equals("H"));
+    Assert.assertTrue(results1.get(2).get(bios.HANDLE).equals("F"));
+    Assert.assertTrue(results1.get(2).get(handlers.HANDLE).equals("D"));
+    Assert.assertTrue(results1.get(3).get(bios.HANDLE).equals("G"));
+    Assert.assertTrue(results1.get(3).get(handlers.HANDLE).equals("E"));
+    Assert.assertTrue(results1.get(4).get(bios.HANDLE).equals("H"));
+    Assert.assertTrue(results1.get(4).get(handlers.HANDLE).equals("F"));
 
     // test self join with complex conditions
     // select the entry with the largest num_posts group by some_boolean
@@ -806,14 +804,14 @@ public class TestGenericQuery {
         .select(User.HANDLE, User.SOME_BOOLEAN, User.BIO, User.NUM_POSTS)
         .fetch();
     assertEquals(2, results1.size());
-    assertTrue(results1.get(0).get(User.HANDLE).equals("D"));
-    assertTrue(results1.get(0).get(User.BIO).equals("F"));
-    assertTrue(results1.get(0).get(User.SOME_BOOLEAN).equals(true));
-    assertTrue(results1.get(0).get(User.NUM_POSTS).equals(5));
-    assertTrue(results1.get(1).get(User.HANDLE).equals("G"));
-    assertTrue(results1.get(1).get(User.BIO).equals("D"));
-    assertTrue(results1.get(1).get(User.SOME_BOOLEAN).equals(false));
-    assertTrue(results1.get(1).get(User.NUM_POSTS).equals(7));
+    Assert.assertTrue(results1.get(0).get(User.HANDLE).equals("D"));
+    Assert.assertTrue(results1.get(0).get(User.BIO).equals("F"));
+    Assert.assertTrue(results1.get(0).get(User.SOME_BOOLEAN).equals(true));
+    Assert.assertTrue(results1.get(0).get(User.NUM_POSTS).equals(5));
+    Assert.assertTrue(results1.get(1).get(User.HANDLE).equals("G"));
+    Assert.assertTrue(results1.get(1).get(User.BIO).equals("D"));
+    Assert.assertTrue(results1.get(1).get(User.SOME_BOOLEAN).equals(false));
+    Assert.assertTrue(results1.get(1).get(User.NUM_POSTS).equals(7));
   }
 
   @Test
@@ -880,12 +878,12 @@ public class TestGenericQuery {
         .from(User.TBL.with(IndexHints.use(index1), IndexHints.ignoreForGroupBy(index2)))
         .getSqlStatement();
 
-    assertTrue(sqlStatement.contains("USE INDEX (" + index1.getName() + ")"));
-    assertTrue(sqlStatement.contains("IGNORE INDEX FOR GROUP BY (" + index2.getName() + ")"));
+    Assert.assertTrue(sqlStatement.contains("USE INDEX (" + index1.getName() + ")"));
+    Assert.assertTrue(sqlStatement.contains("IGNORE INDEX FOR GROUP BY (" + index2.getName() + ")"));
 
     try {
       db.createQuery().from(User.TBL.with(IndexHints.use(index1), IndexHints.force(index2)));
-      fail();
+      Assert.fail();
     } catch (InvalidIndexHintException e) {
       // expected
     }

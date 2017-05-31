@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
@@ -21,7 +20,7 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
  * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
-  private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
+  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private final IDbManager<DB> dbManager;
 

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestModelWithID {
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
+  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
   private Post postModel;
   private Post postModelx;
   private IDatabases dbs;

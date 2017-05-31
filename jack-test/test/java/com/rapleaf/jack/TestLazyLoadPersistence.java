@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestLazyLoadPersistence {
 
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new DatabaseConnection("database1");
+  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
   private static final IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
 
   @Test
