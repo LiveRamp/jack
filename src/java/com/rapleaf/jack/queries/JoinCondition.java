@@ -19,6 +19,6 @@ public class JoinCondition implements QueryCondition {
 
   @Override
   public String getSqlStatement() {
-    return joinType.getSqlKeyword() + " " + tableReference.getSqlStatement() + " ON " + GenericQuery.getClauseFromQueryConditions(constraints, "", " AND ", "");
+    return joinType.getSqlKeyword() + " " + tableReference.getSqlStatement() + " ON " + BaseExecution.getClauseFromQueryConditions(constraints, "", " AND ", "");
   }
 }

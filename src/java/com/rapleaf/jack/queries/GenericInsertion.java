@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.sql.Statement;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,16 +15,14 @@ import org.slf4j.LoggerFactory;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.util.JackUtility;
 
-public class GenericInsertion {
+public class GenericInsertion extends BaseExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericInsertion.class);
-  private static int MAX_CONNECTION_RETRIES = 1;
 
-  private final BaseDatabaseConnection dbConnection;
   private final Table table;
   private final Map<Column, Object> values;
 
   public <T> GenericInsertion(BaseDatabaseConnection dbConnection, Table table, Column<T> column, T value) {
-    this.dbConnection = dbConnection;
+    super(dbConnection);
     this.table = table;
     this.values = Maps.newLinkedHashMap();
     values.put(column, value);
@@ -71,10 +69,6 @@ public class GenericInsertion {
     return this;
   }
 
-  public String getSqlStatement() throws IOException {
-    return this.getPreparedStatement().toString();
-  }
-
   public long execute() throws IOException {
     int retryCount = 0;
     PreparedStatement preparedStatement = getPreparedStatement();
@@ -93,30 +87,16 @@ public class GenericInsertion {
     }
   }
 
-  private PreparedStatement getPreparedStatement() throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getQueryStatement(), Statement.RETURN_GENERATED_KEYS);
-    setStatementParameters(preparedStatement);
-    return preparedStatement;
-  }
-
-  private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
-    int index = 0;
-    for (Object parameter : values.values()) {
-      if (parameter == null) {
-        continue;
-      }
-      try {
-        preparedStatement.setObject(++index, parameter);
-      } catch (SQLException e) {
-        throw new IOException(e);
-      }
-    }
-  }
-
-  private String getQueryStatement() {
+  @Override
+  protected String getQueryStatement() {
     return getInsertClause()
         + getColumnsClause()
         + getValuesClause();
+  }
+
+  @Override
+  protected Collection<Object> getParameters() {
+    return values.values();
   }
 
   private String getInsertClause() {

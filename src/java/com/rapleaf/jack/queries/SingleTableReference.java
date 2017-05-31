@@ -30,7 +30,7 @@ public class SingleTableReference implements TableReference {
 
   @Override
   public String getSqlStatement() {
-    return table.getSqlKeyword() + (indexHints.isEmpty() ? "" : GenericQuery.getClauseFromQueryConditions(indexHints, " ", " ", ""));
+    return table.getSqlKeyword() + (indexHints.isEmpty() ? "" : BaseExecution.getClauseFromQueryConditions(indexHints, " ", " ", ""));
   }
 
 }

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,11 +20,10 @@ import com.rapleaf.jack.tracking.NoOpAction;
 import com.rapleaf.jack.tracking.PostQueryAction;
 import com.rapleaf.jack.tracking.QueryStatistics;
 
-public class GenericQuery {
+public class GenericQuery extends BaseExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
-  private final BaseDatabaseConnection dbConnection;
   private final List<TableReference> tableReferences;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
@@ -37,7 +35,7 @@ public class GenericQuery {
   private Optional<LimitCriterion> limitCriteria;
 
   private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
-    this.dbConnection = dbConnection;
+    super(dbConnection);
     this.tableReferences = Lists.newArrayList(tableReference);
     this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
@@ -185,10 +183,6 @@ public class GenericQuery {
     return this;
   }
 
-  public String getSqlStatement() throws IOException {
-    return getPreparedStatement().toString();
-  }
-
   public Records fetch() throws IOException {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
@@ -225,27 +219,8 @@ public class GenericQuery {
     }
   }
 
-  private PreparedStatement getPreparedStatement() throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getQueryStatement());
-    setStatementParameters(preparedStatement);
-    return preparedStatement;
-  }
-
-  private void setStatementParameters(PreparedStatement preparedStatement) throws IOException {
-    int index = 0;
-    for (Object parameter : parameters) {
-      if (parameter == null) {
-        continue;
-      }
-      try {
-        preparedStatement.setObject(++index, parameter);
-      } catch (SQLException e) {
-        throw new IOException(e);
-      }
-    }
-  }
-
-  private String getQueryStatement() {
+  @Override
+  protected String getQueryStatement() {
     return getSelectClause()
         + getFromClause()
         + getJoinClause()
@@ -253,6 +228,11 @@ public class GenericQuery {
         + getGroupByClause()
         + getOrderClause()
         + getLimitClause();
+  }
+
+  @Override
+  protected Collection<Object> getParameters() {
+    return parameters;
   }
 
   private String getSelectClause() {
@@ -309,37 +289,4 @@ public class GenericQuery {
     }
   }
 
-  static String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator, String terminalKeyword) {
-    if (columns.isEmpty()) {
-      return "";
-    }
-
-    StringBuilder clause = new StringBuilder(initialKeyword);
-    Iterator<Column> it = columns.iterator();
-    while (it.hasNext()) {
-      clause.append(it.next().getSqlKeyword());
-      if (it.hasNext()) {
-        clause.append(separator);
-      }
-    }
-
-    return clause.append(terminalKeyword).toString();
-  }
-
-  static <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator, String terminalKeyword) {
-    if (conditions.isEmpty()) {
-      return "";
-    }
-
-    StringBuilder clause = new StringBuilder(initialKeyword);
-    Iterator<T> it = conditions.iterator();
-    while (it.hasNext()) {
-      clause.append(it.next().getSqlStatement());
-      if (it.hasNext()) {
-        clause.append(separator);
-      }
-    }
-
-    return clause.append(terminalKeyword).toString();
-  }
 }
