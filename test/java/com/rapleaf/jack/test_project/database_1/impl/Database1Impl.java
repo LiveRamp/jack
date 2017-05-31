@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.LazyLoadPersistence;
+import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.Records;
@@ -73,6 +74,10 @@ public class Database1Impl implements IDatabase1 {
         return new BaseUserPersistenceImpl(conn, databases);
       }
     };
+  }
+
+  public GenericInsertion.Builder createInsertion() {
+    return GenericInsertion.create(conn);
   }
 
   public GenericQuery.Builder createQuery() {
