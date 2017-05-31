@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestGenericCreation {
+public class TestGenericInsertion {
   private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
   private static final String HANDLE = "HANDLE";
