@@ -27,6 +27,7 @@ import <%= JACK_NAMESPACE %>.LazyLoadPersistence;
 import <%= JACK_NAMESPACE %>.queries.GenericInsertion;
 import <%= JACK_NAMESPACE %>.queries.GenericQuery;
 import <%= JACK_NAMESPACE %>.queries.GenericUpdate;
+import <%= JACK_NAMESPACE %>.queries.GenericDeletion;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 import <%= JACK_NAMESPACE %>.queries.Records;
 import <%= JACK_NAMESPACE %>.queries.Column;
@@ -78,6 +79,10 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public GenericUpdate.Builder createUpdate() {
     return GenericUpdate.create(conn, allowBulkOperation);
+  }
+
+  public GenericDeletion.Builder createDeletion() {
+    return GenericDeletion.create(conn, allowBulkOperation);
   }
 
   @Override

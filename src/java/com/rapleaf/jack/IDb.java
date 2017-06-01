@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.GenericDeletion;
 import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.queries.GenericUpdate;
@@ -61,6 +62,8 @@ public interface IDb extends Serializable, Closeable {
   GenericQuery.Builder createQuery();
 
   GenericUpdate.Builder createUpdate();
+
+  GenericDeletion.Builder createDeletion();
 
   Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
 

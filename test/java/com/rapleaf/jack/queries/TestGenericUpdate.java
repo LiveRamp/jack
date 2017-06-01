@@ -28,6 +28,7 @@ public class TestGenericUpdate {
   @Before
   public void prepare() throws Exception {
     db.deleteAll();
+    db.setBulkOperation(false);
     post1 = db.posts().create();
     post1.setTitle(TITLE_1).setUserId(USER_ID_1).save();
     post2 = db.posts().create();

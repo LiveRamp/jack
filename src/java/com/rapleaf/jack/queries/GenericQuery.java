@@ -20,7 +20,7 @@ import com.rapleaf.jack.tracking.NoOpAction;
 import com.rapleaf.jack.tracking.PostQueryAction;
 import com.rapleaf.jack.tracking.QueryStatistics;
 
-public class GenericQuery extends BaseExecution {
+public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 

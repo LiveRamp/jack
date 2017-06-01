@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.util.JackUtility;
 
-public class GenericInsertion extends BaseExecution {
+public class GenericInsertion extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericInsertion.class);
 
   private final Table table;
   private final Map<Column, List<Object>> values;
   private int rowCount = 0;
 
-  public GenericInsertion(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericInsertion(BaseDatabaseConnection dbConnection, Table table) {
     super(dbConnection);
     this.table = table;
     this.values = Maps.newLinkedHashMap();

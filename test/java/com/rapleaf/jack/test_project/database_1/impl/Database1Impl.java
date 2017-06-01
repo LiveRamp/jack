@@ -17,6 +17,7 @@ import com.rapleaf.jack.LazyLoadPersistence;
 import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.queries.GenericUpdate;
+import com.rapleaf.jack.queries.GenericDeletion;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.queries.Column;
@@ -91,6 +92,10 @@ public class Database1Impl implements IDatabase1 {
 
   public GenericUpdate.Builder createUpdate() {
     return GenericUpdate.create(conn, allowBulkOperation);
+  }
+
+  public GenericDeletion.Builder createDeletion() {
+    return GenericDeletion.create(conn, allowBulkOperation);
   }
 
   @Override
