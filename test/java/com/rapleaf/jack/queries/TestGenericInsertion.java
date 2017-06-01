@@ -2,13 +2,14 @@ package com.rapleaf.jack.queries;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -30,6 +31,11 @@ public class TestGenericInsertion {
   private static final float SOME_FLOAT = 9.1F;
   private static final double SOME_DOUBLE = 9.1;
   private static final boolean SOME_BOOLEAN = true;
+
+  @Before
+  public void prepare() throws Exception {
+    db.deleteAll();
+  }
 
   @Test
   public void testRecordCreation() throws Exception {
@@ -108,6 +114,14 @@ public class TestGenericInsertion {
     User user = db.users().find(id);
     assertNotNull(user);
     assertEquals(user.getHandle(), handle);
+  }
+
+  @Test
+  public void testEmptyValues() throws Exception {
+    db.createInsertion()
+        .into(Post.TBL)
+        .execute();
+    assertEquals(1, db.posts().findAll().size());
   }
 
   @Test(expected = IOException.class)

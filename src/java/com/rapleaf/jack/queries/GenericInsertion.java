@@ -23,11 +23,10 @@ public class GenericInsertion extends BaseExecution {
   private final Table table;
   private final Map<Column, Object> values;
 
-  public <T> GenericInsertion(BaseDatabaseConnection dbConnection, Table table, Column<T> column, T value) {
+  public GenericInsertion(BaseDatabaseConnection dbConnection, Table table) {
     super(dbConnection);
     this.table = table;
     this.values = Maps.newLinkedHashMap();
-    values.put(column, value);
   }
 
   public static Builder create(BaseDatabaseConnection dbConnection) {
@@ -41,22 +40,8 @@ public class GenericInsertion extends BaseExecution {
       this.dbConnection = dbConnection;
     }
 
-    public Setter into(Table table) {
-      return new Setter(dbConnection, table);
-    }
-  }
-
-  public static class Setter {
-    private final BaseDatabaseConnection dbConnection;
-    private final Table table;
-
-    Setter(BaseDatabaseConnection dbConnection, Table table) {
-      this.dbConnection = dbConnection;
-      this.table = table;
-    }
-
-    public <T> GenericInsertion set(Column<T> column, T value) {
-      return new GenericInsertion(dbConnection, table, column, value);
+    public GenericInsertion into(Table table) {
+      return new GenericInsertion(dbConnection, table);
     }
   }
 
