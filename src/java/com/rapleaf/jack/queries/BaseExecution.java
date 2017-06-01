@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
@@ -17,12 +18,15 @@ public abstract class BaseExecution {
     this.dbConnection = dbConnection;
   }
 
-  protected String getSqlStatement() throws IOException {
-    return this.getPreparedStatement().toString();
+  public String getSqlStatement() throws IOException {
+    return this.getPreparedStatement(Optional.empty()).toString();
   }
 
-  protected PreparedStatement getPreparedStatement() throws IOException {
-    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getQueryStatement());
+  protected PreparedStatement getPreparedStatement(Optional<Integer> options) throws IOException {
+    PreparedStatement preparedStatement;
+    preparedStatement = options
+        .map(integer -> dbConnection.getPreparedStatement(getQueryStatement(), integer))
+        .orElseGet(() -> dbConnection.getPreparedStatement(getQueryStatement()));
     setStatementParameters(preparedStatement, getParameters());
     return preparedStatement;
   }

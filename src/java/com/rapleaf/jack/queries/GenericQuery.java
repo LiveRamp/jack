@@ -7,9 +7,9 @@ import java.sql.SQLRecoverableException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class GenericQuery extends BaseExecution {
     this.orderCriteria = Lists.newArrayList();
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
-    this.limitCriteria = Optional.absent();
+    this.limitCriteria = Optional.empty();
   }
 
   public static Builder create(BaseDatabaseConnection dbConnection) {
@@ -167,7 +167,7 @@ public class GenericQuery extends BaseExecution {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
     statTracker.recordQueryPrepStart();
-    PreparedStatement preparedStatement = getPreparedStatement();
+    PreparedStatement preparedStatement = getPreparedStatement(Optional.empty());
     statTracker.recordQueryPrepEnd();
 
     while (true) {

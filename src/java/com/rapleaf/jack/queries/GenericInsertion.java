@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -71,7 +73,7 @@ public class GenericInsertion extends BaseExecution {
 
   public long execute() throws IOException {
     int retryCount = 0;
-    PreparedStatement preparedStatement = getPreparedStatement();
+    PreparedStatement preparedStatement = getPreparedStatement(Optional.of(Statement.RETURN_GENERATED_KEYS));
 
     while (true) {
       try {
