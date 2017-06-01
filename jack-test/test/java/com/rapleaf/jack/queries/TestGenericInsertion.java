@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestGenericInsertion {
   private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
+
   static {
     db.disableCaching();
   }
