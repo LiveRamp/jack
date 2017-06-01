@@ -14,7 +14,10 @@ import java.util.List;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.LazyLoadPersistence;
+import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.GenericUpdate;
+import com.rapleaf.jack.queries.GenericDeletion;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.queries.Column;
@@ -29,7 +32,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class Database1Impl implements IDatabase1 {
-  
+
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
   private final PostQueryAction postQueryAction;
@@ -38,6 +41,8 @@ public class Database1Impl implements IDatabase1 {
   private final LazyLoadPersistence<ILockableModelPersistence, IDatabases> lockable_models;
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
+
+  private boolean allowBulkOperation = false;
 
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
@@ -75,10 +80,22 @@ public class Database1Impl implements IDatabase1 {
     };
   }
 
+  public GenericInsertion.Builder createInsertion() {
+    return GenericInsertion.create(conn);
+  }
+
   public GenericQuery.Builder createQuery() {
     final GenericQuery.Builder builder = GenericQuery.create(conn);
     builder.setPostQueryAction(postQueryAction);
     return builder;
+  }
+
+  public GenericUpdate.Builder createUpdate() {
+    return GenericUpdate.create(conn, allowBulkOperation);
+  }
+
+  public GenericDeletion.Builder createDeletion() {
+    return GenericDeletion.create(conn, allowBulkOperation);
   }
 
   @Override
@@ -161,6 +178,16 @@ public class Database1Impl implements IDatabase1 {
   @Override
   public void close() throws IOException {
     conn.close();
+  }
+
+  @Override
+  public void setBulkOperation(boolean isAllowBulkOperation) {
+    this.allowBulkOperation = isAllowBulkOperation;
+  }
+
+  @Override
+  public boolean getBulkOperation() {
+    return allowBulkOperation;
   }
 
   public IDatabases getDatabases() {

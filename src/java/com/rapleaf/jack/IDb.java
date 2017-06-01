@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.GenericDeletion;
+import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.GenericUpdate;
 import com.rapleaf.jack.queries.Records;
 
 public interface IDb extends Serializable, Closeable {
@@ -50,7 +53,17 @@ public interface IDb extends Serializable, Closeable {
   @Override
   public void close() throws IOException;
 
+  public void setBulkOperation(boolean isAllowBulkOperation);
+
+  public boolean getBulkOperation();
+
+  GenericInsertion.Builder createInsertion();
+
   GenericQuery.Builder createQuery();
+
+  GenericUpdate.Builder createUpdate();
+
+  GenericDeletion.Builder createDeletion();
 
   Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
 

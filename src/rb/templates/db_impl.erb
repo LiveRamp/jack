@@ -24,7 +24,10 @@ import java.util.List;
 
 import <%= root_package %>.I<%= db_name%>;
 import <%= JACK_NAMESPACE %>.LazyLoadPersistence;
+import <%= JACK_NAMESPACE %>.queries.GenericInsertion;
 import <%= JACK_NAMESPACE %>.queries.GenericQuery;
+import <%= JACK_NAMESPACE %>.queries.GenericUpdate;
+import <%= JACK_NAMESPACE %>.queries.GenericDeletion;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
 import <%= JACK_NAMESPACE %>.queries.Records;
 import <%= JACK_NAMESPACE %>.queries.Column;
@@ -38,7 +41,7 @@ import <%= project_defn.databases_namespace %>.IDatabases;
 import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class <%=db_name%>Impl implements I<%=db_name%> {
-  
+
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
   private final PostQueryAction postQueryAction;
@@ -46,6 +49,8 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 <% model_defns.each do |model_defn| %>
   private final LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases> <%= model_defn.table_name %>;
 <% end %>
+
+  private boolean allowBulkOperation = false;
 
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
@@ -62,10 +67,22 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   <% end %>
   }
 
+  public GenericInsertion.Builder createInsertion() {
+    return GenericInsertion.create(conn);
+  }
+
   public GenericQuery.Builder createQuery() {
     final GenericQuery.Builder builder = GenericQuery.create(conn);
     builder.setPostQueryAction(postQueryAction);
     return builder;
+  }
+
+  public GenericUpdate.Builder createUpdate() {
+    return GenericUpdate.create(conn, allowBulkOperation);
+  }
+
+  public GenericDeletion.Builder createDeletion() {
+    return GenericDeletion.create(conn, allowBulkOperation);
   }
 
   @Override
@@ -135,6 +152,16 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   @Override
   public void close() throws IOException {
     conn.close();
+  }
+
+  @Override
+  public void setBulkOperation(boolean isAllowBulkOperation) {
+    this.allowBulkOperation = isAllowBulkOperation;
+  }
+
+  @Override
+  public boolean getBulkOperation() {
+    return allowBulkOperation;
   }
 
   public IDatabases getDatabases() {

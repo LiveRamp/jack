@@ -298,7 +298,7 @@ public class Column<T> {
     return new GenericConstraint<String>(this.as(String.class), new Match("%" + end));
   }
 
-  private boolean isDateColumn() {
+  boolean isDateColumn() {
     return java.util.Date.class.isAssignableFrom(type);
   }
 
