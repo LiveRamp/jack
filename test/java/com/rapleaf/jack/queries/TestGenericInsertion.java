@@ -22,6 +22,9 @@ import static org.junit.Assert.assertTrue;
 
 public class TestGenericInsertion {
   private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
+  static {
+    db.disableCaching();
+  }
 
   private static final String HANDLE = "HANDLE";
   private static final long CREATED_AT = System.currentTimeMillis();

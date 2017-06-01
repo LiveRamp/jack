@@ -23,6 +23,7 @@ import java.util.Set;
 import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.GenericUpdate;
 import com.rapleaf.jack.queries.Records;
 
 public interface IDb extends Serializable, Closeable {
@@ -54,6 +55,8 @@ public interface IDb extends Serializable, Closeable {
   GenericInsertion.Builder createInsertion();
 
   GenericQuery.Builder createQuery();
+
+  GenericUpdate.Builder createUpdate();
 
   Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
 

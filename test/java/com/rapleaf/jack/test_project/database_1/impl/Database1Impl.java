@@ -16,6 +16,7 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.LazyLoadPersistence;
 import com.rapleaf.jack.queries.GenericInsertion;
 import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.GenericUpdate;
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.queries.Column;
@@ -30,7 +31,7 @@ import com.rapleaf.jack.test_project.IDatabases;
 import com.rapleaf.jack.tracking.PostQueryAction;
 
 public class Database1Impl implements IDatabase1 {
-  
+
   private final BaseDatabaseConnection conn;
   private final IDatabases databases;
   private final PostQueryAction postQueryAction;
@@ -84,6 +85,10 @@ public class Database1Impl implements IDatabase1 {
     final GenericQuery.Builder builder = GenericQuery.create(conn);
     builder.setPostQueryAction(postQueryAction);
     return builder;
+  }
+
+  public GenericUpdate.Builder createUpdate() {
+    return GenericUpdate.create(conn);
   }
 
   @Override
