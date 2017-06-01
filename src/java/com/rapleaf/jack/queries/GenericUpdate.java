@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -20,32 +21,36 @@ import com.rapleaf.jack.BaseDatabaseConnection;
 public class GenericUpdate extends BaseExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericUpdate.class);
 
+  private final boolean allowBulkOperation;
   private final Table table;
   private final Map<Column, Object> values;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> whereParameters;
 
-  private GenericUpdate(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericUpdate(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, Table table) {
     super(dbConnection);
+    this.allowBulkOperation = allowBulkOperation;
     this.table = table;
     this.values = Maps.newLinkedHashMap();
     this.whereConstraints = Lists.newLinkedList();
     this.whereParameters = Lists.newLinkedList();
   }
 
-  public static Builder create(BaseDatabaseConnection dbConnection) {
-    return new Builder(dbConnection);
+  public static Builder create(BaseDatabaseConnection dbConnection, boolean allowBulkOperation) {
+    return new Builder(dbConnection, allowBulkOperation);
   }
 
   public static class Builder {
     private final BaseDatabaseConnection dbConnection;
+    private final boolean allowBulkOperation;
 
-    public Builder(BaseDatabaseConnection dbConnection) {
+    public Builder(BaseDatabaseConnection dbConnection, boolean allowBulkOperation) {
       this.dbConnection = dbConnection;
+      this.allowBulkOperation = allowBulkOperation;
     }
 
     public GenericUpdate table(Table table) {
-      return new GenericUpdate(dbConnection, table);
+      return new GenericUpdate(dbConnection, allowBulkOperation, table);
     }
   }
 
@@ -65,6 +70,13 @@ public class GenericUpdate extends BaseExecution {
   }
 
   public Updates execute() throws IOException {
+    if (!allowBulkOperation) {
+      Preconditions.checkState(
+          !whereConstraints.isEmpty(),
+          "Bulk operation is not allowed; either enable it, or specify at least one where constraint"
+      );
+    }
+
     int retryCount = 0;
     PreparedStatement preparedStatement = getPreparedStatement(Optional.empty());
 

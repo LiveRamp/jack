@@ -41,6 +41,8 @@ public class Database1Impl implements IDatabase1 {
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
+  private boolean allowBulkOperation = false;
+
   public Database1Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
@@ -88,7 +90,7 @@ public class Database1Impl implements IDatabase1 {
   }
 
   public GenericUpdate.Builder createUpdate() {
-    return GenericUpdate.create(conn);
+    return GenericUpdate.create(conn, allowBulkOperation);
   }
 
   @Override
@@ -171,6 +173,16 @@ public class Database1Impl implements IDatabase1 {
   @Override
   public void close() throws IOException {
     conn.close();
+  }
+
+  @Override
+  public void setBulkOperation(boolean isAllowBulkOperation) {
+    this.allowBulkOperation = isAllowBulkOperation;
+  }
+
+  @Override
+  public boolean getBulkOperation() {
+    return allowBulkOperation;
   }
 
   public IDatabases getDatabases() {

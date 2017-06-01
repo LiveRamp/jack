@@ -49,6 +49,8 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   private final LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases> <%= model_defn.table_name %>;
 <% end %>
 
+  private boolean allowBulkOperation = false;
+
   public <%=db_name%>Impl(BaseDatabaseConnection conn, IDatabases databases, PostQueryAction postQueryAction) {
     this.conn = conn;
     this.databases = databases;
@@ -75,7 +77,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   }
 
   public GenericUpdate.Builder createUpdate() {
-    return GenericUpdate.create(conn);
+    return GenericUpdate.create(conn, allowBulkOperation);
   }
 
   @Override
@@ -145,6 +147,16 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   @Override
   public void close() throws IOException {
     conn.close();
+  }
+
+  @Override
+  public void setBulkOperation(boolean isAllowBulkOperation) {
+    this.allowBulkOperation = isAllowBulkOperation;
+  }
+
+  @Override
+  public boolean getBulkOperation() {
+    return allowBulkOperation;
   }
 
   public IDatabases getDatabases() {

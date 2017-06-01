@@ -52,6 +52,10 @@ public interface IDb extends Serializable, Closeable {
   @Override
   public void close() throws IOException;
 
+  public void setBulkOperation(boolean isAllowBulkOperation);
+
+  public boolean getBulkOperation();
+
   GenericInsertion.Builder createInsertion();
 
   GenericQuery.Builder createQuery();

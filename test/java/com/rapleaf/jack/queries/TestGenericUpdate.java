@@ -35,7 +35,8 @@ public class TestGenericUpdate {
   }
 
   @Test
-  public void testUpdateAll() throws Exception {
+  public void testUpdateAllWithBulkOperation() throws Exception {
+    db.setBulkOperation(true);
     Updates updates = db.createUpdate()
         .table(Post.TBL)
         .set(Post.USER_ID, USER_ID_1 * 10)
@@ -44,6 +45,14 @@ public class TestGenericUpdate {
     assertEquals(2, updates.getUpdatedRowCount());
     assertEquals(USER_ID_1 * 10, db.posts().find(post1.getId()).getUserId().longValue());
     assertEquals(USER_ID_1 * 10, db.posts().find(post2.getId()).getUserId().longValue());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testUpdateAllWithoutBulkOperation() throws Exception {
+    db.createUpdate()
+        .table(Post.TBL)
+        .set(Post.USER_ID, USER_ID_1 * 10)
+        .execute();
   }
 
   @Test
