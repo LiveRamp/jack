@@ -3,7 +3,9 @@ package com.rapleaf.jack.queries;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +41,7 @@ public class TestGenericInsertion {
 
   @Test
   public void testRecordCreation() throws Exception {
-    long id = db.createInsertion()
+    Insertions insertions = db.createInsertion()
         .into(User.TBL)
         .set(User.HANDLE, HANDLE)
         .set(User.CREATED_AT_MILLIS, CREATED_AT)
@@ -53,7 +55,7 @@ public class TestGenericInsertion {
         .set(User.SOME_BOOLEAN, SOME_BOOLEAN)
         .execute();
 
-    User user = db.users().find(id);
+    User user = db.users().find(insertions.getFirstId());
     assertNotNull(user);
     assertEquals(user.getHandle(), HANDLE);
     assertEquals(user.getCreatedAtMillis().longValue(), CREATED_AT);
@@ -68,15 +70,39 @@ public class TestGenericInsertion {
   }
 
   @Test
+  public void testMultipleRows() throws Exception {
+    String handle1 = "a";
+    String handle2 = "b";
+    int numPosts1 = 51;
+    int numPosts2 = 52;
+
+    Insertions insertions = db.createInsertion()
+        .into(User.TBL)
+        .set(User.HANDLE, handle1, handle2)
+        .set(User.NUM_POSTS, numPosts1, numPosts2)
+        .execute();
+
+    long id1 = insertions.getFirstId();
+    User user1 = db.users().find(id1);
+    assertEquals(handle1, user1.getHandle());
+    assertEquals(numPosts1, user1.getNumPosts());
+
+    long id2 = insertions.getIds().get(1);
+    User user2 = db.users().find(id2);
+    assertEquals(handle2, user2.getHandle());
+    assertEquals(numPosts2, user2.getNumPosts());
+  }
+
+  @Test
   public void testColumnCast() throws Exception {
-    long id = db.createInsertion()
+    Insertions insertions = db.createInsertion()
         .into(User.TBL)
         .set(User.HANDLE, HANDLE)
         .set(User.NUM_POSTS.as(Long.class), (long)NUM_POSTS)
         .set(User.SOME_FLOAT.as(Float.class), SOME_FLOAT)
         .execute();
 
-    User user = db.users().find(id);
+    User user = db.users().find(insertions.getFirstId());
     assertNotNull(user);
     assertEquals(user.getNumPosts(), NUM_POSTS);
     assertTrue(Math.abs(user.getSomeFloat().floatValue() - SOME_FLOAT) < 10e-5);
@@ -84,7 +110,7 @@ public class TestGenericInsertion {
 
   @Test
   public void testNullValue() throws Exception {
-    long id = db.createInsertion()
+    Insertions insertions = db.createInsertion()
         .into(User.TBL)
         .set(User.HANDLE, HANDLE)
         .set(User.NUM_POSTS, NUM_POSTS)
@@ -93,7 +119,7 @@ public class TestGenericInsertion {
         .set(User.SOME_BOOLEAN, null)
         .execute();
 
-    User user = db.users().find(id);
+    User user = db.users().find(insertions.getFirstId());
     assertNotNull(user);
     assertNull(user.getBio());
     assertNull(user.getSomeFloat());
@@ -104,16 +130,26 @@ public class TestGenericInsertion {
   public void testDuplicatedSet() throws Exception {
     String handle = HANDLE + "2";
 
-    long id = db.createInsertion()
+    Insertions insertions = db.createInsertion()
         .into(User.TBL)
         .set(User.NUM_POSTS, NUM_POSTS)
         .set(User.HANDLE, HANDLE)
         .set(User.HANDLE, handle)
         .execute();
 
-    User user = db.users().find(id);
+    User user = db.users().find(insertions.getFirstId());
     assertNotNull(user);
     assertEquals(user.getHandle(), handle);
+  }
+
+  @Test
+  public void testNullOnly() throws Exception {
+    List<String> nulls = Lists.newArrayList(null, null, null);
+    db.createInsertion()
+        .into(Post.TBL)
+        .set(Post.TITLE, nulls)
+        .execute();
+    assertEquals(nulls.size(), db.posts().findAll().size());
   }
 
   @Test
@@ -124,11 +160,28 @@ public class TestGenericInsertion {
     assertEquals(1, db.posts().findAll().size());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testEmptyValueList() throws Exception {
+    db.createInsertion()
+        .into(Post.TBL)
+        .set(Post.TITLE, Lists.newArrayList())
+        .execute();
+  }
+
   @Test(expected = IOException.class)
   public void testMissingRequiredField() throws Exception {
     db.createInsertion()
         .into(User.TBL)
         .set(User.NUM_POSTS, NUM_POSTS)
+        .execute();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInconsistentRowCount() throws Exception {
+    db.createInsertion()
+        .into(User.TBL)
+        .set(User.HANDLE, "a", "b")
+        .set(User.NUM_POSTS, 1, 2, 3)
         .execute();
   }
 
