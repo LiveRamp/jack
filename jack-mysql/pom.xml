@@ -121,57 +121,7 @@
   <build>
 
     <directory>${basedir}/build</directory>
-    <sourceDirectory>${basedir}/src/java</sourceDirectory>
-    <testSourceDirectory>${basedir}/test/java</testSourceDirectory>
-
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <includes>
-          <include>**/*.java</include>
-          <include>**/*.yaml</include>
-          <include>**/*.yml</include>
-          <include>**/*.txt</include>
-          <include>**/*.rb</include>
-          <include>**/*.erb</include>
-          <include>**/Gemfile</include>
-          <include>**/Gemfile.lock</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>test/java</directory>
-        <includes>
-          <include>**/*.java</include>
-          <include>**/*.yaml</include>
-          <include>**/*.yml</include>
-          <include>**/*.txt</include>
-          <include>**/*.rb</include>
-          <include>**/*.erb</include>
-          <include>**/Gemfile</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>test/rb</directory>
-        <includes>
-          <include>**/*.java</include>
-          <include>**/*.yaml</include>
-          <include>**/*.yml</include>
-          <include>**/*.txt</include>
-          <include>**/*.rb</include>
-          <include>**/*.erb</include>
-          <include>**/Gemfile</include>
-        </includes>
-
-      </resource>
-      <resource>
-        <directory>./</directory>
-        <includes>
-          <include>Gemfile</include>
-          <include>Gemfile.lock</include>
-          <include>.ruby-version</include>
-        </includes>
-      </resource>
-    </resources>
+    <sourceDirectory>${basedir}/src</sourceDirectory>
 
     <plugins>
       <plugin>
