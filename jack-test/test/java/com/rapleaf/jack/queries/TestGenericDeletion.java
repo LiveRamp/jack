@@ -1,6 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +44,7 @@ public class TestGenericDeletion {
         .from(Post.TBL)
         .execute();
 
-    Assert.assertEquals(2, deletions.getDeletedRowCount());
+    assertEquals(2, deletions.getDeletedRowCount());
     assertEquals(0, db.posts().findAll().size());
   }
 
@@ -61,7 +60,7 @@ public class TestGenericDeletion {
         .where(Post.TITLE.equalTo(TITLE_1))
         .execute();
 
-    Assert.assertEquals(1, deletions1.getDeletedRowCount());
+    assertEquals(1, deletions1.getDeletedRowCount());
     assertEquals(1, db.posts().findAll().size());
     assertNull(db.posts().find(post1.getId()));
     assertNotNull(db.posts().find(post2.getId()));
@@ -71,7 +70,7 @@ public class TestGenericDeletion {
         .where(Post.TITLE.equalTo(TITLE_1))
         .execute();
 
-    Assert.assertEquals(0, deletions2.getDeletedRowCount());
+    assertEquals(0, deletions2.getDeletedRowCount());
     assertEquals(1, db.posts().findAll().size());
     assertNull(db.posts().find(post1.getId()));
     assertNotNull(db.posts().find(post2.getId()));
@@ -81,7 +80,7 @@ public class TestGenericDeletion {
         .where(Post.TITLE.isNull())
         .execute();
 
-    Assert.assertEquals(0, deletions3.getDeletedRowCount());
+    assertEquals(0, deletions3.getDeletedRowCount());
   }
 
 }

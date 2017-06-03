@@ -16,6 +16,7 @@ package com.rapleaf.jack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,14 +58,14 @@ class DatabaseConnection extends BaseDatabaseConnection {
   private long expiresAt;
   private long expiration;
 
-  static final long DEFAULT_EXPIRATION = 14400000; // 4 hours
+  static final long DEFAULT_EXPIRATION = Duration.ofHours(4).toMillis(); // 4 hours
 
   public DatabaseConnection(String dbname_key, long expiration, String driverClass) {
 
     DatabaseConnectionConfiguration config = DatabaseConnectionConfiguration.loadFromEnvironment(dbname_key);
     // get server credentials from database info
     String adapter = config.getAdapter();
-    if (!VALID_ADAPTER_CONSTANTS.keySet().contains(adapter) || !VALID_ADAPTER_CONSTANTS.get(adapter).equals(driverClass)) {
+    if (!VALID_ADAPTER_CONSTANTS.get(adapter).equals(driverClass)) {
       throw new IllegalArgumentException("Don't know the driver for adapter '" + adapter + "'!");
     }
     this.driverClass = driverClass;

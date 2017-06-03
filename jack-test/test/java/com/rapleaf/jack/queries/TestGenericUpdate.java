@@ -1,6 +1,5 @@
 package com.rapleaf.jack.queries;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +43,7 @@ public class TestGenericUpdate {
         .set(Post.USER_ID, USER_ID_1 * 10)
         .execute();
 
-    Assert.assertEquals(2, updates.getUpdatedRowCount());
+    assertEquals(2, updates.getUpdatedRowCount());
     assertEquals(USER_ID_1 * 10, db.posts().find(post1.getId()).getUserId().longValue());
     assertEquals(USER_ID_1 * 10, db.posts().find(post2.getId()).getUserId().longValue());
   }
@@ -66,7 +65,7 @@ public class TestGenericUpdate {
         .where(Post.TITLE.equalTo(TITLE_1))
         .execute();
 
-    Assert.assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(1, updates.getUpdatedRowCount());
     assertEquals(USER_ID_2, db.posts().find(post2.getId()).getUserId().longValue());
     assertEquals(TITLE_2, db.posts().find(post2.getId()).getTitle());
     assertEquals(USER_ID_1 * 10, db.posts().find(post1.getId()).getUserId().longValue());
@@ -81,7 +80,7 @@ public class TestGenericUpdate {
         .where(Post.USER_ID.equalTo(USER_ID_1))
         .execute();
 
-    Assert.assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(1, updates.getUpdatedRowCount());
     assertNull(db.posts().find(post1.getId()).getTitle());
   }
 
