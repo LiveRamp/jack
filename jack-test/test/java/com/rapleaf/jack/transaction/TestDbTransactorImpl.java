@@ -17,9 +17,12 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestDbTransactorImpl extends JackTestCase {
@@ -222,5 +225,39 @@ public class TestDbTransactorImpl extends JackTestCase {
     transactor.close();
     transactor.execute(db -> {
     });
+  }
+
+  @Test
+  public void testResetAutoCommit() throws Exception {
+    // create a transactor that returns an existing db connection
+    IDatabase1 testDbInstance = new DatabasesImpl().getDatabase1();
+    ITransactor<IDatabase1> transactor = TransactorImpl.create(() -> testDbInstance).setMaxTotalConnections(1).get();
+
+    transactor.execute(db -> {
+      assertTrue(db.getAutoCommit());
+      assertTrue(testDbInstance.getAutoCommit());
+      db.setAutoCommit(false);
+      assertFalse(db.getAutoCommit());
+      assertFalse(testDbInstance.getAutoCommit());
+    });
+    // after execution, the connection auto commit status should have been reset
+    assertTrue(testDbInstance.getAutoCommit());
+  }
+
+  @Test
+  public void testResetBulkOperation() throws Exception {
+    // create a transactor that returns an existing db connection
+    IDatabase1 testDbInstance = new DatabasesImpl().getDatabase1();
+    ITransactor<IDatabase1> transactor = TransactorImpl.create(() -> testDbInstance).setMaxTotalConnections(1).get();
+
+    transactor.execute(db -> {
+      assertFalse(db.getBulkOperation());
+      assertFalse(testDbInstance.getBulkOperation());
+      db.setBulkOperation(true);
+      assertTrue(db.getBulkOperation());
+      assertTrue(testDbInstance.getBulkOperation());
+    });
+    // after execution, the connection bulk operation status should have been reset
+    assertFalse(testDbInstance.getBulkOperation());
   }
 }
