@@ -95,6 +95,15 @@
           <include>**/Gemfile.lock</include>
         </includes>
       </resource>
+
+      <resource>
+        <directory>${project.parent.basedir}</directory>
+        <includes>
+          <include>Gemfile</include>
+          <include>Gemfile.lock</include>
+        </includes>
+      </resource>
+
     </resources>
 
     <plugins>
