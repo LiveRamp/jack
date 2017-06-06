@@ -8,6 +8,7 @@ jack.iws
 out
 database.yml
 Gemfile
+!jack-core/src/Gemfile
 lib
 target
 .idea
