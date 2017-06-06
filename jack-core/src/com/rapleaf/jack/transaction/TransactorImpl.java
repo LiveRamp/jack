@@ -81,9 +81,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       }
       throw new SqlExecutionFailureException(e);
     } finally {
-      if (asTransaction) {
-        connection.setAutoCommit(true);
-      }
+      // connection should be reset in PooledObjectFactory
       dbManager.returnConnection(connection);
     }
   }
@@ -103,9 +101,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       }
       throw new SqlExecutionFailureException(e);
     } finally {
-      if (asTransaction) {
-        connection.setAutoCommit(true);
-      }
+      // connection should be reset in PooledObjectFactory
       dbManager.returnConnection(connection);
     }
   }

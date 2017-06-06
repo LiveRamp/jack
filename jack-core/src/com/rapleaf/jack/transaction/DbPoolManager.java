@@ -146,7 +146,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
     @Override
     public void passivateObject(PooledObject<DB> connection) throws Exception {
-      // ignore
+      connection.getObject().setAutoCommit(true);
+      connection.getObject().setBulkOperation(false);
     }
   }
 
