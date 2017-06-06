@@ -26,7 +26,6 @@ public class StoreClientImpl<DB extends IDb> implements StoreClient<DB> {
   @Override
   public ScopedStoreClientImpl<DB> inScope(String scope) {
     transactor.execute(db -> {
-      db.create
     });
     return new ScopedStoreClientImpl<>(transactor, scope);
   }

@@ -27,6 +27,7 @@
 
   <modules>
     <module>jack-core</module>
+    <module>jack-store</module>
     <module>jack-mysql</module>
     <module>jack-postgresql</module>
     <module>jack-redshift</module>
