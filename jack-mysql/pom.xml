@@ -45,6 +45,17 @@
     <directory>${basedir}/build</directory>
     <sourceDirectory>${basedir}/src</sourceDirectory>
 
+    <resources>
+      <resource>
+        <directory>${project.parent.basedir}</directory>
+        <includes>
+          <include>Gemfile</include>
+          <include>Gemfile.lock</include>
+          <include>.ruby-version</include>
+        </includes>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <artifactId>exec-maven-plugin</artifactId>
