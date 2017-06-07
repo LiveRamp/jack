@@ -7,7 +7,7 @@ jack.iws
 *.gem
 out
 database.yml
-Gemfile
+jack-test/test/test_project/*/Gemfile*
 lib
 target
 .idea
