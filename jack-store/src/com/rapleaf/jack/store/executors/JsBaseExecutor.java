@@ -20,9 +20,8 @@ public class JsBaseExecutor<DB extends IDb> {
   private final Column<String> typeColumn;
   private final Column<String> keyColumn;
   private final Column<String> valueColumn;
-  private JsScope executionScope;
 
-  public JsBaseExecutor(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn, JsScope executionScope) {
+  public JsBaseExecutor(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.transactor = transactor;
     this.table = table;
     this.idColumn = Column.fromId(table.getName());
@@ -30,16 +29,10 @@ public class JsBaseExecutor<DB extends IDb> {
     this.typeColumn = typeColumn;
     this.keyColumn = keyColumn;
     this.valueColumn = valueColumn;
-    this.executionScope = executionScope;
   }
 
-  public JsBaseExecutor<DB> updateExecutionScope(JsScope executionScope) {
-    this.executionScope = executionScope;
-    return this;
-  }
-
-  public JsScope getOrCreateScope(List<String> scopes) {
-    JsScope upperScope = executionScope;
+  public JsScope getOrCreateScope(JsScope parentScope, List<String> scopes) {
+    JsScope upperScope = parentScope;
     for (String scope : scopes) {
       Optional<JsScope> currentScope = getScope(upperScope, scope);
       if (currentScope.isPresent()) {
@@ -49,6 +42,25 @@ public class JsBaseExecutor<DB extends IDb> {
       }
     }
     return upperScope;
+  }
+
+  public boolean renameScope(JsScope parentScope, String oldName, String newName) {
+    Long upperScopeId = parentScope.getScopeId();
+    Optional<JsScope> scope = getScope(parentScope, oldName);
+
+    if (scope.isPresent()) {
+      return transactor.query(db ->
+          db.createUpdate().table(table)
+              .set(valueColumn, newName)
+              .where(scopeColumn.as(Long.class).equalTo(upperScopeId))
+              .where(keyColumn.equalTo(JsConstants.SCOPE_KEY))
+              .where(typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+              .execute()
+              .getUpdatedRowCount() == 1
+      );
+    } else {
+      return true;
+    }
   }
 
   private Optional<JsScope> getScope(JsScope parentScope, String childScope) {

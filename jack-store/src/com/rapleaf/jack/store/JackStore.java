@@ -42,15 +42,14 @@ public class JackStore<DB extends IDb> {
     Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `withinRoot` method");
     Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
 
-    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn, JsConstants.ROOT_SCOPE);
-    JsScope newScope = baseExecutor.getOrCreateScope(scopes);
-    baseExecutor.updateExecutionScope(newScope);
-    return new JsExecutors<>(baseExecutor);
+    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn);
+    JsScope newScope = baseExecutor.getOrCreateScope(JsConstants.ROOT_SCOPE, scopes);
+    return new JsExecutors<>(baseExecutor, newScope);
   }
 
   public JsExecutors<DB> within(JsScope scope) {
-    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn, scope);
-    return new JsExecutors<>(baseExecutor);
+    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn);
+    return new JsExecutors<>(baseExecutor, scope);
   }
 
   public JsExecutors<DB> withinRoot() {
