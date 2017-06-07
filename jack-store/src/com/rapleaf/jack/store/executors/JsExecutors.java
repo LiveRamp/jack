@@ -1,13 +1,12 @@
 package com.rapleaf.jack.store.executors;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.store.JsScope;
 
 public class JsExecutors<DB extends IDb> {
 
   private final JsBaseExecutor<DB> baseExecutor;
 
-  public JsExecutors(JsBaseExecutor<DB> baseExecutor, JsScope executionScope) {
+  public JsExecutors(JsBaseExecutor<DB> baseExecutor) {
     this.baseExecutor = baseExecutor;
   }
 

@@ -20,7 +20,7 @@ public class JsBaseExecutor<DB extends IDb> {
   private final Column<String> typeColumn;
   private final Column<String> keyColumn;
   private final Column<String> valueColumn;
-  private final JsScope executionScope;
+  private JsScope executionScope;
 
   public JsBaseExecutor(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn, JsScope executionScope) {
     this.transactor = transactor;
@@ -31,6 +31,11 @@ public class JsBaseExecutor<DB extends IDb> {
     this.keyColumn = keyColumn;
     this.valueColumn = valueColumn;
     this.executionScope = executionScope;
+  }
+
+  public JsBaseExecutor<DB> updateExecutionScope(JsScope executionScope) {
+    this.executionScope = executionScope;
+    return this;
   }
 
   public JsScope getOrCreateScope(List<String> scopes) {
@@ -67,11 +72,6 @@ public class JsBaseExecutor<DB extends IDb> {
   }
 
   private JsScope createScope(JsScope parentScope, String childScope) {
-    Optional<JsScope> existingScope = getScope(parentScope, childScope);
-    if (existingScope.isPresent()) {
-      return existingScope.get();
-    }
-
     Long upperScopeId = parentScope.getScopeId();
     long childScopeId = transactor.queryAsTransaction(db ->
         db.createInsertion().into(table)

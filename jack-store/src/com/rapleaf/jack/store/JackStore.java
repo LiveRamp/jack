@@ -15,10 +15,20 @@ import com.rapleaf.jack.transaction.ITransactor;
 
 public class JackStore<DB extends IDb> {
 
-  private final JsBaseExecutor<DB> baseExecutor;
+  private final ITransactor<DB> transactor;
+  private final Table<?, ?> table;
+  private final Column<String> scopeColumn;
+  private final Column<String> typeColumn;
+  private final Column<String> keyColumn;
+  private final Column<String> valueColumn;
 
   public JackStore(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
-    this.baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn, JsConstants.ROOT_SCOPE);
+    this.transactor = transactor;
+    this.table = table;
+    this.scopeColumn = scopeColumn;
+    this.typeColumn = typeColumn;
+    this.keyColumn = keyColumn;
+    this.valueColumn = valueColumn;
   }
 
   public JsExecutors<DB> within(String scope, String... moreScopes) {
@@ -32,11 +42,15 @@ public class JackStore<DB extends IDb> {
     Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `withinRoot` method");
     Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
 
-    return within(baseExecutor.getOrCreateScope(scopes));
+    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn, JsConstants.ROOT_SCOPE);
+    JsScope newScope = baseExecutor.getOrCreateScope(scopes);
+    baseExecutor.updateExecutionScope(newScope);
+    return new JsExecutors<>(baseExecutor);
   }
 
   public JsExecutors<DB> within(JsScope scope) {
-    return new JsExecutors<>(baseExecutor, scope);
+    JsBaseExecutor<DB> baseExecutor = new JsBaseExecutor<>(transactor, table, scopeColumn, typeColumn, keyColumn, valueColumn, scope);
+    return new JsExecutors<>(baseExecutor);
   }
 
   public JsExecutors<DB> withinRoot() {
