@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151226013740) do
+ActiveRecord::Schema.define(version: 20170607113609) do
 
   create_table "comments", force: :cascade do |t|
     t.text     "content",         limit: 65535
@@ -37,6 +37,18 @@ ActiveRecord::Schema.define(version: 20151226013740) do
     t.integer  "user_id",          limit: 4
     t.datetime "updated_at"
   end
+
+  create_table "test_store", force: :cascade do |t|
+    t.string   "scope",      limit: 255
+    t.string   "key",        limit: 255
+    t.string   "type",       limit: 255
+    t.string   "value",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "test_store", ["scope", "key"], name: "store_index_on_scope_key", using: :btree
+  add_index "test_store", ["scope", "value"], name: "store_index_on_scope_value", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "handle",            limit: 255,                             null: false
