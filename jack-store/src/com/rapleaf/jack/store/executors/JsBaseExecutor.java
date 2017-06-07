@@ -48,19 +48,19 @@ public class JsBaseExecutor<DB extends IDb> {
     Long upperScopeId = parentScope.getScopeId();
     Optional<JsScope> scope = getScope(parentScope, oldName);
 
-    if (scope.isPresent()) {
-      return transactor.query(db ->
-          db.createUpdate().table(table)
-              .set(valueColumn, newName)
-              .where(scopeColumn.as(Long.class).equalTo(upperScopeId))
-              .where(keyColumn.equalTo(JsConstants.SCOPE_KEY))
-              .where(typeColumn.equalTo(JsConstants.SCOPE_TYPE))
-              .execute()
-              .getUpdatedRowCount() == 1
-      );
-    } else {
-      return true;
+    if (!scope.isPresent()) {
+      throw new JackRuntimeException("Scope " + oldName + " does not exist");
     }
+
+    return transactor.query(db ->
+        db.createUpdate().table(table)
+            .set(valueColumn, newName)
+            .where(scopeColumn.as(Long.class).equalTo(upperScopeId))
+            .where(keyColumn.equalTo(JsConstants.SCOPE_KEY))
+            .where(typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+            .execute()
+            .getUpdatedRowCount() == 1
+    );
   }
 
   private Optional<JsScope> getScope(JsScope parentScope, String childScope) {

@@ -17,4 +17,8 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeCreationExecutor<>(baseExecutor, executionScope, scope);
   }
 
+  ScopeRenameExecutor<DB> renameScope(String currentName, String newName) {
+    return new ScopeRenameExecutor<>(baseExecutor, executionScope, currentName, newName);
+  }
+
 }

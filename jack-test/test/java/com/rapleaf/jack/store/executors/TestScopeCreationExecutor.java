@@ -17,15 +17,7 @@ import com.rapleaf.jack.transaction.ITransactor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class TestScopeCreationExecutor {
-
-  private final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  private final JackStore<IDatabase1> jackStore = new JackStore<>(transactor, TestStore.TBL, TestStore.SCOPE, TestStore.TYPE, TestStore.KEY, TestStore.VALUE);
-
-  @Before
-  public void prepare() throws Exception {
-    transactor.executeAsTransaction((IExecution<IDatabase1>)IDb::deleteAll);
-  }
+public class TestScopeCreationExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testRootScope() throws Exception {
