@@ -12,6 +12,7 @@ import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
+import com.rapleaf.jack.test_project.database_1.iface.ITestStorePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -21,6 +22,7 @@ public interface IDatabase1 extends IDb {
   IImagePersistence images();
   ILockableModelPersistence lockableModels();
   IPostPersistence posts();
+  ITestStorePersistence testStore();
   IUserPersistence users();
 
 }

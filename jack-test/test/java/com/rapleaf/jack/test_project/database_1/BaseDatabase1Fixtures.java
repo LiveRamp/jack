@@ -24,6 +24,7 @@ public class BaseDatabase1Fixtures extends DbFixtures {
     databases.getDatabase1().images().deleteAll();
     databases.getDatabase1().lockableModels().deleteAll();
     databases.getDatabase1().posts().deleteAll();
+    databases.getDatabase1().testStore().deleteAll();
     databases.getDatabase1().users().deleteAll();
   }
 }

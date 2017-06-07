@@ -26,6 +26,7 @@ import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
+import com.rapleaf.jack.test_project.database_1.iface.ITestStorePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 
 import com.rapleaf.jack.test_project.IDatabases;
@@ -40,6 +41,7 @@ public class Database1Impl implements IDatabase1 {
   private final LazyLoadPersistence<IImagePersistence, IDatabases> images;
   private final LazyLoadPersistence<ILockableModelPersistence, IDatabases> lockable_models;
   private final LazyLoadPersistence<IPostPersistence, IDatabases> posts;
+  private final LazyLoadPersistence<ITestStorePersistence, IDatabases> test_store;
   private final LazyLoadPersistence<IUserPersistence, IDatabases> users;
 
   private boolean allowBulkOperation = false;
@@ -70,6 +72,12 @@ public class Database1Impl implements IDatabase1 {
       @Override
       protected IPostPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
         return new BasePostPersistenceImpl(conn, databases);
+      }
+    };
+    this.test_store = new LazyLoadPersistence<ITestStorePersistence, IDatabases>(conn, databases) {
+      @Override
+      protected ITestStorePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
+        return new BaseTestStorePersistenceImpl(conn, databases);
       }
     };
     this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases) {
@@ -129,6 +137,10 @@ public class Database1Impl implements IDatabase1 {
     return posts.get();
   }
 
+  public ITestStorePersistence testStore(){
+    return test_store.get();
+  }
+
   public IUserPersistence users(){
     return users.get();
   }
@@ -140,6 +152,7 @@ public class Database1Impl implements IDatabase1 {
     success &= images().isEmpty() || images().deleteAll();
     success &= lockableModels().isEmpty() || lockableModels().deleteAll();
     success &= posts().isEmpty() || posts().deleteAll();
+    success &= testStore().isEmpty() || testStore().deleteAll();
     success &= users().isEmpty() || users().deleteAll();
     } catch (IOException e) {
       throw e;
@@ -152,6 +165,7 @@ public class Database1Impl implements IDatabase1 {
     images.disableCaching();
     lockable_models.disableCaching();
     posts.disableCaching();
+    test_store.disableCaching();
     users.disableCaching();
   }
 
