@@ -16,12 +16,15 @@ package com.rapleaf.jack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Optional;
+
+import static com.rapleaf.jack.DatabaseConnectionConstants.MYSQL_JDBC_DRIVER;
+import static com.rapleaf.jack.DatabaseConnectionConstants.POSTGRESQL_JDBC_DRIVER;
+import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
 
 /**
  * The DatabaseConnection class manages connections to your databases. The
@@ -33,10 +36,6 @@ import com.google.common.base.Optional;
  */
 class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
-
-  static final String MYSQL_JDBC_DRIVER = "com.mysql.jdbc.Driver";
-  static final String POSTGRESQL_JDBC_DRIVER = "org.postgresql.Driver";
-  static final String REDSHIFT_JDBC_DRIVER = "com.amazon.redshift.jdbc41.Driver";
 
   static final Map VALID_ADAPTER_CONSTANTS = Collections.unmodifiableMap(new HashMap() {
     private static final long serialVersionUID = 1L;
@@ -52,6 +51,7 @@ class DatabaseConnection extends BaseDatabaseConnection {
 
   static final Map<String, String> ADAPTER_TO_DRIVER = Collections.unmodifiableMap(new HashMap() {
     private static final long serialVersionUID = 1L;
+
     {
       put("mysql2", "mysql");
       put("mysql_replication", "mysql");
@@ -66,8 +66,6 @@ class DatabaseConnection extends BaseDatabaseConnection {
   protected String driverClass;
   private long expiresAt;
   private long expiration;
-
-  public static final long DEFAULT_EXPIRATION = Duration.ofHours(4).toMillis(); // 4 hours
 
   public DatabaseConnection(String dbname_key, long expiration, String driverClass) {
 

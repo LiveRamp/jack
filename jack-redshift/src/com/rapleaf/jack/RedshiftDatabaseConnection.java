@@ -2,6 +2,9 @@ package com.rapleaf.jack;
 
 import java.sql.PreparedStatement;
 
+import static com.rapleaf.jack.DatabaseConnectionConstants.DEFAULT_EXPIRATION;
+import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
+
 public class RedshiftDatabaseConnection extends DatabaseConnection {
   public RedshiftDatabaseConnection(String dbname_key) {
     this(dbname_key, DEFAULT_EXPIRATION);
