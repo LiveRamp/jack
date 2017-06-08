@@ -34,7 +34,7 @@ import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
  * All public methods methods of DatabaseConnection throw RuntimeExceptions
  * (rather than IO or SQL exceptions).
  */
-class DatabaseConnection extends BaseDatabaseConnection {
+public class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
 
   static final Map VALID_ADAPTER_CONSTANTS = Collections.unmodifiableMap(new HashMap() {
