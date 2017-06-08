@@ -50,6 +50,15 @@ class DatabaseConnection extends BaseDatabaseConnection {
     }
   });
 
+  static final Map<String, String> ADAPTER_TO_DRIVER = Collections.unmodifiableMap(new HashMap() {
+    private static final long serialVersionUID = 1L;
+    {
+      put("mysql2", "mysql");
+      put("mysql_replication", "mysql");
+    }
+  });
+
+
   private final String connectionString;
   private final Optional<String> username;
   private final Optional<String> password;
@@ -70,8 +79,14 @@ class DatabaseConnection extends BaseDatabaseConnection {
     }
     this.driverClass = driverClass;
 
+
+    String driver = adapter;
+    if (ADAPTER_TO_DRIVER.containsKey(adapter)) {
+      driver = ADAPTER_TO_DRIVER.get(adapter);
+    }
+
     StringBuilder connectionStringBuilder = new StringBuilder("jdbc:");
-    connectionStringBuilder.append(adapter).append("://").append(config.getHost());
+    connectionStringBuilder.append(driver).append("://").append(config.getHost());
     if (config.getPort().isPresent()) {
       connectionStringBuilder.append(":").append(config.getPort().get());
     }
