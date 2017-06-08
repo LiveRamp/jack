@@ -47,20 +47,7 @@
 
     <resources>
       <resource>
-        <directory>src</directory>
-        <includes>
-          <include>**/*.java</include>
-          <include>**/*.yaml</include>
-          <include>**/*.yml</include>
-          <include>**/*.txt</include>
-          <include>**/*.rb</include>
-          <include>**/*.erb</include>
-          <include>**/Gemfile</include>
-          <include>**/Gemfile.lock</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>./</directory>
+        <directory>${project.parent.basedir}</directory>
         <includes>
           <include>Gemfile</include>
           <include>Gemfile.lock</include>

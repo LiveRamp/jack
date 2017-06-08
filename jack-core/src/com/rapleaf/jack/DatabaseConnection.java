@@ -67,7 +67,7 @@ class DatabaseConnection extends BaseDatabaseConnection {
   private long expiresAt;
   private long expiration;
 
-  static final long DEFAULT_EXPIRATION = Duration.ofHours(4).toMillis(); // 4 hours
+  public static final long DEFAULT_EXPIRATION = Duration.ofHours(4).toMillis(); // 4 hours
 
   public DatabaseConnection(String dbname_key, long expiration, String driverClass) {
 
