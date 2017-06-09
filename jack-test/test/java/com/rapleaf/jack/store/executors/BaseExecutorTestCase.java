@@ -1,9 +1,13 @@
 package com.rapleaf.jack.store.executors;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JackStore;
+import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
@@ -20,5 +24,16 @@ public class BaseExecutorTestCase {
     transactor.executeAsTransaction((IExecution<IDatabase1>)IDb::deleteAll);
   }
 
+  protected JsScope createScope(String newScope) {
+    return jackStore.withinRoot().createScope(newScope).execute();
+  }
+
+  protected JsScope createScope(List<String> parentScopes, String newScope) {
+    return jackStore.within(parentScopes).createScope(newScope).execute();
+  }
+
+  protected List<String> list(String element) {
+    return Collections.singletonList(element);
+  }
 
 }

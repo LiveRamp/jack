@@ -20,18 +20,18 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     assertEquals(0, scopes.size());
 
     // three scopes under root
-    JsScope s1 = jackStore.withinRoot().createScope("1").execute();
-    JsScope s2 = jackStore.withinRoot().createScope("2").execute();
-    JsScope s3 = jackStore.withinRoot().createScope("3").execute();
+    JsScope s1 = createScope("1");
+    JsScope s2 = createScope("2");
+    JsScope s3 = createScope("3");
 
     scopes = jackStore.withinRoot().queryScope().fetch();
     assertEquals(3, scopes.size());
     assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(scopes.getScopes()));
 
     // three scopes under scope 1
-    JsScope s01 = jackStore.within("1").createScope("1").execute();
-    JsScope s02 = jackStore.within("1").createScope("2").execute();
-    JsScope s03 = jackStore.within("1").createScope("3").execute();
+    JsScope s01 = createScope(list("1"), "1");
+    JsScope s02 = createScope(list("1"), "2");
+    JsScope s03 = createScope(list("1"), "3");
 
     scopes = jackStore.withinRoot().queryScope().fetch();
     assertEquals(3, scopes.size());
@@ -44,9 +44,9 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testScopeConstraint() throws Exception {
-    JsScope s1 = jackStore.withinRoot().createScope("1").execute();
-    JsScope s2 = jackStore.withinRoot().createScope("2").execute();
-    JsScope s3 = jackStore.withinRoot().createScope("3").execute();
+    JsScope s1 = createScope("1");
+    JsScope s2 = createScope("2");
+    JsScope s3 = createScope("3");
 
     JsScopes scopes = jackStore.withinRoot().queryScope()
         .whereScope(JackMatchers.greaterThan("2"))
@@ -73,9 +73,9 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testOrder() throws Exception {
-    JsScope s1 = jackStore.withinRoot().createScope("b").execute();
-    JsScope s2 = jackStore.withinRoot().createScope("a").execute();
-    JsScope s3 = jackStore.withinRoot().createScope("c").execute();
+    JsScope s1 = createScope("b");
+    JsScope s2 = createScope("a");
+    JsScope s3 = createScope("c");
 
     // order by id asc
     JsScopes scopes = jackStore.withinRoot().queryScope().orderByScopeId(QueryOrder.ASC).fetch();
@@ -96,9 +96,9 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testLimit() throws Exception {
-    JsScope s1 = jackStore.withinRoot().createScope("1").execute();
-    JsScope s2 = jackStore.withinRoot().createScope("2").execute();
-    JsScope s3 = jackStore.withinRoot().createScope("3").execute();
+    JsScope s1 = createScope("1");
+    JsScope s2 = createScope("2");
+    JsScope s3 = createScope("3");
 
     JsScopes scopes = jackStore.withinRoot().queryScope().orderByScopeId(QueryOrder.ASC).limit(2).fetch();
     assertEquals(Lists.newArrayList(s1, s2), scopes.getScopes());

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
+import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ public class TestScopeRenameExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testRename() throws Exception {
-    jackStore.withinRoot().createScope("scope0").execute();
+    createScope("scope0");
     boolean rename = jackStore.withinRoot().renameScope("scope0", "scope1").execute();
     assertTrue(rename);
 
@@ -41,10 +42,17 @@ public class TestScopeRenameExecutor extends BaseExecutorTestCase {
     assertEquals("scope2", records.get(0).getValue());
   }
 
-  @Test(expected = JackRuntimeException.class)
+  @Test(expected = MissingScopeException.class)
   public void testNonexistRename() throws Exception {
     jackStore.withinRoot().createScope("scope0").execute();
     jackStore.withinRoot().renameScope("scope1", "scope2").execute();
+  }
+
+  @Test(expected = JackRuntimeException.class)
+  public void testExistingRename() throws Exception {
+    jackStore.withinRoot().createScope("scope0").execute();
+    jackStore.withinRoot().createScope("scope1").execute();
+    jackStore.withinRoot().renameScope("scope0", "scope1").execute();
   }
 
 }
