@@ -43,7 +43,6 @@ public class JsExecutors<DB extends IDb> {
   }
 
   ScopeDeletionExecutor<DB> deleteScope() {
-
     return new ScopeDeletionExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
   }
 

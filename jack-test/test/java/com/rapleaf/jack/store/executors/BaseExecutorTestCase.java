@@ -32,6 +32,10 @@ public class BaseExecutorTestCase {
     return jackStore.within(parentScopes).createScope(newScope).execute();
   }
 
+  protected JsScope createScope(JsScope parentScopes, String newScope) {
+    return jackStore.within(parentScopes).createScope(newScope).execute();
+  }
+
   protected List<String> list(String element) {
     return Collections.singletonList(element);
   }
