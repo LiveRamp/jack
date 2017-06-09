@@ -19,6 +19,14 @@ public class JsRecords implements Iterable<JsRecord> {
     return jsRecords.iterator();
   }
 
+  public boolean isEmpty() {
+    return jsRecords.isEmpty();
+  }
+
+  public int size() {
+    return jsRecords.size();
+  }
+
   public Stream<JsRecord> stream() {
     return jsRecords.stream();
   }

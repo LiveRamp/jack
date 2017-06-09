@@ -9,17 +9,19 @@ import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.Table;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.exceptions.DuplicatedScopeException;
+import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class JsBaseExecutor<DB extends IDb> {
 
-  private final ITransactor<DB> transactor;
-  private final Table<?, ?> table;
-  private final Column<Long> idColumn;
-  private final Column<String> scopeColumn;
-  private final Column<String> typeColumn;
-  private final Column<String> keyColumn;
-  private final Column<String> valueColumn;
+  final ITransactor<DB> transactor;
+  final Table<?, ?> table;
+  final Column<Long> idColumn;
+  final Column<String> scopeColumn;
+  final Column<String> typeColumn;
+  final Column<String> keyColumn;
+  final Column<String> valueColumn;
 
   public JsBaseExecutor(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.transactor = transactor;
@@ -49,7 +51,7 @@ public class JsBaseExecutor<DB extends IDb> {
     Optional<JsScope> scope = getScope(parentScope, oldName);
 
     if (!scope.isPresent()) {
-      throw new JackRuntimeException("Scope " + oldName + " does not exist");
+      throw new MissingScopeException(oldName);
     }
 
     return transactor.query(db ->
@@ -79,7 +81,7 @@ public class JsBaseExecutor<DB extends IDb> {
     } else if (ids.size() == 1) {
       return Optional.of(new JsScope(ids.get(0), childScope));
     } else {
-      throw new JackRuntimeException(String.format("Duplicated scopes with name %s exist under parent scope %s", childScope, parentScope.toString()));
+      throw new DuplicatedScopeException(childScope, parentScope);
     }
   }
 

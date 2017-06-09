@@ -21,4 +21,12 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeRenameExecutor<>(baseExecutor, executionScope, currentName, newName);
   }
 
+  ScopeQueryExecutor<DB> queryScope() {
+    return new ScopeQueryExecutor<>(baseExecutor, executionScope);
+  }
+
+  ScopeQueryExecutor<DB> deleteScope() {
+    return new ScopeQueryExecutor<>(baseExecutor, executionScope);
+  }
+
 }

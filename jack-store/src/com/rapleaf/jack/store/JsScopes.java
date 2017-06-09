@@ -33,6 +33,14 @@ public class JsScopes implements Iterable<JsScope> {
     return stream().map(JsScope::getScopeName).collect(Collectors.toList());
   }
 
+  public boolean isEmpty() {
+    return jsScopes.isEmpty();
+  }
+
+  public int size() {
+    return jsScopes.size();
+  }
+
   public Stream<JsScope> stream() {
     return jsScopes.stream();
   }
