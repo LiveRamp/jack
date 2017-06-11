@@ -48,27 +48,40 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope s2 = createScope("2");
     JsScope s3 = createScope("3");
 
+    // name constraint
     JsScopes scopes = jackStore.withinRoot().queryScope()
-        .whereScope(JackMatchers.greaterThan("2"))
+        .whereScopeName(JackMatchers.greaterThan("2"))
         .fetch();
     assertEquals(1, scopes.size());
     assertEquals(s3, scopes.getScopes().get(0));
 
     scopes = jackStore.withinRoot().queryScope()
-        .whereScope(JackMatchers.greaterThanOrEqualTo("2"))
+        .whereScopeName(JackMatchers.greaterThanOrEqualTo("2"))
         .fetch();
     assertEquals(2, scopes.size());
     assertEquals(Sets.newHashSet(s2, s3), Sets.newHashSet(scopes.getScopes()));
 
     scopes = jackStore.withinRoot().queryScope()
-        .whereScope(JackMatchers.isNull())
+        .whereScopeName(JackMatchers.isNull())
         .fetch();
     assertTrue(scopes.isEmpty());
 
     scopes = jackStore.withinRoot().queryScope()
-        .whereScope(JackMatchers.equalTo("2"))
+        .whereScopeName(JackMatchers.equalTo("2"))
         .fetch();
     assertEquals(s2, scopes.getScopes().get(0));
+
+    // id constraint
+    scopes = jackStore.withinRoot().queryScope()
+        .whereScopeId(JackMatchers.equalTo(s2.getScopeId()))
+        .fetch();
+    assertEquals(s2, scopes.getScopes().get(0));
+    
+    scopes = jackStore.withinRoot().queryScope()
+        .whereScopeId(JackMatchers.lessThanOrEqualTo(s2.getScopeId()))
+        .fetch();
+    assertEquals(2, scopes.size());
+    assertEquals(Sets.newHashSet(s1, s2), Sets.newHashSet(scopes.getScopes()));
   }
 
   @Test

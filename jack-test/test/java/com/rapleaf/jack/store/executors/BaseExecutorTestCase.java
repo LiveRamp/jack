@@ -24,6 +24,14 @@ public class BaseExecutorTestCase {
     transactor.executeAsTransaction((IExecution<IDatabase1>)IDb::deleteAll);
   }
 
+  protected JsScope createScope() {
+    return jackStore.withinRoot().createScope().execute();
+  }
+
+  protected JsScope createScope(List<String> parentScopes) {
+    return jackStore.within(parentScopes).createScope().execute();
+  }
+
   protected JsScope createScope(String newScope) {
     return jackStore.withinRoot().createScope(newScope).execute();
   }
@@ -32,8 +40,8 @@ public class BaseExecutorTestCase {
     return jackStore.within(parentScopes).createScope(newScope).execute();
   }
 
-  protected JsScope createScope(JsScope parentScopes, String newScope) {
-    return jackStore.within(parentScopes).createScope(newScope).execute();
+  protected JsScope createScope(JsScope parentScope, String newScope) {
+    return jackStore.within(parentScope).createScope(newScope).execute();
   }
 
   protected List<String> list(String element) {
