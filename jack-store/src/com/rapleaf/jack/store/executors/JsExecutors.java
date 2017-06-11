@@ -34,6 +34,10 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeCreationExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, scope);
   }
 
+  ScopeCreationExecutor<DB> createScope() {
+    return new ScopeCreationExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
+  }
+
   ScopeRenameExecutor<DB> renameScope(String currentName, String newName) {
     return new ScopeRenameExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
   }

@@ -32,18 +32,23 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.limitCriteria = Optional.empty();
   }
 
-  public ScopeQueryExecutor<DB> whereScope(IWhereOperator<String> scopeConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeConstraint));
+  public ScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn.as(Long.class), scopeIdConstraint));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
-    this.orderCriteria.put(table.valueColumn, queryOrder);
+  public ScopeQueryExecutor<DB> whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
   public ScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
     this.orderCriteria.put(table.idColumn, queryOrder);
+    return this;
+  }
+
+  public ScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
+    this.orderCriteria.put(table.valueColumn, queryOrder);
     return this;
   }
 

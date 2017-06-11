@@ -2,9 +2,12 @@ package com.rapleaf.jack.store.executors;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsConstants;
+import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +16,25 @@ import static org.junit.Assert.assertNull;
 public class TestScopeCreationExecutor extends BaseExecutorTestCase {
 
   @Test
-  public void testRootScope() throws Exception {
+  public void testDefaultRootScope() throws Exception {
+    JsScope scope = createScope();
+    JsScopes jsScopes = jackStore.withinRoot().queryScope().fetch();
+    assertEquals(1, jsScopes.size());
+    assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
+    assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());
+  }
+
+  @Test
+  public void testDefaultCustomScope() throws Exception {
+    JsScope scope = createScope(Lists.newArrayList("scope0", "scope1"));
+    JsScopes jsScopes = jackStore.within("scope0", "scope1").queryScope().fetch();
+    assertEquals(1, jsScopes.size());
+    assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
+    assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());
+  }
+
+  @Test
+  public void testCustomRootScope() throws Exception {
     createScope("scope0");
     createScope("scope1");
 
@@ -31,16 +52,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
   }
 
   @Test
-  public void testDuplicatedCreation() throws Exception {
-    createScope("scope");
-    createScope("scope");
-
-    int scopeCount = transactor.query(db -> db.createQuery().from(TestStore.TBL).fetch().size());
-    assertEquals(1, scopeCount);
-  }
-
-  @Test
-  public void testNestedScope() throws Exception {
+  public void testCustomNestedScope() throws Exception {
     createScope(list("scope0"), "scope1");
     createScope(list("scope0"), "scope2");
 
@@ -62,6 +74,15 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
       assertEquals(JsConstants.SCOPE_KEY, scope.getKey());
       assertEquals("scope" + i, scope.getValue());
     }
+  }
+
+  @Test
+  public void testDuplicatedCreation() throws Exception {
+    createScope("scope");
+    createScope("scope");
+
+    int scopeCount = transactor.query(db -> db.createQuery().from(TestStore.TBL).fetch().size());
+    assertEquals(1, scopeCount);
   }
 
 }
