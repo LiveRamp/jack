@@ -55,7 +55,7 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   private JsScopes getScopes() {
-    Optional<JsScope> executionScope = getExecutionScope();
+    Optional<JsScope> executionScope = getOptionalExecutionScope();
     if (executionScope.isPresent()) {
       JsScopes scopes = queryScope(executionScope.get(), Collections.singletonList(getConstraint()));
       if (scopes.isEmpty() || scopes.size() == 1) {

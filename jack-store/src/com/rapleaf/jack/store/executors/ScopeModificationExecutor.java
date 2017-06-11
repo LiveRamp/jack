@@ -25,7 +25,7 @@ public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> 
   }
 
   public boolean execute() {
-    Optional<JsScope> executionScope = getExecutionScope();
+    Optional<JsScope> executionScope = getOptionalExecutionScope();
     if (!executionScope.isPresent()) {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
     }
@@ -45,12 +45,12 @@ public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> 
   }
 
   private void validateOperation(JsScope executionScope) {
-    Optional<JsScope> currentScope = getScope(executionScope, Collections.singletonList(currentName));
+    Optional<JsScope> currentScope = getOptionalScope(executionScope, Collections.singletonList(currentName));
     if (!currentScope.isPresent()) {
       throw new MissingScopeException(currentName);
     }
 
-    Optional<JsScope> newScope = getScope(executionScope, Collections.singletonList(newName));
+    Optional<JsScope> newScope = getOptionalScope(executionScope, Collections.singletonList(newName));
     if (newScope.isPresent()) {
       throw new JackRuntimeException(String.format("Scope %s already exists", newName));
     }

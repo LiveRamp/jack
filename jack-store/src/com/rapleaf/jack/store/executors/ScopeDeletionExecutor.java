@@ -46,7 +46,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public boolean execute() {
-    Optional<JsScope> executionScope = getExecutionScope();
+    Optional<JsScope> executionScope = getOptionalExecutionScope();
     if (!executionScope.isPresent()) {
       return true;
     }

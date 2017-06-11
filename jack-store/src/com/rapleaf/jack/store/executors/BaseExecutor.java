@@ -32,18 +32,22 @@ public abstract class BaseExecutor<DB extends IDb> {
     this.predefinedScopeNames = predefinedScopeNames;
   }
 
-  protected Optional<JsScope> getExecutionScope() {
+  protected JsScope getOrCreateExecutionScope() {
+    return predefinedScope.orElse(getOrCreateScope(JsConstants.ROOT_SCOPE, predefinedScopeNames));
+  }
+
+  protected Optional<JsScope> getOptionalExecutionScope() {
     if (predefinedScope.isPresent()) {
       return predefinedScope;
     } else {
-      return getScope(JsConstants.ROOT_SCOPE, predefinedScopeNames);
+      return getOptionalScope(JsConstants.ROOT_SCOPE, predefinedScopeNames);
     }
   }
 
   protected JsScope getOrCreateScope(JsScope executionScope, List<String> scopes) {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
-      Optional<JsScope> currentScope = getScope(upperScope, scope);
+      Optional<JsScope> currentScope = getOptionalScope(upperScope, scope);
       if (currentScope.isPresent()) {
         upperScope = currentScope.get();
       } else {
@@ -53,10 +57,10 @@ public abstract class BaseExecutor<DB extends IDb> {
     return upperScope;
   }
 
-  protected Optional<JsScope> getScope(JsScope executionScope, List<String> scopes) {
+  protected Optional<JsScope> getOptionalScope(JsScope executionScope, List<String> scopes) {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
-      Optional<JsScope> currentScope = getScope(upperScope, scope);
+      Optional<JsScope> currentScope = getOptionalScope(upperScope, scope);
       if (currentScope.isPresent()) {
         upperScope = currentScope.get();
       } else {
@@ -114,7 +118,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     return new JsScope(childScopeId, childScope);
   }
 
-  private Optional<JsScope> getScope(JsScope executionScope, String childScope) {
+  private Optional<JsScope> getOptionalScope(JsScope executionScope, String childScope) {
     List<Long> ids = transactor.query(db ->
         db.createQuery().from(table.table)
             .where(table.scopeColumn.as(Long.class).equalTo(executionScope.getScopeId()))

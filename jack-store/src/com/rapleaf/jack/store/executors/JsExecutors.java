@@ -57,4 +57,8 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeDeletionExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
   }
 
+  RecordIndexExecutor<DB> indexRecord() {
+    return new RecordIndexExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
+  }
+
 }

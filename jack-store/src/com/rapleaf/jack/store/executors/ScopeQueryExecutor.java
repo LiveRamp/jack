@@ -63,7 +63,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public JsScopes fetch() {
-    Optional<JsScope> executionScope = getExecutionScope();
+    Optional<JsScope> executionScope = getOptionalExecutionScope();
     if (executionScope.isPresent()) {
       return queryScope(executionScope.get(), scopeConstraints, orderCriteria, limitCriteria);
     } else {

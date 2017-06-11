@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.transaction.ITransactor;
 
@@ -25,9 +24,8 @@ public class ScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public JsScope execute() {
-    JsScope executionScope = predefinedScope.orElseGet(() -> getOrCreateScope(JsConstants.ROOT_SCOPE, predefinedScopeNames));
     String scopeName = newScope.orElseGet(() -> UUID.randomUUID().toString());
-    return getOrCreateScope(executionScope, Collections.singletonList(scopeName));
+    return getOrCreateScope(getOrCreateExecutionScope(), Collections.singletonList(scopeName));
   }
 
 }
