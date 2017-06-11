@@ -13,12 +13,12 @@ import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class ScopeRenameExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final String currentName;
   private final String newName;
 
-  ScopeRenameExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String currentName, String newName) {
+  ScopeModificationExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String currentName, String newName) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
     this.currentName = currentName;
     this.newName = newName;
