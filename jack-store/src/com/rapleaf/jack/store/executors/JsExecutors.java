@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.transaction.ITransactor;
 
@@ -30,8 +29,8 @@ public class JsExecutors<DB extends IDb> {
     this.predefinedScopeNames = executionScopeNames;
   }
 
-  ScopeCreationExecutor<DB> createScope(String scope) {
-    return new ScopeCreationExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, scope);
+  ScopeCreationExecutor<DB> createScope(String scopeName) {
+    return new ScopeCreationExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, scopeName);
   }
 
   ScopeCreationExecutor<DB> createScope() {
@@ -40,6 +39,14 @@ public class JsExecutors<DB extends IDb> {
 
   ScopeRenameExecutor<DB> renameScope(String currentName, String newName) {
     return new ScopeRenameExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
+  }
+
+  ScopeGetterExecutor<DB> getScope(long scopeId) {
+    return new ScopeGetterExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, scopeId);
+  }
+
+  ScopeGetterExecutor<DB> getScope(String scopeName) {
+    return new ScopeGetterExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames, scopeName);
   }
 
   ScopeQueryExecutor<DB> queryScope() {

@@ -33,7 +33,6 @@ public class JackStore<DB extends IDb> {
   public JsExecutors<DB> within(List<String> scopes) {
     Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `withinRoot` method");
     Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
-
     return new JsExecutors<>(transactor, jsTable, scopes);
   }
 

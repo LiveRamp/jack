@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +95,10 @@ public abstract class BaseExecutor<DB extends IDb> {
 
       return new JsScopes(scopes);
     });
+  }
+
+  protected JsScopes queryScope(JsScope executionScope, List<GenericConstraint> scopeConstraints) {
+    return queryScope(executionScope, scopeConstraints, Collections.emptyMap(), Optional.empty());
   }
 
   private JsScope createScope(JsScope executionScope, String childScope) {

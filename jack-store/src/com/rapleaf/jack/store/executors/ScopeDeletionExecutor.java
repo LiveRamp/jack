@@ -58,7 +58,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
       throw new JackRuntimeException("Bulk deletion is disabled; either enable it or specify at least one constraint");
     }
 
-    JsScopes scopesToDelete = queryScope(executionScope.get(), scopeConstraints, Collections.emptyMap(), Optional.empty());
+    JsScopes scopesToDelete = queryScope(executionScope.get(), scopeConstraints);
     Set<Long> idsToDelete = Sets.newHashSet(scopesToDelete.getScopeIds());
 
     return transactor.queryAsTransaction(db -> {

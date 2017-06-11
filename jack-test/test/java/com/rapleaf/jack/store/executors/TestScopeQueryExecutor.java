@@ -76,7 +76,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
         .whereScopeId(JackMatchers.equalTo(s2.getScopeId()))
         .fetch();
     assertEquals(s2, scopes.getScopes().get(0));
-    
+
     scopes = jackStore.withinRoot().queryScope()
         .whereScopeId(JackMatchers.lessThanOrEqualTo(s2.getScopeId()))
         .fetch();
