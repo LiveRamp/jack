@@ -16,7 +16,6 @@ import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
-import com.rapleaf.jack.store.exceptions.DuplicatedScopeException;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public abstract class BaseExecutor<DB extends IDb> {

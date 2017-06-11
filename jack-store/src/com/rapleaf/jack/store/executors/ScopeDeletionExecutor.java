@@ -1,12 +1,10 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -15,11 +13,9 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.queries.Deletions;
 import com.rapleaf.jack.queries.GenericConstraint;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
-import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
-import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {

@@ -1,6 +1,5 @@
 package com.rapleaf.jack.store.executors;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import com.google.common.collect.Lists;
@@ -8,7 +7,7 @@ import org.junit.Test;
 
 import com.rapleaf.jack.store.JsScope;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestScopeGetterExecutor extends BaseExecutorTestCase {
 
