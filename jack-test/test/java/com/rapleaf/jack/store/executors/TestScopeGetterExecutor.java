@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,6 +38,16 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
     assertEquals(Optional.of(scope), jackStore.within("scope0", "scope1").getScope(scope.getScopeId()).getOptional());
     assertEquals(Optional.empty(), jackStore.within("scope0", "scope1").getScope(scope.getScopeId() + 10L).getOptional());
     assertEquals(Optional.empty(), jackStore.within("scope0", "scope1").getScope(scope.getScopeName() + "0").getOptional());
+  }
+
+  @Test(expected = MissingScopeException.class)
+  public void testMissingScopeId() throws Exception {
+    jackStore.withinRoot().getScope(1L).get();
+  }
+
+  @Test(expected = MissingScopeException.class)
+  public void testMissingScopeName() throws Exception {
+    jackStore.withinRoot().getScope("scope0").get();
   }
 
 }

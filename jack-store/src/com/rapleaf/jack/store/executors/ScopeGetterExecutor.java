@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
@@ -40,7 +39,9 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   public JsScope get() {
     JsScopes scopes = getScopes();
-    Preconditions.checkState(scopes.size() == 1);
+    if (scopes.isEmpty()) {
+      throw new MissingScopeException(getterType.name() + " " + scopes);
+    }
     return scopes.getScopes().get(0);
   }
 
