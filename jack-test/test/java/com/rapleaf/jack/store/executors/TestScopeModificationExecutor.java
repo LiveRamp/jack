@@ -12,7 +12,7 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestScopeRenameExecutor extends BaseExecutorTestCase {
+public class TestScopeModificationExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testRename() throws Exception {

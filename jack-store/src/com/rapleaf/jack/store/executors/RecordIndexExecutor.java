@@ -23,13 +23,13 @@ import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
-  private final Map<String, JsConstants.ValueType> recordTypes;
-  private final Map<String, Object> recordValues;
+  private final Map<String, JsConstants.ValueType> types;
+  private final Map<String, Object> values;
 
   protected RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
-    this.recordTypes = Maps.newHashMap();
-    this.recordValues = Maps.newHashMap();
+    this.types = Maps.newHashMap();
+    this.values = Maps.newHashMap();
   }
 
   public RecordIndexExecutor<DB> put(String key, Object value) {
@@ -59,38 +59,38 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public RecordIndexExecutor<DB> putBoolean(String key, Boolean value) {
-    recordTypes.put(key, JsConstants.ValueType.BOOLEAN);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.BOOLEAN);
+    values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putInt(String key, Integer value) {
-    recordTypes.put(key, JsConstants.ValueType.INT);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.INT);
+    values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putLong(String key, Long value) {
-    recordTypes.put(key, JsConstants.ValueType.LONG);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.LONG);
+    values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putDouble(String key, Double value) {
-    recordTypes.put(key, JsConstants.ValueType.DOUBLE);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.DOUBLE);
+    values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putDateTime(String key, DateTime value) {
-    recordTypes.put(key, JsConstants.ValueType.DATETIME);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.DATETIME);
+    values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putString(String key, String value) {
-    recordTypes.put(key, JsConstants.ValueType.STRING);
-    recordValues.put(key, value);
+    types.put(key, JsConstants.ValueType.STRING);
+    values.put(key, value);
     return this;
   }
 
@@ -122,44 +122,38 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public RecordIndexExecutor<DB> putBooleanList(String key, List<Boolean> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.BOOLEAN_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.BOOLEAN_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putIntList(String key, List<Integer> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.INT_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.INT_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putLongList(String key, List<Long> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.LONG_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.LONG_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putDoubleList(String key, List<Double> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.DOUBLE_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.DOUBLE_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putDateTimeList(String key, List<DateTime> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.DATETIME_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.DATETIME_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putStringList(String key, List<String> valueList) {
-    verifyValueList(valueList);
-    recordTypes.put(key, JsConstants.ValueType.STRING_LIST);
-    recordValues.put(key, valueList);
+    types.put(key, JsConstants.ValueType.STRING_LIST);
+    values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
@@ -173,16 +167,18 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
         updateExistingKeys(db, scopeId, existingKeys);
       }
 
-      Set<String> newKeys = Sets.difference(recordTypes.keySet(), existingKeys);
+      Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
       if (!newKeys.isEmpty()) {
         insertNewKeys(db, scopeId, newKeys);
       }
     });
   }
 
-  private void verifyValueList(List valueList) {
-    if (valueList != null) {
-      Preconditions.checkArgument(!valueList.isEmpty(), "Value list cannot be empty");
+  private List nullifyEmptyList(List valueList) {
+    if (valueList != null && valueList.isEmpty()) {
+      return null;
+    } else {
+      return valueList;
     }
   }
 
@@ -192,7 +188,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     Records records = db.createQuery()
         .from(table.table)
         .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
-        .where(table.keyColumn.in(recordTypes.keySet()))
+        .where(table.keyColumn.in(types.keySet()))
         .select(table.idColumn, table.keyColumn)
         .fetch();
 
@@ -215,8 +211,8 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     List<String> valuesToInsert = Lists.newLinkedList();
 
     for (String key : newKeys) {
-      JsConstants.ValueType type = recordTypes.get(key);
-      Object value = recordValues.get(key);
+      JsConstants.ValueType type = types.get(key);
+      Object value = values.get(key);
 
       if (value == null) {
         keysToInsert.add(key);

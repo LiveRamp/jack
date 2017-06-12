@@ -61,6 +61,10 @@ public class JsExecutors<DB extends IDb> {
     return new RecordIndexExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
   }
 
+  RecordGetterExecutor<DB> getRecord() {
+    return new RecordGetterExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
+  }
+
   RecordDeletionExecutor<DB> deleteRecord() {
     return new RecordDeletionExecutor<>(transactor, jsTable, predefinedScope, predefinedScopeNames);
   }

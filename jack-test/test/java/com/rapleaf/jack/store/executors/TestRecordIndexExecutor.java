@@ -16,44 +16,6 @@ import static org.junit.Assert.assertNull;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
-  private static final String BOOLEAN_KEY = "boolean";
-  private static final boolean BOOLEAN_VALUE = false;
-
-  private static final String INT_KEY = "int";
-  private static final int INT_VALUE = 10;
-
-  private static final long LONG_VALUE = 20L;
-  private static final String LONG_KEY = "long";
-
-  private static final String DOUBLE_KEY = "double";
-  private static final double DOUBLE_VALUE = 30.5;
-
-  private static final String DATETIME_KEY = "datetime";
-  private static final DateTime DATETIME_VALUE = DateTime.now();
-
-  private static final String STRING_KEY = "string";
-  private static final String STRING_VALUE = "s40";
-
-  private static final String BOOLEAN_LIST_KEY = "boolean-list";
-  private static final List<Boolean> BOOLEAN_LIST_VALUE = Lists.newArrayList(true, true, false);
-
-  private static final String INT_LIST_KEY = "int-list";
-  private static final List<Integer> INT_LIST_VALUE = Lists.newArrayList(50, 60, 70);
-
-  private static final String LONG_LIST_KEY = "long-list";
-  private static final List<Long> LONG_LIST_VALUE = Lists.newArrayList(80L, 90L);
-
-  private static final String DOUBLE_LIST_KEY = "double-list";
-  private static final List<Double> DOUBLE_LIST_VALUE = Lists.newArrayList(100.5, 110.5);
-
-  private static final String DATETIME_LIST_KEY = "datetime-list";
-  private static final List<DateTime> DATETIME_LIST_VALUE = Lists.newArrayList(DateTime.now(), DateTime.now().minusDays(1));
-
-  private static final String STRING_LIST_KEY = "string-list";
-  private static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");
-
-  private Records records;
-
   @Test
   public void testInsertion() throws Exception {
     testInsertion(false);
@@ -188,7 +150,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     // primitive value
     jackStore.withinRoot().indexRecord().put(key, oldValue).execute();
     jackStore.withinRoot().indexRecord().put(key, newValue).execute();
-    Records records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
+    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(1, records.size());
     assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));
 
