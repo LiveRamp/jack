@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,40 +69,6 @@ public abstract class BaseExecutor<DB extends IDb> {
       }
     }
     return Optional.of(upperScope);
-  }
-
-  protected JsScopes queryScope(JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) {
-    return transactor.queryAsTransaction(db -> {
-      GenericQuery query = db.createQuery()
-          .from(table.table)
-          .where(table.scopeColumn.as(Long.class).equalTo(executionScope.getScopeId()))
-          .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
-          .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-          .select(table.idColumn, table.valueColumn);
-
-      for (GenericConstraint constraint : scopeConstraints) {
-        query.where(constraint);
-      }
-
-      for (Map.Entry<Column, QueryOrder> entry : orderCriteria.entrySet()) {
-        query.orderBy(entry.getKey(), entry.getValue());
-      }
-
-      if (limitCriteria.isPresent()) {
-        LimitCriterion limit = limitCriteria.get();
-        query.limit(limit.getOffset(), limit.getNResults());
-      }
-
-      List<JsScope> scopes = query.fetch().stream()
-          .map(r -> new JsScope(r.get(table.idColumn), r.get(table.valueColumn)))
-          .collect(Collectors.toList());
-
-      return new JsScopes(scopes);
-    });
-  }
-
-  protected JsScopes queryScope(JsScope executionScope, List<GenericConstraint> scopeConstraints) {
-    return queryScope(executionScope, scopeConstraints, Collections.emptyMap(), Optional.empty());
   }
 
   private JsScope createScope(JsScope executionScope, String childScope) {

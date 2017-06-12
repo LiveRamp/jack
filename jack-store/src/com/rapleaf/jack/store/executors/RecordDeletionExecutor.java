@@ -10,7 +10,7 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB>  {
+public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Set<String> keysToDelete;
 

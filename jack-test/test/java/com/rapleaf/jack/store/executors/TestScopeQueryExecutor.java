@@ -85,6 +85,67 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
   }
 
   @Test
+  public void testKeyConstraint() throws Exception {
+    JsScope s1 = createScope("1");
+    JsScope s2 = createScope("2");
+    JsScope s3 = createScope("3");
+    JsScope s4 = createScope("4");
+
+    jackStore.within(s1).indexRecord().put("count0", 15).put("count1", 50).execute();
+    jackStore.within(s2).indexRecord().put("count0", 20).put("count1", 60).execute();
+    jackStore.within(s3).indexRecord().put("count0", 25).put("count1", 70).execute();
+    jackStore.within(s4).indexRecord().put("count0", 30).put("count1", 80).execute();
+
+    // single key query
+    JsScopes scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.equalTo("15"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s1), scopes.getScopes());
+
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.notEqualTo("15"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s2, s3, s4), scopes.getScopes());
+
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.between("15", "25"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s1, s2, s3), scopes.getScopes());
+
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.greaterThan("15"))
+        .whereRecord("count0", JackMatchers.lessThan("25"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s2), scopes.getScopes());
+
+    // multiple keys query
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.equalTo("15"))
+        .whereRecord("count1", JackMatchers.equalTo("50"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s1), scopes.getScopes());
+
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.equalTo("15"))
+        .whereRecord("count1", JackMatchers.notEqualTo("50"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(0, scopes.size());
+
+    scopes = jackStore.withinRoot().queryScope()
+        .whereRecord("count0", JackMatchers.greaterThan("15"))
+        .whereRecord("count1", JackMatchers.lessThan("80"))
+        .orderByScopeName(QueryOrder.ASC)
+        .fetch();
+    assertEquals(Lists.newArrayList(s2, s3), scopes.getScopes());
+  }
+
+  @Test
   public void testOrder() throws Exception {
     JsScope s1 = createScope("b");
     JsScope s2 = createScope("a");

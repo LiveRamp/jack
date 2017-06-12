@@ -1,5 +1,7 @@
 package com.rapleaf.jack.store;
 
+import java.util.Collections;
+
 public class JsConstants {
 
   public static final String SCOPE_KEY = "_scope_name";
