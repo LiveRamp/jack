@@ -13,7 +13,7 @@ public class GenericConstraint<T> implements QueryCondition {
   private final IWhereOperator<T> operator;
   private final List<List<GenericConstraint>> chainedOrConstraints;
 
-  GenericConstraint(Column<T> column, IWhereOperator<T> operator) {
+  public GenericConstraint(Column<T> column, IWhereOperator<T> operator) {
     this.column = column;
     this.operator = operator;
     this.chainedOrConstraints = Lists.newArrayList();

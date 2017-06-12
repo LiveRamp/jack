@@ -30,6 +30,7 @@
     <module>jack-mysql</module>
     <module>jack-postgresql</module>
     <module>jack-redshift</module>
+    <module>jack-store</module>
     <module>jack-test</module>
   </modules>
 
