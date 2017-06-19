@@ -2,6 +2,7 @@ package com.liveramp.java_support.json;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
@@ -22,17 +23,17 @@ public class JsonDbHelper {
     List<JsonDbTuple> tuples = Lists.newArrayList();
 
     for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-      String key = entry.getKey();
+      String nodePath = getPath(path, entry.getKey());
       JsonElement jsonElement = entry.getValue();
 
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(new JsonDbTuple(getPath(path, key), jsonElement.getAsJsonPrimitive().getAsString()));
+        tuples.add(new JsonDbTuple(nodePath, jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonArray()) {
-        tuples.addAll(toTupleList(path, jsonElement.getAsJsonArray()));
+        tuples.addAll(toTupleList(nodePath, jsonElement.getAsJsonArray()));
       } else if (jsonElement.isJsonObject()) {
-        tuples.addAll(toTupleList(getPath(path, key), jsonElement.getAsJsonObject()));
+        tuples.addAll(toTupleList(nodePath, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(getPath(path, key), ""));
+        tuples.add(new JsonDbTuple(nodePath, ""));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -52,7 +53,8 @@ public class JsonDbHelper {
       if (jsonElement.isJsonPrimitive()) {
         tuples.add(new JsonDbTuple(arrayPath, jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonArray()) {
-        tuples.addAll(toTupleList(arrayPath, jsonElement.getAsJsonArray()));
+        JsonArray keylessArray = jsonElement.getAsJsonArray();
+        tuples.addAll(toTupleList(getPath(arrayPath, JsonDbConstants.KEYLESS_ARRAY_NAME), keylessArray));
       } else if (jsonElement.isJsonObject()) {
         tuples.addAll(toTupleList(arrayPath, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
@@ -70,7 +72,7 @@ public class JsonDbHelper {
   }
 
   private static String getArrayPath(String path, int arrayIndex, int arraySize) {
-    return getPath(path, String.format("%s%s%d%s%d", JsonDbConstants.LIST_PATH_PREFIX, JsonDbConstants.LIST_PATH_SEPARATOR, arrayIndex, JsonDbConstants.LIST_PATH_SEPARATOR, arraySize));
+    return String.format("%s%s%d%s%d", path, JsonDbConstants.LIST_PATH_SEPARATOR, arrayIndex, JsonDbConstants.LIST_PATH_SEPARATOR, arraySize);
   }
 
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
@@ -80,24 +82,24 @@ public class JsonDbHelper {
     Map<String, Map<String, List<JsonElement>>> arrayBuilder = Maps.newHashMap();
     for (JsonDbTuple tuple : tuples) {
       String path = tuple.getPath();
-      String key = tuple.getKey();
+      Optional<String> key = tuple.getKey();
       JsonElement parsedValue = parser.parse(tuple.getValue());
       if (parsedValue.isJsonNull()) {
         parsedValue = new JsonPrimitive("");
       }
 
-      if (tuple.getListIndex().isPresent()) {
+      if (tuple.isArray()) {
         if (!arrayBuilder.containsKey(path)) {
           arrayBuilder.put(path, Maps.newHashMap());
         }
-        if (!arrayBuilder.get(path).containsKey(key)) {
-          arrayBuilder.get(path).put(key, Lists.newArrayList(new JsonElement[tuple.getListSize().get()]));
+        if (!arrayBuilder.get(path).containsKey(key.orElse(""))) {
+          arrayBuilder.get(path).put(key.orElse(""), Lists.newArrayList(new JsonElement[tuple.getListSize().get()]));
         }
-        arrayBuilder.get(path).get(key).set(tuple.getListIndex().get(), parsedValue);
+        arrayBuilder.get(path).get(key.orElse("")).set(tuple.getListIndex().get(), parsedValue);
       } else {
         List<String> split = Lists.newArrayList(path.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR)));
         JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
-        jsonObject.add(key, parsedValue);
+        jsonObject.add(key.orElse(""), parsedValue);
       }
     }
 
@@ -123,12 +125,22 @@ public class JsonDbHelper {
   private static JsonObject ensureMapsAndReturnObject(JsonObject json, List<String> split) {
     if (!split.isEmpty() && !split.get(0).isEmpty()) {
       JsonElement jsonElement = json.get(split.get(0));
+      String elementName = parseName(split.get(0));
       if (jsonElement == null) {
-        json.add(split.get(0), new JsonObject());
+        json.add(elementName, new JsonObject());
       }
-      return ensureMapsAndReturnObject(json.get(split.get(0)).getAsJsonObject(), split.subList(1, split.size()));
+      return ensureMapsAndReturnObject(json.get(elementName).getAsJsonObject(), split.subList(1, split.size()));
     } else {
       return json;
+    }
+  }
+
+  private static String parseName(String token) {
+    String[] splits = token.split(Pattern.quote(JsonDbConstants.LIST_PATH_SEPARATOR));
+    if (splits.length > 1) {
+      return splits[0];
+    } else {
+      return token;
     }
   }
 
