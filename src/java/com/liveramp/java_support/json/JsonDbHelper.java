@@ -5,87 +5,113 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.jetbrains.annotations.NotNull;
-
-import com.liveramp.commons.collections.nested_map.TwoNestedMap;
+import com.google.gson.JsonPrimitive;
 
 public class JsonDbHelper {
 
-
-  public static final String SEPERATOR = ".";
+  private static final String PATH_SEPARATOR = ".";
 
   public static List<JsonDbTuple> toTupleList(JsonObject json) {
     return toTupleList("", json);
   }
 
   private static List<JsonDbTuple> toTupleList(String path, JsonObject json) {
-    List<JsonDbTuple> result = Lists.newArrayList();
+    List<JsonDbTuple> tuples = Lists.newArrayList();
+
     for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-      if (entry.getValue().isJsonPrimitive()) {
-        result.add(new JsonDbTuple(path, entry.getKey(), entry.getValue().getAsJsonPrimitive().getAsString()));
-      } else if (entry.getValue().isJsonArray()) {
-        handleJsonArray(path, result, entry);
-      } else if (entry.getValue().isJsonObject()) {
-        result.addAll(toTupleList(getPath(path, entry), entry.getValue().getAsJsonObject()));
+      String key = entry.getKey();
+      JsonElement jsonElement = entry.getValue();
+
+      if (jsonElement.isJsonPrimitive()) {
+        tuples.add(new JsonDbTuple(path, key, jsonElement.getAsJsonPrimitive().getAsString()));
+      } else if (jsonElement.isJsonArray()) {
+        tuples.addAll(toTupleList(path, key, jsonElement.getAsJsonArray()));
+      } else if (jsonElement.isJsonObject()) {
+        tuples.addAll(toTupleList(getPath(path, key), jsonElement.getAsJsonObject()));
+      } else if (jsonElement.isJsonNull()) {
+        tuples.add(new JsonDbTuple(path, key, ""));
       } else {
-        throw new IllegalStateException("Unexpected JsonElement " + entry.getValue());
+        throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
     }
-    return result;
+
+    return tuples;
   }
 
-  private static void handleJsonArray(String path, List<JsonDbTuple> result, Map.Entry<String, JsonElement> entry) {
-    JsonArray ja = entry.getValue().getAsJsonArray();
-    for (int i = 0; i < ja.size(); i++) {
-      JsonElement el = ja.get(i);
-      if (el.isJsonPrimitive()) {
-        result.add(new JsonDbTuple(path, entry.getKey(), el.getAsJsonPrimitive().getAsString(), i, ja.size()));
+  private static List<JsonDbTuple> toTupleList(String path, String key, JsonArray jsonArray) {
+    List<JsonDbTuple> tuples = Lists.newArrayListWithCapacity(jsonArray.size());
+
+    for (int i = 0; i < jsonArray.size(); i++) {
+      JsonElement jsonElement = jsonArray.get(i);
+
+      if (jsonElement.isJsonPrimitive()) {
+        tuples.add(new JsonDbTuple(path, key, jsonElement.getAsJsonPrimitive().getAsString(), i, jsonArray.size()));
+      } else if (jsonElement.isJsonArray()) {
+        tuples.addAll(toTupleList(path, key, jsonElement.getAsJsonArray()));
+      } else if (jsonElement.isJsonObject()) {
+        tuples.addAll(toTupleList(path, jsonElement.getAsJsonObject()));
+      } else if (jsonElement.isJsonNull()) {
+        tuples.add(new JsonDbTuple(path, key, ""));
+      } else {
+        throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
     }
+
+    return tuples;
   }
 
-  @NotNull
-  private static String getPath(String path, Map.Entry<String, JsonElement> entry) {
-    return path.isEmpty() ? entry.getKey() : path + SEPERATOR + entry.getKey();
+  private static String getPath(String path, String key) {
+    return path.isEmpty() ? key : path + PATH_SEPARATOR + key;
   }
 
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
     JsonParser parser = new JsonParser();
     JsonObject json = new JsonObject();
-    TwoNestedMap<String, String, List<JsonElement>> arrayBuilder = new TwoNestedMap<>();
+
+    Map<String, Map<String, List<JsonElement>>> arrayBuilder = Maps.newHashMap();
     for (JsonDbTuple tuple : tuples) {
       String path = tuple.getPath();
       String key = tuple.getKey();
       JsonElement parsedValue = parser.parse(tuple.getValue());
+      if (parsedValue.isJsonNull()) {
+        parsedValue = new JsonPrimitive("");
+      }
 
       if (tuple.getListIndex().isPresent()) {
-        if (!arrayBuilder.containsKey(path, key)) {
-          arrayBuilder.put(path, key, Lists.newArrayList(new JsonElement[tuple.getListSize().get()]));
+        if (!arrayBuilder.containsKey(path)) {
+          arrayBuilder.put(path, Maps.newHashMap());
         }
-        arrayBuilder.get(path, key).set(tuple.getListIndex().get(), parsedValue);
+        if (!arrayBuilder.get(path).containsKey(key)) {
+          arrayBuilder.get(path).put(key, Lists.newArrayList(new JsonElement[tuple.getListSize().get()]));
+        }
+        arrayBuilder.get(path).get(key).set(tuple.getListIndex().get(), parsedValue);
       } else {
-        List<String> split = Lists.newArrayList(path.split(Pattern.quote(SEPERATOR)));
+        List<String> split = Lists.newArrayList(path.split(Pattern.quote(PATH_SEPARATOR)));
         JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
         jsonObject.add(key, parsedValue);
       }
     }
 
-    for (TwoNestedMap.Entry<String, String, List<JsonElement>> entries : arrayBuilder.entrySet()) {
-      insertArray(json, entries);
+    for (Map.Entry<String, Map<String, List<JsonElement>>> entry1 : arrayBuilder.entrySet()) {
+      String path = entry1.getKey();
+      for (Map.Entry<String, List<JsonElement>> entry2 : entry1.getValue().entrySet()) {
+        insertArray(json, path, entry2.getKey(), entry2.getValue());
+      }
     }
     return json;
   }
 
-  private static void insertArray(JsonObject json, TwoNestedMap.Entry<String, String, List<JsonElement>> entries) {
-    List<String> split = Lists.newArrayList(entries.getK1().split(Pattern.quote(SEPERATOR)));
+  private static void insertArray(JsonObject json, String path, String key, List<JsonElement> elementList) {
+    List<String> split = Lists.newArrayList(path.split(Pattern.quote(PATH_SEPARATOR)));
     JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
     JsonArray array = new JsonArray();
-    jsonObject.add(entries.getK2(), array);
-    for (JsonElement jsonElement : entries.getValue()) {
+    jsonObject.add(key, array);
+    for (JsonElement jsonElement : elementList) {
       array.add(jsonElement);
     }
   }
