@@ -2,48 +2,59 @@ package com.liveramp.java_support.json;
 
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
+
 public class JsonDbTuple {
 
   private final String path;
-  private final String key;
   private final String value;
+
+  private final String key;
   private final Optional<Integer> listIndex;
   private final Optional<Integer> listSize;
 
-
-  public JsonDbTuple(String path, String key, String value, Integer listIndex, Integer listSize) {
+  JsonDbTuple(String path, String value) {
     this.path = path;
-    this.key = key;
     this.value = value;
-    this.listIndex = Optional.of(listIndex);
-    this.listSize = Optional.of(listSize);
-  }
 
-  public JsonDbTuple(String path, String key, String value) {
-    this.path = path;
-    this.key = key;
-    this.value = value;
-    this.listIndex = Optional.empty();
-    this.listSize = Optional.empty();
+    String[] paths = path.split(JsonDbConstants.PATH_SEPARATOR);
+    int pathSize = paths.length;
+
+    if (pathSize >= 1) {
+      this.key = paths[pathSize - 1];
+    } else {
+      this.key = "";
+    }
+
+    if (paths.length >= 2) {
+      String listPath = paths[pathSize - 2];
+      String[] listPaths = listPath.split(JsonDbConstants.LIST_PATH_SEPARATOR);
+      Preconditions.checkArgument(listPaths.length == 3);
+      this.listIndex = Optional.of(Integer.valueOf(listPaths[1]));
+      this.listSize = Optional.of(Integer.valueOf(listPaths[2]));
+    } else {
+      this.listIndex = Optional.empty();
+      this.listSize = Optional.empty();
+    }
   }
 
   public String getPath() {
     return path;
   }
 
-  public String getKey() {
-    return key;
-  }
-
   public String getValue() {
     return value;
   }
 
-  public Optional<Integer> getListIndex() {
+  String getKey() {
+    return key;
+  }
+
+  Optional<Integer> getListIndex() {
     return listIndex;
   }
 
-  public Optional<Integer> getListSize() {
+  Optional<Integer> getListSize() {
     return listSize;
   }
 
@@ -51,10 +62,8 @@ public class JsonDbTuple {
   public String toString() {
     return "JsonDbTuple{" +
         "path='" + path + '\'' +
-        ", key='" + key + '\'' +
         ", value='" + value + '\'' +
-        ", listIndex=" + listIndex +
-        ", listSize=" + listSize +
         '}';
   }
+
 }

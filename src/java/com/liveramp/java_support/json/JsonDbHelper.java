@@ -14,8 +14,6 @@ import com.google.gson.JsonPrimitive;
 
 public class JsonDbHelper {
 
-  private static final String PATH_SEPARATOR = ".";
-
   public static List<JsonDbTuple> toTupleList(JsonObject json) {
     return toTupleList("", json);
   }
@@ -28,13 +26,13 @@ public class JsonDbHelper {
       JsonElement jsonElement = entry.getValue();
 
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(new JsonDbTuple(path, key, jsonElement.getAsJsonPrimitive().getAsString()));
+        tuples.add(new JsonDbTuple(getPath(path, key), jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonArray()) {
-        tuples.addAll(toTupleList(path, key, jsonElement.getAsJsonArray()));
+        tuples.addAll(toTupleList(path, jsonElement.getAsJsonArray()));
       } else if (jsonElement.isJsonObject()) {
         tuples.addAll(toTupleList(getPath(path, key), jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(path, key, ""));
+        tuples.add(new JsonDbTuple(getPath(path, key), ""));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -43,20 +41,22 @@ public class JsonDbHelper {
     return tuples;
   }
 
-  private static List<JsonDbTuple> toTupleList(String path, String key, JsonArray jsonArray) {
+  private static List<JsonDbTuple> toTupleList(String path, JsonArray jsonArray) {
     List<JsonDbTuple> tuples = Lists.newArrayListWithCapacity(jsonArray.size());
 
+    int size = jsonArray.size();
     for (int i = 0; i < jsonArray.size(); i++) {
       JsonElement jsonElement = jsonArray.get(i);
+      String arrayPath = getArrayPath(path, i, size);
 
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(new JsonDbTuple(path, key, jsonElement.getAsJsonPrimitive().getAsString(), i, jsonArray.size()));
+        tuples.add(new JsonDbTuple(arrayPath, jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonArray()) {
-        tuples.addAll(toTupleList(path, key, jsonElement.getAsJsonArray()));
+        tuples.addAll(toTupleList(arrayPath, jsonElement.getAsJsonArray()));
       } else if (jsonElement.isJsonObject()) {
-        tuples.addAll(toTupleList(path, jsonElement.getAsJsonObject()));
+        tuples.addAll(toTupleList(arrayPath, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(path, key, ""));
+        tuples.add(new JsonDbTuple(arrayPath, ""));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -66,7 +66,11 @@ public class JsonDbHelper {
   }
 
   private static String getPath(String path, String key) {
-    return path.isEmpty() ? key : path + PATH_SEPARATOR + key;
+    return path.isEmpty() ? key : path + JsonDbConstants.PATH_SEPARATOR + key;
+  }
+
+  private static String getArrayPath(String path, int arrayIndex, int arraySize) {
+    return getPath(path, String.format("%s%s%d%s%d", JsonDbConstants.LIST_PATH_PREFIX, JsonDbConstants.LIST_PATH_SEPARATOR, arrayIndex, JsonDbConstants.LIST_PATH_SEPARATOR, arraySize));
   }
 
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
@@ -91,7 +95,7 @@ public class JsonDbHelper {
         }
         arrayBuilder.get(path).get(key).set(tuple.getListIndex().get(), parsedValue);
       } else {
-        List<String> split = Lists.newArrayList(path.split(Pattern.quote(PATH_SEPARATOR)));
+        List<String> split = Lists.newArrayList(path.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR)));
         JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
         jsonObject.add(key, parsedValue);
       }
@@ -107,7 +111,7 @@ public class JsonDbHelper {
   }
 
   private static void insertArray(JsonObject json, String path, String key, List<JsonElement> elementList) {
-    List<String> split = Lists.newArrayList(path.split(Pattern.quote(PATH_SEPARATOR)));
+    List<String> split = Lists.newArrayList(path.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR)));
     JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
     JsonArray array = new JsonArray();
     jsonObject.add(key, array);
@@ -127,4 +131,5 @@ public class JsonDbHelper {
       return json;
     }
   }
+
 }
