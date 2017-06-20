@@ -1,39 +1,42 @@
 package com.liveramp.java_support.json;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 
 public class JsonDbHelper {
 
   public static List<JsonDbTuple> toTupleList(JsonObject json) {
-    return toTupleList("", json);
+    return toTupleList(Collections.emptyList(), json);
   }
 
-  private static List<JsonDbTuple> toTupleList(String path, JsonObject json) {
+  private static List<JsonDbTuple> toTupleList(List<TuplePath> parentPaths, JsonObject json) {
     List<JsonDbTuple> tuples = Lists.newArrayList();
 
     for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-      String nodePath = getPath(path, entry.getKey());
+      List<TuplePath> childPaths = Lists.newArrayList(parentPaths);
+      String key = entry.getKey();
       JsonElement jsonElement = entry.getValue();
 
+      if (jsonElement.isJsonArray()) {
+        tuples.addAll(toTupleList(parentPaths, Optional.of(key), jsonElement.getAsJsonArray()));
+        continue;
+      }
+
+      childPaths.add(new ElementPath(entry.getKey()));
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(new JsonDbTuple(nodePath, jsonElement.getAsJsonPrimitive().getAsString()));
-      } else if (jsonElement.isJsonArray()) {
-        tuples.addAll(toTupleList(nodePath, jsonElement.getAsJsonArray()));
+        tuples.add(new JsonDbTuple(childPaths, jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonObject()) {
-        tuples.addAll(toTupleList(nodePath, jsonElement.getAsJsonObject()));
+        tuples.addAll(toTupleList(childPaths, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(nodePath, ""));
+        tuples.add(new JsonDbTuple(childPaths, ""));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -42,23 +45,25 @@ public class JsonDbHelper {
     return tuples;
   }
 
-  private static List<JsonDbTuple> toTupleList(String path, JsonArray jsonArray) {
+  private static List<JsonDbTuple> toTupleList(List<TuplePath> parentPaths, Optional<String> arrayName, JsonArray jsonArray) {
     List<JsonDbTuple> tuples = Lists.newArrayListWithCapacity(jsonArray.size());
 
     int size = jsonArray.size();
     for (int i = 0; i < jsonArray.size(); i++) {
+      List<TuplePath> childPaths = Lists.newArrayList(parentPaths);
+      childPaths.add(new ArrayPath(arrayName, i, size));
+
       JsonElement jsonElement = jsonArray.get(i);
-      String arrayPath = getArrayPath(path, i, size);
 
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(new JsonDbTuple(arrayPath, jsonElement.getAsJsonPrimitive().getAsString()));
+        tuples.add(new JsonDbTuple(childPaths, jsonElement.getAsJsonPrimitive().getAsString()));
       } else if (jsonElement.isJsonArray()) {
         JsonArray keylessArray = jsonElement.getAsJsonArray();
-        tuples.addAll(toTupleList(getPath(arrayPath, JsonDbConstants.KEYLESS_ARRAY_NAME), keylessArray));
+        tuples.addAll(toTupleList(childPaths, Optional.empty(), keylessArray));
       } else if (jsonElement.isJsonObject()) {
-        tuples.addAll(toTupleList(arrayPath, jsonElement.getAsJsonObject()));
+        tuples.addAll(toTupleList(childPaths, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(arrayPath, ""));
+        tuples.add(new JsonDbTuple(childPaths, ""));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }

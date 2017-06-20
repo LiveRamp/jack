@@ -2,13 +2,13 @@ package com.liveramp.java_support.json;
 
 import java.util.Optional;
 
-public class ListPath implements TuplePath {
+public class ArrayPath implements TuplePath {
 
   private final Optional<String> name;
   private final int index;
   private final int size;
 
-  public ListPath(Optional<String> name, int index, int size) {
+  public ArrayPath(Optional<String> name, int index, int size) {
     this.name = name;
     this.index = index;
     this.size = size;
