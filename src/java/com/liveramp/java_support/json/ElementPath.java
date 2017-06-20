@@ -1,5 +1,6 @@
 package com.liveramp.java_support.json;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ElementPath implements TuplePath {
@@ -33,6 +34,22 @@ public class ElementPath implements TuplePath {
   @Override
   public String toString() {
     return name;
+  }
+
+  @Override
+  public int hashCode() {
+    return 19 + name.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (!(other instanceof ElementPath)) {
+      return false;
+    }
+    return Objects.equals(this.name, ((ElementPath)other).name);
   }
 
 }

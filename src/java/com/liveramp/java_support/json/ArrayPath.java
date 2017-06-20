@@ -1,5 +1,6 @@
 package com.liveramp.java_support.json;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ArrayPath implements TuplePath {
@@ -37,6 +38,26 @@ public class ArrayPath implements TuplePath {
   @Override
   public String toString() {
     return String.format("%s%s%d%s%d", name.orElse(JsonDbConstants.KEYLESS_ARRAY_NAME), JsonDbConstants.LIST_PATH_SEPARATOR, index, JsonDbConstants.LIST_PATH_SEPARATOR, size);
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode() + 19 * index + 29 * size;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (!(other instanceof ArrayPath)) {
+      return false;
+    }
+
+    ArrayPath that = (ArrayPath)other;
+    return Objects.equals(this.name, that.name) &&
+        this.index == that.index &&
+        this.size == that.size;
   }
 
 }
