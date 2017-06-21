@@ -13,6 +13,7 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -29,9 +30,10 @@ public class TestMockTransactorImpl extends JackTestCase {
   @SuppressWarnings("unchecked")
   public void prepare() throws Exception {
     db = mock(IDatabase1.class);
-    dbManager = mock(IDbManager.class);
+    dbManager = mock(IDbManager.class, RETURNS_DEEP_STUBS);
     transactor = new TransactorImpl<>(dbManager);
     when(dbManager.getConnection()).thenReturn(db);
+    when(dbManager.getMetrics().getSummary()).thenReturn("");
     when(db.deleteAll()).thenReturn(true);
   }
 

@@ -10,8 +10,6 @@ public interface TransactorMetrics {
 
   LinkedHashMap<StackTraceElement, Long> getLongestQueries();
 
-  void update(long executionTime, StackTraceElement queryStackTrace);
-
   String getSummary();
 
 }
