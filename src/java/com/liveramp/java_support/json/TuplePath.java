@@ -6,7 +6,7 @@ public interface TuplePath {
 
   Optional<String> getName();
 
-  boolean isList();
+  boolean isArray();
 
   Optional<Integer> getListIndex();
 

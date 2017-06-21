@@ -21,7 +21,7 @@ public class ArrayPath implements TuplePath {
   }
 
   @Override
-  public boolean isList() {
+  public boolean isArray() {
     return true;
   }
 

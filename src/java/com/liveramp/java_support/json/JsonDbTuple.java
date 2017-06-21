@@ -3,6 +3,7 @@ package com.liveramp.java_support.json;
 import java.util.List;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 public class JsonDbTuple {
 
@@ -10,6 +11,7 @@ public class JsonDbTuple {
   private final String value;
 
   JsonDbTuple(List<TuplePath> paths, String value) {
+    Preconditions.checkArgument(!paths.isEmpty(), "Value path cannot be empty: " + value);
     this.paths = paths;
     this.value = value;
   }

@@ -4,12 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class JsonDbHelper {
 
@@ -72,81 +74,116 @@ public class JsonDbHelper {
     return tuples;
   }
 
-  private static String getPath(String path, String key) {
-    return path.isEmpty() ? key : path + JsonDbConstants.PATH_SEPARATOR + key;
-  }
-
-  private static String getArrayPath(String path, int arrayIndex, int arraySize) {
-    return String.format("%s%s%d%s%d", path, JsonDbConstants.LIST_PATH_SEPARATOR, arrayIndex, JsonDbConstants.LIST_PATH_SEPARATOR, arraySize);
-  }
-
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
-    JsonParser parser = new JsonParser();
     JsonObject json = new JsonObject();
-
-    Map<String, Map<String, List<JsonElement>>> arrayBuilder = Maps.newHashMap();
-    for (JsonDbTuple tuple : tuples) {
-      String path = tuple.getPath();
-      Optional<String> key = tuple.getKey();
-      JsonElement parsedValue = parser.parse(tuple.getValue());
-      if (parsedValue.isJsonNull()) {
-        parsedValue = new JsonPrimitive("");
-      }
-
-      if (tuple.isArray()) {
-        if (!arrayBuilder.containsKey(path)) {
-          arrayBuilder.put(path, Maps.newHashMap());
-        }
-        if (!arrayBuilder.get(path).containsKey(key.orElse(""))) {
-          arrayBuilder.get(path).put(key.orElse(""), Lists.newArrayList(new JsonElement[tuple.getListSize().get()]));
-        }
-        arrayBuilder.get(path).get(key.orElse("")).set(tuple.getListIndex().get(), parsedValue);
-      } else {
-        List<String> split = Lists.newArrayList(path.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR)));
-        JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
-        jsonObject.add(key.orElse(""), parsedValue);
-      }
-    }
-
-    for (Map.Entry<String, Map<String, List<JsonElement>>> entry1 : arrayBuilder.entrySet()) {
-      String path = entry1.getKey();
-      for (Map.Entry<String, List<JsonElement>> entry2 : entry1.getValue().entrySet()) {
-        insertArray(json, path, entry2.getKey(), entry2.getValue());
-      }
-    }
+    tuples.forEach(tuple -> processTuple(json, tuple.getPaths(), tuple.getValue()));
     return json;
   }
 
-  private static void insertArray(JsonObject json, String path, String key, List<JsonElement> elementList) {
-    List<String> split = Lists.newArrayList(path.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR)));
-    JsonObject jsonObject = ensureMapsAndReturnObject(json, split);
-    JsonArray array = new JsonArray();
-    jsonObject.add(key, array);
-    for (JsonElement jsonElement : elementList) {
-      array.add(jsonElement);
+  private static void processTuple(JsonElement parentElement, List<TuplePath> paths, String value) {
+    Preconditions.checkArgument(!paths.isEmpty());
+    TuplePath childPath = paths.get(0);
+    if (childPath.isArray()) {
+      addArrayPath(parentElement, (ArrayPath)childPath, paths.subList(1, paths.size()), value);
+    } else {
+      addElementPath(parentElement, (ElementPath)childPath, paths.subList(1, paths.size()), value);
     }
   }
 
-  private static JsonObject ensureMapsAndReturnObject(JsonObject json, List<String> split) {
-    if (!split.isEmpty() && !split.get(0).isEmpty()) {
-      JsonElement jsonElement = json.get(split.get(0));
-      String elementName = parseName(split.get(0));
-      if (jsonElement == null) {
-        json.add(elementName, new JsonObject());
+  private static void addArrayPath(JsonElement parentElement, ArrayPath childPath, List<TuplePath> tailPaths, String value) {
+    Optional<String> childName = childPath.getName();
+    Optional<Integer> childIndex = childPath.getListIndex();
+    Optional<Integer> childSize = childPath.getListSize();
+    Preconditions.checkState(childIndex.isPresent());
+    Preconditions.checkState(childSize.isPresent());
+
+    if (childName.isPresent()) {
+      String name = childName.get();
+      Preconditions.checkState(parentElement.isJsonObject());
+
+      JsonObject parentObject = parentElement.getAsJsonObject();
+      final JsonArray childArray;
+
+      if (!parentObject.has(name)) {
+        childArray = new JsonArray();
+        parentObject.add(name, childArray);
+      } else {
+        childArray = parentObject.get(name).getAsJsonArray();
       }
-      return ensureMapsAndReturnObject(json.get(elementName).getAsJsonObject(), split.subList(1, split.size()));
+
+      if (tailPaths.isEmpty()) {
+        Preconditions.checkState(childArray.size() == childIndex.get());
+        childArray.add(getJsonElement(value));
+      } else {
+        TuplePath nextChildPath = tailPaths.get(0);
+        final JsonElement childElement;
+        if (childArray.size() <= childIndex.get()) {
+          if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
+            childElement = new JsonObject();
+          } else {
+            childElement = new JsonArray();
+          }
+          childArray.add(childElement);
+        } else {
+          childElement = childArray.get(childIndex.get());
+        }
+        processTuple(childElement, tailPaths, value);
+      }
     } else {
-      return json;
+      Preconditions.checkState(parentElement.isJsonArray());
+      JsonArray parentArray = parentElement.getAsJsonArray();
+
+      if (tailPaths.isEmpty()) {
+        Preconditions.checkState(parentArray.size() == childIndex.get());
+        parentArray.add(getJsonElement(value));
+      } else {
+        processTuple(parentArray, tailPaths, value);
+      }
     }
   }
 
-  private static String parseName(String token) {
-    String[] splits = token.split(Pattern.quote(JsonDbConstants.LIST_PATH_SEPARATOR));
-    if (splits.length > 1) {
-      return splits[0];
+  private static void addElementPath(JsonElement parentElement, ElementPath childPath, List<TuplePath> tailPaths, String value) {
+    Optional<String> childName = childPath.getName();
+    Preconditions.checkState(childName.isPresent());
+
+    JsonObject parentObject = parentElement.getAsJsonObject();
+
+    if (tailPaths.isEmpty()) {
+      parentObject.add(childName.get(), getJsonElement(value));
     } else {
-      return token;
+      TuplePath nextChildPath = tailPaths.get(0);
+      final JsonElement childElement;
+      if (!parentObject.has(childName.get())) {
+        if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
+          childElement = new JsonObject();
+        } else {
+          childElement = new JsonArray();
+        }
+        parentObject.add(childName.get(), childElement);
+      } else {
+        childElement = parentObject.get(childName.get());
+      }
+      processTuple(childElement, tailPaths, value);
     }
+  }
+
+  private static JsonElement getJsonElement(String value) {
+    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+      return new JsonPrimitive(Boolean.valueOf(value));
+    }
+    if (NumberUtils.isNumber(value)) {
+      try {
+        return new JsonPrimitive(Long.valueOf(value));
+      } catch (NumberFormatException e) {
+        // ignore
+      }
+      try {
+        return new JsonPrimitive(Double.valueOf(value));
+      } catch (NumberFormatException e) {
+        // ignore;
+      }
+    }
+    return new JsonPrimitive(value);
   }
 
 }
