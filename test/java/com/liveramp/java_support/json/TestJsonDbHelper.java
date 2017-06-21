@@ -2,7 +2,7 @@ package com.liveramp.java_support.json;
 
 import java.util.List;
 
-import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.Assert;
@@ -10,85 +10,137 @@ import org.junit.Test;
 
 public class TestJsonDbHelper {
 
-  @Test
-  public void testArray() throws Exception {
-    JsonParser parser = new JsonParser();
-    String json = "{\"array\" : [[1, 2, 3], [4, 5, 6]]}";
+  private final JsonParser parser = new JsonParser();
+  private String jsonString;
 
-    JsonObject expected = parser.parse(json).getAsJsonObject();
+  private void testJson() throws Exception {
+    Preconditions.checkNotNull(jsonString);
+    JsonObject expected = parser.parse(jsonString).getAsJsonObject();
     List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
-    System.out.println(Joiner.on("\n").join(jsonDbTuples));
     JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
     Assert.assertEquals(expected, actual);
+    jsonString = null;
   }
 
   @Test
-  public void testNestedArray() throws Exception {
-    JsonParser parser = new JsonParser();
-    String json = "{\"key\": [[1, 2, 3], [4, 5, 6]]}";
-
-    JsonObject expected = parser.parse(json).getAsJsonObject();
-    List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
-    System.out.println(Joiner.on("\n").join(jsonDbTuples));
-    JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
-    Assert.assertEquals(expected, actual);
+  public void testString() throws Exception {
+    jsonString = "{key: \"string\"}";
+    testJson();
   }
 
   @Test
-  public void testNestedObject() throws Exception {
-    JsonParser parser = new JsonParser();
-    String json = "{\"key\": [{\"l1\" : \"v1\"}, {\"l2\" : \"v2\"}]}";
-
-    JsonObject expected = parser.parse(json).getAsJsonObject();
-    List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
-    System.out.println(Joiner.on("\n").join(jsonDbTuples));
-    JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
-    Assert.assertEquals(expected, actual);
+  public void testLong() throws Exception {
+    jsonString = "{k1: 1, k2: 2}";
+    testJson();
   }
 
   @Test
-  public void testRoundTrip() throws Exception {
-    String json = "{" +
-        "\"key1\" : \"val1\"," +
-        "\"key2\" :" +
+  public void testDouble() throws Exception {
+    jsonString = "{k1: 1.1, k2: 2.2, k3: 3.33333}";
+    testJson();
+  }
+
+  @Test
+  public void testBoolean() throws Exception {
+    jsonString = "{k1: true, k2: false, k3: true}";
+    testJson();
+  }
+
+  @Test
+  public void testNullString() throws Exception {
+    jsonString = "{key: \"null\"}";
+    testJson();
+  }
+
+  @Test
+  public void testNull() throws Exception {
+    jsonString = "{key: null}";
+    testJson();
+  }
+
+  @Test
+  public void testSimpleObject() throws Exception {
+    jsonString = "{object: {k1: v1}, str: value, n1: 1, n2: 2.2, b1: true, b2: false}";
+    testJson();
+  }
+
+  @Test
+  public void testSimpleArray() throws Exception {
+    jsonString = "{key: [1.1, 2.2, str, true, false]}";
+    testJson();
+  }
+
+  @Test
+  public void testArrayInArray() throws Exception {
+    jsonString = "{key: [[1, 2, 3], [4, 5, 6], 1, 2.2, string, true, false]}";
+    testJson();
+
+    jsonString = "{key: [[[[[[1]]]]]]}";
+    testJson();
+
+    jsonString = "{key: [1, [2, [3, [4, [5, [6]]]]]]}";
+    testJson();
+
+    jsonString = "{key: [1, 2, [3], 4, [[5]], 6]}";
+    testJson();
+  }
+
+  @Test
+  public void testObjectInObject() throws Exception {
+    jsonString = "{key: {key: {key: {key: {key: value}}}}}";
+    testJson();
+
+    jsonString = "{key0: value, key1: {key0: value, key1: {key0: value, key1: {key0: value, key1: {key0: value, key1: value}}}}}";
+    testJson();
+  }
+
+  @Test
+  public void testObjectInArray() throws Exception {
+    jsonString = "{key: [{l1: v1}, {l2: v2}]}";
+    testJson();
+
+    jsonString = "{key: [[[[{l1: v1}, {l2: v2}]], {l3: v3}]]}";
+    testJson();
+  }
+
+  @Test
+  public void testComplexObject() throws Exception {
+    jsonString = "{" +
+        "key1: val1," +
+        "key2 :" +
         "  {" +
-        "    \"array1\" : [1, 2, 3]," +
-        "    \"array2\" : [\"four\", \"five\"]," +
-        "    \"key3\" : \"val2\"," +
-        "    \"deepObject\":" +
+        "    array1: [1, 2, 3]," +
+        "    array2: [four, five]," +
+        "    key3: val2," +
+        "    deepObject:" +
         "       {" +
-        "        \"deepKey\" : 0.54," +
-        "        \"deepArray\" : [false, true, false]" +
+        "        deepKey: 0.54," +
+        "        deepArray: [false, true, false]" +
         "       }" +
         "  }," +
-        "\"arraysInArray\" :" +
+        "arraysInArray :" +
         "  [" +
         "    [1, 2, 3]," +
         "    [4, 5, 6]," +
         "    [7, 8, 9]" +
         "  ]," +
-        "\"objectsInArray\" :" +
+        "objectsInArray :" +
         "  [" +
         "    {" +
-        "      \"k1\" : [true, false, true]," +
-        "      \"k2\" : 11" +
+        "      k1: [true, false, true]," +
+        "      k2: 11" +
         "    }," +
         "    {" +
-        "      \"k1\" : [true, false, true]," +
-        "      \"k2\" : 12" +
+        "      k1: [true, false, true]," +
+        "      k2: 12" +
         "    }" +
         "  ]," +
-        "\"array3\" : [6,7,8,9,10]," +
-        "\"bool1\" : true," +
-        "\"bool2\" : false," +
-        "\"nullKey\" : \"null\"" +
+        "array3: [6,7,8,9,10]," +
+        "bool1: true," +
+        "bool2: false," +
+        "nullKey: null," +
+        "nullStrKey: \"null\"" +
         "}";
-
-    JsonParser parser = new JsonParser();
-    JsonObject expected = parser.parse(json).getAsJsonObject();
-    List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
-    System.out.println(Joiner.on("\n").join(jsonDbTuples));
-    JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
-    Assert.assertEquals(expected, actual);
+    testJson();
   }
 }
