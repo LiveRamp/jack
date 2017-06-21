@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,7 +39,7 @@ public class JsonDbHelper {
       } else if (jsonElement.isJsonObject()) {
         tuples.addAll(toTupleList(childPaths, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(childPaths, ""));
+        tuples.add(new JsonDbTuple(childPaths, null));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -65,7 +66,7 @@ public class JsonDbHelper {
       } else if (jsonElement.isJsonObject()) {
         tuples.addAll(toTupleList(childPaths, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
-        tuples.add(new JsonDbTuple(childPaths, ""));
+        tuples.add(new JsonDbTuple(childPaths, null));
       } else {
         throw new IllegalArgumentException("Unexpected json element: " + jsonElement);
       }
@@ -168,9 +169,14 @@ public class JsonDbHelper {
   }
 
   private static JsonElement getJsonElement(String value) {
+    if (value == null) {
+      return JsonNull.INSTANCE;
+    }
+
     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
       return new JsonPrimitive(Boolean.valueOf(value));
     }
+
     if (NumberUtils.isNumber(value)) {
       try {
         return new JsonPrimitive(Long.valueOf(value));
@@ -183,6 +189,7 @@ public class JsonDbHelper {
         // ignore;
       }
     }
+
     return new JsonPrimitive(value);
   }
 
