@@ -47,6 +47,12 @@ public class TestJsonDbHelper {
   }
 
   @Test
+  public void testEmptyString() throws Exception {
+    jsonString = "{key: \"\"}";
+    testJson();
+  }
+
+  @Test
   public void testNullString() throws Exception {
     jsonString = "{key: \"null\"}";
     testJson();
