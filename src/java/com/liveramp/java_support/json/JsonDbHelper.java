@@ -77,7 +77,9 @@ public class JsonDbHelper {
 
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
     JsonObject json = new JsonObject();
-    tuples.forEach(tuple -> processTuple(json, tuple.getPaths(), tuple.getValue()));
+    for (JsonDbTuple tuple : tuples) {
+      processTuple(json, tuple.getPaths(), tuple.getValue());
+    }
     return json;
   }
 
@@ -99,6 +101,7 @@ public class JsonDbHelper {
     Preconditions.checkState(childSize.isPresent());
 
     if (childName.isPresent()) {
+      // when the child has a name, the parent must be an object
       String name = childName.get();
       Preconditions.checkState(parentElement.isJsonObject());
 
@@ -116,21 +119,10 @@ public class JsonDbHelper {
         Preconditions.checkState(childArray.size() == childIndex.get());
         childArray.add(getJsonElement(value));
       } else {
-        TuplePath nextChildPath = tailPaths.get(0);
-        final JsonElement childElement;
-        if (childArray.size() <= childIndex.get()) {
-          if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
-            childElement = new JsonObject();
-          } else {
-            childElement = new JsonArray();
-          }
-          childArray.add(childElement);
-        } else {
-          childElement = childArray.get(childIndex.get());
-        }
-        processTuple(childElement, tailPaths, value);
+        addChildPathToParentArray(childArray, childIndex.get(), tailPaths, value);
       }
     } else {
+      // when the child has no name, the parent must be an array
       Preconditions.checkState(parentElement.isJsonArray());
       JsonArray parentArray = parentElement.getAsJsonArray();
 
@@ -138,7 +130,7 @@ public class JsonDbHelper {
         Preconditions.checkState(parentArray.size() == childIndex.get());
         parentArray.add(getJsonElement(value));
       } else {
-        processTuple(parentArray, tailPaths, value);
+        addChildPathToParentArray(parentArray, childIndex.get(), tailPaths, value);
       }
     }
   }
@@ -147,25 +139,51 @@ public class JsonDbHelper {
     Optional<String> childName = childPath.getName();
     Preconditions.checkState(childName.isPresent());
 
-    JsonObject parentObject = parentElement.getAsJsonObject();
+    final JsonObject parentObject;
+    if (parentElement.isJsonArray()) {
+      parentObject = new JsonObject();
+      parentElement.getAsJsonArray().add(parentObject);
+    } else {
+      parentObject = parentElement.getAsJsonObject();
+    }
 
     if (tailPaths.isEmpty()) {
       parentObject.add(childName.get(), getJsonElement(value));
     } else {
-      TuplePath nextChildPath = tailPaths.get(0);
-      final JsonElement childElement;
-      if (!parentObject.has(childName.get())) {
-        if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
-          childElement = new JsonObject();
-        } else {
-          childElement = new JsonArray();
-        }
-        parentObject.add(childName.get(), childElement);
-      } else {
-        childElement = parentObject.get(childName.get());
-      }
-      processTuple(childElement, tailPaths, value);
+      addChildPathToParentObject(parentObject, childName.get(), tailPaths, value);
     }
+  }
+
+  private static void addChildPathToParentObject(JsonObject parentObject, String childPathName, List<TuplePath> tailPaths, String value) {
+    TuplePath nextChildPath = tailPaths.get(0);
+    final JsonElement childElement;
+    if (!parentObject.has(childPathName)) {
+      if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
+        childElement = new JsonObject();
+      } else {
+        childElement = new JsonArray();
+      }
+      parentObject.add(childPathName, childElement);
+    } else {
+      childElement = parentObject.get(childPathName);
+    }
+    processTuple(childElement, tailPaths, value);
+  }
+
+  private static void addChildPathToParentArray(JsonArray parentArray, int childPathIndex, List<TuplePath> tailPaths, String value) {
+    TuplePath nextChildPath = tailPaths.get(0);
+    final JsonElement childElement;
+    if (parentArray.size() <= childPathIndex) {
+      if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
+        childElement = new JsonObject();
+      } else {
+        childElement = new JsonArray();
+      }
+      parentArray.add(childElement);
+    } else {
+      childElement = parentArray.get(childPathIndex);
+    }
+    processTuple(childElement, tailPaths, value);
   }
 
   private static JsonElement getJsonElement(String value) {
