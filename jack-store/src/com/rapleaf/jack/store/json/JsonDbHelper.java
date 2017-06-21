@@ -21,7 +21,7 @@ public class JsonDbHelper {
     return toTupleList(Collections.emptyList(), json);
   }
 
-  private static List<JsonDbTuple> toTupleList(List<TuplePath> parentPaths, JsonObject json) {
+  public static List<JsonDbTuple> toTupleList(List<TuplePath> parentPaths, JsonObject json) {
     List<JsonDbTuple> tuples = Lists.newArrayList();
 
     Set<Map.Entry<String, JsonElement>> entrySet = json.entrySet();

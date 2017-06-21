@@ -35,11 +35,15 @@ public class JsonDbTuple {
     return new JsonDbTuple(paths, null);
   }
 
-  List<TuplePath> getPaths() {
+  public String getFullPaths() {
+    return toString();
+  }
+
+  public List<TuplePath> getPaths() {
     return paths;
   }
 
-  String getValue() {
+  public String getValue() {
     return value;
   }
 

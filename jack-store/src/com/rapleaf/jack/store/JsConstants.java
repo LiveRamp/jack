@@ -7,7 +7,7 @@ public class JsConstants {
   public static final JsScope ROOT_SCOPE = new JsScope(null, "_root_scope");
 
   public enum ValueType {
-    BOOLEAN(), INT(), LONG(), DOUBLE(), DATETIME(), STRING(),
+    BOOLEAN(), INT(), LONG(), DOUBLE(), DATETIME(), STRING(), JSON(),
     BOOLEAN_LIST(true), INT_LIST(true), LONG_LIST(true), DOUBLE_LIST(true), DATETIME_LIST(true), STRING_LIST(true);
 
     private final boolean isList;

@@ -1,16 +1,19 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.IDb;
@@ -19,6 +22,9 @@ import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.json.ElementPath;
+import com.rapleaf.jack.store.json.JsonDbHelper;
+import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
@@ -28,8 +34,8 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   protected RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
-    this.types = Maps.newHashMap();
-    this.values = Maps.newHashMap();
+    this.types = Maps.newLinkedHashMap();
+    this.values = Maps.newLinkedHashMap();
   }
 
   public RecordIndexExecutor<DB> put(String key, Object value) {
@@ -51,6 +57,9 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
     if (value instanceof String) {
       return putString(key, (String)value);
+    }
+    if (value instanceof JsonObject) {
+      return putJson(key, (JsonObject)value);
     }
     if (value instanceof List) {
       return putList(key, (List<Object>)value);
@@ -91,6 +100,15 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   public RecordIndexExecutor<DB> putString(String key, String value) {
     types.put(key, JsConstants.ValueType.STRING);
     values.put(key, value);
+    return this;
+  }
+
+  public RecordIndexExecutor<DB> putJson(String key, JsonObject json) {
+    List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), json);
+    for (JsonDbTuple tuple : tuples) {
+      types.put(tuple.getFullPaths(), JsConstants.ValueType.JSON);
+      values.put(tuple.getFullPaths(), tuple.getValue());
+    }
     return this;
   }
 
@@ -164,12 +182,12 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       Set<String> existingKeys = existingKeyIds.keySet();
       if (!existingKeys.isEmpty()) {
-        updateExistingKeys(db, scopeId, existingKeys);
+        updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
       }
 
       Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
       if (!newKeys.isEmpty()) {
-        insertNewKeys(db, scopeId, newKeys);
+        insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
       }
     });
   }
@@ -183,13 +201,14 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   private Map<String, List<Long>> getExistingKeyIdMap(IDb db, Long scopeId) throws IOException {
-    Map<String, List<Long>> keyIdMap = Maps.newHashMap();
+    Map<String, List<Long>> keyIdMap = Maps.newLinkedHashMap();
 
     Records records = db.createQuery()
         .from(table.table)
         .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
         .where(table.keyColumn.in(types.keySet()))
         .select(table.idColumn, table.keyColumn)
+        .orderBy(table.idColumn)
         .fetch();
 
     for (Record record : records) {
@@ -205,7 +224,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return keyIdMap;
   }
 
-  private void insertNewKeys(DB db, Long scopeId, Set<String> newKeys) throws IOException {
+  private void insertNewKeys(DB db, Long scopeId, List<String> newKeys) throws IOException {
     List<String> typesToInsert = Lists.newLinkedList();
     List<String> keysToInsert = Lists.newLinkedList();
     List<String> valuesToInsert = Lists.newLinkedList();
@@ -242,7 +261,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   // delete existing keys and insert new values
   // replace with true update in the future
-  private void updateExistingKeys(DB db, Long scopeId, Set<String> existingKeys) throws IOException {
+  private void updateExistingKeys(DB db, Long scopeId, List<String> existingKeys) throws IOException {
     db.createDeletion()
         .from(table.table)
         .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
