@@ -2,6 +2,7 @@ package com.liveramp.java_support.json;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -55,6 +56,18 @@ public class TestJsonDbHelper {
   @Test
   public void testNull() throws Exception {
     jsonString = "{key: null}";
+    testJson();
+  }
+
+  @Test
+  public void testEmptyArray() throws Exception {
+    jsonString = "{key: []}";
+    testJson();
+  }
+
+  @Test
+  public void testEmptyObject() throws Exception {
+    jsonString = "{key: {}}";
     testJson();
   }
 
@@ -114,8 +127,9 @@ public class TestJsonDbHelper {
         "    key3: val2," +
         "    deepObject:" +
         "       {" +
-        "        deepKey: 0.54," +
-        "        deepArray: [false, true, false]" +
+        "         deepKey: 0.54," +
+        "         deepArray: [false, true, false]," +
+        "         emptyObject: {}" +
         "       }" +
         "  }," +
         "arraysInArray :" +
@@ -132,7 +146,8 @@ public class TestJsonDbHelper {
         "    }," +
         "    {" +
         "      k1: [true, false, true]," +
-        "      k2: 12" +
+        "      k2: 12," +
+        "      emptyArray: []" +
         "    }" +
         "  ]," +
         "array3: [6,7,8,9,10]," +
