@@ -23,11 +23,12 @@ public class JsonDbHelper {
   private static List<JsonDbTuple> toTupleList(List<TuplePath> parentPaths, JsonObject json) {
     List<JsonDbTuple> tuples = Lists.newArrayList();
 
-    if (json.size() == 0) {
+    Set<Map.Entry<String, JsonElement>> entrySet = json.entrySet();
+    if (entrySet.size() == 0) {
       tuples.add(JsonDbTuple.createEmptyObject(parentPaths));
     }
 
-    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+    for (Map.Entry<String, JsonElement> entry : entrySet) {
       List<TuplePath> childPaths = Lists.newArrayList(parentPaths);
       String key = entry.getKey();
       JsonElement jsonElement = entry.getValue();
