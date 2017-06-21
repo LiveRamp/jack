@@ -1,87 +1,52 @@
 package com.rapleaf.jack.store.json;
 
+import java.util.List;
 import java.util.Optional;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 public class JsonDbTuple {
 
-  private final String path;
-  private final String key;
-  private final String value;
-  private final Optional<Integer> listIndex;
-  private final Optional<Integer> listSize;
+  private final List<TuplePath> paths;
+  /**
+   * When value is present, it represents json value (string, number, boolean)
+   * When value is empty, it represents null value (null)
+   * When value is null, it represents empty json value ("{}" or "[]")
+   * <p>
+   * I know, this makes me weep too.
+   */
+  private final Optional<String> value;
 
-  public JsonDbTuple(String path, String key, String value, Integer listIndex, Integer listSize) {
-    this.path = path;
-    this.key = key;
+  private JsonDbTuple(List<TuplePath> paths, Optional<String> value) {
+    Preconditions.checkArgument(!paths.isEmpty(), "Value path cannot be empty: " + value);
+    this.paths = paths;
     this.value = value;
-    this.listIndex = Optional.of(listIndex);
-    this.listSize = Optional.of(listSize);
   }
 
-  public JsonDbTuple(String path, String key, String value) {
-    this.path = path;
-    this.key = key;
-    this.value = value;
-    this.listIndex = Optional.empty();
-    this.listSize = Optional.empty();
+  static JsonDbTuple create(List<TuplePath> paths, String value) {
+    return new JsonDbTuple(paths, Optional.of(Preconditions.checkNotNull(value)));
   }
 
-  public String getPath() {
-    return path;
+  static JsonDbTuple createNull(List<TuplePath> paths) {
+    return new JsonDbTuple(paths, Optional.empty());
   }
 
-  public String getKey() {
-    return key;
+  static JsonDbTuple createEmptyObject(List<TuplePath> paths) {
+    return new JsonDbTuple(paths, null);
   }
 
-  public String getValue() {
+  List<TuplePath> getPaths() {
+    return paths;
+  }
+
+  Optional<String> getValue() {
     return value;
-  }
-
-  public Optional<Integer> getListIndex() {
-    return listIndex;
-  }
-
-  public Optional<Integer> getListSize() {
-    return listSize;
   }
 
   @Override
   public String toString() {
-    return "JsonDbTuple{" +
-        "path='" + path + '\'' +
-        ", key='" + key + '\'' +
-        ", value='" + value + '\'' +
-        ", listIndex=" + listIndex +
-        ", listSize=" + listSize +
-        '}';
+    return String.format("%s: %s", Joiner.on(JsonDbConstants.PATH_SEPARATOR).join(paths), value);
   }
 
-  @Override
-  public int hashCode() {
-    int hashCode = path.hashCode();
-    hashCode += 19 * key.hashCode();
-    hashCode += 19 * value.hashCode();
-    hashCode += 19 * listIndex.hashCode();
-    hashCode += 19 * listSize.hashCode();
-    return hashCode;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-
-    if (!(other instanceof JsonDbTuple)) {
-      return false;
-    }
-
-    JsonDbTuple that = (JsonDbTuple)other;
-    return this.path.equals(that.path) &&
-        this.key.equals(that.key) &&
-        this.value.equals(that.value) &&
-        this.listIndex.equals(that.listIndex) &&
-        this.listSize.equals(that.listSize);
-  }
 }
