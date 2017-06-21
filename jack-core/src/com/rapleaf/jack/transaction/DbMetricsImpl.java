@@ -89,12 +89,20 @@ public class DbMetricsImpl implements DbMetrics {
 
   @Override
   public double getAverageConnectionWaitTime() {
-    return (double)totalConnectionWaitTime / (double)totalQueries;
+    if (totalQueries > 0) {
+      return (double)totalConnectionWaitTime / (double)totalQueries;
+    } else {
+      return -1;
+    }
   }
 
   @Override
   public double getAverageConnectionExecutionTime() {
-    return ((double)totalActiveTime / (double)totalQueries);
+    if (totalQueries > 0) {
+      return ((double)totalActiveTime / (double)totalQueries);
+    } else {
+      return -1;
+    }
   }
 
   @Override

@@ -26,8 +26,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   }
 
 
-  @Override
-  public void update(long executionTime, StackTraceElement queryStackTrace) {
+  void update(long executionTime, StackTraceElement queryStackTrace) {
     if (longestQueries.containsKey(queryStackTrace)) {
       if (longestQueries.get(queryStackTrace) < executionTime) {
         longestTimes.removeFirstOccurrence(longestQueries.get(queryStackTrace));
@@ -94,7 +93,6 @@ public class TransactorMetricsImpl implements TransactorMetrics {
       log += "\nLine number : " + query.getKey().getLineNumber();
       log += "\nExecution runtime : " + query.getValue() + "\n";
     }
-
     return log;
 
   }

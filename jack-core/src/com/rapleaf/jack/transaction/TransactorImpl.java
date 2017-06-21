@@ -11,14 +11,16 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 /**
- * If there is any exception while executing the query, throws {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
+ * If there is any exception while executing the query, throws
+ * {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
  * <p>
  * If there is no available connections, throws {@link com.rapleaf.jack.exception.NoAvailableConnectionException}.
  * Users can either increase the max total connections or max wait time.
  * <p>
  * If the DB manager has already been closed, throws {@link IllegalStateException}.
  * <p>
- * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
+ * If new DB connections cannot be created, throws
+ * {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
@@ -27,9 +29,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private final int queryLogSize = 10;
 
-  private TransactorMetrics queryMetrics = new TransactorMetricsImpl(queryLogSize);
+  private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(queryLogSize);
 
-  private boolean transactorLog = true;
+  private boolean logMetricsWhenClosed = true;
 
   TransactorImpl(IDbManager<DB> dbManager) {
     this.dbManager = dbManager;
@@ -69,6 +71,18 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   @Override
   public void executeAsTransaction(IExecution<DB> execution) {
     execute(execution, true);
+  }
+
+  TransactorMetrics getQueryMetrics() {
+    return queryMetrics;
+  }
+
+  DbMetrics getDbMetrics() {
+    return dbManager.getMetrics();
+  }
+
+  void setLogMetricsWhenClosed(boolean logMetricsWhenClosed) {
+    this.logMetricsWhenClosed = logMetricsWhenClosed;
   }
 
   private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
@@ -120,7 +134,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   @Override
   public void close() {
-    if (transactorLog) {
+    if (logMetricsWhenClosed) {
       LOG.info(dbManager.getMetrics().getSummary());
       LOG.info("" + "\n" + (queryMetrics.getSummary()));
     }

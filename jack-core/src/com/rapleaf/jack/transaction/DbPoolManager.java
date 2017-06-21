@@ -84,7 +84,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DB getConnection() {
     try {
-      metrics.update(false, connectionPool);
+      metrics.update(true, connectionPool);
       return connectionPool.borrowObject();
     } catch (NoSuchElementException e) {
       String message = "No available connection; please consider increasing wait time or total connections";
