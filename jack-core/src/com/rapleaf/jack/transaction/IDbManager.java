@@ -9,7 +9,7 @@ interface IDbManager<DB extends IDb> extends Closeable {
   DB getConnection();
 
   void returnConnection(DB connection);
-  
+
   @Override
   void close();
 

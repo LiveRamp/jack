@@ -11,16 +11,14 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 
 /**
- * If there is any exception while executing the query, throws
- * {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
+ * If there is any exception while executing the query, throws {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
  * <p>
  * If there is no available connections, throws {@link com.rapleaf.jack.exception.NoAvailableConnectionException}.
  * Users can either increase the max total connections or max wait time.
  * <p>
  * If the DB manager has already been closed, throws {@link IllegalStateException}.
  * <p>
- * If new DB connections cannot be created, throws
- * {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
+ * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
