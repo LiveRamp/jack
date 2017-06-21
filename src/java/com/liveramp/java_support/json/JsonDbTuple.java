@@ -1,6 +1,7 @@
 package com.liveramp.java_support.json;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -8,19 +9,38 @@ import com.google.common.base.Preconditions;
 public class JsonDbTuple {
 
   private final List<TuplePath> paths;
-  private final String value;
+  /**
+   * When value is present, it represents json value (string, number, boolean)
+   * When value is empty, it represents null value (null)
+   * When value is null, it represents empty json value ("{}" or "[]")
+   * <p>
+   * I know, this makes me weep too.
+   */
+  private final Optional<String> value;
 
-  JsonDbTuple(List<TuplePath> paths, String value) {
+  private JsonDbTuple(List<TuplePath> paths, Optional<String> value) {
     Preconditions.checkArgument(!paths.isEmpty(), "Value path cannot be empty: " + value);
     this.paths = paths;
     this.value = value;
+  }
+
+  static JsonDbTuple create(List<TuplePath> paths, String value) {
+    return new JsonDbTuple(paths, Optional.of(Preconditions.checkNotNull(value)));
+  }
+
+  static JsonDbTuple createNull(List<TuplePath> paths) {
+    return new JsonDbTuple(paths, Optional.empty());
+  }
+
+  static JsonDbTuple createEmptyObject(List<TuplePath> paths) {
+    return new JsonDbTuple(paths, null);
   }
 
   List<TuplePath> getPaths() {
     return paths;
   }
 
-  String getValue() {
+  Optional<String> getValue() {
     return value;
   }
 
