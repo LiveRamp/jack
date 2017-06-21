@@ -25,8 +25,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
-
-  private final ObjectPool<DB> connectionPool;
+  private final DbMetricsImpl metrics;
+  private final GenericObjectPool<DB> connectionPool;
 
   /**
    * Create a new DbPoolManager.
@@ -71,6 +71,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
 
     this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
+    this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config
+        .getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
   }
 
   /**
@@ -82,6 +84,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DB getConnection() {
     try {
+      metrics.update(false, connectionPool);
       return connectionPool.borrowObject();
     } catch (NoSuchElementException e) {
       String message = "No available connection; please consider increasing wait time or total connections";
@@ -99,6 +102,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void returnConnection(DB connection) {
     try {
+      metrics.update(false, connectionPool);
       connectionPool.returnObject(connection);
     } catch (Exception e) {
       LOG.error("Return connection failed", e);
@@ -108,6 +112,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void close() {
     connectionPool.close();
+  }
+
+  @Override
+  public DbMetrics getMetrics() {
+    return metrics;
   }
 
   @VisibleForTesting
@@ -149,6 +158,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       connection.getObject().setAutoCommit(true);
       connection.getObject().setBulkOperation(false);
     }
+
   }
 
 }
