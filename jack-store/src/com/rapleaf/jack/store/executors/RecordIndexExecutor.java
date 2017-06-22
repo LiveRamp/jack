@@ -1,14 +1,12 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -104,6 +102,8 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public RecordIndexExecutor<DB> putJson(String key, JsonObject json) {
+    Preconditions.checkNotNull(json);
+
     List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), json);
     for (JsonDbTuple tuple : tuples) {
       types.put(tuple.getFullPaths(), JsConstants.ValueType.JSON);
@@ -114,8 +114,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   @SuppressWarnings("unchecked")
   public RecordIndexExecutor<DB> putList(String key, List<Object> valueList) {
-    Preconditions.checkNotNull(valueList, "Value list cannot be null when using the putList method");
-    Preconditions.checkArgument(!valueList.isEmpty(), "Value list cannot be empty");
+    Preconditions.checkArgument(valueList != null && !valueList.isEmpty(), "Value list cannot be null or empty when using the putList method");
 
     Object value = valueList.get(0);
     if (value instanceof Boolean) {

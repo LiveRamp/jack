@@ -5,15 +5,14 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
@@ -66,6 +65,18 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     testGenericListInsertion(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE);
     testGenericListInsertion(DATETIME_LIST_KEY, DATETIME_LIST_VALUE);
     testGenericListInsertion(STRING_LIST_KEY, STRING_LIST_VALUE);
+  }
+
+  @Test
+  public void testJsonInsertion() throws Exception {
+    jackStore.within("scope").indexRecord().putJson(JSON_KEY, JSON_VALUE).execute();
+    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.startsWith(JSON_KEY)).fetch());
+    assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testNullJsonInsertion() throws Exception {
+    testInsertion(JSON_KEY, JSON_VALUE, true, RecordIndexExecutor::putJson);
   }
 
   @Test(expected = NullPointerException.class)
