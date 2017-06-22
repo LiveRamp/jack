@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,6 +20,8 @@ public class TestJsonDbHelper {
     List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
     JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
     Assert.assertEquals(expected, actual);
+    // the number of tuples equal to the number of comma + 1
+    Assert.assertEquals(StringUtils.countMatches(jsonString, ",") + 1, jsonDbTuples.size());
     jsonString = null;
   }
 
