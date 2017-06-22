@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.exception.JackRuntimeException;
@@ -48,6 +49,8 @@ public class JsRecord {
         return checkTypeAndGetNullable(key, JsConstants.ValueType.DATETIME, DateTime::parse);
       case STRING:
         return checkTypeAndGetNullable(key, JsConstants.ValueType.STRING, Function.identity());
+      case JSON:
+        return checkAndGetJson(key);
       default:
         throw new JackRuntimeException("Unsupported value type: " + type.name());
     }
@@ -81,6 +84,11 @@ public class JsRecord {
   public String getString(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, JsConstants.ValueType.STRING, Function.identity());
+  }
+
+  public JsonObject getJson(String key) {
+    checkKey(key);
+    return checkAndGetJson(key);
   }
 
   public List getList(String key) {
@@ -152,6 +160,12 @@ public class JsRecord {
     }
   }
 
+  private JsonObject checkAndGetJson(String key) {
+    Preconditions.checkArgument(types.get(key).equals(JsConstants.ValueType.JSON));
+    return (JsonObject)values.get(key);
+  }
+
+  @SuppressWarnings("unchecked")
   private <T> List<T> checkTypeAndGetList(String key, JsConstants.ValueType type, Function<String, T> function) {
     Preconditions.checkArgument(types.get(key).equals(type));
     List<String> valueList = (List<String>)values.get(key);
