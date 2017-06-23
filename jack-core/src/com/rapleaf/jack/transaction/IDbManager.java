@@ -14,4 +14,6 @@ interface IDbManager<DB extends IDb> extends Closeable {
   void close();
 
   DbMetrics getMetrics();
+
+  void toggleLogging();
 }

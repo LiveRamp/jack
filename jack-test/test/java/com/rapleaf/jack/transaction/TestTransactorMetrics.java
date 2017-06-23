@@ -87,5 +87,17 @@ public class TestTransactorMetrics extends JackTestCase {
     transactor.close();
   }
 
+  @Test
+  public void testDisableMetrics() throws Exception {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+
+    if (transactor.isLoggingEnabled()) {
+      transactor.toggleLogging();
+    }
+    TransactorMetrics queryMetrics = transactor.getQueryMetrics();
+
+    assert (queryMetrics == null);
+  }
+
 
 }

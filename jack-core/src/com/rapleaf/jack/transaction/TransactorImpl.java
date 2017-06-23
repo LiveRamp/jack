@@ -29,7 +29,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(queryLogSize);
 
-  private boolean logMetricsWhenClosed = true;
+  private boolean loggingEnabled = DbPoolManager.DEFAULT_LOGGING_ENABLED;
 
   TransactorImpl(IDbManager<DB> dbManager) {
     this.dbManager = dbManager;
@@ -72,15 +72,31 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   TransactorMetrics getQueryMetrics() {
-    return queryMetrics;
+    if (loggingEnabled) {
+      return queryMetrics;
+    } else {
+      LOG.info("logging disabled, transactor metrics cannot be accessed");
+      return null;
+    }
+  }
+
+  @Override
+  public boolean isLoggingEnabled() {
+    return loggingEnabled;
+  }
+
+  @Override
+  public void toggleLogging() {
+    if (loggingEnabled) {
+      loggingEnabled = false;
+    } else {
+      loggingEnabled = true;
+    }
+    dbManager.toggleLogging();
   }
 
   DbMetrics getDbMetrics() {
     return dbManager.getMetrics();
-  }
-
-  void setLogMetricsWhenClosed(boolean logMetricsWhenClosed) {
-    this.logMetricsWhenClosed = logMetricsWhenClosed;
   }
 
   private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
@@ -132,7 +148,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   @Override
   public void close() {
-    if (logMetricsWhenClosed) {
+    if (loggingEnabled) {
       LOG.info(dbManager.getMetrics().getSummary());
       LOG.info("" + "\n" + (queryMetrics.getSummary()));
     }

@@ -25,7 +25,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
+  public static boolean DEFAULT_LOGGING_ENABLED = true;
   private final DbMetricsImpl metrics;
+  private boolean loggingEnabled = DEFAULT_LOGGING_ENABLED;
   private final GenericObjectPool<DB> connectionPool;
 
   /**
@@ -84,7 +86,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DB getConnection() {
     try {
-      metrics.update(true, connectionPool);
+      if (loggingEnabled) {
+        metrics.update(true, connectionPool);
+      }
       return connectionPool.borrowObject();
     } catch (NoSuchElementException e) {
       String message = "No available connection; please consider increasing wait time or total connections";
@@ -102,7 +106,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void returnConnection(DB connection) {
     try {
-      metrics.update(false, connectionPool);
+      if (loggingEnabled) {
+        metrics.update(false, connectionPool);
+      }
       connectionPool.returnObject(connection);
     } catch (Exception e) {
       LOG.error("Return connection failed", e);
@@ -116,8 +122,24 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   @Override
   public DbMetrics getMetrics() {
-    metrics.update(false, connectionPool);
-    return metrics;
+    if (loggingEnabled) {
+      metrics.update(false, connectionPool);
+      return metrics;
+    } else {
+      LOG.info("logging disabled, db metrics cannot be accessed");
+      return null;
+    }
+  }
+
+  @Override
+  public void toggleLogging() {
+    if (loggingEnabled) {
+      loggingEnabled = false;
+      metrics.pause();
+    } else {
+      loggingEnabled = true;
+      metrics.resume();
+    }
   }
 
   @VisibleForTesting

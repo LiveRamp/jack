@@ -15,13 +15,12 @@ public class DbMetricsImpl implements DbMetrics {
 
   private long totalQueries;
   private long maxActiveConnectionsTime;
-  long maxConnectionWaitTime;
+  private long maxConnectionWaitTime;
   private long totalConnectionWaitTime;
   private long totalIdleTimeMaxValue;
   private long totalIdleTimeMinValue;
   private long totalActiveTime;
   private long openedConnections;
-
   //Transactor parameters
 
   private final int maxTotalConnections;
@@ -55,7 +54,6 @@ public class DbMetricsImpl implements DbMetrics {
       totalActiveTime += numActive * updateToNowTime;
       totalConnectionWaitTime += numWaiters * updateToNowTime;
       totalIdleTimeMinValue += numIdle * updateToNowTime;
-
       if (currentConnections > numActive) {
         totalIdleTimeMaxValue += (currentConnections - numActive) * updateToNowTime;
       }
@@ -76,6 +74,16 @@ public class DbMetricsImpl implements DbMetrics {
     } catch (Exception e) {
       LOG.error("failed to update statistics", e);
     }
+  }
+
+  @Override
+  public void pause() {
+    lifeTimeStopwatch.stop();
+  }
+
+  @Override
+  public void resume() {
+    lifeTimeStopwatch.start();
   }
 
   @Override
