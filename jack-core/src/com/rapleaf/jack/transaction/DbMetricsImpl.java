@@ -21,6 +21,7 @@ public class DbMetricsImpl implements DbMetrics {
   private long totalIdleTimeMinValue;
   private long totalActiveTime;
   private long openedConnections;
+  
   //Transactor parameters
 
   private final int maxTotalConnections;
