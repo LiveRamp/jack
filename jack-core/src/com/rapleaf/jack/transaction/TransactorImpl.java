@@ -29,7 +29,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(queryLogSize);
 
-  private boolean loggingEnabled = DbPoolManager.DEFAULT_LOGGING_ENABLED;
+  private boolean metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
 
   TransactorImpl(IDbManager<DB> dbManager) {
     this.dbManager = dbManager;
@@ -72,7 +72,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   TransactorMetrics getQueryMetrics() {
-    if (loggingEnabled) {
+    if (metricsTrackingEnabled) {
       return queryMetrics;
     } else {
       LOG.info("logging disabled, transactor metrics cannot be accessed");
@@ -81,18 +81,19 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public boolean isLoggingEnabled() {
-    return loggingEnabled;
+  public boolean isMetricsTrackingEnabled() {
+    return metricsTrackingEnabled;
   }
 
   @Override
-  public void toggleLogging() {
-    if (loggingEnabled) {
-      loggingEnabled = false;
+  public void toggleMetricsTracking() {
+    if (metricsTrackingEnabled) {
+      metricsTrackingEnabled = false;
     } else {
-      loggingEnabled = true;
+      metricsTrackingEnabled = true;
     }
-    dbManager.toggleLogging();
+    dbManager.toggleMetricsTracking();
+    assert (dbManager.isMetricsTrackingEnabled() == this.isMetricsTrackingEnabled());
   }
 
   DbMetrics getDbMetrics() {
@@ -148,7 +149,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   @Override
   public void close() {
-    if (loggingEnabled) {
+    if (metricsTrackingEnabled) {
       LOG.info(dbManager.getMetrics().getSummary());
       LOG.info("" + "\n" + (queryMetrics.getSummary()));
     }

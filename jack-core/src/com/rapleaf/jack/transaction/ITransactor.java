@@ -20,9 +20,9 @@ public interface ITransactor<DB extends IDb> extends Closeable {
 
   void executeAsTransaction(IExecution<DB> execution);
 
-  boolean isLoggingEnabled();
+  boolean isMetricsTrackingEnabled();
 
-  void toggleLogging();
+  void toggleMetricsTracking();
 
   @Override
   void close();

@@ -25,9 +25,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
-  public static boolean DEFAULT_LOGGING_ENABLED = true;
+  public static boolean DEFAULT_METRICS_TRACKING_ENABLED = true;
   private final DbMetricsImpl metrics;
-  private boolean loggingEnabled = DEFAULT_LOGGING_ENABLED;
+  private boolean metricsTrackingEnabled = DEFAULT_METRICS_TRACKING_ENABLED;
   private final GenericObjectPool<DB> connectionPool;
 
   /**
@@ -86,7 +86,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DB getConnection() {
     try {
-      if (loggingEnabled) {
+      if (metricsTrackingEnabled) {
         metrics.update(true, connectionPool);
       }
       return connectionPool.borrowObject();
@@ -106,7 +106,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void returnConnection(DB connection) {
     try {
-      if (loggingEnabled) {
+      if (metricsTrackingEnabled) {
         metrics.update(false, connectionPool);
       }
       connectionPool.returnObject(connection);
@@ -122,7 +122,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   @Override
   public DbMetrics getMetrics() {
-    if (loggingEnabled) {
+    if (metricsTrackingEnabled) {
       metrics.update(false, connectionPool);
       return metrics;
     } else {
@@ -132,12 +132,17 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   }
 
   @Override
-  public void toggleLogging() {
-    if (loggingEnabled) {
-      loggingEnabled = false;
+  public boolean isMetricsTrackingEnabled() {
+    return metricsTrackingEnabled;
+  }
+
+  @Override
+  public void toggleMetricsTracking() {
+    if (metricsTrackingEnabled) {
+      metricsTrackingEnabled = false;
       metrics.pause();
     } else {
-      loggingEnabled = true;
+      metricsTrackingEnabled = true;
       metrics.resume();
     }
   }

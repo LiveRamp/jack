@@ -15,5 +15,7 @@ interface IDbManager<DB extends IDb> extends Closeable {
 
   DbMetrics getMetrics();
 
-  void toggleLogging();
+  void toggleMetricsTracking();
+
+  boolean isMetricsTrackingEnabled();
 }
