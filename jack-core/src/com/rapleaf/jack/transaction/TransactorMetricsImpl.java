@@ -26,7 +26,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   }
 
 
-  void update(long executionTime, StackTraceElement queryStackTrace) {
+  synchronized void update(long executionTime, StackTraceElement queryStackTrace) {
     if (longestQueries.containsKey(queryStackTrace)) {
       if (longestQueries.get(queryStackTrace) < executionTime) {
         longestTimes.removeFirstOccurrence(longestQueries.get(queryStackTrace));

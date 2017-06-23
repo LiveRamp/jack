@@ -116,6 +116,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   @Override
   public DbMetrics getMetrics() {
+    metrics.update(false, connectionPool);
     return metrics;
   }
 

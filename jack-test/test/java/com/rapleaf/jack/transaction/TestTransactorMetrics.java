@@ -1,9 +1,7 @@
 package com.rapleaf.jack.transaction;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Stopwatch;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
   private ExecutorService executorService;
-  private static final Logger LOG = LoggerFactory.getLogger(TestDbPoolManager.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestTransactorMetrics.class);
 
   @Before
   public void prepare() throws Exception {
@@ -67,29 +65,26 @@ public class TestTransactorMetrics extends JackTestCase {
   @Test
   public void testQueryNumber() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
-    String expectedBio = "test";
 
-    Stopwatch stopwatch = new Stopwatch().start();
-
-    transactor.execute(db -> {
-      User user = db.users().createDefaultInstance();
-      user.setBio(expectedBio).save();
-    });
-
-    System.out.println(stopwatch.elapsedTime(TimeUnit.MILLISECONDS));
-//
-//    transactor.execute(db -> {
-//      User user = db.users().createDefaultInstance();
-//      user.setBio(expectedBio).save();
-//    });
-
-    System.out.println(stopwatch.elapsedTime(TimeUnit.MILLISECONDS));
+    transactor.execute(db -> {});
 
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
-    System.out.println(stopwatch.elapsedTime(TimeUnit.MILLISECONDS));
     assert (queryMetrics.getLongestQueries().size() == 1);
     transactor.close();
-    System.out.println(stopwatch.elapsedTime(TimeUnit.MILLISECONDS));
+  }
+
+  @Test
+  public void testMaxExecutionTime() throws Exception {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+
+    transactor.execute(db -> {
+      Thread.sleep(200);
+    });
+
+    TransactorMetrics queryMetrics = transactor.getQueryMetrics();
+    long maxExecutionTime = queryMetrics.getMaxExecutionTime();
+    assert ((maxExecutionTime > 190) && (maxExecutionTime < 210));
+    transactor.close();
   }
 
 

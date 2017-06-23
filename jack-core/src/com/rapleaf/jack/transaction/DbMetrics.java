@@ -13,9 +13,9 @@ public interface DbMetrics {
 
   double getAverageConnectionExecutionTime();
 
-  double getMinConnectionsProportion();
+  double getAverageIdleConnectionsMaxValue();
 
-  double getAverageIdleConnections();
+  double getAverageIdleConnectionsMinValue();
 
   double getAverageActiveConnections();
 

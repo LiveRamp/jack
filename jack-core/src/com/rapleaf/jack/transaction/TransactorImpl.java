@@ -236,5 +236,4 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return new TransactorImpl<DB>(dbPoolManager);
     }
   }
-
 }

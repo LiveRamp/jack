@@ -7,27 +7,27 @@ import org.slf4j.LoggerFactory;
 
 public class DbMetricsImpl implements DbMetrics {
 
-  private Stopwatch lifeTimeStopwatch;
-  private long lastUpdateTime;
+  private final Stopwatch lifeTimeStopwatch;
+  private long lastUpdateTime = 0;
   private int currentConnections;
 
   //Raw metrics
 
   private long totalQueries;
   private long maxActiveConnectionsTime;
-  private long minIdleConnectionsTime;
   long maxConnectionWaitTime;
   private long totalConnectionWaitTime;
-  private long totalIdleTime;
+  private long totalIdleTimeMaxValue;
+  private long totalIdleTimeMinValue;
   private long totalActiveTime;
   private long openedConnections;
 
   //Transactor parameters
 
-  private int maxTotalConnections;
-  private int minIdleConnections;
-  private long maxWaitMillis;
-  private long keepAliveMillis;
+  private final int maxTotalConnections;
+  private final int minIdleConnections;
+  private final long maxWaitMillis;
+  private final long keepAliveMillis;
 
   private static final Logger LOG = LoggerFactory.getLogger(DbMetricsImpl.class);
 
@@ -41,7 +41,8 @@ public class DbMetricsImpl implements DbMetrics {
     this.keepAliveMillis = keepAliveMillis;
   }
 
-  void update(boolean isOpenConnection, final GenericObjectPool connectionPool) {
+  synchronized void update(boolean isOpenConnection, final GenericObjectPool connectionPool) {
+
     try {
       long updateToNowTime = lifeTimeStopwatch.elapsedMillis() - lastUpdateTime;
       lastUpdateTime = lifeTimeStopwatch.elapsedMillis();
@@ -52,9 +53,12 @@ public class DbMetricsImpl implements DbMetrics {
 
       maxConnectionWaitTime = connectionPool.getMaxBorrowWaitTimeMillis();
       totalActiveTime += numActive * updateToNowTime;
-      totalIdleTime += numIdle * updateToNowTime;
       totalConnectionWaitTime += numWaiters * updateToNowTime;
+      totalIdleTimeMinValue += numIdle * updateToNowTime;
 
+      if (currentConnections > numActive) {
+        totalIdleTimeMaxValue += (currentConnections - numActive) * updateToNowTime;
+      }
       if (isOpenConnection) {
         totalQueries += 1;
       }
@@ -69,9 +73,6 @@ public class DbMetricsImpl implements DbMetrics {
         maxActiveConnectionsTime += updateToNowTime;
       }
 
-      if ((numIdle == minIdleConnections) && (numActive == 0)) {
-        minIdleConnectionsTime += updateToNowTime;
-      }
     } catch (Exception e) {
       LOG.error("failed to update statistics", e);
     }
@@ -105,10 +106,6 @@ public class DbMetricsImpl implements DbMetrics {
     }
   }
 
-  @Override
-  public double getMinConnectionsProportion() {
-    return (double)minIdleConnectionsTime / (double)lifeTimeStopwatch.elapsedMillis();
-  }
 
   @Override
   public long getOpenedConnectionsNumber() {
@@ -116,8 +113,13 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public double getAverageIdleConnections() {
-    return (double)totalIdleTime / (double)lifeTimeStopwatch.elapsedMillis();
+  public double getAverageIdleConnectionsMaxValue() {
+    return (double)totalIdleTimeMaxValue / (double)lifeTimeStopwatch.elapsedMillis();
+  }
+
+  @Override
+  public double getAverageIdleConnectionsMinValue() {
+    return (double)totalIdleTimeMinValue / (double)lifeTimeStopwatch.elapsedMillis();
   }
 
   @Override
@@ -134,20 +136,18 @@ public class DbMetricsImpl implements DbMetrics {
   public String getSummary() {
     String summary = "";
     summary += ("\n-----------------------TRANSACTOR METRICS-----------------------\n");
-    summary += ("\nAverage number of Idle connections : " + String.format("%,.2f ms", getAverageIdleConnections()));
-    summary += ("\nAverage number of Active connections : " + String.format("%,.2f ms", getAverageActiveConnections()));
+    summary += ("\nAverage number of Idle connections is between " + String.format("%,.2f", getAverageIdleConnectionsMinValue()) + " and " + String
+        .format("%,.2f", getAverageIdleConnectionsMaxValue()));
+    summary += ("\nAverage number of Active connections : " + String.format("%,.2f", getAverageActiveConnections()));
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
     summary += ("\nConnections opened : " + String.valueOf(getOpenedConnectionsNumber()));
-    summary += ("\nMax capacity time (%) : " + String.format("%,.2f ms", getMaxConnectionsProportion()));
-    summary += ("\nAll idle time (%) : " + String.format("%,.2f ms", getMinConnectionsProportion()));
+    summary += ("\nMax capacity time (%) : " + String.format("%,.2f", getMaxConnectionsProportion()));
 
-    summary += ("\nAverage connection execution time : " + String.format("%,.2f ms",
-        getAverageConnectionExecutionTime()) + " ms");
-    summary += ("\nAverage connection waiting time : " + String.format("%,.2f ms", getAverageConnectionWaitTime()) +
-        " ms");
+    summary += ("\nAverage connection execution time : " + String.format("%,.2f ms", getAverageConnectionExecutionTime()));
+    summary += ("\nAverage connection waiting time : " + String.format("%,.2f ms", getAverageConnectionWaitTime()));
     summary += ("\nMaximum connection waiting time : " + getMaxConnectionWaitingTime() + " ms");
 
-    summary += ("\nTransactor lifetime : " + String.valueOf(lifeTimeStopwatch.elapsedMillis()) + "ms");
+    summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + "ms");
 
     summary += ("\n\n--------------------TRANSACTOR PARAMETERS--------------------");
     summary += ("\nMin idle connections : " + minIdleConnections);
