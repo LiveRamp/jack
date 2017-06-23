@@ -131,8 +131,9 @@ public class TestDbMetrics extends JackTestCase {
     Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
     future1.get();
     future2.get();
-    sleepMillis(450);
+    sleepMillis(200);
     DbMetrics dbMetrics = transactor.getDbMetrics();
+    assert (dbMetrics.getAverageIdleConnectionsMinValue() >= 1);
     transactor.close();
   }
 
