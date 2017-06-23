@@ -19,9 +19,5 @@ public interface DbMetrics {
 
   double getAverageActiveConnections();
 
-  void pause();
-
-  void resume();
-
   String getSummary();
 }

@@ -31,8 +31,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private boolean metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
 
-  TransactorImpl(IDbManager<DB> dbManager) {
+  TransactorImpl(IDbManager<DB> dbManager, boolean metricsTrackingEnabled) {
     this.dbManager = dbManager;
+    this.metricsTrackingEnabled = metricsTrackingEnabled;
   }
 
   public static <DB extends IDb> Builder<DB> create(Callable<DB> dbConstructor) {
@@ -72,28 +73,10 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   TransactorMetrics getQueryMetrics() {
-    if (metricsTrackingEnabled) {
-      return queryMetrics;
-    } else {
-      LOG.info("logging disabled, transactor metrics cannot be accessed");
-      return null;
+    if (!metricsTrackingEnabled) {
+      LOG.info("the transactor metrics aren't being tracked, it's useless to access them");
     }
-  }
-
-  @Override
-  public boolean isMetricsTrackingEnabled() {
-    return metricsTrackingEnabled;
-  }
-
-  @Override
-  public void toggleMetricsTracking() {
-    if (metricsTrackingEnabled) {
-      metricsTrackingEnabled = false;
-    } else {
-      metricsTrackingEnabled = true;
-    }
-    dbManager.toggleMetricsTracking();
-    assert (dbManager.isMetricsTrackingEnabled() == this.isMetricsTrackingEnabled());
+    return queryMetrics;
   }
 
   DbMetrics getDbMetrics() {
@@ -163,6 +146,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     private int minIdleConnections;
     private long maxWaitMillis;
     private long keepAliveMillis;
+    private boolean metricsTrackingEnabled;
 
     Builder(Callable<DB> dbConstructor) {
       initialize();
@@ -177,6 +161,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       this.minIdleConnections = DbPoolManager.DEFAULT_MIN_IDLE_CONNECTIONS;
       this.maxWaitMillis = DbPoolManager.DEFAULT_MAX_WAIT_TIME;
       this.keepAliveMillis = DbPoolManager.DEFAULT_KEEP_ALIVE_TIME;
+      this.metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
     }
 
     /**
@@ -235,6 +220,11 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return this;
     }
 
+    public Builder<DB> setMetricsTracking(boolean metricsTrackingEnabled) {
+      this.metricsTrackingEnabled = metricsTrackingEnabled;
+      return this;
+    }
+
     /**
      * Returns a new transactor impl using the parameters specified during the building
      * process. After building, builder parameters are re-initialized and not shared
@@ -249,8 +239,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     private static <DB extends IDb> TransactorImpl<DB> build(Builder<DB> builder) {
       DbPoolManager<DB> dbPoolManager = new DbPoolManager<DB>(builder.dbConstructor, builder.maxTotalConnections,
-          builder.minIdleConnections, builder.maxWaitMillis, builder.keepAliveMillis);
-      return new TransactorImpl<DB>(dbPoolManager);
+          builder.minIdleConnections, builder.maxWaitMillis, builder.keepAliveMillis, builder.metricsTrackingEnabled);
+      return new TransactorImpl<DB>(dbPoolManager, builder.metricsTrackingEnabled);
     }
   }
 }

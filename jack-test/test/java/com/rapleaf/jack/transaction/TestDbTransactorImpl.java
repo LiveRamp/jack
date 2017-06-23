@@ -17,7 +17,6 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
-import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;

@@ -27,7 +27,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
   public static boolean DEFAULT_METRICS_TRACKING_ENABLED = true;
   private final DbMetricsImpl metrics;
-  private boolean metricsTrackingEnabled = DEFAULT_METRICS_TRACKING_ENABLED;
+  private final boolean metricsTrackingEnabled;
   private final GenericObjectPool<DB> connectionPool;
 
   /**
@@ -44,7 +44,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
    *                            eligible for eviction (with the extra condition that at least {@code minIdleConnections}
    *                            connections remain in the pool).
    */
-  DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime) {
+  DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime, boolean metricsTrackingEnabled) {
     GenericObjectPoolConfig config = new GenericObjectPoolConfig();
     config.setFairness(true);
     config.setBlockWhenExhausted(true);
@@ -73,8 +73,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
 
     this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
-    this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config
-        .getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
+    this.metricsTrackingEnabled = metricsTrackingEnabled;
+    this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config.getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
   }
 
   /**
@@ -122,29 +122,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   @Override
   public DbMetrics getMetrics() {
-    if (metricsTrackingEnabled) {
-      metrics.update(false, connectionPool);
-      return metrics;
-    } else {
-      LOG.info("logging disabled, db metrics cannot be accessed");
-      return null;
+    if (!metricsTrackingEnabled) {
+      LOG.info("the db metrics aren't being tracked, it's useless to access them");
     }
-  }
-
-  @Override
-  public boolean isMetricsTrackingEnabled() {
-    return metricsTrackingEnabled;
-  }
-
-  @Override
-  public void toggleMetricsTracking() {
-    if (metricsTrackingEnabled) {
-      metricsTrackingEnabled = false;
-      metrics.pause();
-    } else {
-      metricsTrackingEnabled = true;
-      metrics.resume();
-    }
+    metrics.update(false, connectionPool);
+    return metrics;
   }
 
   @VisibleForTesting

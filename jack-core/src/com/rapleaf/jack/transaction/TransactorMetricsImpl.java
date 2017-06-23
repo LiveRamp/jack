@@ -89,7 +89,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
     String log = "";
     log += "\n--------------" + longestQueriesListSize + " QUERIES WITH LONGEST EXECUTION TIME-----------------\n";
     for (Map.Entry<StackTraceElement, Long> query : sortedMap.entrySet()) {
-      log += "\nClass name : " + query.getKey().getClassName();
+      log += "\nClass name : " + query.getKey().getClass().getName();
       log += "\nLine number : " + query.getKey().getLineNumber();
       log += "\nExecution runtime : " + query.getValue() + "\n";
     }

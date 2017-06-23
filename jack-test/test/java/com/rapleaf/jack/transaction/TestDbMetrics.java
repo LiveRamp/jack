@@ -129,14 +129,12 @@ public class TestDbMetrics extends JackTestCase {
   public void testAverageIdleConnections() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.millis
         (50)).get();
-    executorService = Executors.newFixedThreadPool(5);
-    Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
-    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
-    future1.get();
-    future2.get();
-    sleepMillis(200);
+    transactor.execute(a -> {sleepMillis(100);});
+    sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert (dbMetrics.getAverageIdleConnectionsMinValue() >= 1);
+    double averageIdleConnectionsMaxValue = dbMetrics.getAverageIdleConnectionsMaxValue();
+    LOG.info(String.format("average Idle connections number <= %,.2f", averageIdleConnectionsMaxValue));
+    assert (averageIdleConnectionsMaxValue <= .6);
   }
 
   @Test
@@ -149,6 +147,5 @@ public class TestDbMetrics extends JackTestCase {
     LOG.info("average active connections : " + averageActiveConnections);
     assert ((averageActiveConnections > .40) && (averageActiveConnections < .60));
   }
-
 
 }

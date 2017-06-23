@@ -31,7 +31,7 @@ public class TestMockTransactorImpl extends JackTestCase {
   public void prepare() throws Exception {
     db = mock(IDatabase1.class);
     dbManager = mock(IDbManager.class, RETURNS_DEEP_STUBS);
-    transactor = new TransactorImpl<>(dbManager);
+    transactor = new TransactorImpl<>(dbManager, false);
     when(dbManager.getConnection()).thenReturn(db);
     when(dbManager.getMetrics().getSummary()).thenReturn("");
     when(db.deleteAll()).thenReturn(true);

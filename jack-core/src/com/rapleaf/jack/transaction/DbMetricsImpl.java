@@ -77,16 +77,6 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public void pause() {
-    lifeTimeStopwatch.stop();
-  }
-
-  @Override
-  public void resume() {
-    lifeTimeStopwatch.start();
-  }
-
-  @Override
   public long getTotalQueries() {
     return totalQueries;
   }
@@ -144,17 +134,16 @@ public class DbMetricsImpl implements DbMetrics {
   public String getSummary() {
     String summary = "";
     summary += ("\n-----------------------TRANSACTOR METRICS-----------------------\n");
-    summary += ("\nAverage number of Idle connections is between " + String.format("%,.2f", getAverageIdleConnectionsMinValue()) + " and " + String
-        .format("%,.2f", getAverageIdleConnectionsMaxValue()));
-    summary += ("\nAverage number of Active connections : " + String.format("%,.2f", getAverageActiveConnections()));
+
+    summary += String.format("\nAverage number of Idle connections is between %,.2f and %,.2f", getAverageIdleConnectionsMinValue(), getAverageIdleConnectionsMaxValue());
+    summary += String.format("\nAverage number of Active connections : %,.2f", getAverageActiveConnections());
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
-    summary += ("\nConnections opened : " + String.valueOf(getOpenedConnectionsNumber()));
-    summary += ("\nMax capacity time (%) : " + String.format("%,.2f", getMaxConnectionsProportion()));
+    summary += ("\nConnections opened : " + getOpenedConnectionsNumber());
+    summary += String.format("\n Max capacity time (%%)" + " : %,.2f ", getMaxConnectionsProportion());
 
-    summary += ("\nAverage connection execution time : " + String.format("%,.2f ms", getAverageConnectionExecutionTime()));
-    summary += ("\nAverage connection waiting time : " + String.format("%,.2f ms", getAverageConnectionWaitTime()));
-    summary += ("\nMaximum connection waiting time : " + getMaxConnectionWaitingTime() + " ms");
-
+    summary += String.format("\nAverage connection execution time : %,.2f ms", getAverageConnectionExecutionTime());
+    summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitTime());
+    summary += String.format("\nMaximum connection waiting time : %1$d    ms", getMaxConnectionWaitingTime());
     summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + "ms");
 
     summary += ("\n\n--------------------TRANSACTOR PARAMETERS--------------------");
