@@ -92,21 +92,17 @@ public class TestDbMetrics extends JackTestCase {
 
   @Test
   public void testAverageConnectionWaitingTime() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
     executorService = Executors.newFixedThreadPool(5);
 
     Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
     Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
-    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future4 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
     future1.get();
     future2.get();
-    future3.get();
-    future4.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double averageConnectionWaitTime = dbMetrics.getAverageConnectionWaitTime();
     transactor.close();
-    assert ((averageConnectionWaitTime >= 50) && (averageConnectionWaitTime < 75));
+    assert (averageConnectionWaitTime >= 50);
   }
 
   @Test
