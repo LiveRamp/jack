@@ -64,14 +64,13 @@ public class TestDbMetrics extends JackTestCase {
 
     Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
     Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
-    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(100);}));
     future1.get();
     future2.get();
-    future3.get();
+    sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
     transactor.close();
-    assert ((maxConnectionsProportion > .40) && (maxConnectionsProportion < .60));
+    assert (maxConnectionsProportion > .45);
   }
 
 
@@ -118,7 +117,7 @@ public class TestDbMetrics extends JackTestCase {
     double averageConnectionExecutionTime = dbMetrics.getAverageConnectionExecutionTime();
     transactor.close();
 
-    assert ((averageConnectionExecutionTime >= 100) && (averageConnectionExecutionTime < 150));
+    assert (averageConnectionExecutionTime >= 100);
   }
 
   @Test

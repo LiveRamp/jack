@@ -12,7 +12,6 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
-import com.rapleaf.jack.test_project.database_1.models.User;
 
 public class TestTransactorMetrics extends JackTestCase {
 
@@ -34,23 +33,13 @@ public class TestTransactorMetrics extends JackTestCase {
   public void testQueryOrder() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
-    String expectedBio = "test";
+    transactor.execute(db -> {sleepMillis(200);});
 
     transactor.execute(db -> {
-      User user = db.users().createDefaultInstance();
-      user.setBio(expectedBio).save();
-      sleepMillis(200);
-    });
-
-    transactor.execute(db -> {
-      User user = db.users().createDefaultInstance();
-      user.setBio(expectedBio).save();
       sleepMillis(100);
     });
 
     transactor.execute(db -> {
-      User user = db.users().createDefaultInstance();
-      user.setBio(expectedBio).save();
     });
 
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
