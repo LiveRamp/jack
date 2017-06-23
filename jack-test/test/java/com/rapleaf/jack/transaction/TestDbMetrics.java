@@ -38,7 +38,6 @@ public class TestDbMetrics extends JackTestCase {
     transactor.execute(db -> {});
     DbMetrics dbMetrics = transactor.getDbMetrics();
     assert (dbMetrics.getTotalQueries() == 1);
-    transactor.close();
   }
 
   @Test
@@ -54,7 +53,6 @@ public class TestDbMetrics extends JackTestCase {
     future3.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
     assert (dbMetrics.getOpenedConnectionsNumber() == 2);
-    transactor.close();
   }
 
   @Test
@@ -69,8 +67,9 @@ public class TestDbMetrics extends JackTestCase {
     future2.get();
     future3.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert ((dbMetrics.getMaxConnectionsProportion() > .45) && (dbMetrics.getMaxConnectionsProportion() < .55));
-    transactor.close();
+    double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
+    LOG.info("max connections proportion : " + maxConnectionsProportion);
+    assert ((maxConnectionsProportion > .40) && (maxConnectionsProportion < .60));
   }
 
 
@@ -86,8 +85,9 @@ public class TestDbMetrics extends JackTestCase {
     future2.get();
     future3.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert ((dbMetrics.getMaxConnectionWaitingTime() > 100) && (dbMetrics.getMaxConnectionWaitingTime() < 150));
-    transactor.close();
+    double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
+    LOG.info("max connections waiting time : " + maxConnectionsWaitingTime);
+    assert ((maxConnectionsWaitingTime > 100) && (maxConnectionsWaitingTime < 150));
   }
 
   @Test
@@ -104,8 +104,9 @@ public class TestDbMetrics extends JackTestCase {
     future3.get();
     future4.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert ((dbMetrics.getAverageConnectionWaitTime() >= 50) && (dbMetrics.getAverageConnectionWaitTime() < 75));
-    transactor.close();
+    double averageConnectionWaitTime = dbMetrics.getAverageConnectionWaitTime();
+    LOG.info("average connection waiting time  : " + averageConnectionWaitTime);
+    assert ((averageConnectionWaitTime >= 50) && (averageConnectionWaitTime < 75));
   }
 
   @Test
@@ -118,8 +119,10 @@ public class TestDbMetrics extends JackTestCase {
     future1.get();
     future2.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert ((dbMetrics.getAverageConnectionExecutionTime() >= 100) && (dbMetrics.getAverageConnectionExecutionTime() < 130));
-    transactor.close();
+    double averageConnectionExecutionTime = dbMetrics.getAverageConnectionExecutionTime();
+    LOG.info("average connection execution time  : " + averageConnectionExecutionTime);
+
+    assert ((averageConnectionExecutionTime >= 100) && (averageConnectionExecutionTime < 150));
   }
 
   @Test
@@ -134,7 +137,6 @@ public class TestDbMetrics extends JackTestCase {
     sleepMillis(200);
     DbMetrics dbMetrics = transactor.getDbMetrics();
     assert (dbMetrics.getAverageIdleConnectionsMinValue() >= 1);
-    transactor.close();
   }
 
   @Test
@@ -144,8 +146,8 @@ public class TestDbMetrics extends JackTestCase {
     sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double averageActiveConnections = dbMetrics.getAverageActiveConnections();
-    assert ((averageActiveConnections > .45) && (averageActiveConnections < .55));
-    transactor.close();
+    LOG.info("average active connections : " + averageActiveConnections);
+    assert ((averageActiveConnections > .40) && (averageActiveConnections < .60));
   }
 
 

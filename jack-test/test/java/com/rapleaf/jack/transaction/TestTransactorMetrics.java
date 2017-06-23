@@ -83,7 +83,8 @@ public class TestTransactorMetrics extends JackTestCase {
 
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
     long maxExecutionTime = queryMetrics.getMaxExecutionTime();
-    assert ((maxExecutionTime > 190) && (maxExecutionTime < 210));
+    LOG.info("max execution time : " + maxExecutionTime);
+    assert ((maxExecutionTime >= 190) && (maxExecutionTime < 230));
     transactor.close();
   }
 
