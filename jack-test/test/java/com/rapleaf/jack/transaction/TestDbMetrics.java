@@ -122,8 +122,7 @@ public class TestDbMetrics extends JackTestCase {
 
   @Test
   public void testAverageIdleConnections() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.millis
-        (50)).get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.millis(50)).get();
     transactor.execute(a -> {sleepMillis(100);});
     sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();

@@ -60,8 +60,8 @@ public class TransactorMetricsImpl implements TransactorMetrics {
       log += "\nClass name : " + query.getQueryTrace().getClassName();
       log += "\nLine number : " + query.getQueryTrace().getLineNumber();
       log += String.format("\nAverage execution runtime : %,.2f", query.getAverageExecutionTime());
+      log += "\nExecution count >= " + query.getCount();
     }
     return log;
-
   }
 }

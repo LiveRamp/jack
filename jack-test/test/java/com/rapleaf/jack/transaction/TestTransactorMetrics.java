@@ -34,9 +34,7 @@ public class TestTransactorMetrics extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     transactor.execute(db -> {sleepMillis(200);});
-
     transactor.execute(db -> {sleepMillis(100);});
-
     transactor.execute(db -> {});
 
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
@@ -53,10 +51,8 @@ public class TestTransactorMetrics extends JackTestCase {
   public void testMaxAverageExecutionTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
-    transactor.execute(db -> {
-      Thread.sleep(200);
-    });
-
+    transactor.execute(db -> {Thread.sleep(200);});
+    
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
     double maxExecutionTime = queryMetrics.getLongestQueries().getFirst().getAverageExecutionTime();
     LOG.info("max execution time : " + maxExecutionTime);

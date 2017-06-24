@@ -47,5 +47,4 @@ class TransactorMetricElementsComparator implements Comparator<TransactorMetricE
     }
   }
 
-
 }
