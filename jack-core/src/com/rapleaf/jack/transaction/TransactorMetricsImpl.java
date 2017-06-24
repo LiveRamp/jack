@@ -1,97 +1,65 @@
 package com.rapleaf.jack.transaction;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.PriorityQueue;
 
 public class TransactorMetricsImpl implements TransactorMetrics {
-  int longestQueriesListSize;
+  int longestQueriesSize;
 
-
-  LinkedList<Long> longestTimes;
-
-  HashMap<StackTraceElement, Long> longestQueries;
-
+  PriorityQueue<TransactorMetricElement> longestQueries;
+  HashMap<StackTraceElement, TransactorMetricElement> longestQueriesMap;
+  Comparator<TransactorMetricElement> queryComparator;
 
   //Contains a map with the *longestQueriesListSize* queries that took the most time to execute and their execution time
 
-
   TransactorMetricsImpl(int longestQueriesSize) {
-    this.longestQueriesListSize = longestQueriesSize;
-    this.longestQueries = new HashMap<>();
-    this.longestTimes = new LinkedList<>();
+    this.longestQueriesSize = longestQueriesSize;
+    this.longestQueriesMap = new HashMap<>();
+    this.queryComparator = new TransactorMetricElementsComparator().reversed();
+    this.longestQueries = new PriorityQueue<>(longestQueriesSize, queryComparator);
   }
-
 
   synchronized void update(long executionTime, StackTraceElement queryStackTrace) {
-    if (longestQueries.containsKey(queryStackTrace)) {
-      if (longestQueries.get(queryStackTrace) < executionTime) {
-        longestTimes.removeFirstOccurrence(longestQueries.get(queryStackTrace));
-        longestTimes.add(executionTime);
-        longestQueries.put(queryStackTrace, executionTime);
-        Collections.sort(longestTimes);
-      }
+    if (longestQueriesMap.containsKey(queryStackTrace)) {
+      TransactorMetricElement query = longestQueriesMap.get(queryStackTrace);
+      longestQueries.remove(query);
+      query.addExecution(executionTime);
+      longestQueries.add(query);
     } else {
-      if (longestTimes.size() < longestQueriesListSize) {
-        longestTimes.add(executionTime);
-        longestQueries.put(queryStackTrace, executionTime);
-      } else if (executionTime > longestTimes.get(0)) {
-        for (StackTraceElement k : longestQueries.keySet()) {
-          if (longestQueries.get(k) == longestTimes.get(0)) {
-            longestQueries.remove(k);
-            longestTimes.remove(0);
-            longestTimes.add(executionTime);
-            longestQueries.put(queryStackTrace, executionTime);
-            Collections.sort(longestTimes);
-            break;
-          }
-        }
+      TransactorMetricElement newQuery = new TransactorMetricElement(queryStackTrace, executionTime);
+      if (longestQueriesMap.size() < longestQueriesSize) {
+        longestQueriesMap.put(queryStackTrace, newQuery);
+        longestQueries.add(newQuery);
+      } else if (queryComparator.compare(newQuery, longestQueries.peek()) > 0) {
+        TransactorMetricElement removedQuery = longestQueries.poll();
+        longestQueriesMap.remove(removedQuery.getQueryTrace());
+        longestQueriesMap.put(newQuery.getQueryTrace(), newQuery);
+        longestQueries.add(newQuery);
       }
     }
   }
 
-
   @Override
-  public long getMaxExecutionTime() {
-    return longestTimes.getLast();
-  }
-
-  @Override
-  public LinkedHashMap<StackTraceElement, Long> getLongestQueries() {
-    return longestQueries.entrySet()
-        .stream()
-        .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
-        .collect(Collectors.toMap(
-            Map.Entry::getKey,
-            Map.Entry::getValue,
-            (e1, e2) -> e1,
-            LinkedHashMap::new
-        ));
-  }
-
-  @Override
-  public StackTraceElement getMaxExecutionTimeQuery() {
-    for (StackTraceElement k : longestQueries.keySet()) {
-      if (longestQueries.get(k) == getMaxExecutionTime()) {
-        return k;
-      }
+  public synchronized LinkedList<TransactorMetricElement> getLongestQueries() {
+    LinkedList<TransactorMetricElement> longestQueriesList = new LinkedList<>();
+    while (longestQueries.size() > 0) {
+      longestQueriesList.add(longestQueries.poll());
     }
-    return null;
+    longestQueries.addAll(longestQueriesList);
+    return longestQueriesList;
   }
-
 
   @Override
   public String getSummary() {
-    LinkedHashMap<StackTraceElement, Long> sortedMap = getLongestQueries();
+    LinkedList<TransactorMetricElement> longestQueriesList = getLongestQueries();
     String log = "";
-    log += "\n--------------" + longestQueriesListSize + " QUERIES WITH LONGEST EXECUTION TIME-----------------\n";
-    for (Map.Entry<StackTraceElement, Long> query : sortedMap.entrySet()) {
-      log += "\nClass name : " + query.getKey().getClass().getName();
-      log += "\nLine number : " + query.getKey().getLineNumber();
-      log += "\nExecution runtime : " + query.getValue() + "\n";
+    log += "\n--------------" + longestQueriesSize + " QUERIES WITH LONGEST EXECUTION TIME-----------------\n";
+    for (TransactorMetricElement query : longestQueriesList) {
+      log += "\nClass name : " + query.getQueryTrace().getClassName();
+      log += "\nLine number : " + query.getQueryTrace().getLineNumber();
+      log += String.format("\nAverage execution runtime : %,.2f", query.getAverageExecutionTime());
     }
     return log;
 

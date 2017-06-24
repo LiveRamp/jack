@@ -1,14 +1,10 @@
 package com.rapleaf.jack.transaction;
 
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public interface TransactorMetrics {
 
-  long getMaxExecutionTime();
-
-  StackTraceElement getMaxExecutionTimeQuery();
-
-  LinkedHashMap<StackTraceElement, Long> getLongestQueries();
+  LinkedList<TransactorMetricElement> getLongestQueries();
 
   String getSummary();
 
