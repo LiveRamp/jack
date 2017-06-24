@@ -70,7 +70,7 @@ public class TestDbMetrics extends JackTestCase {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
     transactor.close();
-    assert (maxConnectionsProportion > .45);
+    assert (maxConnectionsProportion > .3);
   }
 
 
