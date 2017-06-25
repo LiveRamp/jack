@@ -130,4 +130,9 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
     assertTrue(record.getList(STRING_LIST_KEY).isEmpty());
   }
 
+  @Test(expected = NullPointerException.class)
+  public void testNullJson() throws Exception {
+    jackStore.within("scope").indexRecord().putJson("key", null).execute();
+  }
+
 }
