@@ -1,18 +1,25 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.queries.Record;
+import com.rapleaf.jack.store.json.JsonDbHelper;
+import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
@@ -69,9 +76,25 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testJsonInsertion() throws Exception {
+    List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(JSON_VALUE);
+    Map<String, String> tupleMap = Maps.newHashMap();
+    for (JsonDbTuple tuple : tuples) {
+      // key is prepended to json tuple path
+      tupleMap.put(String.format("%s.%s", JSON_KEY, tuple.getFullPaths()), tuple.getValue());
+    }
     jackStore.within("scope").indexRecord().putJson(JSON_KEY, JSON_VALUE).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.startsWith(JSON_KEY)).fetch());
     assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
+    for (Record record : records) {
+      String key = record.get(TestStore.KEY);
+      String value = record.get(TestStore.VALUE);
+      assertTrue(tupleMap.containsKey(key));
+      if (value == null) {
+        assertNull(tupleMap.get(key));
+      } else {
+        assertEquals(tupleMap.get(key), value);
+      }
+    }
   }
 
   @Test(expected = NullPointerException.class)

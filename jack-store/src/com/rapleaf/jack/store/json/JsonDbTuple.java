@@ -36,7 +36,7 @@ public class JsonDbTuple {
   }
 
   public String getFullPaths() {
-    return toString();
+    return Joiner.on(JsonDbConstants.PATH_SEPARATOR).join(paths);
   }
 
   public List<TuplePath> getPaths() {
@@ -49,7 +49,7 @@ public class JsonDbTuple {
 
   @Override
   public String toString() {
-    return String.format("%s: %s", Joiner.on(JsonDbConstants.PATH_SEPARATOR).join(paths), value);
+    return String.format("%s: %s", getFullPaths(), value);
   }
 
 }

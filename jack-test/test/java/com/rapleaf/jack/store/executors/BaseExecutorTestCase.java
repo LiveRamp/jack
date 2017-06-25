@@ -40,7 +40,7 @@ public class BaseExecutorTestCase {
   protected static final String STRING_VALUE = "s40";
 
   protected static final String JSON_KEY = "json";
-  protected static final String JSON_STRING = "{key: [[1, 2, [[3]]], [{k1: v1, k2: v2}, 4, 5], {k3: v3}]}";
+  protected static final String JSON_STRING = "{key: [[1, 2, [[]]], [{k1: v1, k2: v2}, 4, 5], {k3: v3}], k4: null}";
   protected static final JsonObject JSON_VALUE = new JsonParser().parse(JSON_STRING).getAsJsonObject();
 
   protected static final String BOOLEAN_LIST_KEY = "boolean-list";
