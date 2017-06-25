@@ -60,7 +60,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
           values.put(key, value);
           break;
         case JSON:
-          JsonDbTuple tuple = JsonDbHelper.toTuple(key, type, value);
+          JsonDbTuple tuple = JsonDbTuple.create(key, type, value);
           jsonKeys.add(tuple.getPaths().get(0).getName().get());
           jsonTuples.add(tuple);
           break;
