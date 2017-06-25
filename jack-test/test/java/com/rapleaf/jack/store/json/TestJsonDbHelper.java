@@ -59,11 +59,17 @@ public class TestJsonDbHelper {
   public void testNullString() throws Exception {
     jsonString = "{key: \"null\"}";
     testJson();
+
+    jsonString = "{key: [\"null\"]}";
+    testJson();
   }
 
   @Test
   public void testNull() throws Exception {
     jsonString = "{key: null}";
+    testJson();
+
+    jsonString = "{key: [null]}";
     testJson();
   }
 
@@ -138,7 +144,8 @@ public class TestJsonDbHelper {
         "         deepKey: 0.54," +
         "         deepArray: [false, true, false]," +
         "         emptyObject: {}" +
-        "       }" +
+        "       }," +
+        "    deepArray: [21, 22, 23]" +
         "  }," +
         "arraysInArray :" +
         "  [" +

@@ -16,7 +16,10 @@ import com.google.gson.JsonPrimitive;
 
 import com.rapleaf.jack.store.ValueType;
 
-public class JsonDbHelper {
+public final class JsonDbHelper {
+
+  private JsonDbHelper() {
+  }
 
   public static List<JsonDbTuple> toTupleList(JsonObject json) {
     return toTupleList(Collections.emptyList(), json);
@@ -140,11 +143,12 @@ public class JsonDbHelper {
 
       if (!tailPaths.isEmpty()) {
         addChildPathToParentArray(childArray, childIndex.get(), tailPaths, type, value);
-      } else if (value != null) {
-        Preconditions.checkState(childArray.size() == childIndex.get());
-        childArray.add(getJsonElement(type, value));
       } else {
-        Preconditions.checkState(childArray.size() == 0);
+        // tuples are sorted by name, and this element must have not been added to the array
+        Preconditions.checkState(childArray.size() == childIndex.get());
+        if (type != ValueType.JSON_EMPTY) {
+          childArray.add(getJsonElement(type, value));
+        }
       }
     } else {
       // when the child has no name, the parent must be an array
@@ -153,43 +157,39 @@ public class JsonDbHelper {
 
       if (!tailPaths.isEmpty()) {
         addChildPathToParentArray(parentArray, childIndex.get(), tailPaths, type, value);
-      } else if (value != null) {
-        Preconditions.checkState(parentArray.size() == childIndex.get());
-        parentArray.add(getJsonElement(type, value));
       } else {
-        Preconditions.checkState(parentArray.size() == 0);
+        // tuples are sorted by name, and this element must have not been added to the array
+        Preconditions.checkState(parentArray.size() == childIndex.get());
+        if (type != ValueType.JSON_EMPTY) {
+          parentArray.add(getJsonElement(type, value));
+        }
       }
     }
   }
 
   private static void addElementPath(JsonElement parentElement, ElementPath childPath, List<TuplePath> tailPaths, ValueType type, String value) {
+    // parent element must be an object because it has an element path
+    Preconditions.checkState(parentElement.isJsonObject());
+    // child path must have a name because it is an element path
     Optional<String> childName = childPath.getName();
     Preconditions.checkState(childName.isPresent());
 
-    final JsonObject parentObject;
-    if (parentElement.isJsonArray()) {
-      parentObject = new JsonObject();
-      parentElement.getAsJsonArray().add(parentObject);
-    } else {
-      parentObject = parentElement.getAsJsonObject();
-    }
-
+    final JsonObject parentObject = parentElement.getAsJsonObject();
     if (!tailPaths.isEmpty()) {
-      addChildPathToParentObject(parentObject, childName.get(), tailPaths, type, value);
+      addElementChildPathToParentObject(parentObject, childName.get(), tailPaths, type, value);
     } else {
       parentObject.add(childName.get(), getJsonElement(type, value));
     }
   }
 
-  private static void addChildPathToParentObject(JsonObject parentObject, String childPathName, List<TuplePath> tailPaths, ValueType type, String value) {
+  private static void addElementChildPathToParentObject(JsonObject parentObject, String childPathName, List<TuplePath> tailPaths, ValueType type, String value) {
     TuplePath nextChildPath = tailPaths.get(0);
     final JsonElement childElement;
     if (!parentObject.has(childPathName)) {
-      if (nextChildPath.getName().isPresent() || !nextChildPath.isArray()) {
-        childElement = new JsonObject();
-      } else {
-        childElement = new JsonArray();
-      }
+      // current child must be an object because it is an element path
+      childElement = new JsonObject();
+      // next child must have a name because the current child is an object
+      Preconditions.checkArgument(nextChildPath.getName().isPresent());
       parentObject.add(childPathName, childElement);
     } else {
       childElement = parentObject.get(childPathName);
