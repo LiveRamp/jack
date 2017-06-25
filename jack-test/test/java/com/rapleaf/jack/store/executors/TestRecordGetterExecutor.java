@@ -23,6 +23,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
         .putDouble(DOUBLE_KEY, DOUBLE_VALUE)
         .putDateTime(DATETIME_KEY, DATETIME_VALUE)
         .putString(STRING_KEY, STRING_VALUE)
+        .putJson(JSON_KEY, JSON_VALUE)
         .putBooleanList(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE)
         .putIntList(INT_LIST_KEY, INT_LIST_VALUE)
         .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
@@ -50,6 +51,9 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
     assertEquals(STRING_VALUE, record.getString(STRING_KEY));
     assertEquals(STRING_VALUE, record.get(STRING_KEY));
+
+    assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
+    assertEquals(JSON_VALUE, record.get(JSON_KEY));
 
     assertEquals(BOOLEAN_LIST_VALUE, record.getBooleanList(BOOLEAN_LIST_KEY));
     assertEquals(BOOLEAN_LIST_VALUE, record.getList(BOOLEAN_LIST_KEY));

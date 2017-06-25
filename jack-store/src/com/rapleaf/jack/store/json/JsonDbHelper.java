@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -15,7 +16,44 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.rapleaf.jack.store.ValueType;
+
 public class JsonDbHelper {
+
+  public static JsonDbTuple toTuple(String fullPath, ValueType type, String value) {
+    Preconditions.checkArgument(type.getCategory() == ValueType.Category.JSON);
+
+    List<TuplePath> paths = Lists.newLinkedList();
+    for (String path : fullPath.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR))) {
+      String[] listPathSplits = path.split(Pattern.quote(JsonDbConstants.LIST_PATH_SEPARATOR));
+      if (listPathSplits.length == 3 && NumberUtils.isDigits(listPathSplits[1]) && NumberUtils.isDigits(listPathSplits[2])) {
+        int index = Integer.valueOf(listPathSplits[1]);
+        int size = Integer.valueOf(listPathSplits[2]);
+        if (listPathSplits[0].equals(JsonDbConstants.KEYLESS_ARRAY_NAME)) {
+          paths.add(new ArrayPath(Optional.empty(), index, size));
+        } else {
+          paths.add(new ArrayPath(Optional.of(listPathSplits[0]), index, size));
+        }
+      } else {
+        paths.add(new ElementPath(path));
+      }
+    }
+
+    switch (type) {
+      case JSON_STRING:
+        return JsonDbTuple.createString(paths, value);
+      case JSON_BOOLEAN:
+        return JsonDbTuple.createBoolean(paths, value);
+      case JSON_NUMBER:
+        return JsonDbTuple.createNumber(paths, value);
+      case JSON_NULL:
+        return JsonDbTuple.createNull(paths);
+      case JSON_EMPTY:
+        return JsonDbTuple.createEmpty(paths);
+      default:
+        throw new IllegalArgumentException("Unexpected json type: " + type.name());
+    }
+  }
 
   public static List<JsonDbTuple> toTupleList(JsonObject json) {
     return toTupleList(Collections.emptyList(), json);
@@ -26,7 +64,7 @@ public class JsonDbHelper {
 
     Set<Map.Entry<String, JsonElement>> entrySet = json.entrySet();
     if (entrySet.size() == 0) {
-      tuples.add(JsonDbTuple.createEmptyObject(parentPaths));
+      tuples.add(JsonDbTuple.createEmpty(parentPaths));
     }
 
     for (Map.Entry<String, JsonElement> entry : entrySet) {
@@ -41,7 +79,7 @@ public class JsonDbHelper {
 
       childPaths.add(new ElementPath(entry.getKey()));
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(JsonDbTuple.create(childPaths, jsonElement.getAsJsonPrimitive().getAsString()));
+        tuples.add(createPrimitiveTuple(childPaths, jsonElement.getAsJsonPrimitive()));
       } else if (jsonElement.isJsonObject()) {
         tuples.addAll(toTupleList(childPaths, jsonElement.getAsJsonObject()));
       } else if (jsonElement.isJsonNull()) {
@@ -61,7 +99,7 @@ public class JsonDbHelper {
     if (size == 0) {
       List<TuplePath> childPaths = Lists.newArrayList(parentPaths);
       childPaths.add(new ArrayPath(arrayName, 0, 0));
-      tuples.add(JsonDbTuple.createEmptyObject(childPaths));
+      tuples.add(JsonDbTuple.createEmpty(childPaths));
     }
 
     for (int i = 0; i < jsonArray.size(); i++) {
@@ -71,7 +109,7 @@ public class JsonDbHelper {
       JsonElement jsonElement = jsonArray.get(i);
 
       if (jsonElement.isJsonPrimitive()) {
-        tuples.add(JsonDbTuple.create(childPaths, jsonElement.getAsJsonPrimitive().getAsString()));
+        tuples.add(createPrimitiveTuple(childPaths, jsonElement.getAsJsonPrimitive()));
       } else if (jsonElement.isJsonArray()) {
         JsonArray keylessArray = jsonElement.getAsJsonArray();
         tuples.addAll(getTupleListFromArray(childPaths, Optional.empty(), keylessArray));
@@ -87,25 +125,35 @@ public class JsonDbHelper {
     return tuples;
   }
 
+  private static JsonDbTuple createPrimitiveTuple(List<TuplePath> childPaths, JsonPrimitive jsonPrimitive) {
+    if (jsonPrimitive.isBoolean()) {
+      return JsonDbTuple.createBoolean(childPaths, jsonPrimitive.getAsString());
+    } else if (jsonPrimitive.isNumber()) {
+      return JsonDbTuple.createNumber(childPaths, jsonPrimitive.getAsString());
+    } else {
+      return JsonDbTuple.createString(childPaths, jsonPrimitive.getAsString());
+    }
+  }
+
   public static JsonObject fromTupleList(List<JsonDbTuple> tuples) {
     JsonObject json = new JsonObject();
     for (JsonDbTuple tuple : tuples) {
-      processTuple(json, tuple.getPaths(), tuple.getValue());
+      processTuple(json, tuple.getPaths(), tuple.getType(), tuple.getValue());
     }
     return json;
   }
 
-  private static void processTuple(JsonElement parentElement, List<TuplePath> paths, String value) {
+  private static void processTuple(JsonElement parentElement, List<TuplePath> paths, ValueType type, String value) {
     Preconditions.checkArgument(!paths.isEmpty());
     TuplePath childPath = paths.get(0);
     if (childPath.isArray()) {
-      addArrayPath(parentElement, (ArrayPath)childPath, paths.subList(1, paths.size()), value);
+      addArrayPath(parentElement, (ArrayPath)childPath, paths.subList(1, paths.size()), type, value);
     } else {
-      addElementPath(parentElement, (ElementPath)childPath, paths.subList(1, paths.size()), value);
+      addElementPath(parentElement, (ElementPath)childPath, paths.subList(1, paths.size()), type, value);
     }
   }
 
-  private static void addArrayPath(JsonElement parentElement, ArrayPath childPath, List<TuplePath> tailPaths, String value) {
+  private static void addArrayPath(JsonElement parentElement, ArrayPath childPath, List<TuplePath> tailPaths, ValueType type, String value) {
     Optional<String> childName = childPath.getName();
     Optional<Integer> childIndex = childPath.getListIndex();
     Optional<Integer> childSize = childPath.getListSize();
@@ -128,10 +176,10 @@ public class JsonDbHelper {
       }
 
       if (!tailPaths.isEmpty()) {
-        addChildPathToParentArray(childArray, childIndex.get(), tailPaths, value);
+        addChildPathToParentArray(childArray, childIndex.get(), tailPaths, type, value);
       } else if (value != null) {
         Preconditions.checkState(childArray.size() == childIndex.get());
-        childArray.add(getJsonElement(value));
+        childArray.add(getJsonElement(type, value));
       } else {
         Preconditions.checkState(childArray.size() == 0);
       }
@@ -141,17 +189,17 @@ public class JsonDbHelper {
       JsonArray parentArray = parentElement.getAsJsonArray();
 
       if (!tailPaths.isEmpty()) {
-        addChildPathToParentArray(parentArray, childIndex.get(), tailPaths, value);
+        addChildPathToParentArray(parentArray, childIndex.get(), tailPaths, type, value);
       } else if (value != null) {
         Preconditions.checkState(parentArray.size() == childIndex.get());
-        parentArray.add(getJsonElement(value));
+        parentArray.add(getJsonElement(type, value));
       } else {
         Preconditions.checkState(parentArray.size() == 0);
       }
     }
   }
 
-  private static void addElementPath(JsonElement parentElement, ElementPath childPath, List<TuplePath> tailPaths, String value) {
+  private static void addElementPath(JsonElement parentElement, ElementPath childPath, List<TuplePath> tailPaths, ValueType type, String value) {
     Optional<String> childName = childPath.getName();
     Preconditions.checkState(childName.isPresent());
 
@@ -164,15 +212,13 @@ public class JsonDbHelper {
     }
 
     if (!tailPaths.isEmpty()) {
-      addChildPathToParentObject(parentObject, childName.get(), tailPaths, value);
-    } else if (value != null) {
-      parentObject.add(childName.get(), getJsonElement(value));
+      addChildPathToParentObject(parentObject, childName.get(), tailPaths, type, value);
     } else {
-      parentObject.add(childName.get(), new JsonObject());
+      parentObject.add(childName.get(), getJsonElement(type, value));
     }
   }
 
-  private static void addChildPathToParentObject(JsonObject parentObject, String childPathName, List<TuplePath> tailPaths, String value) {
+  private static void addChildPathToParentObject(JsonObject parentObject, String childPathName, List<TuplePath> tailPaths, ValueType type, String value) {
     TuplePath nextChildPath = tailPaths.get(0);
     final JsonElement childElement;
     if (!parentObject.has(childPathName)) {
@@ -185,10 +231,10 @@ public class JsonDbHelper {
     } else {
       childElement = parentObject.get(childPathName);
     }
-    processTuple(childElement, tailPaths, value);
+    processTuple(childElement, tailPaths, type, value);
   }
 
-  private static void addChildPathToParentArray(JsonArray parentArray, int childPathIndex, List<TuplePath> tailPaths, String value) {
+  private static void addChildPathToParentArray(JsonArray parentArray, int childPathIndex, List<TuplePath> tailPaths, ValueType type, String value) {
     TuplePath nextChildPath = tailPaths.get(0);
     final JsonElement childElement;
     if (parentArray.size() <= childPathIndex) {
@@ -201,32 +247,32 @@ public class JsonDbHelper {
     } else {
       childElement = parentArray.get(childPathIndex);
     }
-    processTuple(childElement, tailPaths, value);
+    processTuple(childElement, tailPaths, type, value);
   }
 
-  private static JsonElement getJsonElement(String value) {
-    if (JsonDbConstants.NULL_VALUE.equals(value)) {
-      return JsonNull.INSTANCE;
+  private static JsonElement getJsonElement(ValueType type, String value) {
+    switch (type) {
+      case JSON_STRING:
+        return new JsonPrimitive(value);
+      case JSON_BOOLEAN:
+        return new JsonPrimitive(Boolean.valueOf(value));
+      case JSON_NUMBER:
+        try {
+          return new JsonPrimitive(Long.valueOf(value));
+        } catch (NumberFormatException e1) {
+          try {
+            return new JsonPrimitive(Double.valueOf(value));
+          } catch (NumberFormatException e2) {
+            throw new IllegalArgumentException("Unexpected json number: " + value);
+          }
+        }
+      case JSON_NULL:
+        return JsonNull.INSTANCE;
+      case JSON_EMPTY:
+        return new JsonObject();
+      default:
+        throw new IllegalArgumentException("Unexpected value type: " + type.name());
     }
-
-    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-      return new JsonPrimitive(Boolean.valueOf(value));
-    }
-
-    if (NumberUtils.isNumber(value)) {
-      try {
-        return new JsonPrimitive(Long.valueOf(value));
-      } catch (NumberFormatException e) {
-        // ignore
-      }
-      try {
-        return new JsonPrimitive(Double.valueOf(value));
-      } catch (NumberFormatException e) {
-        // ignore;
-      }
-    }
-
-    return new JsonPrimitive(value);
   }
 
 }
