@@ -93,6 +93,9 @@ public class TestJsonDbHelper {
   public void testEmptyString() throws Exception {
     jsonString = "{key: \"\"}";
     testJson();
+
+    jsonString = "{key: [\"\", \"\"]}";
+    testJson();
   }
 
   @Test
@@ -110,6 +113,27 @@ public class TestJsonDbHelper {
     testJson();
 
     jsonString = "{key: [null]}";
+    testJson();
+  }
+
+  @Test
+  public void testNullKey() throws Exception {
+    jsonString = "{null: value}";
+    testJson();
+  }
+
+  @Test
+  public void testNullStringKey() throws Exception {
+    jsonString = "{\"null\": value}";
+    testJson();
+  }
+
+  @Test
+  public void testEmptyKey() throws Exception {
+    jsonString = "{\"\": value}";
+    testJson();
+
+    jsonString = "{\"\": [1, 2, 3]}";
     testJson();
   }
 
