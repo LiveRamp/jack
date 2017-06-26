@@ -13,7 +13,7 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JackStore;
 import com.rapleaf.jack.store.JsScope;
-import com.rapleaf.jack.store.json.TestJsonDbHelper;
+import com.rapleaf.jack.store.json.BaseJsonTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
@@ -41,7 +41,7 @@ public class BaseExecutorTestCase {
   static final String STRING_VALUE = "s40";
 
   static final String JSON_KEY = "json";
-  static final String JSON_STRING = TestJsonDbHelper.COMPLEX_JSON_STRING;
+  static final String JSON_STRING = BaseJsonTestCase.COMPLEX_JSON_STRING;
   static final JsonObject JSON_VALUE = new JsonParser().parse(JSON_STRING).getAsJsonObject();
 
   static final String BOOLEAN_LIST_KEY = "boolean-list";

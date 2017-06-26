@@ -1,13 +1,13 @@
 package com.rapleaf.jack.store.json;
 
-class BaseJsonTestCase {
+public class BaseJsonTestCase {
 
-  static final String ELEMENT_PATH_NAME = "test_path_name";
-  static final String ARRAY_PATH_NAME = "test_path_name";
+  static final String ELEMENT_PATH_NAME = "test_element_path_name";
+  static final String ARRAY_PATH_NAME = "test_array_path_name";
   static final int ARRAY_INDEX = 1;
   static final int ARRAY_SIZE = 5;
 
-  static final String COMPLEX_JSON_STRING = "{" +
+  public static final String COMPLEX_JSON_STRING = "{" +
       "key1: val1," +
       "key2 :" +
       "  {" +
