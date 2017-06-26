@@ -2,6 +2,7 @@ package com.rapleaf.jack.store.executors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonParser;
 import org.junit.Test;
 
 import com.rapleaf.jack.queries.QueryOrder;
@@ -179,6 +180,26 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
 
     scopes = jackStore.withinRoot().queryScope().orderByScopeId(QueryOrder.ASC).limit(1, 2).fetch();
     assertEquals(Lists.newArrayList(s2, s3), scopes.getScopes());
+  }
+
+  @Test
+  public void testJson() throws Exception {
+    JsonParser parser = new JsonParser();
+    JsScope scope1 = createJson(parser, "scope1", "json", "{key1: {key2: [[11]]}}");
+    JsScope scope2 = createJson(parser, "scope2", "json", "{key1: {key2: [[12]]}}");
+    JsScope scope3 = createJson(parser, "scope3", "json", "{key1: {key2: [[13]]}}");
+    JsScope scope4 = createJson(parser, "scope4", "json", "{key1: {key2: 13}}");
+    JsScope scope5 = createJson(parser, "scope5", "json", "{key1: {key3: [[13]]}}");
+    JsScope scope6 = createJson(parser, "scope6", "json", "{key2: {key1: [[13]]}}");
+
+    JsScopes scopes = jackStore.withinRoot().queryScope().whereRecord("json.key1.key2", JackMatchers.between("12", "13")).fetch();
+    assertEquals(Lists.newArrayList(scope2, scope3, scope4), scopes.getScopes());
+  }
+
+  private JsScope createJson(JsonParser parser, String scope, String key, String jsonString) throws Exception {
+    JsScope jsScope = jackStore.withinRoot().createScope(scope).execute();
+    jackStore.within(jsScope).indexRecord().putJson(key, parser.parse(jsonString).getAsJsonObject()).execute();
+    return jsScope;
   }
 
 }
