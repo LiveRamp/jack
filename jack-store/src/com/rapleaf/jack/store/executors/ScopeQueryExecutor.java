@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
@@ -24,6 +25,7 @@ import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
+import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
@@ -53,12 +55,22 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   public ScopeQueryExecutor<DB> whereRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
-    if (this.recordConstraints.containsKey(key)) {
-      this.recordConstraints.get(key).add(constraint);
+    String queryKey = processKey(key);
+    if (this.recordConstraints.containsKey(queryKey)) {
+      this.recordConstraints.get(queryKey).add(constraint);
     } else {
-      this.recordConstraints.put(key, Lists.newArrayList(constraint));
+      this.recordConstraints.put(queryKey, Lists.newArrayList(constraint));
     }
     return this;
+  }
+
+  private static String processKey(String key) {
+    String[] paths = key.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR));
+    if (paths.length == 1) {
+      return key;
+    } else {
+      return Joiner.on("%.").join(paths) + "%";
+    }
   }
 
   public ScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
@@ -134,7 +146,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
       GenericQuery query = db.createQuery()
           .from(table.table)
           .where(table.scopeColumn.as(Long.class).in(scopeIds))
-          .where(table.keyColumn.equalTo(key))
+          .where(table.keyColumn.matches(key))
           .select(table.scopeColumn);
 
       for (GenericConstraint constraint : constraints) {

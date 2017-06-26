@@ -1,8 +1,10 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -23,6 +25,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
         .putDouble(DOUBLE_KEY, DOUBLE_VALUE)
         .putDateTime(DATETIME_KEY, DATETIME_VALUE)
         .putString(STRING_KEY, STRING_VALUE)
+        .putJson(JSON_KEY, JSON_VALUE)
         .putBooleanList(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE)
         .putIntList(INT_LIST_KEY, INT_LIST_VALUE)
         .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
@@ -50,6 +53,9 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
     assertEquals(STRING_VALUE, record.getString(STRING_KEY));
     assertEquals(STRING_VALUE, record.get(STRING_KEY));
+
+    assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
+    assertEquals(JSON_VALUE, record.get(JSON_KEY));
 
     assertEquals(BOOLEAN_LIST_VALUE, record.getBooleanList(BOOLEAN_LIST_KEY));
     assertEquals(BOOLEAN_LIST_VALUE, record.getList(BOOLEAN_LIST_KEY));
@@ -124,6 +130,39 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
     assertTrue(record.getStringList(STRING_LIST_KEY).isEmpty());
     assertTrue(record.getList(STRING_LIST_KEY).isEmpty());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testNullJson() throws Exception {
+    jackStore.within("scope").indexRecord().putJson("key", null).execute();
+  }
+
+  @Test
+  public void testSelectedKeys() throws Exception {
+    jackStore.withinRoot().indexRecord()
+        .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
+        .putJson(JSON_KEY, JSON_VALUE)
+        .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
+        .putDateTimeList(DATETIME_LIST_KEY, DATETIME_LIST_VALUE)
+        .putStringList(STRING_LIST_KEY, STRING_LIST_VALUE)
+        .execute();
+
+    Set<String> keySet = Sets.newHashSet(BOOLEAN_KEY, LONG_LIST_KEY, JSON_KEY);
+
+    JsRecord record = jackStore.withinRoot().getRecord().select(keySet).get();
+    assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
+    assertEquals(LONG_LIST_VALUE, record.getLongList(LONG_LIST_KEY));
+    assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
+    assertEquals(keySet, record.keySet());
+
+    record = jackStore.withinRoot().getRecord().select("invalid_key").get();
+    assertEquals(0, record.keySet().size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetInvalidKey() throws Exception {
+    JsRecord record = jackStore.withinRoot().getRecord().select("invalid_key").get();
+    record.get("invalid_key");
   }
 
 }

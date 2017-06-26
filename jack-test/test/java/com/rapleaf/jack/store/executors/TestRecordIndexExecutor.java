@@ -1,20 +1,37 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.joda.time.DateTime;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
-import com.rapleaf.jack.queries.Records;
+import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.queries.Record;
+import com.rapleaf.jack.store.json.JsonDbHelper;
+import com.rapleaf.jack.store.json.JsonDbTuple;
+import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
+
+  @FunctionalInterface
+  private interface RecordIndexExecution<DB extends IDb, VALUE> {
+    RecordIndexExecutor<DB> apply(RecordIndexExecutor<DB> executor, String key, VALUE value);
+  }
+
+  @FunctionalInterface
+  private interface RecordIndexListExecution<DB extends IDb, VALUE> {
+    RecordIndexExecutor<DB> apply(RecordIndexExecutor<DB> executor, String key, List<VALUE> value);
+  }
 
   @Test
   public void testInsertion() throws Exception {
@@ -23,77 +40,19 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   }
 
   private void testInsertion(boolean isNull) throws Exception {
-    // boolean
-    jackStore.within("scope").indexRecord().putBoolean(BOOLEAN_KEY, isNull ? null : BOOLEAN_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(BOOLEAN_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(BOOLEAN_VALUE), records.get(0).get(TestStore.VALUE));
+    testInsertion(BOOLEAN_KEY, BOOLEAN_VALUE, isNull, RecordIndexExecutor::putBoolean);
+    testInsertion(INT_KEY, INT_VALUE, isNull, RecordIndexExecutor::putInt);
+    testInsertion(LONG_KEY, LONG_VALUE, isNull, RecordIndexExecutor::putLong);
+    testInsertion(DOUBLE_KEY, DOUBLE_VALUE, isNull, RecordIndexExecutor::putDouble);
+    testInsertion(DATETIME_KEY, DATETIME_VALUE, isNull, RecordIndexExecutor::putDateTime);
+    testInsertion(STRING_KEY, STRING_VALUE, isNull, RecordIndexExecutor::putString);
 
-    // int
-    jackStore.within("scope").indexRecord().putInt(INT_KEY, isNull ? null : INT_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(INT_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(INT_VALUE), records.get(0).get(TestStore.VALUE));
-
-    // long
-    jackStore.within("scope").indexRecord().putLong(LONG_KEY, isNull ? null : LONG_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(LONG_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(LONG_VALUE), records.get(0).get(TestStore.VALUE));
-
-    // double
-    jackStore.within("scope").indexRecord().putDouble(DOUBLE_KEY, isNull ? null : DOUBLE_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(DOUBLE_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(DOUBLE_VALUE), records.get(0).get(TestStore.VALUE));
-
-    // datetime
-    jackStore.within("scope").indexRecord().putDateTime(DATETIME_KEY, isNull ? null : DATETIME_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(DATETIME_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(DATETIME_VALUE), records.get(0).get(TestStore.VALUE));
-
-    // string
-    jackStore.within("scope").indexRecord().putString(STRING_KEY, isNull ? null : STRING_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(STRING_KEY)).fetch());
-    assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(STRING_VALUE), records.get(0).get(TestStore.VALUE));
-
-    // boolean list
-    jackStore.within("scope").indexRecord().putBooleanList(BOOLEAN_LIST_KEY, isNull ? null : BOOLEAN_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(BOOLEAN_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : BOOLEAN_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : BOOLEAN_LIST_VALUE.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
-
-    // int list
-    jackStore.within("scope").indexRecord().putIntList(INT_LIST_KEY, isNull ? null : INT_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(INT_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : INT_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : INT_LIST_VALUE.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
-
-    // long list
-    jackStore.within("scope").indexRecord().putLongList(LONG_LIST_KEY, isNull ? null : LONG_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(LONG_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : LONG_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : LONG_LIST_VALUE.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
-
-    // double list
-    jackStore.within("scope").indexRecord().putDoubleList(DOUBLE_LIST_KEY, isNull ? null : DOUBLE_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(DOUBLE_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : DOUBLE_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : DOUBLE_LIST_VALUE.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
-
-    // datetime list
-    jackStore.within("scope").indexRecord().putDateTimeList(DATETIME_LIST_KEY, isNull ? null : DATETIME_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(DATETIME_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : DATETIME_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : DATETIME_LIST_VALUE.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
-
-    // string list
-    jackStore.within("scope").indexRecord().putStringList(STRING_LIST_KEY, isNull ? null : STRING_LIST_VALUE).execute();
-    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(STRING_LIST_KEY)).fetch());
-    assertEquals(isNull ? 1 : STRING_LIST_VALUE.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : Sets.newHashSet(STRING_LIST_VALUE), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    testListInsertion(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE, isNull, RecordIndexExecutor::putBooleanList);
+    testListInsertion(INT_LIST_KEY, INT_LIST_VALUE, isNull, RecordIndexExecutor::putIntList);
+    testListInsertion(LONG_LIST_KEY, LONG_LIST_VALUE, isNull, RecordIndexExecutor::putLongList);
+    testListInsertion(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE, isNull, RecordIndexExecutor::putDoubleList);
+    testListInsertion(DATETIME_LIST_KEY, DATETIME_LIST_VALUE, isNull, RecordIndexExecutor::putDateTimeList);
+    testListInsertion(STRING_LIST_KEY, STRING_LIST_VALUE, isNull, RecordIndexExecutor::putStringList);
   }
 
   @Test
@@ -115,6 +74,34 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     testGenericListInsertion(STRING_LIST_KEY, STRING_LIST_VALUE);
   }
 
+  @Test
+  public void testJsonInsertion() throws Exception {
+    List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(JSON_VALUE);
+    Map<String, String> tupleMap = Maps.newHashMap();
+    for (JsonDbTuple tuple : tuples) {
+      // key is prepended to json tuple path
+      tupleMap.put(String.format("%s.%s", JSON_KEY, tuple.getFullPaths()), tuple.getValue());
+    }
+    jackStore.within("scope").indexRecord().putJson(JSON_KEY, JSON_VALUE).execute();
+    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.startsWith(JSON_KEY)).fetch());
+    assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
+    for (Record record : records) {
+      String key = record.get(TestStore.KEY);
+      String value = record.get(TestStore.VALUE);
+      assertTrue(tupleMap.containsKey(key));
+      if (value == null) {
+        assertNull(tupleMap.get(key));
+      } else {
+        assertEquals(tupleMap.get(key), value);
+      }
+    }
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testNullJsonInsertion() throws Exception {
+    testInsertion(JSON_KEY, JSON_VALUE, true, RecordIndexExecutor::putJson);
+  }
+
   @Test(expected = NullPointerException.class)
   public void testInsertNullWithPutObjectMethod() throws Exception {
     jackStore.withinRoot().indexRecord().put("key", (Object)null).execute();
@@ -123,6 +110,22 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   @Test(expected = NullPointerException.class)
   public void testInsertNullWithPutObjectListMethod() throws Exception {
     jackStore.withinRoot().indexRecord().put("key", (List<Object>)null).execute();
+  }
+
+  private <T> void testInsertion(String key, T value, boolean isNull, RecordIndexExecution<IDatabase1, T> execution) {
+    RecordIndexExecutor<IDatabase1> executor = jackStore.within("scope").indexRecord();
+    execution.apply(executor, key, isNull ? null : value).execute();
+    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
+    assertEquals(1, records.size());
+    assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.VALUE));
+  }
+
+  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, RecordIndexListExecution<IDatabase1, T> execution) {
+    RecordIndexExecutor<IDatabase1> executor = jackStore.within("scope").indexRecord();
+    execution.apply(executor, key, isNull ? null : listValue).execute();
+    records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
+    assertEquals(isNull ? 1 : listValue.size(), records.size());
+    assertEquals(isNull ? Sets.newHashSet((Object)null) : listValue.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
   }
 
   private void testGenericInsertion(String key, Object value) throws Exception {

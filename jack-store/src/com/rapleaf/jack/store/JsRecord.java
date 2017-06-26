@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.exception.JackRuntimeException;
@@ -16,10 +18,10 @@ public class JsRecord {
 
   private static final JsRecord EMPTY_RECORD = new JsRecord(Collections.emptyMap(), Collections.emptyMap());
 
-  private final Map<String, JsConstants.ValueType> types;
+  private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  public JsRecord(Map<String, JsConstants.ValueType> types, Map<String, Object> values) {
+  public JsRecord(Map<String, ValueType> types, Map<String, Object> values) {
     Preconditions.checkNotNull(types);
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
@@ -31,77 +33,89 @@ public class JsRecord {
     return EMPTY_RECORD;
   }
 
+  public Set<String> keySet() {
+    return types.keySet();
+  }
+
   public Object get(String key) {
     checkKey(key);
 
-    JsConstants.ValueType type = types.get(key);
+    ValueType type = types.get(key);
     switch (type) {
       case BOOLEAN:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.BOOLEAN, Boolean::valueOf);
+        return checkTypeAndGetNullable(key, ValueType.BOOLEAN, Boolean::valueOf);
       case INT:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.INT, Integer::valueOf);
+        return checkTypeAndGetNullable(key, ValueType.INT, Integer::valueOf);
       case LONG:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.LONG, Long::valueOf);
+        return checkTypeAndGetNullable(key, ValueType.LONG, Long::valueOf);
       case DOUBLE:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.DOUBLE, Double::valueOf);
+        return checkTypeAndGetNullable(key, ValueType.DOUBLE, Double::valueOf);
       case DATETIME:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.DATETIME, DateTime::parse);
+        return checkTypeAndGetNullable(key, ValueType.DATETIME, DateTime::parse);
       case STRING:
-        return checkTypeAndGetNullable(key, JsConstants.ValueType.STRING, Function.identity());
+        return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
       default:
+        if (type.getCategory() == ValueType.Category.JSON) {
+          return checkAndGetJson(key);
+        }
         throw new JackRuntimeException("Unsupported value type: " + type.name());
     }
   }
 
   public Boolean getBoolean(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.BOOLEAN, Boolean::valueOf);
+    return checkTypeAndGetNullable(key, ValueType.BOOLEAN, Boolean::valueOf);
   }
 
   public Integer getInt(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.INT, Integer::valueOf);
+    return checkTypeAndGetNullable(key, ValueType.INT, Integer::valueOf);
   }
 
   public Long getLong(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.LONG, Long::valueOf);
+    return checkTypeAndGetNullable(key, ValueType.LONG, Long::valueOf);
   }
 
   public Double getDouble(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.DOUBLE, Double::valueOf);
+    return checkTypeAndGetNullable(key, ValueType.DOUBLE, Double::valueOf);
   }
 
   public DateTime getDateTime(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.DATETIME, DateTime::parse);
+    return checkTypeAndGetNullable(key, ValueType.DATETIME, DateTime::parse);
   }
 
   public String getString(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, JsConstants.ValueType.STRING, Function.identity());
+    return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
+  }
+
+  public JsonObject getJson(String key) {
+    checkKey(key);
+    return checkAndGetJson(key);
   }
 
   public List getList(String key) {
     checkKey(key);
 
-    JsConstants.ValueType type = types.get(key);
+    ValueType type = types.get(key);
     Preconditions.checkArgument(type.isList(), "Key " + key + " has type " + type.name() + " and is not a list");
 
     switch (type) {
       case BOOLEAN_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.BOOLEAN_LIST, Boolean::valueOf);
+        return checkTypeAndGetList(key, ValueType.BOOLEAN_LIST, Boolean::valueOf);
       case INT_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.INT_LIST, Integer::valueOf);
+        return checkTypeAndGetList(key, ValueType.INT_LIST, Integer::valueOf);
       case LONG_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.LONG_LIST, Long::valueOf);
+        return checkTypeAndGetList(key, ValueType.LONG_LIST, Long::valueOf);
       case DOUBLE_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.DOUBLE_LIST, Double::valueOf);
+        return checkTypeAndGetList(key, ValueType.DOUBLE_LIST, Double::valueOf);
       case DATETIME_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.DATETIME_LIST, DateTime::parse);
+        return checkTypeAndGetList(key, ValueType.DATETIME_LIST, DateTime::parse);
       case STRING_LIST:
-        return checkTypeAndGetList(key, JsConstants.ValueType.STRING_LIST, Function.identity());
+        return checkTypeAndGetList(key, ValueType.STRING_LIST, Function.identity());
       default:
         throw new JackRuntimeException("Unsupported value type: " + type.name());
     }
@@ -109,32 +123,32 @@ public class JsRecord {
 
   public List<Boolean> getBooleanList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.BOOLEAN_LIST, Boolean::valueOf);
+    return checkTypeAndGetList(key, ValueType.BOOLEAN_LIST, Boolean::valueOf);
   }
 
   public List<Integer> getIntList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.INT_LIST, Integer::valueOf);
+    return checkTypeAndGetList(key, ValueType.INT_LIST, Integer::valueOf);
   }
 
   public List<Long> getLongList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.LONG_LIST, Long::valueOf);
+    return checkTypeAndGetList(key, ValueType.LONG_LIST, Long::valueOf);
   }
 
   public List<Double> getDoubleList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.DOUBLE_LIST, Double::valueOf);
+    return checkTypeAndGetList(key, ValueType.DOUBLE_LIST, Double::valueOf);
   }
 
   public List<DateTime> getDateTimeList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.DATETIME_LIST, DateTime::parse);
+    return checkTypeAndGetList(key, ValueType.DATETIME_LIST, DateTime::parse);
   }
 
   public List<String> getStringList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, JsConstants.ValueType.STRING_LIST, Function.identity());
+    return checkTypeAndGetList(key, ValueType.STRING_LIST, Function.identity());
   }
 
   private void checkKey(String key) {
@@ -142,7 +156,7 @@ public class JsRecord {
     Preconditions.checkArgument(types.containsKey(key), "Key" + key + " does not exist");
   }
 
-  private <T> T checkTypeAndGetNullable(String key, JsConstants.ValueType type, Function<String, T> function) {
+  private <T> T checkTypeAndGetNullable(String key, ValueType type, Function<String, T> function) {
     Preconditions.checkArgument(types.get(key).equals(type));
     String value = (String)values.get(key);
     if (value == null) {
@@ -152,7 +166,13 @@ public class JsRecord {
     }
   }
 
-  private <T> List<T> checkTypeAndGetList(String key, JsConstants.ValueType type, Function<String, T> function) {
+  private JsonObject checkAndGetJson(String key) {
+    Preconditions.checkArgument(types.get(key).getCategory().equals(ValueType.Category.JSON));
+    return (JsonObject)values.get(key);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> List<T> checkTypeAndGetList(String key, ValueType type, Function<String, T> function) {
     Preconditions.checkArgument(types.get(key).equals(type));
     List<String> valueList = (List<String>)values.get(key);
     if (valueList == null || valueList.isEmpty()) {

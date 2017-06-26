@@ -5,10 +5,11 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestJsonDbHelper {
+public class TestJsonDbHelper extends BaseJsonTestCase {
 
   private final JsonParser parser = new JsonParser();
   private String jsonString;
@@ -19,6 +20,8 @@ public class TestJsonDbHelper {
     List<JsonDbTuple> jsonDbTuples = JsonDbHelper.toTupleList(expected);
     JsonObject actual = JsonDbHelper.fromTupleList(jsonDbTuples);
     Assert.assertEquals(expected, actual);
+    // the number of tuples equal to the number of comma + 1
+    Assert.assertEquals(StringUtils.countMatches(jsonString, ",") + 1, jsonDbTuples.size());
     jsonString = null;
   }
 
@@ -47,14 +50,50 @@ public class TestJsonDbHelper {
   }
 
   @Test
+  public void testEmptyString() throws Exception {
+    jsonString = "{key: \"\"}";
+    testJson();
+
+    jsonString = "{key: [\"\", \"\"]}";
+    testJson();
+  }
+
+  @Test
   public void testNullString() throws Exception {
     jsonString = "{key: \"null\"}";
+    testJson();
+
+    jsonString = "{key: [\"null\"]}";
     testJson();
   }
 
   @Test
   public void testNull() throws Exception {
     jsonString = "{key: null}";
+    testJson();
+
+    jsonString = "{key: [null]}";
+    testJson();
+  }
+
+  @Test
+  public void testNullKey() throws Exception {
+    jsonString = "{null: value}";
+    testJson();
+  }
+
+  @Test
+  public void testNullStringKey() throws Exception {
+    jsonString = "{\"null\": value}";
+    testJson();
+  }
+
+  @Test
+  public void testEmptyKey() throws Exception {
+    jsonString = "{\"\": value}";
+    testJson();
+
+    jsonString = "{\"\": [1, 2, 3]}";
     testJson();
   }
 
@@ -117,44 +156,8 @@ public class TestJsonDbHelper {
 
   @Test
   public void testComplexObject() throws Exception {
-    jsonString = "{" +
-        "key1: val1," +
-        "key2 :" +
-        "  {" +
-        "    array1: [1, 2, 3]," +
-        "    array2: [four, five]," +
-        "    key3: val2," +
-        "    deepObject:" +
-        "       {" +
-        "         deepKey: 0.54," +
-        "         deepArray: [false, true, false]," +
-        "         emptyObject: {}" +
-        "       }" +
-        "  }," +
-        "arraysInArray :" +
-        "  [" +
-        "    [1, 2, 3]," +
-        "    [4, 5, 6]," +
-        "    [7, 8, 9]" +
-        "  ]," +
-        "objectsInArray :" +
-        "  [" +
-        "    {" +
-        "      k1: [true, false, true]," +
-        "      k2: 11" +
-        "    }," +
-        "    {" +
-        "      k1: [true, false, true]," +
-        "      k2: 12," +
-        "      emptyArray: []" +
-        "    }" +
-        "  ]," +
-        "array3: [6,7,8,9,10]," +
-        "bool1: true," +
-        "bool2: false," +
-        "nullKey: null," +
-        "nullStrKey: \"null\"" +
-        "}";
+    jsonString = COMPLEX_JSON_STRING;
     testJson();
   }
+
 }

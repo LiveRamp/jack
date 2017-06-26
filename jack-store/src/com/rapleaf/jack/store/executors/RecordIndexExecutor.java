@@ -11,25 +11,29 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
-import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.ValueType;
+import com.rapleaf.jack.store.json.ElementPath;
+import com.rapleaf.jack.store.json.JsonDbHelper;
+import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
-  private final Map<String, JsConstants.ValueType> types;
+  private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
   protected RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
-    this.types = Maps.newHashMap();
-    this.values = Maps.newHashMap();
+    this.types = Maps.newLinkedHashMap();
+    this.values = Maps.newLinkedHashMap();
   }
 
   public RecordIndexExecutor<DB> put(String key, Object value) {
@@ -52,6 +56,9 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     if (value instanceof String) {
       return putString(key, (String)value);
     }
+    if (value instanceof JsonObject) {
+      return putJson(key, (JsonObject)value);
+    }
     if (value instanceof List) {
       return putList(key, (List<Object>)value);
     }
@@ -59,45 +66,55 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public RecordIndexExecutor<DB> putBoolean(String key, Boolean value) {
-    types.put(key, JsConstants.ValueType.BOOLEAN);
+    types.put(key, ValueType.BOOLEAN);
     values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putInt(String key, Integer value) {
-    types.put(key, JsConstants.ValueType.INT);
+    types.put(key, ValueType.INT);
     values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putLong(String key, Long value) {
-    types.put(key, JsConstants.ValueType.LONG);
+    types.put(key, ValueType.LONG);
     values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putDouble(String key, Double value) {
-    types.put(key, JsConstants.ValueType.DOUBLE);
+    types.put(key, ValueType.DOUBLE);
     values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putDateTime(String key, DateTime value) {
-    types.put(key, JsConstants.ValueType.DATETIME);
+    types.put(key, ValueType.DATETIME);
     values.put(key, value);
     return this;
   }
 
   public RecordIndexExecutor<DB> putString(String key, String value) {
-    types.put(key, JsConstants.ValueType.STRING);
+    types.put(key, ValueType.STRING);
     values.put(key, value);
+    return this;
+  }
+
+  public RecordIndexExecutor<DB> putJson(String key, JsonObject json) {
+    Preconditions.checkNotNull(json);
+
+    List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), json);
+    for (JsonDbTuple tuple : tuples) {
+      types.put(tuple.getFullPaths(), tuple.getType());
+      values.put(tuple.getFullPaths(), tuple.getValue());
+    }
     return this;
   }
 
   @SuppressWarnings("unchecked")
   public RecordIndexExecutor<DB> putList(String key, List<Object> valueList) {
-    Preconditions.checkNotNull(valueList, "Value list cannot be null when using the putList method");
-    Preconditions.checkArgument(!valueList.isEmpty(), "Value list cannot be empty");
+    Preconditions.checkArgument(valueList != null && !valueList.isEmpty(), "Value list cannot be null or empty when using the putList method");
 
     Object value = valueList.get(0);
     if (value instanceof Boolean) {
@@ -122,37 +139,37 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public RecordIndexExecutor<DB> putBooleanList(String key, List<Boolean> valueList) {
-    types.put(key, JsConstants.ValueType.BOOLEAN_LIST);
+    types.put(key, ValueType.BOOLEAN_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putIntList(String key, List<Integer> valueList) {
-    types.put(key, JsConstants.ValueType.INT_LIST);
+    types.put(key, ValueType.INT_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putLongList(String key, List<Long> valueList) {
-    types.put(key, JsConstants.ValueType.LONG_LIST);
+    types.put(key, ValueType.LONG_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putDoubleList(String key, List<Double> valueList) {
-    types.put(key, JsConstants.ValueType.DOUBLE_LIST);
+    types.put(key, ValueType.DOUBLE_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putDateTimeList(String key, List<DateTime> valueList) {
-    types.put(key, JsConstants.ValueType.DATETIME_LIST);
+    types.put(key, ValueType.DATETIME_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
   public RecordIndexExecutor<DB> putStringList(String key, List<String> valueList) {
-    types.put(key, JsConstants.ValueType.STRING_LIST);
+    types.put(key, ValueType.STRING_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
@@ -164,12 +181,12 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       Set<String> existingKeys = existingKeyIds.keySet();
       if (!existingKeys.isEmpty()) {
-        updateExistingKeys(db, scopeId, existingKeys);
+        updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
       }
 
       Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
       if (!newKeys.isEmpty()) {
-        insertNewKeys(db, scopeId, newKeys);
+        insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
       }
     });
   }
@@ -183,13 +200,14 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   private Map<String, List<Long>> getExistingKeyIdMap(IDb db, Long scopeId) throws IOException {
-    Map<String, List<Long>> keyIdMap = Maps.newHashMap();
+    Map<String, List<Long>> keyIdMap = Maps.newLinkedHashMap();
 
     Records records = db.createQuery()
         .from(table.table)
         .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
         .where(table.keyColumn.in(types.keySet()))
         .select(table.idColumn, table.keyColumn)
+        .orderBy(table.idColumn)
         .fetch();
 
     for (Record record : records) {
@@ -205,13 +223,13 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return keyIdMap;
   }
 
-  private void insertNewKeys(DB db, Long scopeId, Set<String> newKeys) throws IOException {
+  private void insertNewKeys(DB db, Long scopeId, List<String> newKeys) throws IOException {
     List<String> typesToInsert = Lists.newLinkedList();
     List<String> keysToInsert = Lists.newLinkedList();
     List<String> valuesToInsert = Lists.newLinkedList();
 
     for (String key : newKeys) {
-      JsConstants.ValueType type = types.get(key);
+      ValueType type = types.get(key);
       Object value = values.get(key);
 
       if (value == null) {
@@ -242,7 +260,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   // delete existing keys and insert new values
   // replace with true update in the future
-  private void updateExistingKeys(DB db, Long scopeId, Set<String> existingKeys) throws IOException {
+  private void updateExistingKeys(DB db, Long scopeId, List<String> existingKeys) throws IOException {
     db.createDeletion()
         .from(table.table)
         .where(table.scopeColumn.as(Long.class).equalTo(scopeId))

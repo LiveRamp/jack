@@ -3,6 +3,8 @@ package com.rapleaf.jack.store.json;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
+
 public class ArrayPath implements TuplePath {
 
   private final Optional<String> name;
