@@ -139,7 +139,7 @@ public class TestDbMetrics extends JackTestCase {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double averageActiveConnections = dbMetrics.getAverageActiveConnections();
     transactor.close();
-    assert ((averageActiveConnections > .40) && (averageActiveConnections < .60));
+    assert ((averageActiveConnections > .30) && (averageActiveConnections < .70));
   }
 
 }

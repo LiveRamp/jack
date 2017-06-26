@@ -21,7 +21,7 @@ public class DbMetricsImpl implements DbMetrics {
   private long totalIdleTimeMinValue;
   private long totalActiveTime;
   private long openedConnections;
-  
+
   //Transactor parameters
 
   private final int maxTotalConnections;
@@ -67,7 +67,6 @@ public class DbMetricsImpl implements DbMetrics {
       }
       currentConnections = newConnections;
 
-
       if (numActive == maxTotalConnections) {
         maxActiveConnectionsTime += updateToNowTime;
       }
@@ -104,7 +103,6 @@ public class DbMetricsImpl implements DbMetrics {
       return -1;
     }
   }
-
 
   @Override
   public long getOpenedConnectionsNumber() {

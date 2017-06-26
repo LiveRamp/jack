@@ -103,7 +103,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     }
   }
 
-  @Test(timeout = 3 * 1000) // 3s
+  @Test(timeout = 5 * 1000) // 5s
   public void testSimultaneousQuery() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(5).get();
 
