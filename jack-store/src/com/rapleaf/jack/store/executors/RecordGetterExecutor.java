@@ -1,5 +1,7 @@
 package com.rapleaf.jack.store.executors;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,8 +27,22 @@ import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
+  private final Set<String> selectedKeys;
+
   protected RecordGetterExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
+    this.selectedKeys = Sets.newHashSet();
+  }
+
+  public RecordGetterExecutor<DB> select(String key, String... otherKeys) {
+    selectedKeys.add(key);
+    selectedKeys.addAll(Arrays.asList(otherKeys));
+    return this;
+  }
+
+  public RecordGetterExecutor<DB> select(Collection<String> keys) {
+    selectedKeys.addAll(keys);
+    return this;
   }
 
   @SuppressWarnings("unchecked")
@@ -56,15 +72,25 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       switch (type.getCategory()) {
         case PRIMITIVE:
+          if (!isSelectedKey(key)) {
+            continue;
+          }
           types.put(key, type);
           values.put(key, value);
           break;
         case JSON:
           JsonDbTuple tuple = JsonDbTuple.create(key, type, value);
-          jsonKeys.add(tuple.getPaths().get(0).getName().get());
+          String jsonKey = tuple.getPaths().get(0).getName().get();
+          if (!isSelectedKey(jsonKey)) {
+            continue;
+          }
+          jsonKeys.add(jsonKey);
           jsonTuples.add(tuple);
           break;
         case LIST:
+          if (!isSelectedKey(key)) {
+            continue;
+          }
           types.put(key, type);
           if (!values.containsKey(key)) {
             values.put(key, Lists.newArrayList());
@@ -85,7 +111,15 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
       values.put(jsonKey, json);
     }
 
-    return new JsRecord(types, values);
+    if (types.isEmpty()) {
+      return JsRecord.empty();
+    } else {
+      return new JsRecord(types, values);
+    }
+  }
+
+  private boolean isSelectedKey(String key) {
+    return selectedKeys.isEmpty() || selectedKeys.contains(key);
   }
 
 }
