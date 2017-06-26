@@ -9,7 +9,7 @@ public interface DbMetrics {
 
   long getMaxConnectionWaitingTime();
 
-  double getAverageConnectionWaitTime();
+  double getAverageConnectionWaitingTime();
 
   double getAverageConnectionExecutionTime();
 
@@ -18,6 +18,8 @@ public interface DbMetrics {
   double getAverageIdleConnectionsMinValue();
 
   double getAverageActiveConnections();
+
+  long getLifeTime();
 
   String getSummary();
 }

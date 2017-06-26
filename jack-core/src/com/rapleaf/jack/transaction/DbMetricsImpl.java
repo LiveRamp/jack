@@ -15,8 +15,8 @@ public class DbMetricsImpl implements DbMetrics {
 
   private long totalQueries;
   private long maxActiveConnectionsTime;
-  private long maxConnectionWaitTime;
-  private long totalConnectionWaitTime;
+  private long maxConnectionWaitingTime;
+  private long totalConnectionWaitingTime;
   private long totalIdleTimeMaxValue;
   private long totalIdleTimeMinValue;
   private long totalActiveTime;
@@ -51,9 +51,9 @@ public class DbMetricsImpl implements DbMetrics {
       int numIdle = connectionPool.getNumIdle();
       int numWaiters = connectionPool.getNumWaiters();
 
-      maxConnectionWaitTime = connectionPool.getMaxBorrowWaitTimeMillis();
+      maxConnectionWaitingTime = connectionPool.getMaxBorrowWaitTimeMillis();
       totalActiveTime += numActive * updateToNowTime;
-      totalConnectionWaitTime += numWaiters * updateToNowTime;
+      totalConnectionWaitingTime += numWaiters * updateToNowTime;
       totalIdleTimeMinValue += numIdle * updateToNowTime;
       if (currentConnections > numActive) {
         totalIdleTimeMaxValue += (currentConnections - numActive) * updateToNowTime;
@@ -87,9 +87,9 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public double getAverageConnectionWaitTime() {
+  public double getAverageConnectionWaitingTime() {
     if (totalQueries > 0) {
-      return (double)totalConnectionWaitTime / (double)totalQueries;
+      return (double)totalConnectionWaitingTime / (double)totalQueries;
     } else {
       return -1;
     }
@@ -126,7 +126,12 @@ public class DbMetricsImpl implements DbMetrics {
 
   @Override
   public long getMaxConnectionWaitingTime() {
-    return maxConnectionWaitTime;
+    return maxConnectionWaitingTime;
+  }
+
+  @Override
+  public long getLifeTime() {
+    return lifeTimeStopwatch.elapsedMillis();
   }
 
   @Override
@@ -141,7 +146,7 @@ public class DbMetricsImpl implements DbMetrics {
     summary += String.format("\n Max capacity time (%%)" + " : %,.2f ", getMaxConnectionsProportion());
 
     summary += String.format("\nAverage connection execution time : %,.2f ms", getAverageConnectionExecutionTime());
-    summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitTime());
+    summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitingTime());
     summary += String.format("\nMaximum connection waiting time : %1$d    ms", getMaxConnectionWaitingTime());
     summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + "ms");
 
