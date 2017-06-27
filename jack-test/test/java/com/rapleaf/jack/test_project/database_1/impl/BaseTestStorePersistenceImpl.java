@@ -50,7 +50,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
 
   @Override
   public TestStore create(Map<Enum, Object> fieldsMap) throws IOException {
-    String scope = (String) fieldsMap.get(TestStore._Fields.scope);
+    Long scope = (Long) fieldsMap.get(TestStore._Fields.scope);
     String key = (String) fieldsMap.get(TestStore._Fields.key);
     String type = (String) fieldsMap.get(TestStore._Fields.type);
     String value = (String) fieldsMap.get(TestStore._Fields.value);
@@ -59,13 +59,13 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     return create(scope, key, type, value, created_at, updated_at);
   }
 
-  public TestStore create(final String scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) throws IOException {
+  public TestStore create(final Long scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
         if (scope == null) {
-          stmt.setNull(1, java.sql.Types.CHAR);
+          stmt.setNull(1, java.sql.Types.INTEGER);
         } else {
-          stmt.setString(1, scope);
+          stmt.setLong(1, scope);
         }
         if (key == null) {
           stmt.setNull(2, java.sql.Types.CHAR);
@@ -166,7 +166,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
         try {
           switch (field) {
             case scope:
-              preparedStatement.setString(i+1, (String) nonNullValues.get(i));
+              preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
               break;
             case key:
               preparedStatement.setString(i+1, (String) nonNullValues.get(i));
@@ -217,7 +217,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
             TestStore._Fields field = (TestStore._Fields)constraint.getField();
             switch (field) {
               case scope:
-                preparedStatement.setString(++index, (String) parameter);
+                preparedStatement.setLong(++index, (Long) parameter);
                 break;
               case key:
                 preparedStatement.setString(++index, (String) parameter);
@@ -246,9 +246,9 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   @Override
   protected void setAttrs(TestStore model, PreparedStatement stmt) throws SQLException {
     if (model.getScope() == null) {
-      stmt.setNull(1, java.sql.Types.CHAR);
+      stmt.setNull(1, java.sql.Types.INTEGER);
     } else {
-      stmt.setString(1, model.getScope());
+      stmt.setLong(1, model.getScope());
     }
     if (model.getKey() == null) {
       stmt.setNull(2, java.sql.Types.CHAR);
@@ -283,7 +283,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new TestStore(id,
-      allFields || selectedFields.contains(TestStore._Fields.scope) ? rs.getString("scope") : null,
+      allFields || selectedFields.contains(TestStore._Fields.scope) ? getLongOrNull(rs, "scope") : null,
       allFields || selectedFields.contains(TestStore._Fields.key) ? rs.getString("key") : null,
       allFields || selectedFields.contains(TestStore._Fields.type) ? rs.getString("type") : null,
       allFields || selectedFields.contains(TestStore._Fields.value) ? rs.getString("value") : null,
@@ -293,7 +293,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     );
   }
 
-  public List<TestStore> findByScope(final String value) throws IOException {
+  public List<TestStore> findByScope(final Long value) throws IOException {
     return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.scope, value));
   }
 

@@ -75,7 +75,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     Long upperScopeId = executionScope.getScopeId();
     long childScopeId = transactor.queryAsTransaction(db ->
         db.createInsertion().into(table.table)
-            .set(table.scopeColumn.as(Long.class), upperScopeId)
+            .set(table.scopeColumn, upperScopeId)
             .set(table.keyColumn, JsConstants.SCOPE_KEY)
             .set(table.typeColumn, JsConstants.SCOPE_TYPE)
             .set(table.valueColumn, childScope)
@@ -88,7 +88,7 @@ public abstract class BaseExecutor<DB extends IDb> {
   private Optional<JsScope> getOptionalScope(JsScope executionScope, String childScope) {
     List<Long> ids = transactor.query(db ->
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.as(Long.class).equalTo(executionScope.getScopeId()))
+            .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
             .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
             .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
             .where(table.valueColumn.equalTo(childScope))

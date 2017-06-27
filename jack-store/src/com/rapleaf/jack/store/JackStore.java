@@ -18,7 +18,7 @@ public class JackStore<DB extends IDb> {
   private final ITransactor<DB> transactor;
   private final JsTable jsTable;
 
-  public JackStore(ITransactor<DB> transactor, Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
+  public JackStore(ITransactor<DB> transactor, Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.transactor = transactor;
     this.jsTable = new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
   }

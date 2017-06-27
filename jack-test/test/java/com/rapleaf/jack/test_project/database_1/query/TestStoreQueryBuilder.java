@@ -88,13 +88,13 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreQueryBuilder scope(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
+  public TestStoreQueryBuilder scope(Long value) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreQueryBuilder whereScope(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.scope, operator));
+  public TestStoreQueryBuilder whereScope(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, operator));
     return this;
   }
 

@@ -117,7 +117,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private static JsScopes queryByScopeConstraints(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
     GenericQuery query = db.createQuery()
         .from(table.table)
-        .where(table.scopeColumn.as(Long.class).equalTo(executionScope.getScopeId()))
+        .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
         .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);
@@ -145,7 +145,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       GenericQuery query = db.createQuery()
           .from(table.table)
-          .where(table.scopeColumn.as(Long.class).in(scopeIds))
+          .where(table.scopeColumn.in(scopeIds))
           .where(table.keyColumn.matches(key))
           .select(table.scopeColumn);
 

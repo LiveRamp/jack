@@ -69,7 +69,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
     for (int i = 1; i < records.size(); ++i) {
       TestStore scope = records.get(i);
 
-      assertEquals(String.valueOf(scope0.getId()), scope.getScope());
+      assertEquals(scope0.getId(), scope.getScope().longValue());
       assertEquals(JsConstants.SCOPE_TYPE, scope.getType());
       assertEquals(JsConstants.SCOPE_KEY, scope.getKey());
       assertEquals("scope" + i, scope.getValue());
