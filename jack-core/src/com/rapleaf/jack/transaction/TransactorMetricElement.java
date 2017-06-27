@@ -15,6 +15,27 @@ public class TransactorMetricElement {
     this.count = 1;
   }
 
+  @Override
+  public int hashCode() {
+    int hash = queryTrace.hashCode();
+    hash += 137 * totalExecutionTime;
+    hash += 197 * count;
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(this.getClass() == obj.getClass())) {
+      return false;
+    } else {
+      TransactorMetricElement that = (TransactorMetricElement)obj;
+      return ((this.queryTrace.equals(that.queryTrace)) && (this.totalExecutionTime == that.totalExecutionTime) && (this.count == that.count));
+    }
+  }
+
   public double getAverageExecutionTime() {
     return (double)totalExecutionTime / (double)count;
   }
@@ -27,7 +48,7 @@ public class TransactorMetricElement {
     return queryTrace;
   }
 
-  public synchronized void addExecution(long executionTime) {
+  public void addExecution(long executionTime) {
     count += 1;
     totalExecutionTime += executionTime;
   }
@@ -35,15 +56,12 @@ public class TransactorMetricElement {
 
 class TransactorMetricElementsComparator implements Comparator<TransactorMetricElement> {
 
-  public TransactorMetricElementsComparator() {
-  }
-
   @Override
   public int compare(TransactorMetricElement a, TransactorMetricElement b) {
     if (a.getAverageExecutionTime() >= b.getAverageExecutionTime()) {
-      return 1;
-    } else {
       return -1;
+    } else {
+      return 1;
     }
   }
 

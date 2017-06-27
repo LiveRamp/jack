@@ -10,8 +10,6 @@ import org.joda.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
@@ -24,7 +22,6 @@ public class TestDbMetrics extends JackTestCase {
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
   private ExecutorService executorService;
   private Stopwatch stopwatch = new Stopwatch();
-  private static final Logger LOG = LoggerFactory.getLogger(TestDbMetrics.class);
 
   @Before
   public void prepare() throws Exception {
@@ -34,7 +31,7 @@ public class TestDbMetrics extends JackTestCase {
 
   @After
   public void cleanup() throws Exception {
-    executorService = null;
+    executorService.shutdown();
     stopwatch.reset();
   }
 
@@ -43,7 +40,8 @@ public class TestDbMetrics extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
     transactor.execute(db -> {});
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    assert (dbMetrics.getTotalQueries() == 1);
+
+    assertTrue(dbMetrics.getTotalQueries() == 1);
   }
 
   @Test
@@ -60,7 +58,8 @@ public class TestDbMetrics extends JackTestCase {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double openedConnectionsNumber = dbMetrics.getOpenedConnectionsNumber();
     transactor.close();
-    assert (openedConnectionsNumber == 2);
+
+    assertTrue(openedConnectionsNumber == 2);
   }
 
   @Test
@@ -74,6 +73,7 @@ public class TestDbMetrics extends JackTestCase {
     double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
     transactor.close();
     double expectedMaxConnectionsProportion = (double)timeActive / (double)totalTime;
+
     assertRoughEqual(maxConnectionsProportion, expectedMaxConnectionsProportion, .1);
   }
 
@@ -83,10 +83,11 @@ public class TestDbMetrics extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
     executorService = Executors.newFixedThreadPool(2);
 
-    Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
-      sleepMillis(100);
-      return stopwatch.elapsedMillis();
-    }));
+    Future<Long> future1 = executorService.submit(
+        () -> transactor.query(a -> {
+          sleepMillis(100);
+          return stopwatch.elapsedMillis();
+        }));
     final Long[] startingTime2 = new Long[1];
     Future future2 = executorService.submit(
         () -> {
@@ -98,8 +99,9 @@ public class TestDbMetrics extends JackTestCase {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
-    double expectedMaxConnectionsWaitingTime = (finishingTime1 - startingTime2[0]);
+    double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
     expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
+
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
   }
 
@@ -125,6 +127,7 @@ public class TestDbMetrics extends JackTestCase {
     transactor.close();
     double expectedAverageConnectionsWaitingTime = (finishingTime1 - startingTime2[0]) / 2;
     expectedAverageConnectionsWaitingTime = (expectedAverageConnectionsWaitingTime > 0) ? expectedAverageConnectionsWaitingTime : 0;
+
     assertRoughEqual(averageConnectionsWaitingTime, expectedAverageConnectionsWaitingTime, 15);
   }
 
@@ -164,7 +167,7 @@ public class TestDbMetrics extends JackTestCase {
     double averageIdleConnectionsMinValue = dbMetrics.getAverageIdleConnectionsMinValue();
     transactor.close();
 
-    assert ((expectedAverageIdleConnections - .1 <= averageIdleConnectionsMaxValue) && (expectedAverageIdleConnections + .1 >= averageIdleConnectionsMinValue));
+    assertTrue((expectedAverageIdleConnections - .1 <= averageIdleConnectionsMaxValue) && (expectedAverageIdleConnections + .1 >= averageIdleConnectionsMinValue));
   }
 
   @Test
@@ -179,6 +182,7 @@ public class TestDbMetrics extends JackTestCase {
     double expectedAverageActiveConnections = (double)activeTime / (double)lifeTime;
     double averageActiveConnections = dbMetrics.getAverageActiveConnections();
     transactor.close();
+
     assertRoughEqual(expectedAverageActiveConnections, averageActiveConnections, .2);
   }
 
@@ -188,6 +192,7 @@ public class TestDbMetrics extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
     sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();
+
     assertRoughEqual(stopwatch.elapsedMillis() - startTime, dbMetrics.getLifeTime(), 20);
   }
 
@@ -196,5 +201,3 @@ public class TestDbMetrics extends JackTestCase {
   }
 
 }
-
-

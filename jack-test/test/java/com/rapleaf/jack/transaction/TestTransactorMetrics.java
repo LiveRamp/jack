@@ -31,7 +31,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @After
   public void cleanup() throws Exception {
-    executorService = null;
+    executorService.shutdown();
     stopwatch.reset();
   }
 
@@ -47,7 +47,7 @@ public class TestTransactorMetrics extends JackTestCase {
     int lastLine = 0;
     transactor.close();
     for (TransactorMetricElement query : queryMetrics.getLongestQueries()) {
-      assert (query.getQueryTrace().getLineNumber() > lastLine);
+      assertTrue(query.getQueryTrace().getLineNumber() > lastLine);
       lastLine = query.getQueryTrace().getLineNumber();
     }
     transactor.close();
@@ -64,6 +64,7 @@ public class TestTransactorMetrics extends JackTestCase {
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
     double maxExecutionTime = queryMetrics.getLongestQueries().getFirst().getAverageExecutionTime();
     transactor.close();
+
     assertRoughEqual(executionTime, maxExecutionTime, 20);
   }
 

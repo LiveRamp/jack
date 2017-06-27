@@ -25,7 +25,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private final IDbManager<DB> dbManager;
 
-  private final int queryLogSize = 10;
+  private static final int queryLogSize = 10;
 
   private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(queryLogSize);
 
@@ -93,7 +93,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
         connection.commit();
       }
       long executionTime = System.currentTimeMillis() - startTime;
-      queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      if (metricsTrackingEnabled) {
+        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      }
       return value;
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
@@ -117,7 +119,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
         connection.commit();
       }
       long executionTime = System.currentTimeMillis() - startTime;
-      queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      if (metricsTrackingEnabled) {
+        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      }
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
       if (asTransaction) {
@@ -134,7 +138,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   public void close() {
     if (metricsTrackingEnabled) {
       LOG.info(dbManager.getMetrics().getSummary());
-      LOG.info("" + "\n" + (queryMetrics.getSummary()));
+      LOG.info("\n{}", queryMetrics.getSummary());
     }
     dbManager.close();
   }
