@@ -31,13 +31,13 @@ public class TestStoreDeleteBuilder extends AbstractDeleteBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreDeleteBuilder scope(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
+  public TestStoreDeleteBuilder scope(Long value) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreDeleteBuilder whereScope(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.scope, operator));
+  public TestStoreDeleteBuilder whereScope(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, operator));
     return this;
   }
 

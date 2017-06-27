@@ -33,11 +33,11 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class TestStore extends ModelWithId<TestStore, IDatabases> implements Comparable<TestStore>{
   
-  public static final long serialVersionUID = 3129246925074958892L;
+  public static final long serialVersionUID = -2060093919925697310L;
 
   public static class Tbl extends AbstractTable<TestStore.Attributes, TestStore> {
     public final Column<Long> ID;
-    public final Column<String> SCOPE;
+    public final Column<Long> SCOPE;
     public final Column<String> KEY;
     public final Column<String> TYPE;
     public final Column<String> VALUE;
@@ -47,7 +47,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     private Tbl(String alias) {
       super("test_store", alias, TestStore.Attributes.class, TestStore.class);
       this.ID = Column.fromId(alias);
-      this.SCOPE = Column.fromField(alias, _Fields.scope, String.class);
+      this.SCOPE = Column.fromField(alias, _Fields.scope, Long.class);
       this.KEY = Column.fromField(alias, _Fields.key, String.class);
       this.TYPE = Column.fromField(alias, _Fields.type, String.class);
       this.VALUE = Column.fromField(alias, _Fields.value, String.class);
@@ -63,7 +63,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public static final Tbl TBL = new Tbl("test_store");
   public static final Column<Long> ID = TBL.ID;
-  public static final Column<String> SCOPE = TBL.SCOPE;
+  public static final Column<Long> SCOPE = TBL.SCOPE;
   public static final Column<String> KEY = TBL.KEY;
   public static final Column<String> TYPE = TBL.TYPE;
   public static final Column<String> VALUE = TBL.VALUE;
@@ -93,12 +93,12 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     return cachedTypedId;
   }
 
-  public TestStore(long id, final String scope, final String key, final String type, final String value, final Long created_at, final Long updated_at, IDatabases databases) {
+  public TestStore(long id, final Long scope, final String key, final String type, final String value, final Long created_at, final Long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, scope, key, type, value, created_at, updated_at);
   }
 
-  public TestStore(long id, final String scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) {
+  public TestStore(long id, final Long scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) {
     super(null);
     attributes = new Attributes(id, scope, key, type, value, created_at, updated_at);
   }
@@ -150,11 +150,11 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     return attributes;
   }
 
-  public String getScope(){
+  public Long getScope(){
     return attributes.getScope();
   }
 
-  public TestStore setScope(String newval){
+  public TestStore setScope(Long newval){
     attributes.setScope(newval);
     cachedHashCode = 0;
     return this;
@@ -213,7 +213,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   public void setField(_Fields field, Object value) {
     switch (field) {
       case scope:
-        setScope((String) value);
+        setScope((Long) value);
         break;
       case key:
         setKey((String) value);
@@ -237,7 +237,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   
   public void setField(String fieldName, Object value) {
     if (fieldName.equals("scope")) {
-      setScope((String)  value);
+      setScope((Long)  value);
       return;
     }
     if (fieldName.equals("key")) {
@@ -266,7 +266,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   public static Class getFieldType(_Fields field) {
     switch (field) {
       case scope:
-        return String.class;
+        return Long.class;
       case key:
         return String.class;
       case type:
@@ -284,7 +284,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public static Class getFieldType(String fieldName) {    
     if (fieldName.equals("scope")) {
-      return String.class;
+      return Long.class;
     }
     if (fieldName.equals("key")) {
       return String.class;
@@ -435,10 +435,10 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 3129246925074958892L;
+    public static final long serialVersionUID = -2060093919925697310L;
 
     // Fields
-    private String __scope;
+    private Long __scope;
     private String __key;
     private String __type;
     private String __value;
@@ -449,7 +449,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       super(id);
     }
 
-    public Attributes(long id, final String scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) {
+    public Attributes(long id, final Long scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) {
       super(id);
       this.__scope = scope;
       this.__key = key;
@@ -465,7 +465,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      String scope = (String) fieldsMap.get(TestStore._Fields.scope);
+      Long scope = (Long) fieldsMap.get(TestStore._Fields.scope);
       String key = (String) fieldsMap.get(TestStore._Fields.key);
       String type = (String) fieldsMap.get(TestStore._Fields.type);
       String value = (String) fieldsMap.get(TestStore._Fields.value);
@@ -489,11 +489,11 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       this.__updated_at = other.getUpdatedAt();
     }
 
-    public String getScope(){
+    public Long getScope(){
       return __scope;
     }
 
-    public Attributes setScope(String newval){
+    public Attributes setScope(Long newval){
       this.__scope = newval;
       cachedHashCode = 0;
       return this;
@@ -552,7 +552,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     public void setField(_Fields field, Object value) {
       switch (field) {
         case scope:
-          setScope((String) value);
+          setScope((Long) value);
           break;
         case key:
           setKey((String) value);
@@ -576,7 +576,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("scope")) {
-        setScope((String)  value);
+        setScope((Long)  value);
         return;
       }
       if (fieldName.equals("key")) {
@@ -605,7 +605,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     public static Class getFieldType(_Fields field) {
       switch (field) {
         case scope:
-          return String.class;
+          return Long.class;
         case key:
           return String.class;
         case type:
@@ -623,7 +623,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public static Class getFieldType(String fieldName) {    
       if (fieldName.equals("scope")) {
-        return String.class;
+        return Long.class;
       }
       if (fieldName.equals("key")) {
         return String.class;
