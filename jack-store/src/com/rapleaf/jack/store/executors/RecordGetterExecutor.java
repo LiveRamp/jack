@@ -54,7 +54,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     Records records = transactor.queryAsTransaction(db ->
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.as(Long.class).equalTo(recordScope.get().getScopeId()))
+            .where(table.scopeColumn.equalTo(recordScope.get().getScopeId()))
             .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
             .select(table.typeColumn, table.keyColumn, table.valueColumn)
             .fetch()

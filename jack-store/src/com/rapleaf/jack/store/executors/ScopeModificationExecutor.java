@@ -36,7 +36,7 @@ public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> 
     return transactor.query(db ->
         db.createUpdate().table(table.table)
             .set(table.valueColumn, newName)
-            .where(table.scopeColumn.as(Long.class).equalTo(upperScopeId))
+            .where(table.scopeColumn.equalTo(upperScopeId))
             .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
             .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
             .execute()

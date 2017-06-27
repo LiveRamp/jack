@@ -37,7 +37,7 @@ public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     transactor.executeAsTransaction(db -> {
       db.createDeletion()
           .from(table.table)
-          .where(table.scopeColumn.as(Long.class).equalTo(executionScope.get().getScopeId()))
+          .where(table.scopeColumn.equalTo(executionScope.get().getScopeId()))
           .where(table.keyColumn.in(keysToDelete))
           .execute();
     });

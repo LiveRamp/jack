@@ -6,12 +6,12 @@ import com.rapleaf.jack.queries.Table;
 public class JsTable {
   final Table<?, ?> table;
   final Column<Long> idColumn;
-  final Column<String> scopeColumn;
+  final Column<Long> scopeColumn;
   final Column<String> typeColumn;
   final Column<String> keyColumn;
   final Column<String> valueColumn;
 
-  public JsTable(Table<?, ?> table, Column<String> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
+  public JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.table = table;
     this.idColumn = Column.fromId(table.getName());
     this.scopeColumn = scopeColumn;

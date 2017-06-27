@@ -204,7 +204,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     Records records = db.createQuery()
         .from(table.table)
-        .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
+        .where(table.scopeColumn.equalTo(scopeId))
         .where(table.keyColumn.in(types.keySet()))
         .select(table.idColumn, table.keyColumn)
         .orderBy(table.idColumn)
@@ -251,7 +251,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     db.createInsertion()
         .into(table.table)
-        .set(table.scopeColumn.as(Long.class), Collections.nCopies(typesToInsert.size(), scopeId))
+        .set(table.scopeColumn, Collections.nCopies(typesToInsert.size(), scopeId))
         .set(table.typeColumn, typesToInsert)
         .set(table.keyColumn, keysToInsert)
         .set(table.valueColumn, valuesToInsert)
@@ -263,7 +263,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private void updateExistingKeys(DB db, Long scopeId, List<String> existingKeys) throws IOException {
     db.createDeletion()
         .from(table.table)
-        .where(table.scopeColumn.as(Long.class).equalTo(scopeId))
+        .where(table.scopeColumn.equalTo(scopeId))
         .where(table.keyColumn.in(existingKeys))
         .execute();
 

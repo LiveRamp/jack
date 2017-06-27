@@ -75,7 +75,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     while (!ids.isEmpty()) {
       nestedIds = Sets.newHashSet(
           db.createQuery().from(table.table)
-              .where(table.scopeColumn.as(Long.class).in(ids))
+              .where(table.scopeColumn.in(ids))
               .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
               .select(table.idColumn)
               .fetch()
@@ -91,7 +91,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private boolean deleteScopes(DB db, Set<Long> scopeIds) throws IOException {
     // delete records
     db.createDeletion().from(table.table)
-        .where(table.scopeColumn.as(Long.class).in(scopeIds))
+        .where(table.scopeColumn.in(scopeIds))
         .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
         .where(table.keyColumn.notEqualTo(JsConstants.SCOPE_KEY))
         .execute();
