@@ -68,3 +68,4 @@ public class TestTransactorMetrics extends JackTestCase {
     assertTrue(value <= (expected + error) && value >= (expected - error));
   }
 }
+
