@@ -1,7 +1,5 @@
 package com.rapleaf.jack.transaction;
 
-import java.util.concurrent.ExecutorService;
-
 import com.google.common.base.Stopwatch;
 import org.junit.After;
 import org.junit.Before;
@@ -19,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 public class TestTransactorMetrics extends JackTestCase {
 
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
-  private ExecutorService executorService;
   private static final Logger LOG = LoggerFactory.getLogger(TestTransactorMetrics.class);
   private Stopwatch stopwatch = new Stopwatch();
 
@@ -31,7 +28,6 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @After
   public void cleanup() throws Exception {
-    executorService.shutdown();
     stopwatch.reset();
   }
 

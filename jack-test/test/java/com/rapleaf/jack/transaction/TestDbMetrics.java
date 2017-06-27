@@ -27,6 +27,7 @@ public class TestDbMetrics extends JackTestCase {
   public void prepare() throws Exception {
     transactorBuilder.get().query(IDb::deleteAll);
     stopwatch.start();
+    executorService = Executors.newFixedThreadPool(5);
   }
 
   @After
@@ -46,7 +47,6 @@ public class TestDbMetrics extends JackTestCase {
 
   @Test
   public void testOpenedConnectionsNumber() throws Exception {
-    executorService = Executors.newFixedThreadPool(5);
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
 
     Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
@@ -81,7 +81,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-    executorService = Executors.newFixedThreadPool(2);
 
     Future<Long> future1 = executorService.submit(
         () -> transactor.query(a -> {
@@ -108,7 +107,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-    executorService = Executors.newFixedThreadPool(2);
 
     Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
       sleepMillis(100);
@@ -134,7 +132,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testAverageConnectionExecutionTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
-    executorService = Executors.newFixedThreadPool(5);
     Future<Long> future1 = executorService.submit(() -> {
       long start = stopwatch.elapsedMillis();
       transactor.execute(a -> {sleepMillis(100);});
