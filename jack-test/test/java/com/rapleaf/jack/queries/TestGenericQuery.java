@@ -3,6 +3,7 @@ package com.rapleaf.jack.queries;
 import java.sql.Timestamp;
 import java.util.Collections;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -654,6 +655,41 @@ public class TestGenericQuery {
     assertEquals(2, results2.size());
     assertTrue(results2.get(0).getNumber(AVG(User.NUM_POSTS)).intValue() == 49);
     assertTrue(results2.get(1).getNumber(AVG(User.NUM_POSTS)).longValue() == 50);
+  }
+
+  @Test
+  public void testDistinctQuery() throws Exception {
+    // use group by as distinct selection
+    userA = users.createDefaultInstance().setHandle("A").setBio("Engineer");
+    userB = users.createDefaultInstance().setHandle("A").setBio("Engineer");
+    userC = users.createDefaultInstance().setHandle("A").setBio("Accountant");
+    userD = users.createDefaultInstance().setHandle("C").setBio("Accountant");
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    // one column
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .select(User.HANDLE)
+        .groupBy(User.HANDLE)
+        .orderBy(User.HANDLE)
+        .fetch();
+    assertEquals(2, results1.size());
+    assertEquals(Lists.newArrayList("A", "C"), results1.gets(User.HANDLE));
+
+    // two columns
+    results1 = db.createQuery()
+        .from(User.TBL)
+        .select(User.HANDLE, User.BIO)
+        .groupBy(User.HANDLE, User.BIO)
+        .orderBy(User.HANDLE)
+        .orderBy(User.ID)
+        .fetch();
+    assertEquals(3, results1.size());
+    assertEquals(Lists.newArrayList("A", "A", "C"), results1.gets(User.HANDLE));
+    assertEquals(Lists.newArrayList("Engineer", "Accountant", "Accountant"), results1.gets(User.BIO));
   }
 
   @Test
