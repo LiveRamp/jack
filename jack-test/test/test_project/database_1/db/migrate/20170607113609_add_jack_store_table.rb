@@ -9,7 +9,6 @@ class AddJackStoreTable < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :test_store, [:scope, :key], :name => 'store_index_on_scope_key', :length => {:key => 100}
-    add_index :test_store, [:scope, :value], :name => 'store_index_on_scope_value', :length => {:value => 100}
+    add_index :test_store, [:scope, :key, :value], :name => 'store_index_on_scope_key_value', :length => {:key => 20, :value => 60}
   end
 end

@@ -47,8 +47,7 @@ ActiveRecord::Schema.define(version: 20170607113609) do
     t.datetime "updated_at"
   end
 
-  add_index "test_store", ["scope", "key"], name: "store_index_on_scope_key", length: {"scope"=>nil, "key"=>100}, using: :btree
-  add_index "test_store", ["scope", "value"], name: "store_index_on_scope_value", length: {"scope"=>nil, "value"=>100}, using: :btree
+  add_index "test_store", ["scope", "key", "value"], name: "store_index_on_scope_key_value", length: {"scope"=>nil, "key"=>20, "value"=>60}, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "handle",            limit: 255,                             null: false
