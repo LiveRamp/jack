@@ -95,15 +95,6 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public double getAverageConnectionExecutionTime() {
-    if (totalQueries > 0) {
-      return ((double)totalActiveTime / (double)totalQueries);
-    } else {
-      return -1;
-    }
-  }
-
-  @Override
   public long getOpenedConnectionsNumber() {
     return openedConnections;
   }
@@ -143,8 +134,6 @@ public class DbMetricsImpl implements DbMetrics {
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
     summary += ("\nConnections opened : " + getOpenedConnectionsNumber());
     summary += String.format("\n Max capacity time (%%) : %,.2f %%", 100 * getMaxConnectionsProportion());
-
-    summary += String.format("\nAverage connection execution time : %,.2f ms", getAverageConnectionExecutionTime());
     summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitingTime());
     summary += String.format("\nMaximum connection waiting time : %d ms", getMaxConnectionWaitingTime());
     summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + " ms");

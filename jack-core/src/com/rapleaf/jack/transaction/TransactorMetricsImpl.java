@@ -11,6 +11,8 @@ public class TransactorMetricsImpl implements TransactorMetrics {
 
   PriorityQueue<TransactorMetricElement> longestQueries;
   HashMap<StackTraceElement, TransactorMetricElement> longestQueriesMap;
+  long totalExecutionTime = 0;
+  long queryCount = 0;
   /*
   Algorithm description :
 
@@ -35,6 +37,9 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   }
 
   void update(long executionTime, StackTraceElement queryStackTrace) {
+    totalExecutionTime += executionTime;
+    queryCount += 1;
+
     if (longestQueriesMap.containsKey(queryStackTrace)) {
       TransactorMetricElement query = longestQueriesMap.get(queryStackTrace);
       longestQueries.remove(query);
@@ -55,6 +60,11 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   }
 
   @Override
+  public double getAverageQueryExecutionTime() {
+    return (double)totalExecutionTime / (double)queryCount;
+  }
+
+  @Override
   public synchronized LinkedList<TransactorMetricElement> getLongestQueries() {
     LinkedList<TransactorMetricElement> longestQueriesList = new LinkedList<>();
     while (longestQueries.size() > 0) {
@@ -68,6 +78,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   public String getSummary() {
     LinkedList<TransactorMetricElement> longestQueriesList = getLongestQueries();
     String log = "";
+    log += "\n Average Query execution time : " + getAverageQueryExecutionTime();
     log += "\n--------------" + longestQueriesSize + " QUERIES WITH LONGEST AVERAGE EXECUTION TIME-----------------\n";
     for (TransactorMetricElement query : longestQueriesList) {
       log += "\nClass name : " + query.getQueryTrace().getClassName();

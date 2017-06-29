@@ -11,8 +11,6 @@ public interface DbMetrics {
 
   double getAverageConnectionWaitingTime();
 
-  double getAverageConnectionExecutionTime();
-
   double getAverageIdleConnectionsMaxValue();
 
   double getAverageIdleConnectionsMinValue();

@@ -6,6 +6,8 @@ public interface TransactorMetrics {
 
   LinkedList<TransactorMetricElement> getLongestQueries();
 
+  double getAverageQueryExecutionTime();
+
   String getSummary();
 
 }

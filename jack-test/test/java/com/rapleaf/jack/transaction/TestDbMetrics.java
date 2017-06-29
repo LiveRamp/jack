@@ -130,27 +130,6 @@ public class TestDbMetrics extends JackTestCase {
   }
 
   @Test
-  public void testAverageConnectionExecutionTime() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
-    Future<Long> future1 = executorService.submit(() -> {
-      long start = stopwatch.elapsedMillis();
-      transactor.execute(a -> {sleepMillis(100);});
-      return stopwatch.elapsedMillis() - start;
-    });
-    Future<Long> future2 = executorService.submit(() -> {
-      long start = stopwatch.elapsedMillis();
-      transactor.execute(a -> {sleepMillis(100);});
-      return stopwatch.elapsedMillis() - start;
-    });
-    double expectedAverageConnectionExecutionTime = ((double)future1.get() + (double)future2.get()) / 2;
-    DbMetrics dbMetrics = transactor.getDbMetrics();
-    double averageConnectionExecutionTime = dbMetrics.getAverageConnectionExecutionTime();
-    transactor.close();
-
-    assertRoughEqual(averageConnectionExecutionTime, expectedAverageConnectionExecutionTime, 20);
-  }
-
-  @Test
   public void testAverageIdleConnections() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.millis(50)).get();
     transactor.execute(a -> {sleepMillis(100);});
