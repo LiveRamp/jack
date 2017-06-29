@@ -64,6 +64,36 @@ public class TestTransactorMetrics extends JackTestCase {
     assertRoughEqual(executionTime, maxExecutionTime, 20);
   }
 
+  @Test
+  public void testQueryOverhead() throws Exception {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(false).get();
+    Long executionTime = 0l;
+    for (int i = 0; i < 10; i++) {
+      long time = transactor.query(db -> {
+        long startTime = System.currentTimeMillis();
+        Thread.sleep(20);
+        return System.currentTimeMillis() - startTime;
+      });
+      executionTime += time;
+    }
+    System.out.println("execution time without query tracking : " + executionTime);
+    transactor.close();
+
+    TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(true).get();
+    Long executionTime2 = 0l;
+    for (int i = 0; i < 10; i++) {
+      long time = transactor2.query(db -> {
+        long startTime = System.currentTimeMillis();
+        Thread.sleep(20);
+        return System.currentTimeMillis() - startTime;
+      });
+      executionTime2 += time;
+    }
+    System.out.println("execution time with query tracking : " + executionTime2);
+    transactor2.close();
+    assertRoughEqual(executionTime, executionTime2, .1 * executionTime);
+  }
+
   private void assertRoughEqual(double value, double expected, double error) {
     assertTrue(value <= (expected + error) && value >= (expected - error));
   }
