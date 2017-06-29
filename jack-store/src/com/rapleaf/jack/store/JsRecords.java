@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -9,10 +10,16 @@ import com.google.common.base.Preconditions;
 
 public class JsRecords implements Iterable<JsRecord> {
 
+  private static final JsRecords EMPTY_RECORDS = new JsRecords(Collections.emptyList());
+
   private final List<JsRecord> jsRecords;
 
   public JsRecords(List<JsRecord> jsRecords) {
     this.jsRecords = jsRecords;
+  }
+
+  public static JsRecords empty() {
+    return EMPTY_RECORDS;
   }
 
   @Override
