@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 public class JsRecords implements Iterable<JsRecord> {
 
@@ -17,6 +18,25 @@ public class JsRecords implements Iterable<JsRecord> {
   @Override
   public Iterator<JsRecord> iterator() {
     return jsRecords.iterator();
+  }
+
+  public List<JsRecord> getRecords() {
+    return jsRecords;
+  }
+
+  public JsRecord getOnly() {
+    Preconditions.checkState(jsRecords.size() == 1, "There are more than one (%s) records", jsRecords.size());
+    return jsRecords.get(0);
+  }
+
+  public JsRecord getFirst() {
+    Preconditions.checkState(jsRecords.size() >= 1, "No record exists");
+    return jsRecords.get(0);
+  }
+
+  public JsRecord get(int index) {
+    Preconditions.checkState(jsRecords.size() > index, "There are only %s record(s), index %s is out of bound", jsRecords.size(), index);
+    return jsRecords.get(index);
   }
 
   public boolean isEmpty() {
