@@ -10,6 +10,7 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.transaction.ITransactor;
 

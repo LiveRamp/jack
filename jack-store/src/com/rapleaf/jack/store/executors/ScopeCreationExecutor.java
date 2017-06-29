@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {

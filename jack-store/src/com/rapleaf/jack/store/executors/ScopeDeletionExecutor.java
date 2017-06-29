@@ -16,6 +16,7 @@ import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {

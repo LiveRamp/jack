@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors;
+package com.rapleaf.jack.store;
 
 import java.util.Objects;
 import java.util.Set;
@@ -8,15 +8,14 @@ import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.Table;
-import com.rapleaf.jack.store.JsConstants;
 
 public class JsTable {
-  final Table<?, ?> table;
-  final Column<Long> idColumn;
-  final Column<Long> scopeColumn;
-  final Column<String> typeColumn;
-  final Column<String> keyColumn;
-  final Column<String> valueColumn;
+  public final Table<?, ?> table;
+  public final Column<Long> idColumn;
+  public final Column<Long> scopeColumn;
+  public final Column<String> typeColumn;
+  public final Column<String> keyColumn;
+  public final Column<String> valueColumn;
 
   public JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.table = table;

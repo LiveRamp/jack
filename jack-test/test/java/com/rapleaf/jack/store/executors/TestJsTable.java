@@ -2,6 +2,7 @@ package com.rapleaf.jack.store.executors;
 
 import org.junit.Test;
 
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.test_project.database_1.models.User;
 

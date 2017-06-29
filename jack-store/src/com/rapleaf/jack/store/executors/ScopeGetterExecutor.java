@@ -12,6 +12,7 @@ import com.rapleaf.jack.queries.GenericConstraint;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.DuplicatedScopeException;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.transaction.ITransactor;

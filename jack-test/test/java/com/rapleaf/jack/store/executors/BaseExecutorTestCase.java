@@ -14,6 +14,7 @@ import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JackStore;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.json.BaseJsonTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;

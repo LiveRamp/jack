@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {

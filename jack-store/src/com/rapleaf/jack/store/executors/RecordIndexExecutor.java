@@ -19,6 +19,7 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;

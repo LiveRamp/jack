@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.executors.JsExecutors;
-import com.rapleaf.jack.store.executors.JsTable;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class JackStore<DB extends IDb> {
