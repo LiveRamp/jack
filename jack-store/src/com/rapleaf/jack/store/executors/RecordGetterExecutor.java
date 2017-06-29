@@ -57,6 +57,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
             .where(table.scopeColumn.equalTo(recordScope.get().getScopeId()))
             .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
             .select(table.typeColumn, table.keyColumn, table.valueColumn)
+            .orderBy(table.idColumn)
             .fetch()
     );
 
