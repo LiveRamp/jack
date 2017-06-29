@@ -74,7 +74,7 @@ public class TestTransactorMetrics extends JackTestCase {
       });
     }
     long finishTime1 = stopwatch.elapsedMillis() - startTime1;
-    System.out.println("execution time without query tracking : " + finishTime1);
+    LOG.info("execution time without query tracking: {} ms", finishTime1);
     transactor1.close();
 
     TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(true).get();
@@ -85,7 +85,7 @@ public class TestTransactorMetrics extends JackTestCase {
       });
     }
     long finishTime2 = stopwatch.elapsedMillis() - startTime2;
-    System.out.println("execution time with query tracking : " + finishTime2);
+    LOG.info("execution time with query tracking: {} ms", finishTime2);
     transactor2.close();
     assertRoughEqual(finishTime1, finishTime2, .2 * finishTime1);
   }
