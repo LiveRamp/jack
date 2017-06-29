@@ -66,7 +66,7 @@ public class BaseExecutorTestCase extends JackTestCase {
   static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");
 
   final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  final JackStore<IDatabase1> jackStore = new JackStore<>(transactor, TestStore.TBL, TestStore.SCOPE, TestStore.TYPE, TestStore.KEY, TestStore.VALUE);
+  final JackStore<IDatabase1> jackStore = new JackStore<>(transactor, JsTable.from(TestStore.TBL).create());
 
   Records records;
 

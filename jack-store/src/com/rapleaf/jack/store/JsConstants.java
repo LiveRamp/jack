@@ -6,4 +6,8 @@ public class JsConstants {
   public static final String SCOPE_TYPE = "_SCOPE";
   public static final JsScope ROOT_SCOPE = new JsScope(null, "_root_scope");
 
+  public enum DefaultTableField {
+    scope, key, type, value
+  }
+
 }

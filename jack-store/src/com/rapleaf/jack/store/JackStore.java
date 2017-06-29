@@ -7,8 +7,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.queries.Column;
-import com.rapleaf.jack.queries.Table;
 import com.rapleaf.jack.store.executors.JsExecutors;
 import com.rapleaf.jack.store.executors.JsTable;
 import com.rapleaf.jack.transaction.ITransactor;
@@ -18,9 +16,9 @@ public class JackStore<DB extends IDb> {
   private final ITransactor<DB> transactor;
   private final JsTable jsTable;
 
-  public JackStore(ITransactor<DB> transactor, Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
+  public JackStore(ITransactor<DB> transactor, JsTable jsTable) {
     this.transactor = transactor;
-    this.jsTable = new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
+    this.jsTable = jsTable;
   }
 
   public JsExecutors<DB> scope(String scope, String... moreScopes) {
