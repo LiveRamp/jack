@@ -12,6 +12,10 @@ public class JsScope {
     this.scopeName = scopeName;
   }
 
+  public static JsScope root() {
+    return JsConstants.ROOT_SCOPE;
+  }
+
   public Long getScopeId() {
     return scopeId;
   }

@@ -16,8 +16,6 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public class JsRecord {
 
-  private static final JsRecord EMPTY_RECORD = new JsRecord(Collections.emptyMap(), Collections.emptyMap());
-
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
@@ -30,7 +28,7 @@ public class JsRecord {
   }
 
   public static JsRecord empty() {
-    return EMPTY_RECORD;
+    return JsConstants.EMPTY_RECORD;
   }
 
   public Set<String> keySet() {
