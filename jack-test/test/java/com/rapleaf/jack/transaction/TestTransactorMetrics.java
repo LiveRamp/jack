@@ -77,7 +77,7 @@ public class TestTransactorMetrics extends JackTestCase {
     System.out.println("execution time without query tracking : " + finishTime1);
     transactor1.close();
 
-    TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(false).get();
+    TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(true).get();
     long startTime2 = stopwatch.elapsedMillis();
     for (int i = 0; i < 10; i++) {
       transactor2.execute(db -> {
