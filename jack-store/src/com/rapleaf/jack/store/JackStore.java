@@ -23,24 +23,24 @@ public class JackStore<DB extends IDb> {
     this.jsTable = new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
   }
 
-  public JsExecutors<DB> within(String scope, String... moreScopes) {
+  public JsExecutors<DB> scope(String scope, String... moreScopes) {
     List<String> scopes = Lists.newArrayListWithCapacity(1 + moreScopes.length);
     scopes.add(scope);
     scopes.addAll(Arrays.asList(moreScopes));
-    return within(scopes);
+    return scope(scopes);
   }
 
-  public JsExecutors<DB> within(List<String> scopes) {
-    Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `withinRoot` method");
+  public JsExecutors<DB> scope(List<String> scopes) {
+    Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `rootScope` method");
     Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
     return new JsExecutors<>(transactor, jsTable, scopes);
   }
 
-  public JsExecutors<DB> within(JsScope scope) {
+  public JsExecutors<DB> scope(JsScope scope) {
     return new JsExecutors<>(transactor, jsTable, scope);
   }
 
-  public JsExecutors<DB> withinRoot() {
-    return within(JsConstants.ROOT_SCOPE);
+  public JsExecutors<DB> rootScope() {
+    return scope(JsConstants.ROOT_SCOPE);
   }
 }

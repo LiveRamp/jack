@@ -25,13 +25,13 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     ID, NAME
   }
 
-  public ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
+  ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
     super(transactor, jsTable, predefinedScope, predefinedScopeNames);
     this.scope = String.valueOf(scopeId);
     this.getterType = GetterType.ID;
   }
 
-  public ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
+  ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
     super(transactor, jsTable, predefinedScope, predefinedScopeNames);
     this.scope = scopeName;
     this.getterType = GetterType.NAME;

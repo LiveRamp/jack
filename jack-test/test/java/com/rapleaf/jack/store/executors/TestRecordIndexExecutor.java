@@ -82,7 +82,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
       // key is prepended to json tuple path
       tupleMap.put(String.format("%s.%s", JSON_KEY, tuple.getFullPaths()), tuple.getValue());
     }
-    jackStore.within("scope").indexRecord().putJson(JSON_KEY, JSON_VALUE).execute();
+    jackStore.scope("scope").indexRecord().putJson(JSON_KEY, JSON_VALUE).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.startsWith(JSON_KEY)).fetch());
     assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
     for (Record record : records) {
@@ -104,16 +104,16 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
   @Test(expected = NullPointerException.class)
   public void testInsertNullWithPutObjectMethod() throws Exception {
-    jackStore.withinRoot().indexRecord().put("key", (Object)null).execute();
+    jackStore.rootScope().indexRecord().put("key", (Object)null).execute();
   }
 
   @Test(expected = NullPointerException.class)
   public void testInsertNullWithPutObjectListMethod() throws Exception {
-    jackStore.withinRoot().indexRecord().put("key", (List<Object>)null).execute();
+    jackStore.rootScope().indexRecord().put("key", (List<Object>)null).execute();
   }
 
   private <T> void testInsertion(String key, T value, boolean isNull, RecordIndexExecution<IDatabase1, T> execution) {
-    RecordIndexExecutor<IDatabase1> executor = jackStore.within("scope").indexRecord();
+    RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecord();
     execution.apply(executor, key, isNull ? null : value).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(1, records.size());
@@ -121,7 +121,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   }
 
   private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, RecordIndexListExecution<IDatabase1, T> execution) {
-    RecordIndexExecutor<IDatabase1> executor = jackStore.within("scope").indexRecord();
+    RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecord();
     execution.apply(executor, key, isNull ? null : listValue).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(isNull ? 1 : listValue.size(), records.size());
@@ -129,14 +129,14 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   }
 
   private void testGenericInsertion(String key, Object value) throws Exception {
-    jackStore.within("scope").indexRecord().put(key, value).execute();
+    jackStore.scope("scope").indexRecord().put(key, value).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(1, records.size());
     assertEquals(String.valueOf(value), records.get(0).get(TestStore.VALUE));
   }
 
   private void testGenericListInsertion(String key, List valueList) throws Exception {
-    jackStore.within("scope").indexRecord().putList(key, valueList).execute();
+    jackStore.scope("scope").indexRecord().putList(key, valueList).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(valueList.size(), records.size());
     assertEquals(valueList.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
@@ -151,27 +151,27 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     List<Integer> newList = Lists.newArrayList(10, 40, 50, 60);
 
     // primitive value
-    jackStore.withinRoot().indexRecord().put(key, oldValue).execute();
-    jackStore.withinRoot().indexRecord().put(key, newValue).execute();
+    jackStore.rootScope().indexRecord().put(key, oldValue).execute();
+    jackStore.rootScope().indexRecord().put(key, newValue).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(1, records.size());
     assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));
 
     // list value
-    jackStore.withinRoot().indexRecord().putIntList(key, oldList).execute();
-    jackStore.withinRoot().indexRecord().putIntList(key, newList).execute();
+    jackStore.rootScope().indexRecord().putIntList(key, oldList).execute();
+    jackStore.rootScope().indexRecord().putIntList(key, newList).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(newList.size(), records.size());
     assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
 
     // primitive to list
-    jackStore.withinRoot().indexRecord().putIntList(key, newList).execute();
+    jackStore.rootScope().indexRecord().putIntList(key, newList).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(newList.size(), records.size());
     assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
 
     // list to primitive
-    jackStore.withinRoot().indexRecord().put(key, newValue).execute();
+    jackStore.rootScope().indexRecord().put(key, newValue).execute();
     records = transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch());
     assertEquals(1, records.size());
     assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));

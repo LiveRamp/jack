@@ -14,7 +14,7 @@ public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Set<String> keysToDelete;
 
-  protected RecordDeletionExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  RecordDeletionExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
     this.keysToDelete = Sets.newHashSet();
   }

@@ -17,7 +17,7 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   @Test
   public void testRename() throws Exception {
     createScope("scope0");
-    boolean rename = jackStore.withinRoot().renameScope("scope0", "scope1").execute();
+    boolean rename = jackStore.rootScope().renameScope("scope0", "scope1").execute();
     assertTrue(rename);
 
     List<TestStore> records = transactor.query(db ->
@@ -30,8 +30,8 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testNestedRename() throws Exception {
-    jackStore.within("scope0").createScope("scope1").execute();
-    boolean rename = jackStore.within("scope0").renameScope("scope1", "scope2").execute();
+    jackStore.scope("scope0").createScope("scope1").execute();
+    boolean rename = jackStore.scope("scope0").renameScope("scope1", "scope2").execute();
     assertTrue(rename);
 
     List<TestStore> records = transactor.query(db ->
@@ -44,15 +44,15 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
 
   @Test(expected = MissingScopeException.class)
   public void testNonexistRename() throws Exception {
-    jackStore.withinRoot().createScope("scope0").execute();
-    jackStore.withinRoot().renameScope("scope1", "scope2").execute();
+    jackStore.rootScope().createScope("scope0").execute();
+    jackStore.rootScope().renameScope("scope1", "scope2").execute();
   }
 
   @Test(expected = JackRuntimeException.class)
   public void testExistingRename() throws Exception {
-    jackStore.withinRoot().createScope("scope0").execute();
-    jackStore.withinRoot().createScope("scope1").execute();
-    jackStore.withinRoot().renameScope("scope0", "scope1").execute();
+    jackStore.rootScope().createScope("scope0").execute();
+    jackStore.rootScope().createScope("scope1").execute();
+    jackStore.rootScope().renameScope("scope0", "scope1").execute();
   }
 
 }

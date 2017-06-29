@@ -16,14 +16,14 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
 
   @Test(expected = JackRuntimeException.class)
   public void testNoBulkDeletion() throws Exception {
-    jackStore.withinRoot().deleteScope().execute();
+    jackStore.rootScope().deleteScope().execute();
   }
 
   @Test
   public void testNoDeletion() throws Exception {
-    deletion = jackStore.withinRoot().deleteScope().allowBulk().execute();
+    deletion = jackStore.rootScope().deleteScope().allowBulk().execute();
     assertTrue(deletion);
-    assertTrue(jackStore.within("scope1").deleteScope().allowBulk().execute());
+    assertTrue(jackStore.scope("scope1").deleteScope().allowBulk().execute());
   }
 
   @Test
@@ -34,12 +34,12 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     JsScope s12 = createScope(s1, "scope2");
     assertRecordCount(4);
 
-    deletion = jackStore.within(s1).deleteScope().allowBulk().execute();
+    deletion = jackStore.scope(s1).deleteScope().allowBulk().execute();
     assertTrue(deletion);
     assertRecordCount(2);
-    assertEquals(2, jackStore.withinRoot().queryScope().fetch().size());
+    assertEquals(2, jackStore.rootScope().queryScope().fetch().size());
 
-    deletion = jackStore.withinRoot().deleteScope().allowBulk().execute();
+    deletion = jackStore.rootScope().deleteScope().allowBulk().execute();
     assertTrue(deletion);
     assertRecordCount(0);
   }
@@ -58,7 +58,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
 
     assertRecordCount(7);
 
-    deletion = jackStore.withinRoot().deleteScope().allowRecursion().whereScope(JackMatchers.equalTo(s1.getScopeName())).execute();
+    deletion = jackStore.rootScope().deleteScope().allowRecursion().whereScope(JackMatchers.equalTo(s1.getScopeName())).execute();
     assertTrue(deletion);
     assertRecordCount(2);
     assertDeletedScope(s1);
@@ -67,7 +67,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     assertDeletedScope(s121);
     assertDeletedScope(s122);
 
-    deletion = jackStore.within(s2).deleteScope().allowRecursion().whereScope(JackMatchers.equalTo(s21.getScopeName())).execute();
+    deletion = jackStore.scope(s2).deleteScope().allowRecursion().whereScope(JackMatchers.equalTo(s21.getScopeName())).execute();
     assertRecordCount(1);
     assertDeletedScope(s21);
   }
@@ -79,7 +79,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     JsScope s3 = createScope("3");
     JsScope s4 = createScope("4");
 
-    deletion = jackStore.withinRoot().deleteScope()
+    deletion = jackStore.rootScope().deleteScope()
         .whereScope(JackMatchers.between("2", "3"))
         .execute();
     assertTrue(deletion);

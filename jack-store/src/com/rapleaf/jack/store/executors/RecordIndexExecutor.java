@@ -30,7 +30,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  protected RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(transactor, table, predefinedScope, predefinedScopeNames);
     this.types = Maps.newLinkedHashMap();
     this.values = Maps.newLinkedHashMap();

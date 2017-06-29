@@ -76,23 +76,23 @@ public class BaseExecutorTestCase extends JackTestCase {
   }
 
   JsScope createScope() {
-    return jackStore.withinRoot().createScope().execute();
+    return jackStore.rootScope().createScope().execute();
   }
 
   JsScope createScope(List<String> parentScopes) {
-    return jackStore.within(parentScopes).createScope().execute();
+    return jackStore.scope(parentScopes).createScope().execute();
   }
 
   JsScope createScope(String newScope) {
-    return jackStore.withinRoot().createScope(newScope).execute();
+    return jackStore.rootScope().createScope(newScope).execute();
   }
 
   JsScope createScope(List<String> parentScopes, String newScope) {
-    return jackStore.within(parentScopes).createScope(newScope).execute();
+    return jackStore.scope(parentScopes).createScope(newScope).execute();
   }
 
   JsScope createScope(JsScope parentScope, String newScope) {
-    return jackStore.within(parentScope).createScope(newScope).execute();
+    return jackStore.scope(parentScope).createScope(newScope).execute();
   }
 
   protected List<String> list(String element) {

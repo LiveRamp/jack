@@ -1,22 +1,12 @@
 package com.rapleaf.jack.store.executors;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
-import com.rapleaf.jack.queries.Column;
-import com.rapleaf.jack.queries.GenericConstraint;
-import com.rapleaf.jack.queries.GenericQuery;
-import com.rapleaf.jack.queries.LimitCriterion;
-import com.rapleaf.jack.queries.QueryOrder;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
-import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public abstract class BaseExecutor<DB extends IDb> {
@@ -26,18 +16,18 @@ public abstract class BaseExecutor<DB extends IDb> {
   protected final Optional<JsScope> predefinedScope;
   protected final List<String> predefinedScopeNames;
 
-  protected BaseExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  BaseExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     this.transactor = transactor;
     this.table = table;
     this.predefinedScope = predefinedScope;
     this.predefinedScopeNames = predefinedScopeNames;
   }
 
-  protected JsScope getOrCreateExecutionScope() {
+  JsScope getOrCreateExecutionScope() {
     return predefinedScope.orElse(getOrCreateScope(JsConstants.ROOT_SCOPE, predefinedScopeNames));
   }
 
-  protected Optional<JsScope> getOptionalExecutionScope() {
+  Optional<JsScope> getOptionalExecutionScope() {
     if (predefinedScope.isPresent()) {
       return predefinedScope;
     } else {
@@ -45,7 +35,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     }
   }
 
-  protected JsScope getOrCreateScope(JsScope executionScope, List<String> scopes) {
+  JsScope getOrCreateScope(JsScope executionScope, List<String> scopes) {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
       Optional<JsScope> currentScope = getOptionalScope(upperScope, scope);
@@ -58,7 +48,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     return upperScope;
   }
 
-  protected Optional<JsScope> getOptionalScope(JsScope executionScope, List<String> scopes) {
+  Optional<JsScope> getOptionalScope(JsScope executionScope, List<String> scopes) {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
       Optional<JsScope> currentScope = getOptionalScope(upperScope, scope);
