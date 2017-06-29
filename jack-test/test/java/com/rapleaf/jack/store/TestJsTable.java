@@ -1,12 +1,11 @@
-package com.rapleaf.jack.store.executors;
+package com.rapleaf.jack.store;
 
 import org.junit.Test;
 
-import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.test_project.database_1.models.User;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestJsTable {
 
