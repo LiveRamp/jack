@@ -17,7 +17,7 @@ public class JsTable {
   public final Column<String> keyColumn;
   public final Column<String> valueColumn;
 
-  public JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
+  private JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.table = table;
     this.idColumn = Column.fromId(table.getName());
     this.scopeColumn = scopeColumn;
@@ -39,7 +39,7 @@ public class JsTable {
     private Column<String> keyColumn;
     private Column<String> valueColumn;
 
-    Builder(Table<?, ?> table) {
+    private Builder(Table<?, ?> table) {
       this.table = table;
       this.allColumns = table.getAllColumns().stream()
           .map(Column::getField)
