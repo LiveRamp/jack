@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JackStore;
 import com.rapleaf.jack.store.JsScope;
@@ -20,7 +21,9 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.transaction.IExecution;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class BaseExecutorTestCase {
+public class BaseExecutorTestCase extends JackTestCase {
+
+  static final JsonParser JSON_PARSER = new JsonParser();
 
   static final String BOOLEAN_KEY = "boolean";
   static final boolean BOOLEAN_VALUE = false;
@@ -42,7 +45,7 @@ public class BaseExecutorTestCase {
 
   static final String JSON_KEY = "json";
   static final String JSON_STRING = BaseJsonTestCase.COMPLEX_JSON_STRING;
-  static final JsonObject JSON_VALUE = new JsonParser().parse(JSON_STRING).getAsJsonObject();
+  static final JsonObject JSON_VALUE = JSON_PARSER.parse(JSON_STRING).getAsJsonObject();
 
   static final String BOOLEAN_LIST_KEY = "boolean-list";
   static final List<Boolean> BOOLEAN_LIST_VALUE = Lists.newArrayList(true, true, false);
