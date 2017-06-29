@@ -66,32 +66,28 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @Test
   public void testQueryOverhead() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(false).get();
-    Long executionTime = 0l;
+    TransactorImpl<IDatabase1> transactor1 = transactorBuilder.setMetricsTracking(false).get();
+    long startTime1 = stopwatch.elapsedMillis();
     for (int i = 0; i < 10; i++) {
-      long time = transactor.query(db -> {
-        long startTime = System.currentTimeMillis();
+      transactor1.execute(db -> {
         Thread.sleep(20);
-        return System.currentTimeMillis() - startTime;
       });
-      executionTime += time;
     }
-    System.out.println("execution time without query tracking : " + executionTime);
-    transactor.close();
+    long finishTime1 = stopwatch.elapsedMillis() - startTime1;
+    System.out.println("execution time without query tracking : " + finishTime1);
+    transactor1.close();
 
-    TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(true).get();
-    Long executionTime2 = 0l;
+    TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(false).get();
+    long startTime2 = stopwatch.elapsedMillis();
     for (int i = 0; i < 10; i++) {
-      long time = transactor2.query(db -> {
-        long startTime = System.currentTimeMillis();
+      transactor2.execute(db -> {
         Thread.sleep(20);
-        return System.currentTimeMillis() - startTime;
       });
-      executionTime2 += time;
     }
-    System.out.println("execution time with query tracking : " + executionTime2);
+    long finishTime2 = stopwatch.elapsedMillis() - startTime2;
+    System.out.println("execution time with query tracking : " + finishTime2);
     transactor2.close();
-    assertRoughEqual(executionTime, executionTime2, .1 * executionTime);
+    assertRoughEqual(finishTime1, finishTime2, .2 * finishTime1);
   }
 
   private void assertRoughEqual(double value, double expected, double error) {
