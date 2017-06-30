@@ -5,10 +5,13 @@ import java.util.Optional;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestScopeGetterExecutor extends BaseExecutorTestCase {
 
@@ -40,18 +43,28 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
     assertEquals(Optional.empty(), transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeName() + "0").getOptional(db)));
   }
 
-  @Test(expected = MissingScopeException.class)
+  @Test
   public void testMissingScopeId() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().getScope(1L).get(db);
-    });
+    try {
+      transactor.execute(db -> {
+        jackStore.rootScope().getScope(1L).get(db);
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof MissingScopeException);
+    }
   }
 
-  @Test(expected = MissingScopeException.class)
+  @Test
   public void testMissingScopeName() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().getScope("scope0").get(db);
-    });
+    try {
+      transactor.execute(db -> {
+        jackStore.rootScope().getScope("scope0").get(db);
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof MissingScopeException);
+    }
   }
 
 }

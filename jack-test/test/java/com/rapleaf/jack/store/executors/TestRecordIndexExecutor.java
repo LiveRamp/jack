@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
@@ -20,6 +21,7 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
 
@@ -100,23 +102,38 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     }
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testNullJsonInsertion() throws Exception {
-    testInsertion(JSON_KEY, JSON_VALUE, true, RecordIndexExecutor::putJson);
+    try {
+      testInsertion(JSON_KEY, JSON_VALUE, true, RecordIndexExecutor::putJson);
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof NullPointerException);
+    }
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testInsertNullWithPutObjectMethod() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().indexRecord().put("key", (Object)null).execute(db);
-    });
+    try {
+      transactor.execute(db -> {
+        jackStore.rootScope().indexRecord().put("key", (Object)null).execute(db);
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof NullPointerException);
+    }
   }
 
-  @Test(expected = NullPointerException.class)
+  @Test
   public void testInsertNullWithPutObjectListMethod() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().indexRecord().put("key", (List<Object>)null).execute(db);
-    });
+    try {
+      transactor.execute(db -> {
+        jackStore.rootScope().indexRecord().put("key", (List<Object>)null).execute(db);
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof NullPointerException);
+    }
   }
 
   private <T> void testInsertion(String key, T value, boolean isNull, RecordIndexExecution<IDatabase1, T> execution) {
