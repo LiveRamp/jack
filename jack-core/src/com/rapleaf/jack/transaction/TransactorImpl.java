@@ -33,21 +33,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return new Builder<>(dbConstructor);
   }
 
-  @Deprecated
-  @Override
-  public <T> T execute(IQuery<DB, T> query) {
-    return query(query);
-  }
-
   @Override
   public <T> T query(IQuery<DB, T> query) {
     return query(query, false);
-  }
-
-  @Deprecated
-  @Override
-  public <T> T executeAsTransaction(IQuery<DB, T> query) {
-    return queryAsTransaction(query);
   }
 
   @Override
