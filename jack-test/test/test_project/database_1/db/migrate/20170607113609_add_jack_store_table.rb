@@ -1,9 +1,9 @@
 class AddJackStoreTable < ActiveRecord::Migration
   def change
     create_table :test_store do |t|
+      t.integer :type,  :limit => 4
       t.integer :scope, :limit => 8
       t.string :key
-      t.string :type
       t.string :value
 
       t.timestamps

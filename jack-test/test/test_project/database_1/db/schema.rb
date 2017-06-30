@@ -39,9 +39,9 @@ ActiveRecord::Schema.define(version: 20170607113609) do
   end
 
   create_table "test_store", force: :cascade do |t|
+    t.integer  "type",       limit: 4
     t.integer  "scope",      limit: 8
     t.string   "key",        limit: 255
-    t.string   "type",       limit: 255
     t.string   "value",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
