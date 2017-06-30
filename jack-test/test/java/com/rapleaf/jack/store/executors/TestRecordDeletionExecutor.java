@@ -17,13 +17,13 @@ public class TestRecordDeletionExecutor extends BaseExecutorTestCase {
   @Test
   public void testDeletion() throws Exception {
     transactor.executeAsTransaction(db -> {
-      jackStore.scope("scope1", "scope2").indexRecord().put(KEY, VALUE).execute(db);
+      jackStore.scope("scope1", "scope2").indexRecords().put(KEY, VALUE).execute(db);
     });
     assertEquals(1, transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(KEY)).fetch()).size());
     assertEquals(2, transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(JsConstants.SCOPE_KEY)).fetch()).size());
 
     transactor.executeAsTransaction(db -> {
-      jackStore.scope("scope1", "scope2").deleteRecord().delete(KEY).execute(db);
+      jackStore.scope("scope1", "scope2").deleteRecords().delete(KEY).execute(db);
     });
     assertEquals(0, transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(KEY)).fetch()).size());
     assertEquals(2, transactor.query(db -> db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(JsConstants.SCOPE_KEY)).fetch()).size());
@@ -34,11 +34,11 @@ public class TestRecordDeletionExecutor extends BaseExecutorTestCase {
     int random = new Random(System.currentTimeMillis()).nextInt(10);
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < random; ++i) {
-        jackStore.rootScope().indexRecord().put(KEY + i, VALUE + i).execute(db);
+        jackStore.rootScope().indexRecords().put(KEY + i, VALUE + i).execute(db);
       }
     });
     transactor.executeAsTransaction(db -> {
-      jackStore.rootScope().deleteRecord().delete(KEY + random).execute(db);
+      jackStore.rootScope().deleteRecords().delete(KEY + random).execute(db);
     });
     assertEquals(random, transactor.query(db -> db.createQuery().from(TestStore.TBL).fetch()).size());
   }

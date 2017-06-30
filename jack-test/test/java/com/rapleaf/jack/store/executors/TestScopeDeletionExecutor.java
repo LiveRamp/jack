@@ -17,15 +17,15 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
   @Test(expected = JackRuntimeException.class)
   public void testNoBulkDeletion() throws Exception {
     transactor.execute(db -> {
-      jackStore.rootScope().deleteSubScope().execute(db);
+      jackStore.rootScope().deleteSubScopes().execute(db);
     });
   }
 
   @Test
   public void testNoDeletion() throws Exception {
-    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScope().allowBulk().execute(db));
+    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScopes().allowBulk().execute(db));
     assertTrue(deletion);
-    assertTrue(transactor.query(db -> jackStore.scope("scope1").deleteSubScope().allowBulk().execute(db)));
+    assertTrue(transactor.query(db -> jackStore.scope("scope1").deleteSubScopes().allowBulk().execute(db)));
   }
 
   @Test
@@ -36,12 +36,12 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     JsScope s12 = createScope(s1, "scope2");
     assertRecordCount(4);
 
-    deletion = transactor.query(db -> jackStore.scope(s1).deleteSubScope().allowBulk().execute(db));
+    deletion = transactor.query(db -> jackStore.scope(s1).deleteSubScopes().allowBulk().execute(db));
     assertTrue(deletion);
     assertRecordCount(2);
-    assertEquals(2, transactor.query(db -> jackStore.rootScope().querySubScope().execute(db)).size());
+    assertEquals(2, transactor.query(db -> jackStore.rootScope().querySubScopes().execute(db)).size());
 
-    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScope().allowBulk().execute(db));
+    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScopes().allowBulk().execute(db));
     assertTrue(deletion);
     assertRecordCount(0);
   }
@@ -60,7 +60,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
 
     assertRecordCount(7);
 
-    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScope().allowRecursion().whereScope(JackMatchers.equalTo(s1.getScopeName())).execute(db));
+    deletion = transactor.query(db -> jackStore.rootScope().deleteSubScopes().allowRecursion().whereScope(JackMatchers.equalTo(s1.getScopeName())).execute(db));
     assertTrue(deletion);
     assertRecordCount(2);
     assertDeletedScope(s1);
@@ -69,7 +69,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     assertDeletedScope(s121);
     assertDeletedScope(s122);
 
-    deletion = transactor.query(db -> jackStore.scope(s2).deleteSubScope().allowRecursion().whereScope(JackMatchers.equalTo(s21.getScopeName())).execute(db));
+    deletion = transactor.query(db -> jackStore.scope(s2).deleteSubScopes().allowRecursion().whereScope(JackMatchers.equalTo(s21.getScopeName())).execute(db));
     assertRecordCount(1);
     assertDeletedScope(s21);
   }
@@ -82,7 +82,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     JsScope s4 = createScope("4");
 
     deletion = transactor.query(db ->
-        jackStore.rootScope().deleteSubScope()
+        jackStore.rootScope().deleteSubScopes()
             .whereScope(JackMatchers.between("2", "3"))
             .execute(db)
     );

@@ -31,7 +31,7 @@ public class TestScopeReaderExecutor extends BaseExecutorTestCase {
       for (long i = 0L; i < size; ++i) {
         JsScope scope = jackStore.scope(customScope).createSubScope(String.valueOf(i)).execute(db);
         scopes.add(scope);
-        jackStore.scope(scope).indexRecord()
+        jackStore.scope(scope).indexRecords()
             .putLong(LONG_KEY, i)
             .putString(STRING_KEY, String.valueOf(i))
             .putJson(JSON_KEY, JSON_PARSER.parse(String.format("{%s: {%s: %d}, %s: [1, 2, 3]}", key1, key2, i, key3)).getAsJsonObject())
@@ -44,7 +44,7 @@ public class TestScopeReaderExecutor extends BaseExecutorTestCase {
     int hi = Math.min(size, lo + size / 5 + random.nextInt(size));
     LOG.info("Range: [{}, {})", lo, hi);
     List<JsScope> subScopes = scopes.subList(lo, hi);
-    JsRecords jsRecords = transactor.queryAsTransaction(db -> jackStore.scope(customScope).readSubScope(subScopes).execute(db));
+    JsRecords jsRecords = transactor.queryAsTransaction(db -> jackStore.scope(customScope).readSubScopes(subScopes).execute(db));
     assertEquals(subScopes.size(), jsRecords.size());
     for (int i = 0; i < subScopes.size(); ++i) {
       String scopeName = subScopes.get(i).getScopeName();

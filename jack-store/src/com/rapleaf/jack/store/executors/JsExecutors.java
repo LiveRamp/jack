@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
@@ -51,19 +52,23 @@ public class JsExecutors<DB extends IDb> {
     return new SubScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
-  public SubScopeQueryExecutor<DB> querySubScope() {
+  public SubScopeQueryExecutor<DB> querySubScopes() {
     return new SubScopeQueryExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public SubScopeDeletionExecutor<DB> deleteSubScope() {
+  public SubScopeDeletionExecutor<DB> deleteSubScopes() {
     return new SubScopeDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public SubScopeReaderExecutor<DB> readSubScope(Collection<JsScope> subScopes) {
+  public SubScopeReaderExecutor<DB> readSubScopesWithIds(Set<Long> subScopeIds) {
+    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeIds);
+  }
+
+  public SubScopeReaderExecutor<DB> readSubScopes(Collection<JsScope> subScopes) {
     return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
   }
 
-  public SubScopeReaderExecutor<DB> readSubScope(JsScopes subScopes) {
+  public SubScopeReaderExecutor<DB> readSubScopes(JsScopes subScopes) {
     return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
   }
 
@@ -71,11 +76,11 @@ public class JsExecutors<DB extends IDb> {
     return new RecordReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public RecordIndexExecutor<DB> indexRecord() {
+  public RecordIndexExecutor<DB> indexRecords() {
     return new RecordIndexExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public RecordDeletionExecutor<DB> deleteRecord() {
+  public RecordDeletionExecutor<DB> deleteRecords() {
     return new RecordDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 

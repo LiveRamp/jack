@@ -27,7 +27,7 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
   public void testValues() throws Exception {
     JsScope scope = transactor.queryAsTransaction(db -> {
       JsScope newScope = jackStore.rootScope().createSubScope("scope").execute(db);
-      jackStore.scope("scope").indexRecord()
+      jackStore.scope("scope").indexRecords()
           .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
           .putInt(INT_KEY, INT_VALUE)
           .putLong(LONG_KEY, LONG_VALUE)
@@ -92,7 +92,7 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
   @Test
   public void testNullValues() throws Exception {
     transactor.executeAsTransaction(db -> {
-      jackStore.scope("scope").indexRecord()
+      jackStore.scope("scope").indexRecords()
           .putBoolean(BOOLEAN_KEY, null)
           .putInt(INT_KEY, null)
           .putLong(LONG_KEY, null)
@@ -151,7 +151,7 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
   public void testNullJson() throws Exception {
     try {
       transactor.execute(db -> {
-        jackStore.scope("scope").indexRecord().putJson("key", null).execute(db);
+        jackStore.scope("scope").indexRecords().putJson("key", null).execute(db);
         fail();
       });
     } catch (SqlExecutionFailureException e) {
@@ -162,7 +162,7 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
   @Test
   public void testSelectedKeys() throws Exception {
     transactor.executeAsTransaction(db -> {
-      jackStore.rootScope().indexRecord()
+      jackStore.rootScope().indexRecords()
           .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
           .putJson(JSON_KEY, JSON_VALUE)
           .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
