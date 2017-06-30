@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,38 +33,39 @@ import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Set<String> selectedKeys;
+  private final Set<JsScope> selectedSubScopes;
 
-  RecordGetterExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  RecordGetterExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.selectedKeys = Sets.newHashSet();
+    this.selectedSubScopes = Sets.newHashSet();
   }
 
-  public RecordGetterExecutor<DB> select(String key, String... otherKeys) {
+  public RecordGetterExecutor<DB> selectKey(String key, String... otherKeys) {
     selectedKeys.add(key);
     selectedKeys.addAll(Arrays.asList(otherKeys));
     return this;
   }
 
-  public RecordGetterExecutor<DB> select(Collection<String> keys) {
+  public RecordGetterExecutor<DB> selectKey(Collection<String> keys) {
     selectedKeys.addAll(keys);
     return this;
   }
 
-  public JsRecords gets(Collection<JsScope> subScopes) {
-    return internalGets(subScopes);
+  public JsRecords gets(DB db, Collection<JsScope> subScopes) throws IOException {
+    return internalGets(db, subScopes);
   }
 
-  public JsRecords gets(JsScopes subScopes) {
-    return internalGets(subScopes.getScopes());
+  public JsRecords gets(DB db, JsScopes subScopes) throws IOException {
+    return internalGets(db, subScopes.getScopes());
   }
 
-  public JsRecord get() {
-    JsRecords records = internalGets(Collections.emptyList());
+  public JsRecord get(DB db) throws IOException {
+    JsRecords records = internalGets(db, Collections.emptyList());
     Preconditions.checkState(records.size() <= 1);
     if (records.size() == 0) {
       return JsRecord.empty();
@@ -73,10 +75,10 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   @SuppressWarnings("unchecked")
-  public JsRecords internalGets(Collection<JsScope> targetScopes) {
+  public JsRecords internalGets(DB db, Collection<JsScope> targetScopes) throws IOException {
     final Optional<JsScope> recordScope;
     if (targetScopes.isEmpty()) {
-      recordScope = getOptionalExecutionScope();
+      recordScope = getOptionalExecutionScope(db);
       if (!recordScope.isPresent()) {
         throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
       }
@@ -84,20 +86,18 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
       recordScope = Optional.empty();
     }
 
-    Records records = transactor.queryAsTransaction(db -> {
-      GenericQuery query = db.createQuery().from(table.table)
-          .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
-          .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn);
+    GenericQuery query = db.createQuery().from(table.table)
+        .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
+        .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn);
 
-      if (targetScopes.isEmpty()) {
-        query.where(table.scopeColumn.equalTo(recordScope.get().getScopeId()));
-      } else {
-        query.where(table.scopeColumn.in(targetScopes.stream().map(JsScope::getScopeId).collect(Collectors.toList())))
-            .orderBy(table.scopeColumn);
-      }
+    if (targetScopes.isEmpty()) {
+      query.where(table.scopeColumn.equalTo(recordScope.get().getScopeId()));
+    } else {
+      query.where(table.scopeColumn.in(targetScopes.stream().map(JsScope::getScopeId).collect(Collectors.toList())))
+          .orderBy(table.scopeColumn);
+    }
 
-      return query.orderBy(table.idColumn).fetch();
-    });
+    Records records = query.orderBy(table.idColumn).fetch();
 
     if (records.isEmpty()) {
       return JsRecords.empty();

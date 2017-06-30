@@ -17,7 +17,7 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   @Test
   public void testRename() throws Exception {
     createScope("scope0");
-    boolean rename = jackStore.rootScope().renameScope("scope0", "scope1").execute();
+    boolean rename = transactor.query(db -> jackStore.rootScope().renameScope("scope0", "scope1").execute(db));
     assertTrue(rename);
 
     List<TestStore> records = transactor.query(db ->
@@ -30,8 +30,10 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testNestedRename() throws Exception {
-    jackStore.scope("scope0").createScope("scope1").execute();
-    boolean rename = jackStore.scope("scope0").renameScope("scope1", "scope2").execute();
+    boolean rename = transactor.queryAsTransaction(db -> {
+      jackStore.scope("scope0").createScope("scope1").execute(db);
+      return jackStore.scope("scope0").renameScope("scope1", "scope2").execute(db);
+    });
     assertTrue(rename);
 
     List<TestStore> records = transactor.query(db ->
@@ -44,15 +46,19 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
 
   @Test(expected = MissingScopeException.class)
   public void testNonexistRename() throws Exception {
-    jackStore.rootScope().createScope("scope0").execute();
-    jackStore.rootScope().renameScope("scope1", "scope2").execute();
+    transactor.executeAsTransaction(db -> {
+      jackStore.rootScope().createScope("scope0").execute(db);
+      jackStore.rootScope().renameScope("scope1", "scope2").execute(db);
+    });
   }
 
   @Test(expected = JackRuntimeException.class)
   public void testExistingRename() throws Exception {
-    jackStore.rootScope().createScope("scope0").execute();
-    jackStore.rootScope().createScope("scope1").execute();
-    jackStore.rootScope().renameScope("scope0", "scope1").execute();
+    transactor.executeAsTransaction(db -> {
+      jackStore.rootScope().createScope("scope0").execute(db);
+      jackStore.rootScope().createScope("scope1").execute(db);
+      jackStore.rootScope().renameScope("scope0", "scope1").execute(db);
+    });
   }
 
 }

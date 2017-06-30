@@ -15,39 +15,43 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   @Test
   public void testGet() throws Exception {
     // within root
-    JsScope scope = createScope();
-    assertEquals(scope, jackStore.rootScope().getScope(scope.getScopeId()).get());
-    assertEquals(scope, jackStore.rootScope().getScope(scope.getScopeName()).get());
+    final JsScope scope1 = createScope();
+    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getScope(scope1.getScopeId()).get(db)));
+    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getScope(scope1.getScopeName()).get(db)));
 
     // within scope
-    scope = createScope(Lists.newArrayList("scope0", "scope1"));
-    assertEquals(scope, jackStore.scope("scope0", "scope1").getScope(scope.getScopeId()).get());
-    assertEquals(scope, jackStore.scope("scope0", "scope1").getScope(scope.getScopeName()).get());
+    final JsScope scope2 = createScope(Lists.newArrayList("scope0", "scope1"));
+    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeId()).get(db)));
+    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeName()).get(db)));
   }
 
   @Test
   public void testOptional() throws Exception {
     // within root
-    JsScope scope = createScope();
-    assertEquals(Optional.of(scope), jackStore.rootScope().getScope(scope.getScopeId()).getOptional());
-    assertEquals(Optional.empty(), jackStore.rootScope().getScope(scope.getScopeId() + 10L).getOptional());
-    assertEquals(Optional.empty(), jackStore.rootScope().getScope(scope.getScopeName() + "0").getOptional());
+    final JsScope scope1 = createScope();
+    assertEquals(Optional.of(scope1), transactor.query(db -> jackStore.rootScope().getScope(scope1.getScopeId()).getOptional(db)));
+    assertEquals(Optional.empty(), transactor.query(db -> jackStore.rootScope().getScope(scope1.getScopeId() + 10L).getOptional(db)));
+    assertEquals(Optional.empty(), transactor.query(db -> jackStore.rootScope().getScope(scope1.getScopeName() + "0").getOptional(db)));
 
     // within scope
-    scope = createScope(Lists.newArrayList("scope0", "scope1"));
-    assertEquals(Optional.of(scope), jackStore.scope("scope0", "scope1").getScope(scope.getScopeId()).getOptional());
-    assertEquals(Optional.empty(), jackStore.scope("scope0", "scope1").getScope(scope.getScopeId() + 10L).getOptional());
-    assertEquals(Optional.empty(), jackStore.scope("scope0", "scope1").getScope(scope.getScopeName() + "0").getOptional());
+    final JsScope scope2 = createScope(Lists.newArrayList("scope0", "scope1"));
+    assertEquals(Optional.of(scope2), transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeId()).getOptional(db)));
+    assertEquals(Optional.empty(), transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeId() + 10L).getOptional(db)));
+    assertEquals(Optional.empty(), transactor.query(db -> jackStore.scope("scope0", "scope1").getScope(scope2.getScopeName() + "0").getOptional(db)));
   }
 
   @Test(expected = MissingScopeException.class)
   public void testMissingScopeId() throws Exception {
-    jackStore.rootScope().getScope(1L).get();
+    transactor.execute(db -> {
+      jackStore.rootScope().getScope(1L).get(db);
+    });
   }
 
   @Test(expected = MissingScopeException.class)
   public void testMissingScopeName() throws Exception {
-    jackStore.rootScope().getScope("scope0").get();
+    transactor.execute(db -> {
+      jackStore.rootScope().getScope("scope0").get(db);
+    });
   }
 
 }

@@ -67,7 +67,7 @@ public class BaseExecutorTestCase extends JackTestCase {
   static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");
 
   final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  final JackStore<IDatabase1> jackStore = new JackStore<>(transactor, JsTable.from(TestStore.TBL).create());
+  final JackStore<IDatabase1> jackStore = new JackStore<>(JsTable.from(TestStore.TBL).create());
 
   Records records;
 
@@ -77,23 +77,23 @@ public class BaseExecutorTestCase extends JackTestCase {
   }
 
   JsScope createScope() {
-    return jackStore.rootScope().createScope().execute();
+    return transactor.queryAsTransaction(db -> jackStore.rootScope().createScope().execute(db));
   }
 
   JsScope createScope(List<String> parentScopes) {
-    return jackStore.scope(parentScopes).createScope().execute();
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createScope().execute(db));
   }
 
   JsScope createScope(String newScope) {
-    return jackStore.rootScope().createScope(newScope).execute();
+    return transactor.queryAsTransaction(db -> jackStore.rootScope().createScope(newScope).execute(db));
   }
 
   JsScope createScope(List<String> parentScopes, String newScope) {
-    return jackStore.scope(parentScopes).createScope(newScope).execute();
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createScope(newScope).execute(db));
   }
 
   JsScope createScope(JsScope parentScope, String newScope) {
-    return jackStore.scope(parentScope).createScope(newScope).execute();
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScope).createScope(newScope).execute(db));
   }
 
   protected List<String> list(String element) {

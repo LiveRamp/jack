@@ -24,15 +24,14 @@ import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.transaction.ITransactor;
 
 public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  RecordIndexExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.types = Maps.newLinkedHashMap();
     this.values = Maps.newLinkedHashMap();
   }
@@ -175,21 +174,19 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return this;
   }
 
-  public void execute() {
-    Long scopeId = getOrCreateExecutionScope().getScopeId();
-    transactor.executeAsTransaction(db -> {
-      Map<String, List<Long>> existingKeyIds = getExistingKeyIdMap(db, scopeId);
+  public void execute(DB db) throws IOException {
+    Long scopeId = getOrCreateExecutionScope(db).getScopeId();
+    Map<String, List<Long>> existingKeyIds = getExistingKeyIdMap(db, scopeId);
 
-      Set<String> existingKeys = existingKeyIds.keySet();
-      if (!existingKeys.isEmpty()) {
-        updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
-      }
+    Set<String> existingKeys = existingKeyIds.keySet();
+    if (!existingKeys.isEmpty()) {
+      updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
+    }
 
-      Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
-      if (!newKeys.isEmpty()) {
-        insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
-      }
-    });
+    Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
+    if (!newKeys.isEmpty()) {
+      insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
+    }
   }
 
   private List nullifyEmptyList(List valueList) {

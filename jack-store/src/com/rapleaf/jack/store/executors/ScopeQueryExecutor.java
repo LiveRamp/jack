@@ -27,7 +27,6 @@ import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
-import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
@@ -36,8 +35,8 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private final Map<Column, QueryOrder> orderCriteria;
   private Optional<LimitCriterion> limitCriteria;
 
-  ScopeQueryExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  ScopeQueryExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.recordConstraints = Maps.newHashMap();
     this.orderCriteria = Maps.newHashMapWithExpectedSize(2);
@@ -94,25 +93,23 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return this;
   }
 
-  public JsScopes fetch() {
-    Optional<JsScope> executionScope = getOptionalExecutionScope();
+  public JsScopes fetch(DB db) throws IOException {
+    Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
-      return queryScope(transactor, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);
+      return queryScope(db, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);
     } else {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
     }
   }
 
-  static <DB extends IDb> JsScopes queryScope(ITransactor<DB> transactor, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) {
-    return queryScope(transactor, table, executionScope, scopeConstraints, Collections.emptyMap(), Collections.emptyMap(), Optional.empty());
+  static <DB extends IDb> JsScopes queryScope(DB db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
+    return queryScope(db, table, executionScope, scopeConstraints, Collections.emptyMap(), Collections.emptyMap(), Optional.empty());
   }
 
-  private static <DB extends IDb> JsScopes queryScope(ITransactor<DB> transactor, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) {
-    return transactor.queryAsTransaction(db -> {
-      JsScopes scopes0 = queryByScopeConstraints(db, table, executionScope, scopeConstraints);
-      JsScopes scopes1 = queryByRecordConstraints(db, table, scopes0, recordConstraints);
-      return queryByOrderConstraints(db, table, scopes1, orderCriteria, limitCriteria);
-    });
+  private static <DB extends IDb> JsScopes queryScope(DB db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) throws IOException {
+    JsScopes scopes0 = queryByScopeConstraints(db, table, executionScope, scopeConstraints);
+    JsScopes scopes1 = queryByRecordConstraints(db, table, scopes0, recordConstraints);
+    return queryByOrderConstraints(db, table, scopes1, orderCriteria, limitCriteria);
   }
 
   private static JsScopes queryByScopeConstraints(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
@@ -154,7 +151,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
         query.where(constraint);
       }
 
-      scopeIds = query.fetch().gets(table.scopeColumn).stream().map(Long::valueOf).collect(Collectors.toSet());
+      scopeIds = Sets.newHashSet(query.fetch().gets(table.scopeColumn));
     }
 
     Set<Long> finalScopeIds = scopeIds;

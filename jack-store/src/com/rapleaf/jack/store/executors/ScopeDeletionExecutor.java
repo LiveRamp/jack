@@ -17,7 +17,6 @@ import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
-import com.rapleaf.jack.transaction.ITransactor;
 
 public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
@@ -25,8 +24,8 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private boolean allowRecursion;
   private boolean allowBulkDeletion;
 
-  ScopeDeletionExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  ScopeDeletionExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.allowRecursion = false;
   }
@@ -46,8 +45,8 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return this;
   }
 
-  public boolean execute() {
-    Optional<JsScope> executionScope = getOptionalExecutionScope();
+  public boolean execute(DB db) throws IOException {
+    Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (!executionScope.isPresent()) {
       return true;
     }
@@ -55,17 +54,15 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
       throw new JackRuntimeException("Bulk deletion is disabled; either enable it or specify at least one constraint");
     }
 
-    JsScopes scopesToDelete = ScopeQueryExecutor.queryScope(transactor, table, executionScope.get(), scopeConstraints);
+    JsScopes scopesToDelete = ScopeQueryExecutor.queryScope(db, table, executionScope.get(), scopeConstraints);
     Set<Long> idsToDelete = Sets.newHashSet(scopesToDelete.getScopeIds());
 
-    return transactor.queryAsTransaction(db -> {
-      Set<Long> nestedScopeIds = getNestedScopeIds(db, idsToDelete);
-      if (!allowRecursion && !nestedScopeIds.isEmpty()) {
-        throw new JackRuntimeException("There are nested scopes under the scopes to delete");
-      }
-      idsToDelete.addAll(nestedScopeIds);
-      return deleteScopes(db, idsToDelete);
-    });
+    Set<Long> nestedScopeIds = getNestedScopeIds(db, idsToDelete);
+    if (!allowRecursion && !nestedScopeIds.isEmpty()) {
+      throw new JackRuntimeException("There are nested scopes under the scopes to delete");
+    }
+    idsToDelete.addAll(nestedScopeIds);
+    return deleteScopes(db, idsToDelete);
   }
 
   private Set<Long> getNestedScopeIds(DB db, Set<Long> scopeIds) throws IOException {
