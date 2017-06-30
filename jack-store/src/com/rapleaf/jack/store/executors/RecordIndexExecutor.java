@@ -222,7 +222,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   private void insertNewKeys(DB db, Long scopeId, List<String> newKeys) throws IOException {
-    List<String> typesToInsert = Lists.newLinkedList();
+    List<Integer> typesToInsert = Lists.newLinkedList();
     List<String> keysToInsert = Lists.newLinkedList();
     List<String> valuesToInsert = Lists.newLinkedList();
 
@@ -232,17 +232,17 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       if (value == null) {
         keysToInsert.add(key);
-        typesToInsert.add(type.name());
+        typesToInsert.add(type.value);
         valuesToInsert.add(null);
       } else if (type.isList()) {
         for (Object v : (List)value) {
           keysToInsert.add(key);
-          typesToInsert.add(type.name());
+          typesToInsert.add(type.value);
           valuesToInsert.add(String.valueOf(v));
         }
       } else {
         keysToInsert.add(key);
-        typesToInsert.add(type.name());
+        typesToInsert.add(type.value);
         valuesToInsert.add(String.valueOf(value));
       }
     }

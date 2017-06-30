@@ -13,11 +13,11 @@ public class JsTable {
   public final Table<?, ?> table;
   public final Column<Long> idColumn;
   public final Column<Long> scopeColumn;
-  public final Column<String> typeColumn;
+  public final Column<Integer> typeColumn;
   public final Column<String> keyColumn;
   public final Column<String> valueColumn;
 
-  private JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
+  private JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<Integer> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
     this.table = table;
     this.idColumn = Column.fromId(table.getName());
     this.scopeColumn = scopeColumn;
@@ -35,7 +35,7 @@ public class JsTable {
     private final Set<String> allColumns;
 
     private Column<Long> scopeColumn;
-    private Column<String> typeColumn;
+    private Column<Integer> typeColumn;
     private Column<String> keyColumn;
     private Column<String> valueColumn;
 
@@ -59,7 +59,7 @@ public class JsTable {
       return this;
     }
 
-    public Builder setTypeColumn(Column<String> typeColumn) {
+    public Builder setTypeColumn(Column<Integer> typeColumn) {
       checkColumn(typeColumn);
       this.typeColumn = typeColumn;
       return this;
@@ -84,7 +84,7 @@ public class JsTable {
       }
       if (typeColumn == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.type.name()));
-        typeColumn = Column.fromField(table.getName(), JsConstants.DefaultTableField.type, String.class);
+        typeColumn = Column.fromField(table.getName(), JsConstants.DefaultTableField.type, Integer.class);
       }
       if (keyColumn == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.key.name()));

@@ -15,7 +15,7 @@ public class TestValueType {
 
   @Test(expected = IllegalArgumentException.class)
   public void testInvalidValue() throws Exception {
-    ValueType.findByValue(0);
+    ValueType.findByValue(5000);
   }
 
 }

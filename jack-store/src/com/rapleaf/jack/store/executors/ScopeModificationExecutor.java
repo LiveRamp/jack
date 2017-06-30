@@ -12,6 +12,7 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
 public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
@@ -38,7 +39,7 @@ public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> 
         .set(table.valueColumn, newName)
         .where(table.scopeColumn.equalTo(upperScopeId))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .execute()
         .getUpdatedRowCount() == 1;
   }

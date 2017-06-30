@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 public class TestRecordGetterExecutor extends BaseExecutorTestCase {
   private static final Logger LOG = LoggerFactory.getLogger(TestRecordGetterExecutor.class);
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testValues() throws Exception {
     transactor.executeAsTransaction(db -> {

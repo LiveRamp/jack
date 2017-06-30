@@ -25,6 +25,7 @@ import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
@@ -116,7 +117,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     GenericQuery query = db.createQuery()
         .from(table.table)
         .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);
 
@@ -175,7 +176,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     GenericQuery query = db.createQuery()
         .from(table.table)
         .where(table.idColumn.in(scopes.getScopeIds()))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);
 

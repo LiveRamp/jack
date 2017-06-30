@@ -17,6 +17,7 @@ import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 
 public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
@@ -90,14 +91,14 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     // delete records
     db.createDeletion().from(table.table)
         .where(table.scopeColumn.in(scopeIds))
-        .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .where(table.keyColumn.notEqualTo(JsConstants.SCOPE_KEY))
         .execute();
 
     // delete scopes
     Deletions deletions = db.createDeletion().from(table.table)
         .where(table.idColumn.in(scopeIds))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .execute();
 

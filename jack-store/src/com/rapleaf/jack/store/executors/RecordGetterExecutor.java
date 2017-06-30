@@ -87,7 +87,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
 
     GenericQuery query = db.createQuery().from(table.table)
-        .where(table.typeColumn.notEqualTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn);
 
     if (targetScopes.isEmpty()) {
@@ -153,7 +153,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   private void appendRecord(Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, Record record) {
-    ValueType type = ValueType.valueOf(record.get(table.typeColumn));
+    ValueType type = ValueType.findByValue(record.get(table.typeColumn));
     String key = record.get(table.keyColumn);
     String value = record.get(table.valueColumn);
 
