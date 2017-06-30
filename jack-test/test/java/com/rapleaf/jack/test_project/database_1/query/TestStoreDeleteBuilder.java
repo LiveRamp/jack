@@ -31,6 +31,16 @@ public class TestStoreDeleteBuilder extends AbstractDeleteBuilder<TestStore> {
     return this;
   }
 
+  public TestStoreDeleteBuilder type(Integer value) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, JackMatchers.equalTo(value)));
+    return this;
+  }
+
+  public TestStoreDeleteBuilder whereType(IWhereOperator<Integer> operator) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, operator));
+    return this;
+  }
+
   public TestStoreDeleteBuilder scope(Long value) {
     addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
     return this;
@@ -48,16 +58,6 @@ public class TestStoreDeleteBuilder extends AbstractDeleteBuilder<TestStore> {
 
   public TestStoreDeleteBuilder whereKey(IWhereOperator<String> operator) {
     addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.key, operator));
-    return this;
-  }
-
-  public TestStoreDeleteBuilder type(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.type, JackMatchers.equalTo(value)));
-    return this;
-  }
-
-  public TestStoreDeleteBuilder whereType(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.type, operator));
     return this;
   }
 
