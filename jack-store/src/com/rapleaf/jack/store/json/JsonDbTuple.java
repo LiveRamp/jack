@@ -23,7 +23,7 @@ public class JsonDbTuple {
   }
 
   public static JsonDbTuple create(String fullPath, ValueType type, String value) {
-    Preconditions.checkArgument(type.getCategory() == ValueType.Category.JSON);
+    Preconditions.checkArgument(type.category == ValueType.Category.JSON);
 
     List<TuplePath> paths = Lists.newLinkedList();
     for (String path : fullPath.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR))) {

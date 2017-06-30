@@ -53,7 +53,7 @@ public class JsRecord {
       case STRING:
         return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
       default:
-        if (type.getCategory() == ValueType.Category.JSON) {
+        if (type.category == ValueType.Category.JSON) {
           return checkAndGetJson(key);
         }
         throw new JackRuntimeException("Unsupported value type: " + type.name());
@@ -165,7 +165,7 @@ public class JsRecord {
   }
 
   private JsonObject checkAndGetJson(String key) {
-    Preconditions.checkArgument(types.get(key).getCategory().equals(ValueType.Category.JSON));
+    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON));
     return (JsonObject)values.get(key);
   }
 

@@ -157,7 +157,7 @@ public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     String key = record.get(table.keyColumn);
     String value = record.get(table.valueColumn);
 
-    switch (type.getCategory()) {
+    switch (type.category) {
       case PRIMITIVE:
         if (!isSelectedKey(key)) {
           break;
