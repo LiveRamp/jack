@@ -15,8 +15,8 @@ import com.rapleaf.jack.store.JsScope;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestScopeReaderExecutor extends BaseExecutorTestCase {
-  private static final Logger LOG = LoggerFactory.getLogger(TestScopeReaderExecutor.class);
+public class TestSubScopeReaderExecutor extends BaseExecutorTestCase {
+  private static final Logger LOG = LoggerFactory.getLogger(TestSubScopeReaderExecutor.class);
 
   @Test
   public void testGetRecords() throws Exception {

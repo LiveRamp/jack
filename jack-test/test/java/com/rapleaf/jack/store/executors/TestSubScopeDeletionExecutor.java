@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
+public class TestSubScopeDeletionExecutor extends BaseExecutorTestCase {
 
   private boolean deletion;
 

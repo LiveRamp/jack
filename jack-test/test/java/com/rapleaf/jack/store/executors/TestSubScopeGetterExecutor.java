@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestScopeGetterExecutor extends BaseExecutorTestCase {
+public class TestSubScopeGetterExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testScopeUnderRoot() throws Exception {

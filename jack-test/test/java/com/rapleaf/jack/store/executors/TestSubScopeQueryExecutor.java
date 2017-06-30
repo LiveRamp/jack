@@ -16,7 +16,7 @@ import com.rapleaf.jack.store.JsScopes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestScopeQueryExecutor extends BaseExecutorTestCase {
+public class TestSubScopeQueryExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testParentScopeId() throws Exception {
