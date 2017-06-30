@@ -10,6 +10,8 @@ import org.joda.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
@@ -22,6 +24,7 @@ public class TestDbMetrics extends JackTestCase {
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
   private ExecutorService executorService;
   private Stopwatch stopwatch = new Stopwatch();
+  private static final Logger LOG = LoggerFactory.getLogger(TestDbMetrics.class);
 
   @Before
   public void prepare() throws Exception {
@@ -81,7 +84,7 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-
+    sleepMillis(200);//so that the first connection doesnt have to wait
     Future<Long> future1 = executorService.submit(
         () -> transactor.query(a -> {
           sleepMillis(100);
@@ -99,6 +102,8 @@ public class TestDbMetrics extends JackTestCase {
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
     double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
+    LOG.info("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime);
+    LOG.info("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime);
     expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
 
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
