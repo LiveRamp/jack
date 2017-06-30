@@ -24,13 +24,13 @@ import com.rapleaf.jack.store.json.JsonDbTuple;
 /**
  * Get records under the execution scope
  */
-public class RecordReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB, RecordReaderExecutor<DB>> {
+public class RecordReaderExecutor extends BaseReaderExecutor<RecordReaderExecutor> {
 
   RecordReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);
   }
 
-  public JsRecord execute(DB db) throws IOException {
+  public JsRecord execute(IDb db) throws IOException {
     Optional<JsScope> recordScope = getOptionalExecutionScope(db);
     if (!recordScope.isPresent()) {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
@@ -62,7 +62,7 @@ public class RecordReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB,
   }
 
   @Override
-  RecordReaderExecutor<DB> getSelf() {
+  RecordReaderExecutor getSelf() {
     return this;
   }
 

@@ -11,7 +11,7 @@ import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public abstract class BaseExecutor<DB extends IDb> {
+public abstract class BaseExecutor {
 
   protected final JsTable table;
   protected final Optional<JsScope> predefinedScope;
@@ -23,11 +23,11 @@ public abstract class BaseExecutor<DB extends IDb> {
     this.predefinedScopeNames = predefinedScopeNames;
   }
 
-  JsScope getOrCreateExecutionScope(DB db) throws IOException {
+  JsScope getOrCreateExecutionScope(IDb db) throws IOException {
     return predefinedScope.orElse(getOrCreateScope(db, JsConstants.ROOT_SCOPE, predefinedScopeNames));
   }
 
-  Optional<JsScope> getOptionalExecutionScope(DB db) throws IOException {
+  Optional<JsScope> getOptionalExecutionScope(IDb db) throws IOException {
     if (predefinedScope.isPresent()) {
       return predefinedScope;
     } else {
@@ -35,7 +35,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     }
   }
 
-  JsScope getOrCreateScope(DB db, JsScope executionScope, List<String> scopes) throws IOException {
+  JsScope getOrCreateScope(IDb db, JsScope executionScope, List<String> scopes) throws IOException {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
       Optional<JsScope> currentScope = getOptionalScope(db, upperScope, scope);
@@ -48,7 +48,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     return upperScope;
   }
 
-  Optional<JsScope> getOptionalScope(DB db, JsScope executionScope, List<String> scopes) throws IOException {
+  Optional<JsScope> getOptionalScope(IDb db, JsScope executionScope, List<String> scopes) throws IOException {
     JsScope upperScope = executionScope;
     for (String scope : scopes) {
       Optional<JsScope> currentScope = getOptionalScope(db, upperScope, scope);
@@ -61,7 +61,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     return Optional.of(upperScope);
   }
 
-  private JsScope createScope(DB db, JsScope executionScope, String childScope) throws IOException {
+  private JsScope createScope(IDb db, JsScope executionScope, String childScope) throws IOException {
     Long upperScopeId = executionScope.getScopeId();
     long childScopeId = db.createInsertion().into(table.table)
         .set(table.scopeColumn, upperScopeId)
@@ -73,7 +73,7 @@ public abstract class BaseExecutor<DB extends IDb> {
     return new JsScope(childScopeId, childScope);
   }
 
-  private Optional<JsScope> getOptionalScope(DB db, JsScope executionScope, String childScope) throws IOException {
+  private Optional<JsScope> getOptionalScope(IDb db, JsScope executionScope, String childScope) throws IOException {
     List<Long> ids = db.createQuery().from(table.table)
         .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))

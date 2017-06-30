@@ -20,7 +20,7 @@ import com.rapleaf.jack.store.exceptions.MissingScopeException;
 /**
  * Get sub scopes under the execution scope
  */
-public class SubScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeGetterExecutor extends BaseExecutor {
 
   private final String scope;
   private final GetterType getterType;
@@ -41,7 +41,7 @@ public class SubScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.getterType = GetterType.NAME;
   }
 
-  public JsScope execute(DB db) throws IOException {
+  public JsScope execute(IDb db) throws IOException {
     JsScopes scopes = getScopes(db);
     if (scopes.isEmpty()) {
       throw new MissingScopeException(getterType.name() + " " + scopes);
@@ -49,7 +49,7 @@ public class SubScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return scopes.getScopes().get(0);
   }
 
-  public Optional<JsScope> getOptional(DB db) throws IOException {
+  public Optional<JsScope> getOptional(IDb db) throws IOException {
     JsScopes scopes = getScopes(db);
     if (scopes.isEmpty()) {
       return Optional.empty();
@@ -58,7 +58,7 @@ public class SubScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  private JsScopes getScopes(DB db) throws IOException {
+  private JsScopes getScopes(IDb db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
       JsScopes scopes = SubScopeQueryExecutor.queryScope(db, table, executionScope.get(), Collections.singletonList(getConstraint()));

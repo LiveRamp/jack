@@ -22,7 +22,7 @@ import com.rapleaf.jack.store.ValueType;
 /**
  * Delete sub scopes under the execution scope
  */
-public class SubScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeDeletionExecutor extends BaseExecutor {
 
   private final List<GenericConstraint> scopeConstraints;
   private boolean allowRecursion;
@@ -34,22 +34,22 @@ public class SubScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.allowRecursion = false;
   }
 
-  public SubScopeDeletionExecutor<DB> whereScope(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeDeletionExecutor whereScope(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public SubScopeDeletionExecutor<DB> allowBulk() {
+  public SubScopeDeletionExecutor allowBulk() {
     this.allowBulkDeletion = true;
     return this;
   }
 
-  public SubScopeDeletionExecutor<DB> allowRecursion() {
+  public SubScopeDeletionExecutor allowRecursion() {
     this.allowRecursion = true;
     return this;
   }
 
-  public boolean execute(DB db) throws IOException {
+  public boolean execute(IDb db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (!executionScope.isPresent()) {
       return true;
@@ -69,7 +69,7 @@ public class SubScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return deleteScopes(db, idsToDelete);
   }
 
-  private Set<Long> getNestedScopeIds(DB db, Set<Long> scopeIds) throws IOException {
+  private Set<Long> getNestedScopeIds(IDb db, Set<Long> scopeIds) throws IOException {
     Set<Long> allNestedScopeIds = Sets.newHashSet();
 
     Set<Long> ids = Sets.newHashSet(scopeIds);
@@ -90,7 +90,7 @@ public class SubScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return allNestedScopeIds;
   }
 
-  private boolean deleteScopes(DB db, Set<Long> scopeIds) throws IOException {
+  private boolean deleteScopes(IDb db, Set<Long> scopeIds) throws IOException {
     // delete records
     db.createDeletion().from(table.table)
         .where(table.scopeColumn.in(scopeIds))

@@ -16,7 +16,6 @@ import com.rapleaf.jack.store.functions.IndexListRecord;
 import com.rapleaf.jack.store.functions.IndexRecord;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -127,8 +126,8 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     }
   }
 
-  private <T> void testInsertion(String key, T value, boolean isNull, IndexRecord<IDatabase1, T> execution) {
-    RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecords();
+  private <T> void testInsertion(String key, T value, boolean isNull, IndexRecord<T> execution) {
+    RecordIndexExecutor executor = jackStore.scope("scope").indexRecords();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : value).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
@@ -137,8 +136,8 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.VALUE));
   }
 
-  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, IndexListRecord<IDatabase1, T> execution) {
-    RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecords();
+  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, IndexListRecord<T> execution) {
+    RecordIndexExecutor executor = jackStore.scope("scope").indexRecords();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : listValue).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();

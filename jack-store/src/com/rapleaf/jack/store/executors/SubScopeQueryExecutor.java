@@ -32,7 +32,7 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 /**
  * Create sub scopes under the execution scope
  */
-public class SubScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeQueryExecutor extends BaseExecutor {
 
   private final List<GenericConstraint> scopeConstraints;
   private final Map<String, List<GenericConstraint>> recordConstraints;
@@ -47,17 +47,17 @@ public class SubScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.limitCriteria = Optional.empty();
   }
 
-  public SubScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
+  public SubScopeQueryExecutor whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
     return this;
   }
 
-  public SubScopeQueryExecutor<DB> whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeQueryExecutor whereScopeName(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public SubScopeQueryExecutor<DB> whereRecord(String key, IWhereOperator<String> valueConstraint) {
+  public SubScopeQueryExecutor whereRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
@@ -77,27 +77,27 @@ public class SubScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  public SubScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor orderByScopeId(QueryOrder queryOrder) {
     this.orderCriteria.put(table.idColumn, queryOrder);
     return this;
   }
 
-  public SubScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor orderByScopeName(QueryOrder queryOrder) {
     this.orderCriteria.put(table.valueColumn, queryOrder);
     return this;
   }
 
-  public SubScopeQueryExecutor<DB> limit(int limit) {
+  public SubScopeQueryExecutor limit(int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(limit));
     return this;
   }
 
-  public SubScopeQueryExecutor<DB> limit(int offset, int limit) {
+  public SubScopeQueryExecutor limit(int offset, int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(offset, limit));
     return this;
   }
 
-  public JsScopes execute(DB db) throws IOException {
+  public JsScopes execute(IDb db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
       return queryScope(db, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);
@@ -106,11 +106,11 @@ public class SubScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  static <DB extends IDb> JsScopes queryScope(DB db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
+  static  JsScopes queryScope(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
     return queryScope(db, table, executionScope, scopeConstraints, Collections.emptyMap(), Collections.emptyMap(), Optional.empty());
   }
 
-  private static <DB extends IDb> JsScopes queryScope(DB db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) throws IOException {
+  private static  JsScopes queryScope(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) throws IOException {
     JsScopes scopes0 = queryByScopeConstraints(db, table, executionScope, scopeConstraints);
     JsScopes scopes1 = queryByRecordConstraints(db, table, scopes0, recordConstraints);
     return queryByOrderConstraints(db, table, scopes1, orderCriteria, limitCriteria);

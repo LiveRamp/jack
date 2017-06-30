@@ -9,12 +9,11 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
-import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
 
-public class JsExecutors<DB extends IDb> {
+public class JsExecutors {
 
   private final JsTable jsTable;
   private final Optional<JsScope> predefinedScope;
@@ -32,56 +31,56 @@ public class JsExecutors<DB extends IDb> {
     this.predefinedScopeNames = executionScopeNames;
   }
 
-  public SubScopeCreationExecutor<DB> createSubScope(String subScopeName) {
-    return new SubScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  public SubScopeCreationExecutor createSubScope(String subScopeName) {
+    return new SubScopeCreationExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
-  public SubScopeCreationExecutor<DB> createSubScope() {
-    return new SubScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeCreationExecutor createSubScope() {
+    return new SubScopeCreationExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public SubScopeModificationExecutor<DB> renameSubScope(String currentName, String newName) {
-    return new SubScopeModificationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
+  public SubScopeModificationExecutor renameSubScope(String currentName, String newName) {
+    return new SubScopeModificationExecutor(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
   }
 
-  public SubScopeGetterExecutor<DB> getSubScope(long subScopeId) {
-    return new SubScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
+  public SubScopeGetterExecutor getSubScope(long subScopeId) {
+    return new SubScopeGetterExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
   }
 
-  public SubScopeGetterExecutor<DB> getSubScope(String subScopeName) {
-    return new SubScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  public SubScopeGetterExecutor getSubScope(String subScopeName) {
+    return new SubScopeGetterExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
-  public SubScopeQueryExecutor<DB> querySubScopes() {
-    return new SubScopeQueryExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeQueryExecutor querySubScopes() {
+    return new SubScopeQueryExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public SubScopeDeletionExecutor<DB> deleteSubScopes() {
-    return new SubScopeDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeDeletionExecutor deleteSubScopes() {
+    return new SubScopeDeletionExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public SubScopeReaderExecutor<DB> readSubScopesWithIds(Set<Long> subScopeIds) {
-    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeIds);
+  public SubScopeReaderExecutor readSubScopesWithIds(Set<Long> subScopeIds) {
+    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeIds);
   }
 
-  public SubScopeReaderExecutor<DB> readSubScopes(Collection<JsScope> subScopes) {
-    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
+  public SubScopeReaderExecutor readSubScopes(Collection<JsScope> subScopes) {
+    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
   }
 
-  public SubScopeReaderExecutor<DB> readSubScopes(JsScopes subScopes) {
-    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
+  public SubScopeReaderExecutor readSubScopes(JsScopes subScopes) {
+    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
   }
 
-  public RecordReaderExecutor<DB> readScope() {
-    return new RecordReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public RecordReaderExecutor readScope() {
+    return new RecordReaderExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public RecordIndexExecutor<DB> indexRecords() {
-    return new RecordIndexExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public RecordIndexExecutor indexRecords() {
+    return new RecordIndexExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public RecordDeletionExecutor<DB> deleteRecords() {
-    return new RecordDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public RecordDeletionExecutor deleteRecords() {
+    return new RecordDeletionExecutor(jsTable, predefinedScope, predefinedScopeNames);
   }
 
 }

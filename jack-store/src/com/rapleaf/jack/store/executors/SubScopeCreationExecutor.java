@@ -13,7 +13,7 @@ import com.rapleaf.jack.store.JsTable;
 /**
  * Create sub scopes under the execution scope
  */
-public class SubScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeCreationExecutor extends BaseExecutor {
 
   private final Optional<String> newScope;
 
@@ -27,7 +27,7 @@ public class SubScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.newScope = Optional.empty();
   }
 
-  public JsScope execute(DB db) throws IOException {
+  public JsScope execute(IDb db) throws IOException {
     String scopeName = newScope.orElseGet(() -> UUID.randomUUID().toString());
     return getOrCreateScope(db, getOrCreateExecutionScope(db), Collections.singletonList(scopeName));
   }

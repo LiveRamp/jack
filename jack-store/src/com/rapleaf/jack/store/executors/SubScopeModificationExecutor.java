@@ -18,7 +18,7 @@ import com.rapleaf.jack.store.exceptions.MissingScopeException;
 /**
  * Modify sub scopes under the execution scope
  */
-public class SubScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeModificationExecutor extends BaseExecutor {
 
   private final String currentName;
   private final String newName;
@@ -29,7 +29,7 @@ public class SubScopeModificationExecutor<DB extends IDb> extends BaseExecutor<D
     this.newName = newName;
   }
 
-  public boolean execute(DB db) throws IOException {
+  public boolean execute(IDb db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (!executionScope.isPresent()) {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
@@ -47,7 +47,7 @@ public class SubScopeModificationExecutor<DB extends IDb> extends BaseExecutor<D
         .getUpdatedRowCount() == 1;
   }
 
-  private void validateOperation(DB db, JsScope executionScope) throws IOException {
+  private void validateOperation(IDb db, JsScope executionScope) throws IOException {
     Optional<JsScope> currentScope = getOptionalScope(db, executionScope, Collections.singletonList(currentName));
     if (!currentScope.isPresent()) {
       throw new MissingScopeException(currentName);

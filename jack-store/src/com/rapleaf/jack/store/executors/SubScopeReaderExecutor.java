@@ -25,7 +25,7 @@ import com.rapleaf.jack.store.json.JsonDbTuple;
 /**
  * Read sub scope records under the execution scope
  */
-public class SubScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB, SubScopeReaderExecutor<DB>> {
+public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExecutor> {
 
   private final Set<Long> subScopeIds;
 
@@ -34,7 +34,7 @@ public class SubScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<D
     this.subScopeIds = subScopeIds;
   }
 
-  public JsRecords execute(DB db) throws IOException {
+  public JsRecords execute(IDb db) throws IOException {
     Records records = db.createQuery().from(table.table)
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .where(table.scopeColumn.in(subScopeIds))
@@ -91,7 +91,7 @@ public class SubScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<D
   }
 
   @Override
-  SubScopeReaderExecutor<DB> getSelf() {
+  SubScopeReaderExecutor getSelf() {
     return this;
   }
 

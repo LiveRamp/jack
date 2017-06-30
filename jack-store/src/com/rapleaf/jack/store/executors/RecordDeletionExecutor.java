@@ -14,7 +14,7 @@ import com.rapleaf.jack.store.JsTable;
 /**
  * Delete records under the execution scope
  */
-public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class RecordDeletionExecutor extends BaseExecutor {
 
   private final Set<String> keysToDelete;
 
@@ -23,12 +23,12 @@ public class RecordDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.keysToDelete = Sets.newHashSet();
   }
 
-  public RecordDeletionExecutor<DB> delete(String key) {
+  public RecordDeletionExecutor delete(String key) {
     this.keysToDelete.add(key);
     return this;
   }
 
-  public void execute(DB db) throws IOException {
+  public void execute(IDb db) throws IOException {
     if (keysToDelete.isEmpty()) {
       return;
     }

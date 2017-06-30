@@ -22,7 +22,7 @@ public class TestJsonStorePerformance extends JackTestCase {
   private final Random random = new Random(System.currentTimeMillis());
   private final Stopwatch stopwatch = new Stopwatch();
   private final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  private final JackStore<IDatabase1> jackStore = new JackStore<>(JsTable.from(TestStore.TBL).create());
+  private final JackStore jackStore = new JackStore(JsTable.from(TestStore.TBL).create());
 
   @Before
   public void prepare() throws Exception {
