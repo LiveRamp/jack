@@ -24,36 +24,40 @@ import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
-import com.rapleaf.jack.transaction.ITransactor;
 
-public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
+/**
+ * Create sub scopes under the execution scope
+ */
+public class SubScopeQueryExecutor extends BaseExecutor {
 
   private final List<GenericConstraint> scopeConstraints;
   private final Map<String, List<GenericConstraint>> recordConstraints;
   private final Map<Column, QueryOrder> orderCriteria;
   private Optional<LimitCriterion> limitCriteria;
 
-  ScopeQueryExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  SubScopeQueryExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.recordConstraints = Maps.newHashMap();
     this.orderCriteria = Maps.newHashMapWithExpectedSize(2);
     this.limitCriteria = Optional.empty();
   }
 
-  public ScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn.as(Long.class), scopeIdConstraint));
+  public SubScopeQueryExecutor whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeQueryExecutor whereScopeName(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> whereRecord(String key, IWhereOperator<String> valueConstraint) {
+  public SubScopeQueryExecutor whereRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
@@ -73,52 +77,50 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  public ScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor orderByScopeId(QueryOrder queryOrder) {
     this.orderCriteria.put(table.idColumn, queryOrder);
     return this;
   }
 
-  public ScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor orderByScopeName(QueryOrder queryOrder) {
     this.orderCriteria.put(table.valueColumn, queryOrder);
     return this;
   }
 
-  public ScopeQueryExecutor<DB> limit(int limit) {
+  public SubScopeQueryExecutor limit(int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(limit));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> limit(int offset, int limit) {
+  public SubScopeQueryExecutor limit(int offset, int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(offset, limit));
     return this;
   }
 
-  public JsScopes fetch() {
-    Optional<JsScope> executionScope = getOptionalExecutionScope();
+  public JsScopes execute(IDb db) throws IOException {
+    Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
-      return queryScope(transactor, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);
+      return queryScope(db, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);
     } else {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
     }
   }
 
-  static <DB extends IDb> JsScopes queryScope(ITransactor<DB> transactor, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) {
-    return queryScope(transactor, table, executionScope, scopeConstraints, Collections.emptyMap(), Collections.emptyMap(), Optional.empty());
+  static  JsScopes queryScope(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
+    return queryScope(db, table, executionScope, scopeConstraints, Collections.emptyMap(), Collections.emptyMap(), Optional.empty());
   }
 
-  private static <DB extends IDb> JsScopes queryScope(ITransactor<DB> transactor, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) {
-    return transactor.queryAsTransaction(db -> {
-      JsScopes scopes0 = queryByScopeConstraints(db, table, executionScope, scopeConstraints);
-      JsScopes scopes1 = queryByRecordConstraints(db, table, scopes0, recordConstraints);
-      return queryByOrderConstraints(db, table, scopes1, orderCriteria, limitCriteria);
-    });
+  private static  JsScopes queryScope(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints, Map<String, List<GenericConstraint>> recordConstraints, Map<Column, QueryOrder> orderCriteria, Optional<LimitCriterion> limitCriteria) throws IOException {
+    JsScopes scopes0 = queryByScopeConstraints(db, table, executionScope, scopeConstraints);
+    JsScopes scopes1 = queryByRecordConstraints(db, table, scopes0, recordConstraints);
+    return queryByOrderConstraints(db, table, scopes1, orderCriteria, limitCriteria);
   }
 
   private static JsScopes queryByScopeConstraints(IDb db, JsTable table, JsScope executionScope, List<GenericConstraint> scopeConstraints) throws IOException {
     GenericQuery query = db.createQuery()
         .from(table.table)
         .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);
 
@@ -140,20 +142,29 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     Set<Long> scopeIds = Sets.newHashSet(scopes.getScopeIds());
     for (Map.Entry<String, List<GenericConstraint>> entry : recordConstraints.entrySet()) {
+      if (scopeIds.isEmpty()) {
+        return JsConstants.EMPTY_SCOPES;
+      }
+
       String key = entry.getKey();
       List<GenericConstraint> constraints = entry.getValue();
 
       GenericQuery query = db.createQuery()
           .from(table.table)
           .where(table.scopeColumn.in(scopeIds))
-          .where(table.keyColumn.matches(key))
           .select(table.scopeColumn);
+
+      if (key.contains("%")) {
+        query.where(table.keyColumn.matches(key));
+      } else {
+        query.where(table.keyColumn.equalTo(key));
+      }
 
       for (GenericConstraint constraint : constraints) {
         query.where(constraint);
       }
 
-      scopeIds = query.fetch().gets(table.scopeColumn).stream().map(Long::valueOf).collect(Collectors.toSet());
+      scopeIds = Sets.newHashSet(query.fetch().gets(table.scopeColumn));
     }
 
     Set<Long> finalScopeIds = scopeIds;
@@ -167,8 +178,8 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     GenericQuery query = db.createQuery()
         .from(table.table)
-        .where(table.idColumn.as(Long.class).in(scopes.getScopeIds()))
-        .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
+        .where(table.idColumn.in(scopes.getScopeIds()))
+        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);
 

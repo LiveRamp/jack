@@ -6,41 +6,34 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.queries.Column;
-import com.rapleaf.jack.queries.Table;
 import com.rapleaf.jack.store.executors.JsExecutors;
-import com.rapleaf.jack.store.executors.JsTable;
-import com.rapleaf.jack.transaction.ITransactor;
 
-public class JackStore<DB extends IDb> {
+public class JackStore {
 
-  private final ITransactor<DB> transactor;
   private final JsTable jsTable;
 
-  public JackStore(ITransactor<DB> transactor, Table<?, ?> table, Column<Long> scopeColumn, Column<String> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
-    this.transactor = transactor;
-    this.jsTable = new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
+  public JackStore(JsTable jsTable) {
+    this.jsTable = jsTable;
   }
 
-  public JsExecutors<DB> within(String scope, String... moreScopes) {
+  public JsExecutors scope(String scope, String... moreScopes) {
     List<String> scopes = Lists.newArrayListWithCapacity(1 + moreScopes.length);
     scopes.add(scope);
     scopes.addAll(Arrays.asList(moreScopes));
-    return within(scopes);
+    return scope(scopes);
   }
 
-  public JsExecutors<DB> within(List<String> scopes) {
-    Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `withinRoot` method");
+  public JsExecutors scope(List<String> scopes) {
+    Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `rootScope` method");
     Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
-    return new JsExecutors<>(transactor, jsTable, scopes);
+    return new JsExecutors(jsTable, scopes);
   }
 
-  public JsExecutors<DB> within(JsScope scope) {
-    return new JsExecutors<>(transactor, jsTable, scope);
+  public JsExecutors scope(JsScope scope) {
+    return new JsExecutors(jsTable, scope);
   }
 
-  public JsExecutors<DB> withinRoot() {
-    return within(JsConstants.ROOT_SCOPE);
+  public JsExecutors rootScope() {
+    return scope(JsConstants.ROOT_SCOPE);
   }
 }

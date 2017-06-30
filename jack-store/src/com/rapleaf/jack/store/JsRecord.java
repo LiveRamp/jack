@@ -16,25 +16,33 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public class JsRecord {
 
-  private static final JsRecord EMPTY_RECORD = new JsRecord(Collections.emptyMap(), Collections.emptyMap());
-
+  private final Long scopeId;
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  public JsRecord(Map<String, ValueType> types, Map<String, Object> values) {
+  public JsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values) {
     Preconditions.checkNotNull(types);
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
+    this.scopeId = scopeId;
     this.types = types;
     this.values = values;
   }
 
   public static JsRecord empty() {
-    return EMPTY_RECORD;
+    return JsConstants.EMPTY_RECORD;
+  }
+
+  public Long getScopeId() {
+    return scopeId;
   }
 
   public Set<String> keySet() {
     return types.keySet();
+  }
+
+  public boolean isEmpty() {
+    return types.isEmpty();
   }
 
   public Object get(String key) {
@@ -55,7 +63,7 @@ public class JsRecord {
       case STRING:
         return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
       default:
-        if (type.getCategory() == ValueType.Category.JSON) {
+        if (type.category == ValueType.Category.JSON) {
           return checkAndGetJson(key);
         }
         throw new JackRuntimeException("Unsupported value type: " + type.name());
@@ -167,7 +175,7 @@ public class JsRecord {
   }
 
   private JsonObject checkAndGetJson(String key) {
-    Preconditions.checkArgument(types.get(key).getCategory().equals(ValueType.Category.JSON));
+    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON));
     return (JsonObject)values.get(key);
   }
 

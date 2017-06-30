@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +19,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
   @Test
   public void testDefaultRootScope() throws Exception {
     JsScope scope = createScope();
-    JsScopes jsScopes = jackStore.withinRoot().queryScope().fetch();
+    JsScopes jsScopes = transactor.query(db -> jackStore.rootScope().querySubScopes().execute(db));
     assertEquals(1, jsScopes.size());
     assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
     assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());
@@ -27,7 +28,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
   @Test
   public void testDefaultCustomScope() throws Exception {
     JsScope scope = createScope(Lists.newArrayList("scope0", "scope1"));
-    JsScopes jsScopes = jackStore.within("scope0", "scope1").queryScope().fetch();
+    JsScopes jsScopes = transactor.query(db -> jackStore.scope("scope0", "scope1").querySubScopes().execute(db));
     assertEquals(1, jsScopes.size());
     assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
     assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());
@@ -45,7 +46,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
       TestStore scope = records.get(i);
 
       assertNull(scope.getScope());
-      assertEquals(JsConstants.SCOPE_TYPE, scope.getType());
+      assertEquals(ValueType.SCOPE.value, scope.getType().intValue());
       assertEquals(JsConstants.SCOPE_KEY, scope.getKey());
       assertEquals("scope" + i, scope.getValue());
     }
@@ -62,7 +63,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
     assertEquals(3, records.size());
 
     TestStore scope0 = records.get(0);
-    assertEquals(JsConstants.SCOPE_TYPE, scope0.getType());
+    assertEquals(ValueType.SCOPE.value, scope0.getType().intValue());
     assertEquals(JsConstants.SCOPE_KEY, scope0.getKey());
     assertEquals("scope0", scope0.getValue());
 
@@ -70,7 +71,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
       TestStore scope = records.get(i);
 
       assertEquals(scope0.getId(), scope.getScope().longValue());
-      assertEquals(JsConstants.SCOPE_TYPE, scope.getType());
+      assertEquals(ValueType.SCOPE.value, scope.getType().intValue());
       assertEquals(JsConstants.SCOPE_KEY, scope.getKey());
       assertEquals("scope" + i, scope.getValue());
     }

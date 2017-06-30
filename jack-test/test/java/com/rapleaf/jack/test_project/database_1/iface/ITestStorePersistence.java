@@ -17,13 +17,13 @@ import java.util.List;
 import com.rapleaf.jack.IModelPersistence;
 
 public interface ITestStorePersistence extends IModelPersistence<TestStore> {
-  TestStore create(final Long scope, final String key, final String type, final String value, final Long created_at, final Long updated_at) throws IOException;
+  TestStore create(final Integer type, final Long scope, final String key, final String value, final Long created_at, final Long updated_at) throws IOException;
   TestStore create() throws IOException;
 
   TestStore createDefaultInstance() throws IOException;
+  List<TestStore> findByType(Integer value)  throws IOException;
   List<TestStore> findByScope(Long value)  throws IOException;
   List<TestStore> findByKey(String value)  throws IOException;
-  List<TestStore> findByType(String value)  throws IOException;
   List<TestStore> findByValue(String value)  throws IOException;
   List<TestStore> findByCreatedAt(Long value)  throws IOException;
   List<TestStore> findByUpdatedAt(Long value)  throws IOException;

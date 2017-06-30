@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +13,14 @@ import com.rapleaf.jack.queries.GenericConstraint;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.DuplicatedScopeException;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
-import com.rapleaf.jack.transaction.ITransactor;
 
-public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
+/**
+ * Get sub scopes under the execution scope
+ */
+public class SubScopeGetterExecutor extends BaseExecutor {
 
   private final String scope;
   private final GetterType getterType;
@@ -25,28 +29,28 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     ID, NAME
   }
 
-  public ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
-    super(transactor, jsTable, predefinedScope, predefinedScopeNames);
+  SubScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
+    super(jsTable, predefinedScope, predefinedScopeNames);
     this.scope = String.valueOf(scopeId);
     this.getterType = GetterType.ID;
   }
 
-  public ScopeGetterExecutor(ITransactor<DB> transactor, JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
-    super(transactor, jsTable, predefinedScope, predefinedScopeNames);
+  SubScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
+    super(jsTable, predefinedScope, predefinedScopeNames);
     this.scope = scopeName;
     this.getterType = GetterType.NAME;
   }
 
-  public JsScope get() {
-    JsScopes scopes = getScopes();
+  public JsScope execute(IDb db) throws IOException {
+    JsScopes scopes = getScopes(db);
     if (scopes.isEmpty()) {
       throw new MissingScopeException(getterType.name() + " " + scopes);
     }
     return scopes.getScopes().get(0);
   }
 
-  public Optional<JsScope> getOptional() {
-    JsScopes scopes = getScopes();
+  public Optional<JsScope> getOptional(IDb db) throws IOException {
+    JsScopes scopes = getScopes(db);
     if (scopes.isEmpty()) {
       return Optional.empty();
     } else {
@@ -54,10 +58,10 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  private JsScopes getScopes() {
-    Optional<JsScope> executionScope = getOptionalExecutionScope();
+  private JsScopes getScopes(IDb db) throws IOException {
+    Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
-      JsScopes scopes = ScopeQueryExecutor.queryScope(transactor, table, executionScope.get(), Collections.singletonList(getConstraint()));
+      JsScopes scopes = SubScopeQueryExecutor.queryScope(db, table, executionScope.get(), Collections.singletonList(getConstraint()));
       if (scopes.isEmpty() || scopes.size() == 1) {
         return scopes;
       } else {

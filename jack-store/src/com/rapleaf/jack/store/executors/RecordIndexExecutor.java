@@ -19,24 +19,27 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.transaction.ITransactor;
 
-public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
+/**
+ * Create and update records under the execution scope
+ */
+public class RecordIndexExecutor extends BaseExecutor {
 
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  protected RecordIndexExecutor(ITransactor<DB> transactor, JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(transactor, table, predefinedScope, predefinedScopeNames);
+  RecordIndexExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+    super(table, predefinedScope, predefinedScopeNames);
     this.types = Maps.newLinkedHashMap();
     this.values = Maps.newLinkedHashMap();
   }
 
-  public RecordIndexExecutor<DB> put(String key, Object value) {
+  public RecordIndexExecutor put(String key, Object value) {
     Preconditions.checkNotNull(value, "Value list cannot be null when using the put(String, Object) method");
     if (value instanceof Boolean) {
       return putBoolean(key, (Boolean)value);
@@ -65,43 +68,43 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     throw new JackRuntimeException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
-  public RecordIndexExecutor<DB> putBoolean(String key, Boolean value) {
+  public RecordIndexExecutor putBoolean(String key, Boolean value) {
     types.put(key, ValueType.BOOLEAN);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putInt(String key, Integer value) {
+  public RecordIndexExecutor putInt(String key, Integer value) {
     types.put(key, ValueType.INT);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putLong(String key, Long value) {
+  public RecordIndexExecutor putLong(String key, Long value) {
     types.put(key, ValueType.LONG);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putDouble(String key, Double value) {
+  public RecordIndexExecutor putDouble(String key, Double value) {
     types.put(key, ValueType.DOUBLE);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putDateTime(String key, DateTime value) {
+  public RecordIndexExecutor putDateTime(String key, DateTime value) {
     types.put(key, ValueType.DATETIME);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putString(String key, String value) {
+  public RecordIndexExecutor putString(String key, String value) {
     types.put(key, ValueType.STRING);
     values.put(key, value);
     return this;
   }
 
-  public RecordIndexExecutor<DB> putJson(String key, JsonObject json) {
+  public RecordIndexExecutor putJson(String key, JsonObject json) {
     Preconditions.checkNotNull(json);
 
     List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), json);
@@ -113,7 +116,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   @SuppressWarnings("unchecked")
-  public RecordIndexExecutor<DB> putList(String key, List<Object> valueList) {
+  public RecordIndexExecutor putList(String key, List<Object> valueList) {
     Preconditions.checkArgument(valueList != null && !valueList.isEmpty(), "Value list cannot be null or empty when using the putList method");
 
     Object value = valueList.get(0);
@@ -138,57 +141,55 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     throw new JackRuntimeException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
-  public RecordIndexExecutor<DB> putBooleanList(String key, List<Boolean> valueList) {
+  public RecordIndexExecutor putBooleanList(String key, List<Boolean> valueList) {
     types.put(key, ValueType.BOOLEAN_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public RecordIndexExecutor<DB> putIntList(String key, List<Integer> valueList) {
+  public RecordIndexExecutor putIntList(String key, List<Integer> valueList) {
     types.put(key, ValueType.INT_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public RecordIndexExecutor<DB> putLongList(String key, List<Long> valueList) {
+  public RecordIndexExecutor putLongList(String key, List<Long> valueList) {
     types.put(key, ValueType.LONG_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public RecordIndexExecutor<DB> putDoubleList(String key, List<Double> valueList) {
+  public RecordIndexExecutor putDoubleList(String key, List<Double> valueList) {
     types.put(key, ValueType.DOUBLE_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public RecordIndexExecutor<DB> putDateTimeList(String key, List<DateTime> valueList) {
+  public RecordIndexExecutor putDateTimeList(String key, List<DateTime> valueList) {
     types.put(key, ValueType.DATETIME_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public RecordIndexExecutor<DB> putStringList(String key, List<String> valueList) {
+  public RecordIndexExecutor putStringList(String key, List<String> valueList) {
     types.put(key, ValueType.STRING_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return this;
   }
 
-  public void execute() {
-    Long scopeId = getOrCreateExecutionScope().getScopeId();
-    transactor.executeAsTransaction(db -> {
-      Map<String, List<Long>> existingKeyIds = getExistingKeyIdMap(db, scopeId);
+  public void execute(IDb db) throws IOException {
+    Long scopeId = getOrCreateExecutionScope(db).getScopeId();
+    Map<String, List<Long>> existingKeyIds = getExistingKeyIdMap(db, scopeId);
 
-      Set<String> existingKeys = existingKeyIds.keySet();
-      if (!existingKeys.isEmpty()) {
-        updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
-      }
+    Set<String> existingKeys = existingKeyIds.keySet();
+    if (!existingKeys.isEmpty()) {
+      updateExistingKeys(db, scopeId, Lists.newLinkedList(existingKeys));
+    }
 
-      Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
-      if (!newKeys.isEmpty()) {
-        insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
-      }
-    });
+    Set<String> newKeys = Sets.difference(types.keySet(), existingKeys);
+    if (!newKeys.isEmpty()) {
+      insertNewKeys(db, scopeId, Lists.newLinkedList(newKeys));
+    }
   }
 
   private List nullifyEmptyList(List valueList) {
@@ -223,8 +224,8 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return keyIdMap;
   }
 
-  private void insertNewKeys(DB db, Long scopeId, List<String> newKeys) throws IOException {
-    List<String> typesToInsert = Lists.newLinkedList();
+  private void insertNewKeys(IDb db, Long scopeId, List<String> newKeys) throws IOException {
+    List<Integer> typesToInsert = Lists.newLinkedList();
     List<String> keysToInsert = Lists.newLinkedList();
     List<String> valuesToInsert = Lists.newLinkedList();
 
@@ -234,17 +235,17 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
       if (value == null) {
         keysToInsert.add(key);
-        typesToInsert.add(type.name());
+        typesToInsert.add(type.value);
         valuesToInsert.add(null);
       } else if (type.isList()) {
         for (Object v : (List)value) {
           keysToInsert.add(key);
-          typesToInsert.add(type.name());
+          typesToInsert.add(type.value);
           valuesToInsert.add(String.valueOf(v));
         }
       } else {
         keysToInsert.add(key);
-        typesToInsert.add(type.name());
+        typesToInsert.add(type.value);
         valuesToInsert.add(String.valueOf(value));
       }
     }
@@ -260,7 +261,7 @@ public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   // delete existing keys and insert new values
   // replace with true update in the future
-  private void updateExistingKeys(DB db, Long scopeId, List<String> existingKeys) throws IOException {
+  private void updateExistingKeys(IDb db, Long scopeId, List<String> existingKeys) throws IOException {
     db.createDeletion()
         .from(table.table)
         .where(table.scopeColumn.equalTo(scopeId))
