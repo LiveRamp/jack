@@ -41,7 +41,7 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.getterType = GetterType.NAME;
   }
 
-  public JsScope get(DB db) throws IOException {
+  public JsScope execute(DB db) throws IOException {
     JsScopes scopes = getScopes(db);
     if (scopes.isEmpty()) {
       throw new MissingScopeException(getterType.name() + " " + scopes);

@@ -19,13 +19,13 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   public void testGet() throws Exception {
     // within root
     final JsScope scope1 = createScope();
-    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeId()).get(db)));
-    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeName()).get(db)));
+    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeId()).execute(db)));
+    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeName()).execute(db)));
 
     // within scope
     final JsScope scope2 = createScope(Lists.newArrayList("scope0", "scope1"));
-    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeId()).get(db)));
-    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeName()).get(db)));
+    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeId()).execute(db)));
+    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeName()).execute(db)));
   }
 
   @Test
@@ -47,7 +47,7 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   public void testMissingScopeId() throws Exception {
     try {
       transactor.execute(db -> {
-        jackStore.rootScope().getSubScope(1L).get(db);
+        jackStore.rootScope().getSubScope(1L).execute(db);
       });
       fail();
     } catch (SqlExecutionFailureException e) {
@@ -59,7 +59,7 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   public void testMissingScopeName() throws Exception {
     try {
       transactor.execute(db -> {
-        jackStore.rootScope().getSubScope("scope0").get(db);
+        jackStore.rootScope().getSubScope("scope0").execute(db);
       });
       fail();
     } catch (SqlExecutionFailureException e) {

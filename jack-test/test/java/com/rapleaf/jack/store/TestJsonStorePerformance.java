@@ -125,7 +125,7 @@ public class TestJsonStorePerformance extends JackTestCase {
       for (int i = 0; i < size; ++i) {
         jackStore.rootScope().querySubScope()
             .whereRecord("handle", JackMatchers.lessThan(String.valueOf(i)))
-            .fetch(db);
+            .execute(db);
       }
     });
     stopwatch.stop();

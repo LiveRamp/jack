@@ -17,7 +17,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testNoConstraint() throws Exception {
-    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().fetch(db));
+    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().execute(db));
     assertEquals(0, scopes.size());
 
     // three scopes under root
@@ -25,7 +25,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope s2 = createScope("2");
     JsScope s3 = createScope("3");
 
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().execute(db));
     assertEquals(3, scopes.size());
     assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(scopes.getScopes()));
 
@@ -34,11 +34,11 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope s02 = createScope(list("1"), "2");
     JsScope s03 = createScope(list("1"), "3");
 
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().execute(db));
     assertEquals(3, scopes.size());
     assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(scopes.getScopes()));
 
-    scopes = transactor.query(db -> jackStore.scope("1").querySubScope().fetch(db));
+    scopes = transactor.query(db -> jackStore.scope("1").querySubScope().execute(db));
     assertEquals(3, scopes.size());
     assertEquals(Sets.newHashSet(s01, s02, s03), Sets.newHashSet(scopes.getScopes()));
   }
@@ -52,40 +52,40 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     // name constraint
     JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeName(JackMatchers.greaterThan("2"))
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(1, scopes.size());
     assertEquals(s3, scopes.getScopes().get(0));
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeName(JackMatchers.greaterThanOrEqualTo("2"))
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(2, scopes.size());
     assertEquals(Sets.newHashSet(s2, s3), Sets.newHashSet(scopes.getScopes()));
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeName(JackMatchers.isNull())
-        .fetch(db)
+        .execute(db)
     );
     assertTrue(scopes.isEmpty());
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeName(JackMatchers.equalTo("2"))
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(s2, scopes.getScopes().get(0));
 
     // id constraint
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeId(JackMatchers.equalTo(s2.getScopeId()))
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(s2, scopes.getScopes().get(0));
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereScopeId(JackMatchers.lessThanOrEqualTo(s2.getScopeId()))
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(2, scopes.size());
     assertEquals(Sets.newHashSet(s1, s2), Sets.newHashSet(scopes.getScopes()));
@@ -109,21 +109,21 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereRecord("count0", JackMatchers.equalTo("15"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s1), scopes.getScopes());
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereRecord("count0", JackMatchers.notEqualTo("15"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s2, s3, s4), scopes.getScopes());
 
     scopes = transactor.query(db -> jackStore.rootScope().querySubScope()
         .whereRecord("count0", JackMatchers.between("15", "25"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s1, s2, s3), scopes.getScopes());
 
@@ -131,7 +131,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
         .whereRecord("count0", JackMatchers.greaterThan("15"))
         .whereRecord("count0", JackMatchers.lessThan("25"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s2), scopes.getScopes());
 
@@ -140,7 +140,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
         .whereRecord("count0", JackMatchers.equalTo("15"))
         .whereRecord("count1", JackMatchers.equalTo("50"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s1), scopes.getScopes());
 
@@ -148,7 +148,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
         .whereRecord("count0", JackMatchers.equalTo("15"))
         .whereRecord("count1", JackMatchers.notEqualTo("50"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(0, scopes.size());
 
@@ -156,7 +156,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
         .whereRecord("count0", JackMatchers.greaterThan("15"))
         .whereRecord("count1", JackMatchers.lessThan("80"))
         .orderByScopeName(QueryOrder.ASC)
-        .fetch(db)
+        .execute(db)
     );
     assertEquals(Lists.newArrayList(s2, s3), scopes.getScopes());
   }
@@ -168,19 +168,19 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope s3 = createScope("c");
 
     // order by id asc
-    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).fetch(db));
+    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).execute(db));
     assertEquals(Lists.newArrayList(s1, s2, s3), scopes.getScopes());
 
     // order by id desc
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.DESC).fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.DESC).execute(db));
     assertEquals(Lists.newArrayList(s3, s2, s1), scopes.getScopes());
 
     // order by name asc
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeName(QueryOrder.ASC).fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeName(QueryOrder.ASC).execute(db));
     assertEquals(Lists.newArrayList(s2, s1, s3), scopes.getScopes());
 
     // order by name desc
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeName(QueryOrder.DESC).fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeName(QueryOrder.DESC).execute(db));
     assertEquals(Lists.newArrayList(s3, s1, s2), scopes.getScopes());
   }
 
@@ -190,10 +190,10 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope s2 = createScope("2");
     JsScope s3 = createScope("3");
 
-    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).limit(2).fetch(db));
+    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).limit(2).execute(db));
     assertEquals(Lists.newArrayList(s1, s2), scopes.getScopes());
 
-    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).limit(1, 2).fetch(db));
+    scopes = transactor.query(db -> jackStore.rootScope().querySubScope().orderByScopeId(QueryOrder.ASC).limit(1, 2).execute(db));
     assertEquals(Lists.newArrayList(s2, s3), scopes.getScopes());
   }
 
@@ -207,7 +207,7 @@ public class TestScopeQueryExecutor extends BaseExecutorTestCase {
     JsScope scope5 = createJson(parser, "scope5", "json", "{key1: {key3: [[13]]}}");
     JsScope scope6 = createJson(parser, "scope6", "json", "{key2: {key1: [[13]]}}");
 
-    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().whereRecord("json.key1.key2", JackMatchers.between("12", "13")).fetch(db));
+    JsScopes scopes = transactor.query(db -> jackStore.rootScope().querySubScope().whereRecord("json.key1.key2", JackMatchers.between("12", "13")).execute(db));
     assertEquals(Lists.newArrayList(scope2, scope3, scope4), scopes.getScopes());
   }
 

@@ -1,11 +1,13 @@
 package com.rapleaf.jack.store.executors;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
 
 public class JsExecutors<DB extends IDb> {
@@ -26,8 +28,8 @@ public class JsExecutors<DB extends IDb> {
     this.predefinedScopeNames = executionScopeNames;
   }
 
-  public ScopeCreationExecutor<DB> createSubScope(String scopeName) {
-    return new ScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, scopeName);
+  public ScopeCreationExecutor<DB> createSubScope(String subScopeName) {
+    return new ScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
   public ScopeCreationExecutor<DB> createSubScope() {
@@ -38,12 +40,12 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeModificationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
   }
 
-  public ScopeGetterExecutor<DB> getSubScope(long scopeId) {
-    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, scopeId);
+  public ScopeGetterExecutor<DB> getSubScope(long subScopeId) {
+    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
   }
 
-  public ScopeGetterExecutor<DB> getSubScope(String scopeName) {
-    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, scopeName);
+  public ScopeGetterExecutor<DB> getSubScope(String subScopeName) {
+    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
   public ScopeQueryExecutor<DB> querySubScope() {
@@ -54,8 +56,16 @@ public class JsExecutors<DB extends IDb> {
     return new ScopeDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public RecordGetterExecutor<DB> readScope() {
-    return new RecordGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public ScopeReaderExecutor<DB> readSubScope(Collection<JsScope> subScopes) {
+    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  }
+
+  public ScopeReaderExecutor<DB> readSubScope(JsScopes subScope) {
+    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  }
+
+  public RecordReaderExecutor<DB> readScope() {
+    return new RecordReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
   public RecordIndexExecutor<DB> indexRecord() {

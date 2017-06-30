@@ -97,7 +97,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     return this;
   }
 
-  public JsScopes fetch(DB db) throws IOException {
+  public JsScopes execute(DB db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
       return queryScope(db, table, executionScope.get(), scopeConstraints, recordConstraints, orderCriteria, limitCriteria);

@@ -39,7 +39,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
     deletion = transactor.query(db -> jackStore.scope(s1).deleteSubScope().allowBulk().execute(db));
     assertTrue(deletion);
     assertRecordCount(2);
-    assertEquals(2, transactor.query(db -> jackStore.rootScope().querySubScope().fetch(db)).size());
+    assertEquals(2, transactor.query(db -> jackStore.rootScope().querySubScope().execute(db)).size());
 
     deletion = transactor.query(db -> jackStore.rootScope().deleteSubScope().allowBulk().execute(db));
     assertTrue(deletion);

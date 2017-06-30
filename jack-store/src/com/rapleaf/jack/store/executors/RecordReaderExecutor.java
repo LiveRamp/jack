@@ -26,7 +26,6 @@ import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsScope;
-import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
@@ -36,37 +35,27 @@ import com.rapleaf.jack.store.json.JsonDbTuple;
 /**
  * Get records under the execution scope
  */
-public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class RecordReaderExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Set<String> selectedKeys;
-  private final Set<JsScope> selectedSubScopes;
 
-  RecordGetterExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  RecordReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);
     this.selectedKeys = Sets.newHashSet();
-    this.selectedSubScopes = Sets.newHashSet();
   }
 
-  public RecordGetterExecutor<DB> selectKey(String key, String... otherKeys) {
+  public RecordReaderExecutor<DB> selectKey(String key, String... otherKeys) {
     selectedKeys.add(key);
     selectedKeys.addAll(Arrays.asList(otherKeys));
     return this;
   }
 
-  public RecordGetterExecutor<DB> selectKey(Collection<String> keys) {
+  public RecordReaderExecutor<DB> selectKey(Collection<String> keys) {
     selectedKeys.addAll(keys);
     return this;
   }
 
-  public JsRecords gets(DB db, Collection<JsScope> subScopes) throws IOException {
-    return internalGets(db, subScopes);
-  }
-
-  public JsRecords gets(DB db, JsScopes subScopes) throws IOException {
-    return internalGets(db, subScopes.getScopes());
-  }
-
-  public JsRecord get(DB db) throws IOException {
+  public JsRecord execute(DB db) throws IOException {
     JsRecords records = internalGets(db, Collections.emptyList());
     Preconditions.checkState(records.size() <= 1);
     if (records.size() == 0) {

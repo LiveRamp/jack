@@ -47,7 +47,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
           .execute(db);
     });
 
-    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().get(db));
+    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().execute(db));
 
     assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
     assertEquals(BOOLEAN_VALUE, record.get(BOOLEAN_KEY));
@@ -108,7 +108,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
           .execute(db);
     });
 
-    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().get(db));
+    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().execute(db));
 
     assertNull(record.getBoolean(BOOLEAN_KEY));
     assertNull(record.get(BOOLEAN_KEY));
@@ -173,13 +173,13 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
     Set<String> keySet = Sets.newHashSet(BOOLEAN_KEY, LONG_LIST_KEY, JSON_KEY);
 
-    JsRecord record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey(keySet).get(db));
+    JsRecord record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey(keySet).execute(db));
     assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
     assertEquals(LONG_LIST_VALUE, record.getLongList(LONG_LIST_KEY));
     assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
     assertEquals(keySet, record.keySet());
 
-    record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey("invalid_key").get(db));
+    record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey("invalid_key").execute(db));
     assertEquals(0, record.keySet().size());
   }
 
@@ -227,7 +227,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void testGetInvalidKey() throws Exception {
-    JsRecord record = transactor.query(db -> jackStore.rootScope().readScope().selectKey("invalid_key").get(db));
+    JsRecord record = transactor.query(db -> jackStore.rootScope().readScope().selectKey("invalid_key").execute(db));
     record.get("invalid_key");
   }
 
