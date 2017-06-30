@@ -174,7 +174,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     GenericQuery query = db.createQuery()
         .from(table.table)
-        .where(table.idColumn.as(Long.class).in(scopes.getScopeIds()))
+        .where(table.idColumn.in(scopes.getScopeIds()))
         .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(table.idColumn, table.valueColumn);

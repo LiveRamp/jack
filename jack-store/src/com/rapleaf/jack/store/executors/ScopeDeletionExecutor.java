@@ -96,7 +96,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     // delete scopes
     Deletions deletions = db.createDeletion().from(table.table)
-        .where(table.idColumn.as(Long.class).in(scopeIds))
+        .where(table.idColumn.in(scopeIds))
         .where(table.typeColumn.equalTo(JsConstants.SCOPE_TYPE))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .execute();
