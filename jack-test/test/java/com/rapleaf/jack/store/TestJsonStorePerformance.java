@@ -30,23 +30,20 @@ public class TestJsonStorePerformance extends JackTestCase {
   }
 
   /**
-   * --------------------
-   * TEST: TestJsonStorePerformance
-   * --------------------
-   * Creation of 1000 records
-   * By store: 1310 ms (1.31 ms per record)
-   * By model: 363 ms (0.36 ms per record)
-   * Difference: 3.61
+   * Creation of 2000 records
+   * By store: 1535 ms (0.77 ms per record)
+   * By model: 588 ms (0.29 ms per record)
+   * Difference: 2.61
    * <p>
-   * Update of 1000 records
-   * By store: 1512 ms (1.51 ms per record)
-   * By model: 463 ms (0.46 ms per record)
-   * Difference: 3.27
+   * Update of 2000 records
+   * By store: 1462 ms (0.73 ms per record)
+   * By model: 570 ms (0.29 ms per record)
+   * Difference: 2.56
    * <p>
-   * Query of 1000 records
-   * By store: 11321 ms (11.32 ms per record)
-   * By model: 2415 ms (2.42 ms per record)
-   * Difference: 4.69
+   * Query of 2000 records
+   * By store: 40731 ms (20.37 ms per record)
+   * By model: 7975 ms (3.99 ms per record)
+   * Difference: 5.11
    */
   @Test
   public void testPerformance() throws Exception {
