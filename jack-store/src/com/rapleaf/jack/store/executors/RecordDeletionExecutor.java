@@ -1,6 +1,8 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,8 +25,14 @@ public class RecordDeletionExecutor extends BaseExecutor {
     this.keysToDelete = Sets.newHashSet();
   }
 
-  public RecordDeletionExecutor delete(String key) {
-    this.keysToDelete.add(key);
+  public RecordDeletionExecutor delete(String keyToDelete, String... keysToDelete) {
+    this.keysToDelete.add(keyToDelete);
+    this.keysToDelete.addAll(Arrays.asList(keysToDelete));
+    return this;
+  }
+
+  public RecordDeletionExecutor delete(Collection<String> keysToDelete) {
+    this.keysToDelete.addAll(keysToDelete);
     return this;
   }
 
