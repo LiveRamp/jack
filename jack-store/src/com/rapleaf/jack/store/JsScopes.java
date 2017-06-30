@@ -1,6 +1,5 @@
 package com.rapleaf.jack.store;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,8 +11,6 @@ import com.google.common.collect.ImmutableList;
 
 public class JsScopes implements Iterable<JsScope> {
 
-  private static final JsScopes EMPTY_SCOPES = new JsScopes(Collections.emptyList());
-
   private final List<JsScope> jsScopes;
 
   private JsScopes(List<JsScope> jsScopes) {
@@ -21,8 +18,8 @@ public class JsScopes implements Iterable<JsScope> {
   }
 
   public static JsScopes of(List<JsScope> jsScopes) {
-    if (jsScopes == null || jsScopes.isEmpty()) {
-      return EMPTY_SCOPES;
+    if (jsScopes == null) {
+      return JsConstants.EMPTY_SCOPES;
     }
     return new JsScopes(jsScopes);
   }

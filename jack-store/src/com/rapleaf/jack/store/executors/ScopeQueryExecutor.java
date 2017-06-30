@@ -44,7 +44,7 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
   }
 
   public ScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn.as(Long.class), scopeIdConstraint));
+    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
     return this;
   }
 
