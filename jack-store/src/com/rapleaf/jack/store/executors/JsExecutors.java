@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
@@ -57,11 +60,11 @@ public class JsExecutors<DB extends IDb> {
   }
 
   public ScopeReaderExecutor<DB> readSubScope(Collection<JsScope> subScopes) {
-    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
   }
 
-  public ScopeReaderExecutor<DB> readSubScope(JsScopes subScope) {
-    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public ScopeReaderExecutor<DB> readSubScope(JsScopes subScopes) {
+    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
   }
 
   public RecordReaderExecutor<DB> readScope() {
