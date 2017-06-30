@@ -18,12 +18,12 @@ import com.rapleaf.jack.store.exceptions.MissingScopeException;
 /**
  * Modify sub scopes under the execution scope
  */
-public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final String currentName;
   private final String newName;
 
-  ScopeModificationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String currentName, String newName) {
+  SubScopeModificationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String currentName, String newName) {
     super(table, predefinedScope, predefinedScopeNames);
     this.currentName = currentName;
     this.newName = newName;

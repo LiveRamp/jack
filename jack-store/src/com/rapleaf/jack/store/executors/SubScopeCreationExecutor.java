@@ -13,16 +13,16 @@ import com.rapleaf.jack.store.JsTable;
 /**
  * Create sub scopes under the execution scope
  */
-public class ScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Optional<String> newScope;
 
-  ScopeCreationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String newScope) {
+  SubScopeCreationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String newScope) {
     super(table, predefinedScope, predefinedScopeNames);
     this.newScope = Optional.of(newScope);
   }
 
-  ScopeCreationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  SubScopeCreationExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);
     this.newScope = Optional.empty();
   }

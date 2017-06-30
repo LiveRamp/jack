@@ -32,14 +32,14 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 /**
  * Create sub scopes under the execution scope
  */
-public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final List<GenericConstraint> scopeConstraints;
   private final Map<String, List<GenericConstraint>> recordConstraints;
   private final Map<Column, QueryOrder> orderCriteria;
   private Optional<LimitCriterion> limitCriteria;
 
-  ScopeQueryExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  SubScopeQueryExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.recordConstraints = Maps.newHashMap();
@@ -47,17 +47,17 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     this.limitCriteria = Optional.empty();
   }
 
-  public ScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
+  public SubScopeQueryExecutor<DB> whereScopeId(IWhereOperator<Long> scopeIdConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeQueryExecutor<DB> whereScopeName(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> whereRecord(String key, IWhereOperator<String> valueConstraint) {
+  public SubScopeQueryExecutor<DB> whereRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
@@ -77,22 +77,22 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
     }
   }
 
-  public ScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor<DB> orderByScopeId(QueryOrder queryOrder) {
     this.orderCriteria.put(table.idColumn, queryOrder);
     return this;
   }
 
-  public ScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
+  public SubScopeQueryExecutor<DB> orderByScopeName(QueryOrder queryOrder) {
     this.orderCriteria.put(table.valueColumn, queryOrder);
     return this;
   }
 
-  public ScopeQueryExecutor<DB> limit(int limit) {
+  public SubScopeQueryExecutor<DB> limit(int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(limit));
     return this;
   }
 
-  public ScopeQueryExecutor<DB> limit(int offset, int limit) {
+  public SubScopeQueryExecutor<DB> limit(int offset, int limit) {
     this.limitCriteria = Optional.of(new LimitCriterion(offset, limit));
     return this;
   }

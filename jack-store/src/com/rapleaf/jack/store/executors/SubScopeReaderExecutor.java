@@ -25,11 +25,11 @@ import com.rapleaf.jack.store.json.JsonDbTuple;
 /**
  * Read sub scope records under the execution scope
  */
-public class ScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB, ScopeReaderExecutor<DB>> {
+public class SubScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB, SubScopeReaderExecutor<DB>> {
 
   private final Set<Long> subScopeIds;
 
-  ScopeReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, Set<Long> subScopeIds) {
+  SubScopeReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, Set<Long> subScopeIds) {
     super(table, predefinedScope, predefinedScopeNames);
     this.subScopeIds = subScopeIds;
   }
@@ -91,7 +91,7 @@ public class ScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB, 
   }
 
   @Override
-  ScopeReaderExecutor<DB> getSelf() {
+  SubScopeReaderExecutor<DB> getSelf() {
     return this;
   }
 

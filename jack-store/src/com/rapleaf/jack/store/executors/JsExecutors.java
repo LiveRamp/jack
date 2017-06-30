@@ -31,40 +31,40 @@ public class JsExecutors<DB extends IDb> {
     this.predefinedScopeNames = executionScopeNames;
   }
 
-  public ScopeCreationExecutor<DB> createSubScope(String subScopeName) {
-    return new ScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  public SubScopeCreationExecutor<DB> createSubScope(String subScopeName) {
+    return new SubScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
-  public ScopeCreationExecutor<DB> createSubScope() {
-    return new ScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeCreationExecutor<DB> createSubScope() {
+    return new SubScopeCreationExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public ScopeModificationExecutor<DB> renameSubScope(String currentName, String newName) {
-    return new ScopeModificationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
+  public SubScopeModificationExecutor<DB> renameSubScope(String currentName, String newName) {
+    return new SubScopeModificationExecutor<>(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
   }
 
-  public ScopeGetterExecutor<DB> getSubScope(long subScopeId) {
-    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
+  public SubScopeGetterExecutor<DB> getSubScope(long subScopeId) {
+    return new SubScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
   }
 
-  public ScopeGetterExecutor<DB> getSubScope(String subScopeName) {
-    return new ScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  public SubScopeGetterExecutor<DB> getSubScope(String subScopeName) {
+    return new SubScopeGetterExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
   }
 
-  public ScopeQueryExecutor<DB> querySubScope() {
-    return new ScopeQueryExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeQueryExecutor<DB> querySubScope() {
+    return new SubScopeQueryExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public ScopeDeletionExecutor<DB> deleteSubScope() {
-    return new ScopeDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
+  public SubScopeDeletionExecutor<DB> deleteSubScope() {
+    return new SubScopeDeletionExecutor<>(jsTable, predefinedScope, predefinedScopeNames);
   }
 
-  public ScopeReaderExecutor<DB> readSubScope(Collection<JsScope> subScopes) {
-    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
+  public SubScopeReaderExecutor<DB> readSubScope(Collection<JsScope> subScopes) {
+    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
   }
 
-  public ScopeReaderExecutor<DB> readSubScope(JsScopes subScopes) {
-    return new ScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
+  public SubScopeReaderExecutor<DB> readSubScope(JsScopes subScopes) {
+    return new SubScopeReaderExecutor<>(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
   }
 
   public RecordReaderExecutor<DB> readScope() {

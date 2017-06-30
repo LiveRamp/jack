@@ -22,29 +22,29 @@ import com.rapleaf.jack.store.ValueType;
 /**
  * Delete sub scopes under the execution scope
  */
-public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final List<GenericConstraint> scopeConstraints;
   private boolean allowRecursion;
   private boolean allowBulkDeletion;
 
-  ScopeDeletionExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
+  SubScopeDeletionExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.allowRecursion = false;
   }
 
-  public ScopeDeletionExecutor<DB> whereScope(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeDeletionExecutor<DB> whereScope(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public ScopeDeletionExecutor<DB> allowBulk() {
+  public SubScopeDeletionExecutor<DB> allowBulk() {
     this.allowBulkDeletion = true;
     return this;
   }
 
-  public ScopeDeletionExecutor<DB> allowRecursion() {
+  public SubScopeDeletionExecutor<DB> allowRecursion() {
     this.allowRecursion = true;
     return this;
   }
@@ -58,7 +58,7 @@ public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
       throw new JackRuntimeException("Bulk deletion is disabled; either enable it or specify at least one constraint");
     }
 
-    JsScopes scopesToDelete = ScopeQueryExecutor.queryScope(db, table, executionScope.get(), scopeConstraints);
+    JsScopes scopesToDelete = SubScopeQueryExecutor.queryScope(db, table, executionScope.get(), scopeConstraints);
     Set<Long> idsToDelete = Sets.newHashSet(scopesToDelete.getScopeIds());
 
     Set<Long> nestedScopeIds = getNestedScopeIds(db, idsToDelete);

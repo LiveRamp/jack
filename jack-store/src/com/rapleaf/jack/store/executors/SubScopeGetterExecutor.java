@@ -20,7 +20,7 @@ import com.rapleaf.jack.store.exceptions.MissingScopeException;
 /**
  * Get sub scopes under the execution scope
  */
-public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
+public class SubScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final String scope;
   private final GetterType getterType;
@@ -29,13 +29,13 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
     ID, NAME
   }
 
-  ScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
+  SubScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, long scopeId) {
     super(jsTable, predefinedScope, predefinedScopeNames);
     this.scope = String.valueOf(scopeId);
     this.getterType = GetterType.ID;
   }
 
-  ScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
+  SubScopeGetterExecutor(JsTable jsTable, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames, String scopeName) {
     super(jsTable, predefinedScope, predefinedScopeNames);
     this.scope = scopeName;
     this.getterType = GetterType.NAME;
@@ -61,7 +61,7 @@ public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
   private JsScopes getScopes(DB db) throws IOException {
     Optional<JsScope> executionScope = getOptionalExecutionScope(db);
     if (executionScope.isPresent()) {
-      JsScopes scopes = ScopeQueryExecutor.queryScope(db, table, executionScope.get(), Collections.singletonList(getConstraint()));
+      JsScopes scopes = SubScopeQueryExecutor.queryScope(db, table, executionScope.get(), Collections.singletonList(getConstraint()));
       if (scopes.isEmpty() || scopes.size() == 1) {
         return scopes;
       } else {
