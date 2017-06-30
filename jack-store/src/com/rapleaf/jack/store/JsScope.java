@@ -4,16 +4,22 @@ import java.util.Objects;
 
 public class JsScope {
 
+  private final Long parentScopeId;
   private final Long scopeId;
   private final String scopeName;
 
-  public JsScope(Long scopeId, String scopeName) {
+  public JsScope(Long parentScopeId, Long scopeId, String scopeName) {
+    this.parentScopeId = parentScopeId;
     this.scopeId = scopeId;
     this.scopeName = scopeName;
   }
 
   public static JsScope root() {
     return JsConstants.ROOT_SCOPE;
+  }
+
+  public Long getParentScopeId() {
+    return parentScopeId;
   }
 
   public Long getScopeId() {

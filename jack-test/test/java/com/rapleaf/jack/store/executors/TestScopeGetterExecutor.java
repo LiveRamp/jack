@@ -10,22 +10,43 @@ import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestScopeGetterExecutor extends BaseExecutorTestCase {
 
   @Test
-  public void testGet() throws Exception {
-    // within root
-    final JsScope scope1 = createScope();
-    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeId()).execute(db)));
-    assertEquals(scope1, transactor.query(db -> jackStore.rootScope().getSubScope(scope1.getScopeName()).execute(db)));
+  public void testScopeUnderRoot() throws Exception {
+    final JsScope expectedScope = createScope();
+    // get by ID
+    JsScope actualScope1 = transactor.query(db -> jackStore.rootScope().getSubScope(expectedScope.getScopeId()).execute(db));
+    assertEquals(expectedScope.getScopeName(), actualScope1.getScopeName());
+    assertEquals(expectedScope.getScopeId(), actualScope1.getScopeId());
+    assertEquals(expectedScope.getParentScopeId(), actualScope1.getParentScopeId());
 
-    // within scope
-    final JsScope scope2 = createScope(Lists.newArrayList("scope0", "scope1"));
-    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeId()).execute(db)));
-    assertEquals(scope2, transactor.query(db -> jackStore.scope("scope0", "scope1").getSubScope(scope2.getScopeName()).execute(db)));
+    // get by name
+    JsScope actualScope2 = transactor.query(db -> jackStore.rootScope().getSubScope(expectedScope.getScopeName()).execute(db));
+    assertEquals(expectedScope.getScopeName(), actualScope2.getScopeName());
+    assertEquals(expectedScope.getScopeId(), actualScope2.getScopeId());
+    assertEquals(expectedScope.getParentScopeId(), actualScope2.getParentScopeId());
+  }
+
+  @Test
+  public void testNestedScope() throws Exception {
+    final JsScope parentScope = createScope("scope0");
+    final JsScope expectedScope = createScope(Lists.newArrayList(parentScope.getScopeName()));
+    // get by ID
+    JsScope actualScope1 = transactor.query(db -> jackStore.scope(parentScope).getSubScope(expectedScope.getScopeId()).execute(db));
+    assertEquals(expectedScope.getScopeName(), actualScope1.getScopeName());
+    assertEquals(expectedScope.getScopeId(), actualScope1.getScopeId());
+    assertEquals(parentScope.getScopeId(), actualScope1.getParentScopeId());
+
+    // get by name
+    JsScope actualScope2 = transactor.query(db -> jackStore.scope(parentScope).getSubScope(expectedScope.getScopeName()).execute(db));
+    assertEquals(expectedScope.getScopeName(), actualScope2.getScopeName());
+    assertEquals(expectedScope.getScopeId(), actualScope2.getScopeId());
+    assertEquals(parentScope.getScopeId(), actualScope2.getParentScopeId());
   }
 
   @Test
