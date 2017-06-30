@@ -138,14 +138,23 @@ public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
     Set<Long> scopeIds = Sets.newHashSet(scopes.getScopeIds());
     for (Map.Entry<String, List<GenericConstraint>> entry : recordConstraints.entrySet()) {
+      if (scopeIds.isEmpty()) {
+        return JsConstants.EMPTY_SCOPES;
+      }
+
       String key = entry.getKey();
       List<GenericConstraint> constraints = entry.getValue();
 
       GenericQuery query = db.createQuery()
           .from(table.table)
           .where(table.scopeColumn.in(scopeIds))
-          .where(table.keyColumn.matches(key))
           .select(table.scopeColumn);
+
+      if (key.contains("%")) {
+        query.where(table.keyColumn.matches(key));
+      } else {
+        query.where(table.keyColumn.equalTo(key));
+      }
 
       for (GenericConstraint constraint : constraints) {
         query.where(constraint);
