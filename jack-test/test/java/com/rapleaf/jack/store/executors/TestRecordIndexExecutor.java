@@ -10,9 +10,10 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
-import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
+import com.rapleaf.jack.store.functions.IndexListRecord;
+import com.rapleaf.jack.store.functions.IndexRecord;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -24,16 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestRecordIndexExecutor extends BaseExecutorTestCase {
-
-  @FunctionalInterface
-  private interface RecordIndexExecution<DB extends IDb, VALUE> {
-    RecordIndexExecutor<DB> apply(RecordIndexExecutor<DB> executor, String key, VALUE value);
-  }
-
-  @FunctionalInterface
-  private interface RecordIndexListExecution<DB extends IDb, VALUE> {
-    RecordIndexExecutor<DB> apply(RecordIndexExecutor<DB> executor, String key, List<VALUE> value);
-  }
 
   @Test
   public void testInsertion() throws Exception {
@@ -136,7 +127,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     }
   }
 
-  private <T> void testInsertion(String key, T value, boolean isNull, RecordIndexExecution<IDatabase1, T> execution) {
+  private <T> void testInsertion(String key, T value, boolean isNull, IndexRecord<IDatabase1, T> execution) {
     RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecords();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : value).execute(db);
@@ -146,7 +137,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
     assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.VALUE));
   }
 
-  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, RecordIndexListExecution<IDatabase1, T> execution) {
+  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, IndexListRecord<IDatabase1, T> execution) {
     RecordIndexExecutor<IDatabase1> executor = jackStore.scope("scope").indexRecords();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : listValue).execute(db);
