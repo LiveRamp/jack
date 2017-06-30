@@ -19,7 +19,7 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   @Test
   public void testRename() throws Exception {
     createScope("scope0");
-    boolean rename = transactor.query(db -> jackStore.rootScope().renameScope("scope0", "scope1").execute(db));
+    boolean rename = transactor.query(db -> jackStore.rootScope().renameSubScope("scope0", "scope1").execute(db));
     assertTrue(rename);
 
     List<TestStore> records = transactor.query(db ->
@@ -33,8 +33,8 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   @Test
   public void testNestedRename() throws Exception {
     boolean rename = transactor.queryAsTransaction(db -> {
-      jackStore.scope("scope0").createScope("scope1").execute(db);
-      return jackStore.scope("scope0").renameScope("scope1", "scope2").execute(db);
+      jackStore.scope("scope0").createSubScope("scope1").execute(db);
+      return jackStore.scope("scope0").renameSubScope("scope1", "scope2").execute(db);
     });
     assertTrue(rename);
 
@@ -50,8 +50,8 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   public void testNonexistRename() throws Exception {
     try {
       transactor.executeAsTransaction(db -> {
-        jackStore.rootScope().createScope("scope0").execute(db);
-        jackStore.rootScope().renameScope("scope1", "scope2").execute(db);
+        jackStore.rootScope().createSubScope("scope0").execute(db);
+        jackStore.rootScope().renameSubScope("scope1", "scope2").execute(db);
       });
       fail();
     } catch (SqlExecutionFailureException e) {
@@ -63,9 +63,9 @@ public class TestScopeModificationExecutor extends BaseExecutorTestCase {
   public void testExistingRename() throws Exception {
     try {
       transactor.executeAsTransaction(db -> {
-        jackStore.rootScope().createScope("scope0").execute(db);
-        jackStore.rootScope().createScope("scope1").execute(db);
-        jackStore.rootScope().renameScope("scope0", "scope1").execute(db);
+        jackStore.rootScope().createSubScope("scope0").execute(db);
+        jackStore.rootScope().createSubScope("scope1").execute(db);
+        jackStore.rootScope().renameSubScope("scope0", "scope1").execute(db);
       });
       fail();
     } catch (SqlExecutionFailureException e) {

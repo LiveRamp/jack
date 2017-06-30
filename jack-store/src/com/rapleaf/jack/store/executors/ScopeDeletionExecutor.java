@@ -19,6 +19,9 @@ import com.rapleaf.jack.store.JsScopes;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
+/**
+ * Delete sub scopes under the execution scope
+ */
 public class ScopeDeletionExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final List<GenericConstraint> scopeConstraints;

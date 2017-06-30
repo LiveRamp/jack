@@ -19,7 +19,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
   @Test
   public void testDefaultRootScope() throws Exception {
     JsScope scope = createScope();
-    JsScopes jsScopes = transactor.query(db -> jackStore.rootScope().queryScope().fetch(db));
+    JsScopes jsScopes = transactor.query(db -> jackStore.rootScope().querySubScope().fetch(db));
     assertEquals(1, jsScopes.size());
     assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
     assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());
@@ -28,7 +28,7 @@ public class TestScopeCreationExecutor extends BaseExecutorTestCase {
   @Test
   public void testDefaultCustomScope() throws Exception {
     JsScope scope = createScope(Lists.newArrayList("scope0", "scope1"));
-    JsScopes jsScopes = transactor.query(db -> jackStore.scope("scope0", "scope1").queryScope().fetch(db));
+    JsScopes jsScopes = transactor.query(db -> jackStore.scope("scope0", "scope1").querySubScope().fetch(db));
     assertEquals(1, jsScopes.size());
     assertEquals(scope.getScopeId(), jsScopes.getScopes().get(0).getScopeId());
     assertEquals(scope.getScopeName(), jsScopes.getScopes().get(0).getScopeName());

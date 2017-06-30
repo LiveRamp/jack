@@ -17,6 +17,9 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.DuplicatedScopeException;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
+/**
+ * Get sub scopes under the execution scope
+ */
 public class ScopeGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final String scope;

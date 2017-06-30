@@ -59,7 +59,7 @@ public class TestJsonStorePerformance extends JackTestCase {
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
         int number = random.nextInt();
-        JsScope scope = jackStore.rootScope().createScope(String.valueOf(i)).execute(db);
+        JsScope scope = jackStore.rootScope().createSubScope(String.valueOf(i)).execute(db);
         jackStore.scope(scope).indexRecord()
             .putString("handle", String.valueOf(number))
             .putInt("numPosts", i)
@@ -123,7 +123,7 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        jackStore.rootScope().queryScope()
+        jackStore.rootScope().querySubScope()
             .whereRecord("handle", JackMatchers.lessThan(String.valueOf(i)))
             .fetch(db);
       }

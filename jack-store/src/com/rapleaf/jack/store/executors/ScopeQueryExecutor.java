@@ -29,6 +29,9 @@ import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
+/**
+ * Create sub scopes under the execution scope
+ */
 public class ScopeQueryExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final List<GenericConstraint> scopeConstraints;

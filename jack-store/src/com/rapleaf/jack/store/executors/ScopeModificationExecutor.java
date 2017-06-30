@@ -15,6 +15,9 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.exceptions.MissingScopeException;
 
+/**
+ * Modify sub scopes under the execution scope
+ */
 public class ScopeModificationExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final String currentName;

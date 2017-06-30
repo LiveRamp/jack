@@ -23,7 +23,6 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
-import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsScope;
@@ -34,6 +33,9 @@ import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
+/**
+ * Get records under the execution scope
+ */
 public class RecordGetterExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Set<String> selectedKeys;

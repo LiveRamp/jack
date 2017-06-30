@@ -25,6 +25,9 @@ import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
+/**
+ * Create and update records under the execution scope
+ */
 public class RecordIndexExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Map<String, ValueType> types;

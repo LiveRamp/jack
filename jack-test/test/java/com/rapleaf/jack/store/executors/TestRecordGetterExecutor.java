@@ -47,7 +47,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
           .execute(db);
     });
 
-    JsRecord record = transactor.query(db -> jackStore.scope("scope").getRecord().get(db));
+    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().get(db));
 
     assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
     assertEquals(BOOLEAN_VALUE, record.get(BOOLEAN_KEY));
@@ -108,7 +108,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
           .execute(db);
     });
 
-    JsRecord record = transactor.query(db -> jackStore.scope("scope").getRecord().get(db));
+    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().get(db));
 
     assertNull(record.getBoolean(BOOLEAN_KEY));
     assertNull(record.get(BOOLEAN_KEY));
@@ -173,13 +173,13 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
     Set<String> keySet = Sets.newHashSet(BOOLEAN_KEY, LONG_LIST_KEY, JSON_KEY);
 
-    JsRecord record = transactor.queryAsTransaction(db -> jackStore.rootScope().getRecord().selectKey(keySet).get(db));
+    JsRecord record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey(keySet).get(db));
     assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
     assertEquals(LONG_LIST_VALUE, record.getLongList(LONG_LIST_KEY));
     assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
     assertEquals(keySet, record.keySet());
 
-    record = transactor.queryAsTransaction(db -> jackStore.rootScope().getRecord().selectKey("invalid_key").get(db));
+    record = transactor.queryAsTransaction(db -> jackStore.rootScope().readScope().selectKey("invalid_key").get(db));
     assertEquals(0, record.keySet().size());
   }
 
@@ -194,7 +194,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
     List<JsScope> scopes = Lists.newArrayListWithCapacity(size);
     transactor.executeAsTransaction(db -> {
       for (long i = 0L; i < size; ++i) {
-        JsScope scope = jackStore.scope(customScope).createScope(String.valueOf(i)).execute(db);
+        JsScope scope = jackStore.scope(customScope).createSubScope(String.valueOf(i)).execute(db);
         scopes.add(scope);
         jackStore.scope(scope).indexRecord()
             .putLong(LONG_KEY, i)
@@ -209,7 +209,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
     int hi = Math.min(size, lo + size / 5 + random.nextInt(size));
     LOG.info("Range: [{}, {})", lo, hi);
     List<JsScope> subScopes = scopes.subList(lo, hi);
-    JsRecords jsRecords = transactor.queryAsTransaction(db -> jackStore.scope(customScope).getRecord().gets(db, subScopes));
+    JsRecords jsRecords = transactor.queryAsTransaction(db -> jackStore.scope(customScope).readScope().gets(db, subScopes));
     assertEquals(subScopes.size(), jsRecords.size());
     for (int i = 0; i < subScopes.size(); ++i) {
       String scopeName = subScopes.get(i).getScopeName();
@@ -227,7 +227,7 @@ public class TestRecordGetterExecutor extends BaseExecutorTestCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void testGetInvalidKey() throws Exception {
-    JsRecord record = transactor.query(db -> jackStore.rootScope().getRecord().selectKey("invalid_key").get(db));
+    JsRecord record = transactor.query(db -> jackStore.rootScope().readScope().selectKey("invalid_key").get(db));
     record.get("invalid_key");
   }
 

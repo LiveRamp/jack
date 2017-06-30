@@ -10,6 +10,9 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsTable;
 
+/**
+ * Create sub scopes under the execution scope
+ */
 public class ScopeCreationExecutor<DB extends IDb> extends BaseExecutor<DB> {
 
   private final Optional<String> newScope;

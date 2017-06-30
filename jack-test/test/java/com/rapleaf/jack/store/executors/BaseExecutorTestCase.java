@@ -77,23 +77,23 @@ public class BaseExecutorTestCase extends JackTestCase {
   }
 
   JsScope createScope() {
-    return transactor.queryAsTransaction(db -> jackStore.rootScope().createScope().execute(db));
+    return transactor.queryAsTransaction(db -> jackStore.rootScope().createSubScope().execute(db));
   }
 
   JsScope createScope(List<String> parentScopes) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createScope().execute(db));
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createSubScope().execute(db));
   }
 
   JsScope createScope(String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.rootScope().createScope(newScope).execute(db));
+    return transactor.queryAsTransaction(db -> jackStore.rootScope().createSubScope(newScope).execute(db));
   }
 
   JsScope createScope(List<String> parentScopes, String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createScope(newScope).execute(db));
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createSubScope(newScope).execute(db));
   }
 
   JsScope createScope(JsScope parentScope, String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScope).createScope(newScope).execute(db));
+    return transactor.queryAsTransaction(db -> jackStore.scope(parentScope).createSubScope(newScope).execute(db));
   }
 
   protected List<String> list(String element) {
