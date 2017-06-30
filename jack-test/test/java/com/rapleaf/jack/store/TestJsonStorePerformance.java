@@ -14,7 +14,6 @@ import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import com.rapleaf.jack.transaction.IExecution;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class TestJsonStorePerformance extends JackTestCase {
@@ -26,7 +25,7 @@ public class TestJsonStorePerformance extends JackTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactor.executeAsTransaction((IExecution<IDatabase1>)IDb::deleteAll);
+    transactor.executeAsTransaction(IDb::deleteAll);
   }
 
   /**

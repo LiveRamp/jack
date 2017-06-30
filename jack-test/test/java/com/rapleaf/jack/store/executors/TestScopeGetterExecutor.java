@@ -46,9 +46,7 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   @Test
   public void testMissingScopeId() throws Exception {
     try {
-      transactor.execute(db -> {
-        jackStore.rootScope().getSubScope(1L).execute(db);
-      });
+      transactor.execute(db -> jackStore.rootScope().getSubScope(1L).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof MissingScopeException);
@@ -58,9 +56,7 @@ public class TestScopeGetterExecutor extends BaseExecutorTestCase {
   @Test
   public void testMissingScopeName() throws Exception {
     try {
-      transactor.execute(db -> {
-        jackStore.rootScope().getSubScope("scope0").execute(db);
-      });
+      transactor.execute(db -> jackStore.rootScope().getSubScope("scope0").execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof MissingScopeException);

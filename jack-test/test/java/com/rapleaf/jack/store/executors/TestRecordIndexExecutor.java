@@ -105,9 +105,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   @Test
   public void testInsertNullWithPutObjectMethod() throws Exception {
     try {
-      transactor.execute(db -> {
-        jackStore.rootScope().indexRecords().put("key", (Object)null).execute(db);
-      });
+      transactor.execute(db -> jackStore.rootScope().indexRecords().put("key", (Object)null).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof NullPointerException);
@@ -117,9 +115,7 @@ public class TestRecordIndexExecutor extends BaseExecutorTestCase {
   @Test
   public void testInsertNullWithPutObjectListMethod() throws Exception {
     try {
-      transactor.execute(db -> {
-        jackStore.rootScope().indexRecords().put("key", (List<Object>)null).execute(db);
-      });
+      transactor.execute(db -> jackStore.rootScope().indexRecords().put("key", (List<Object>)null).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof NullPointerException);

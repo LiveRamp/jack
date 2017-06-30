@@ -16,9 +16,7 @@ public class TestScopeDeletionExecutor extends BaseExecutorTestCase {
 
   @Test(expected = JackRuntimeException.class)
   public void testNoBulkDeletion() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().deleteSubScopes().execute(db);
-    });
+    transactor.execute(db -> jackStore.rootScope().deleteSubScopes().execute(db));
   }
 
   @Test

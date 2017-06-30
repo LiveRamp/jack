@@ -19,7 +19,6 @@ import com.rapleaf.jack.store.json.BaseJsonTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
-import com.rapleaf.jack.transaction.IExecution;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class BaseExecutorTestCase extends JackTestCase {
@@ -73,7 +72,7 @@ public class BaseExecutorTestCase extends JackTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactor.executeAsTransaction((IExecution<IDatabase1>)IDb::deleteAll);
+    transactor.executeAsTransaction(IDb::deleteAll);
   }
 
   JsScope createScope() {

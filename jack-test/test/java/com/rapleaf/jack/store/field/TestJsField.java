@@ -17,9 +17,7 @@ public class TestJsField extends BaseExecutorTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactor.execute(db -> {
-      jackStore.rootScope().deleteSubScopes().allowBulk().allowRecursion().execute(db);
-    });
+    transactor.execute(db -> jackStore.rootScope().deleteSubScopes().allowBulk().allowRecursion().execute(db));
   }
 
   @Test

@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.store.JsRecord;
@@ -20,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestRecordReaderExecutor extends BaseExecutorTestCase {
-  private static final Logger LOG = LoggerFactory.getLogger(TestRecordReaderExecutor.class);
 
   @SuppressWarnings("unchecked")
   @Test
@@ -91,22 +88,22 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testNullValues() throws Exception {
-    transactor.executeAsTransaction(db -> {
-      jackStore.scope("scope").indexRecords()
-          .putBoolean(BOOLEAN_KEY, null)
-          .putInt(INT_KEY, null)
-          .putLong(LONG_KEY, null)
-          .putDouble(DOUBLE_KEY, null)
-          .putDateTime(DATETIME_KEY, null)
-          .putString(STRING_KEY, null)
-          .putBooleanList(BOOLEAN_LIST_KEY, null)
-          .putIntList(INT_LIST_KEY, null)
-          .putLongList(LONG_LIST_KEY, null)
-          .putDoubleList(DOUBLE_LIST_KEY, null)
-          .putDateTimeList(DATETIME_LIST_KEY, null)
-          .putStringList(STRING_LIST_KEY, null)
-          .execute(db);
-    });
+    transactor.executeAsTransaction(db ->
+        jackStore.scope("scope").indexRecords()
+            .putBoolean(BOOLEAN_KEY, null)
+            .putInt(INT_KEY, null)
+            .putLong(LONG_KEY, null)
+            .putDouble(DOUBLE_KEY, null)
+            .putDateTime(DATETIME_KEY, null)
+            .putString(STRING_KEY, null)
+            .putBooleanList(BOOLEAN_LIST_KEY, null)
+            .putIntList(INT_LIST_KEY, null)
+            .putLongList(LONG_LIST_KEY, null)
+            .putDoubleList(DOUBLE_LIST_KEY, null)
+            .putDateTimeList(DATETIME_LIST_KEY, null)
+            .putStringList(STRING_LIST_KEY, null)
+            .execute(db)
+    );
 
     JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().execute(db));
 
@@ -161,15 +158,15 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testSelectedKeys() throws Exception {
-    transactor.executeAsTransaction(db -> {
-      jackStore.rootScope().indexRecords()
-          .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
-          .putJson(JSON_KEY, JSON_VALUE)
-          .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
-          .putDateTimeList(DATETIME_LIST_KEY, DATETIME_LIST_VALUE)
-          .putStringList(STRING_LIST_KEY, STRING_LIST_VALUE)
-          .execute(db);
-    });
+    transactor.executeAsTransaction(db ->
+        jackStore.rootScope().indexRecords()
+            .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
+            .putJson(JSON_KEY, JSON_VALUE)
+            .putLongList(LONG_LIST_KEY, LONG_LIST_VALUE)
+            .putDateTimeList(DATETIME_LIST_KEY, DATETIME_LIST_VALUE)
+            .putStringList(STRING_LIST_KEY, STRING_LIST_VALUE)
+            .execute(db)
+    );
 
     Set<String> keySet = Sets.newHashSet(BOOLEAN_KEY, LONG_LIST_KEY, JSON_KEY);
 
