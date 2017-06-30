@@ -25,7 +25,7 @@ public class JsScope {
   }
 
   public boolean isRootScope() {
-    return scopeId < 0;
+    return scopeId == null;
   }
 
   @Override

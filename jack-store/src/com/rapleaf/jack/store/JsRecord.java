@@ -41,6 +41,10 @@ public class JsRecord {
     return types.keySet();
   }
 
+  public boolean isEmpty() {
+    return types.isEmpty();
+  }
+
   public Object get(String key) {
     checkKey(key);
 
