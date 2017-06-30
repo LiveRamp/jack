@@ -19,9 +19,9 @@ import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-public abstract class BaseReaderExecutor<DB extends IDb, T extends BaseReaderExecutor<DB, T>> extends BaseExecutor<DB> {
+abstract class BaseReaderExecutor<DB extends IDb, T extends BaseReaderExecutor<DB, T>> extends BaseExecutor<DB> {
 
-  final Set<String> selectedKeys;
+  private final Set<String> selectedKeys;
 
   BaseReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
     super(table, predefinedScope, predefinedScopeNames);

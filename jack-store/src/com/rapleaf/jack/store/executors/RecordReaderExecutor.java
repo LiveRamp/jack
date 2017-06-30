@@ -35,6 +35,7 @@ public class RecordReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB,
     if (!recordScope.isPresent()) {
       throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
     }
+    Long scopeId = recordScope.get().getScopeId();
 
     Records records = db.createQuery().from(table.table)
         .where(table.scopeColumn.equalTo(recordScope.get().getScopeId()))
@@ -56,7 +57,7 @@ public class RecordReaderExecutor<DB extends IDb> extends BaseReaderExecutor<DB,
     if (types.isEmpty()) {
       return JsRecord.empty();
     } else {
-      return new JsRecord(types, values);
+      return new JsRecord(scopeId, types, values);
     }
   }
 

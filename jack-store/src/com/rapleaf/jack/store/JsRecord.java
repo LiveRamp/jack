@@ -16,19 +16,25 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public class JsRecord {
 
+  private final Long scopeId;
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  public JsRecord(Map<String, ValueType> types, Map<String, Object> values) {
+  public JsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values) {
     Preconditions.checkNotNull(types);
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
+    this.scopeId = scopeId;
     this.types = types;
     this.values = values;
   }
 
   public static JsRecord empty() {
     return JsConstants.EMPTY_RECORD;
+  }
+
+  public Long getScopeId() {
+    return scopeId;
   }
 
   public Set<String> keySet() {

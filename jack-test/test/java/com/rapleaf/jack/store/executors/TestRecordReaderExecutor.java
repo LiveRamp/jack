@@ -1,13 +1,10 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -15,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsScope;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +25,8 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
   @SuppressWarnings("unchecked")
   @Test
   public void testValues() throws Exception {
-    transactor.executeAsTransaction(db -> {
+    JsScope scope = transactor.queryAsTransaction(db -> {
+      JsScope newScope = jackStore.rootScope().createSubScope("scope").execute(db);
       jackStore.scope("scope").indexRecord()
           .putBoolean(BOOLEAN_KEY, BOOLEAN_VALUE)
           .putInt(INT_KEY, INT_VALUE)
@@ -45,9 +42,12 @@ public class TestRecordReaderExecutor extends BaseExecutorTestCase {
           .putDateTimeList(DATETIME_LIST_KEY, DATETIME_LIST_VALUE)
           .putStringList(STRING_LIST_KEY, STRING_LIST_VALUE)
           .execute(db);
+      return newScope;
     });
 
-    JsRecord record = transactor.query(db -> jackStore.scope("scope").readScope().execute(db));
+    JsRecord record = transactor.query(db -> jackStore.scope(scope).readScope().execute(db));
+
+    assertEquals(scope.getScopeId(), record.getScopeId());
 
     assertEquals(BOOLEAN_VALUE, record.getBoolean(BOOLEAN_KEY));
     assertEquals(BOOLEAN_VALUE, record.get(BOOLEAN_KEY));

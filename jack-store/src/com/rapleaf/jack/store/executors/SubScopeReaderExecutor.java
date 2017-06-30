@@ -57,36 +57,36 @@ public class SubScopeReaderExecutor<DB extends IDb> extends BaseReaderExecutor<D
     Iterator<Record> iterator = records.iterator();
     while (iterator.hasNext()) {
       Record record = iterator.next();
-      Long scopeId = record.get(table.scopeColumn);
+      Long currentScopeId = record.get(table.scopeColumn);
 
-      if (!Objects.equals(previousScopeId, scopeId)) {
+      if (!Objects.equals(previousScopeId, currentScopeId)) {
         // Scope ID changes
         // Construct a new record with previous entries
-        addJsRecord(types, values, jsonTuples, jsonKeys, jsRecords);
+        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
 
         types = Maps.newHashMap();
         values = Maps.newHashMap();
         jsonTuples = Lists.newLinkedList();
         jsonKeys = Sets.newHashSet();
 
-        previousScopeId = scopeId;
+        previousScopeId = currentScopeId;
       }
 
       appendRecord(types, values, jsonTuples, jsonKeys, record);
 
       if (!iterator.hasNext()) {
         // Construct the final record with previous entries
-        addJsRecord(types, values, jsonTuples, jsonKeys, jsRecords);
+        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
       }
     }
 
     return new JsRecords(jsRecords);
   }
 
-  private void addJsRecord(Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, List<JsRecord> jsRecords) {
+  private void addJsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, List<JsRecord> jsRecords) {
     appendJsonRecord(types, values, jsonTuples, jsonKeys);
     if (!types.isEmpty()) {
-      jsRecords.add(new JsRecord(types, values));
+      jsRecords.add(new JsRecord(scopeId, types, values));
     }
   }
 
