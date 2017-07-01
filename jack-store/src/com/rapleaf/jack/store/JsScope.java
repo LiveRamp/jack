@@ -36,13 +36,14 @@ public class JsScope {
 
   @Override
   public int hashCode() {
-    return String.valueOf(scopeId).hashCode() + scopeName.hashCode();
+    return Objects.hashCode(parentScopeId) + 19 * (Objects.hashCode(scopeId) + 19 * Objects.hashCode(scopeName));
   }
 
   @Override
   public String toString() {
-    return JsScope.class.getSimpleName() +
+    return getClass().getSimpleName() +
         "{" +
+        "parentScopeId" + parentScopeId +
         "scopeId=" + scopeId +
         ",scopeName=" + scopeName +
         "}";
@@ -59,7 +60,9 @@ public class JsScope {
     }
 
     JsScope that = (JsScope)other;
-    return Objects.equals(this.scopeId, that.scopeId) && Objects.equals(this.scopeName, that.scopeName);
+    return Objects.equals(this.parentScopeId, that.parentScopeId) &&
+        Objects.equals(this.scopeId, that.scopeId) &&
+        Objects.equals(this.scopeName, that.scopeName);
   }
 
 }

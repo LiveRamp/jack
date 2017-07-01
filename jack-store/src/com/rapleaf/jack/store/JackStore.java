@@ -33,6 +33,10 @@ public class JackStore {
     return new JsExecutors(jsTable, scope);
   }
 
+  public JsExecutors scope(long scopeId) {
+    return new JsExecutors(jsTable, new JsIdScope(scopeId));
+  }
+
   public JsExecutors rootScope() {
     return scope(JsConstants.ROOT_SCOPE);
   }
