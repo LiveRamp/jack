@@ -14,7 +14,7 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class TestScopeCreationExecutor extends BaseExecutorTestCase {
+public class TestSubScopeCreationExecutor extends BaseExecutorTestCase {
 
   @Test
   public void testDefaultRootScope() throws Exception {

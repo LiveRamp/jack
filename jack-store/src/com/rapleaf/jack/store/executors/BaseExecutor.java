@@ -70,7 +70,7 @@ public abstract class BaseExecutor {
         .set(table.valueColumn, childScope)
         .execute()
         .getFirstId();
-    return new JsScope(childScopeId, childScope);
+    return new JsScope(executionScope.getScopeId(), childScopeId, childScope);
   }
 
   private Optional<JsScope> getOptionalScope(IDb db, JsScope executionScope, String childScope) throws IOException {
@@ -85,7 +85,7 @@ public abstract class BaseExecutor {
     if (ids.size() == 0) {
       return Optional.empty();
     } else if (ids.size() == 1) {
-      return Optional.of(new JsScope(ids.get(0), childScope));
+      return Optional.of(new JsScope(executionScope.getScopeId(), ids.get(0), childScope));
     } else {
       throw new JackRuntimeException(String.format("Duplicated scopes, %s, exist under parent scope %s", childScope, executionScope.toString()));
     }

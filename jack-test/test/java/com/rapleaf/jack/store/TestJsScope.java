@@ -10,7 +10,8 @@ public class TestJsScope {
   public void testRootScope() {
     JsScope rootScope = JsScope.root();
     assertTrue(rootScope.isRootScope());
-    assertEquals(JsConstants.ROOT_SCOPE_ID, rootScope.getScopeId());
+    assertNull(rootScope.getParentScopeId());
+    assertNull(rootScope.getScopeId());
     assertEquals(JsConstants.ROOT_SCOPE_NAME, rootScope.getScopeName());
   }
 

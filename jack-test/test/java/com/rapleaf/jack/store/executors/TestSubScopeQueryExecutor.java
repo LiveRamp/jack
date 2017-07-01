@@ -1,5 +1,8 @@
 package com.rapleaf.jack.store.executors;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParser;
@@ -13,7 +16,21 @@ import com.rapleaf.jack.store.JsScopes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestScopeQueryExecutor extends BaseExecutorTestCase {
+public class TestSubScopeQueryExecutor extends BaseExecutorTestCase {
+
+  @Test
+  public void testParentScopeId() throws Exception {
+    JsScope parentScope = transactor.query(db -> jackStore.rootScope().createSubScope().execute(db));
+    JsScopes childScopes = transactor.query(db -> {
+      for (int i = 0; i < 5; ++i) {
+        jackStore.scope(parentScope).createSubScope().execute(db);
+      }
+      return jackStore.scope(parentScope).querySubScopes().execute(db);
+    });
+    Set<Long> parentIds = childScopes.getScopes().stream().map(JsScope::getParentScopeId).collect(Collectors.toSet());
+    assertEquals(1, parentIds.size());
+    assertEquals(parentScope.getScopeId(), parentIds.iterator().next());
+  }
 
   @Test
   public void testNoConstraint() throws Exception {

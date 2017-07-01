@@ -122,14 +122,14 @@ public class SubScopeQueryExecutor extends BaseExecutor {
         .where(table.scopeColumn.equalTo(executionScope.getScopeId()))
         .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-        .select(table.idColumn, table.valueColumn);
+        .select(table.scopeColumn, table.idColumn, table.valueColumn);
 
     for (GenericConstraint constraint : scopeConstraints) {
       query.where(constraint);
     }
 
     List<JsScope> scopes = query.fetch().stream()
-        .map(r -> new JsScope(r.get(table.idColumn), r.get(table.valueColumn)))
+        .map(r -> new JsScope(r.get(table.scopeColumn), r.get(table.idColumn), r.get(table.valueColumn)))
         .collect(Collectors.toList());
 
     return JsScopes.of(scopes);
@@ -181,7 +181,7 @@ public class SubScopeQueryExecutor extends BaseExecutor {
         .where(table.idColumn.in(scopes.getScopeIds()))
         .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-        .select(table.idColumn, table.valueColumn);
+        .select(table.scopeColumn, table.idColumn, table.valueColumn);
 
     for (Map.Entry<Column, QueryOrder> entry : orderCriteria.entrySet()) {
       query.orderBy(entry.getKey(), entry.getValue());
@@ -193,7 +193,7 @@ public class SubScopeQueryExecutor extends BaseExecutor {
     }
 
     List<JsScope> orderedScopes = query.fetch().stream()
-        .map(r -> new JsScope(r.get(table.idColumn), r.get(table.valueColumn)))
+        .map(r -> new JsScope(r.get(table.scopeColumn), r.get(table.idColumn), r.get(table.valueColumn)))
         .collect(Collectors.toList());
 
     return JsScopes.of(orderedScopes);
