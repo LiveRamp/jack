@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -12,14 +11,12 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
 
 import com.rapleaf.jack.queries.Record;
-import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
-import com.rapleaf.jack.store.executors.BaseExecutor;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseReaderExecutor2<T extends BaseReaderExecutor2<T>> extends BaseExecutor2 {
+abstract class BaseReaderExecutor2<T, E extends BaseReaderExecutor2<T, E>> extends BaseExecutor2<T> {
 
   private final Set<String> selectedKeys;
 
@@ -28,18 +25,18 @@ abstract class BaseReaderExecutor2<T extends BaseReaderExecutor2<T>> extends Bas
     this.selectedKeys = Sets.newHashSet();
   }
 
-  public T selectKey(String key, String... otherKeys) {
+  public E selectKey(String key, String... otherKeys) {
     this.selectedKeys.add(key);
     this.selectedKeys.addAll(Arrays.asList(otherKeys));
     return getSelf();
   }
 
-  public T selectKey(Collection<String> keys) {
+  public E selectKey(Collection<String> keys) {
     selectedKeys.addAll(keys);
     return getSelf();
   }
 
-  abstract T getSelf();
+  abstract E getSelf();
 
   void appendJsonRecord(Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys) {
     JsonObject jsonObject = JsonDbHelper.fromTupleList(jsonTuples);
