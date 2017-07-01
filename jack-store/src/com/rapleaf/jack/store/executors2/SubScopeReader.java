@@ -6,9 +6,9 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
-public class SubScopeQuerier extends BaseExecutor2<JsRecords> {
+public class SubScopeReader extends BaseExecutor2<JsRecords> {
 
-  public SubScopeQuerier(JsTable table, Long executionScopeId) {
+  public SubScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
   }
 

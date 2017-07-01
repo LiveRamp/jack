@@ -23,7 +23,7 @@ public class JsExecutors2 {
     this.executionScopeId = executionScopeId;
   }
 
-  public ScopeReader read() {
+  public ScopeReader query() {
     return new ScopeReader(table, executionScopeId);
   }
 
@@ -39,8 +39,8 @@ public class JsExecutors2 {
     return new SubScopeCreator(table, executionScopeId);
   }
 
-  public SubScopeQuerier querySubScopes() {
-    return new SubScopeQuerier(table, executionScopeId);
+  public SubScopeReader querySubScopes() {
+    return new SubScopeReader(table, executionScopeId);
   }
 
   public SubScopeUpdater updateSubScopes() {
