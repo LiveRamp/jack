@@ -55,7 +55,7 @@ public class RecordReaderExecutor extends BaseReaderExecutor<RecordReaderExecuto
     appendJsonRecord(types, values, jsonTuples, jsonKeys);
 
     if (types.isEmpty()) {
-      return JsRecord.empty();
+      return JsRecord.empty(scopeId);
     } else {
       return new JsRecord(scopeId, types, values);
     }

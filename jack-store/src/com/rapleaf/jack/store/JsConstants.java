@@ -10,8 +10,6 @@ public class JsConstants {
   public static final JsScope ROOT_SCOPE = new JsScope(null, null, ROOT_SCOPE_NAME);
 
   public static final JsScopes EMPTY_SCOPES = JsScopes.of(Collections.emptyList());
-  public static final long EMPTY_RECORD_SCOPE_ID = -1L;
-  public static final JsRecord EMPTY_RECORD = new JsRecord(EMPTY_RECORD_SCOPE_ID, Collections.emptyMap(), Collections.emptyMap());
   public static final JsRecords EMPTY_RECORDS = new JsRecords(Collections.emptyList());
 
   public enum DefaultTableField {

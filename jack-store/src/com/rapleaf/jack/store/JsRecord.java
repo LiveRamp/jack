@@ -29,8 +29,8 @@ public class JsRecord {
     this.values = values;
   }
 
-  public static JsRecord empty() {
-    return JsConstants.EMPTY_RECORD;
+  public static JsRecord empty(Long scopeId) {
+    return new JsRecord(scopeId, Collections.emptyMap(), Collections.emptyMap());
   }
 
   public Long getScopeId() {
