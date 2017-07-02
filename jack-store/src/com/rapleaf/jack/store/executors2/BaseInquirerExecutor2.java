@@ -16,11 +16,11 @@ import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseReaderExecutor2<T, E extends BaseReaderExecutor2<T, E>> extends BaseExecutor2<T> {
+abstract class BaseInquirerExecutor2<T, E extends BaseInquirerExecutor2<T, E>> extends BaseExecutor2<T> {
 
   private final Set<String> selectedKeys;
 
-  BaseReaderExecutor2(JsTable table, Long executionScopeId) {
+  BaseInquirerExecutor2(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
     this.selectedKeys = Sets.newHashSet();
   }

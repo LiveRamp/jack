@@ -66,7 +66,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
           .set(TestStore.VALUE, nullValue ? null : value.toString())
           .execute();
       // read back new record
-      return jackStore2.scope(scopeId).query().execute(db);
+      return jackStore2.scope(scopeId).read().execute(db);
     });
 
     assertEquals(scopeId, record.getScopeId().longValue());
@@ -101,7 +101,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
           .set(TestStore.VALUE, nullValue ? Collections.nCopies(values.size(), null) : ((List<Object>)values).stream().map(Object::toString).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.scope(scopeId).query().execute(db);
+      return jackStore2.scope(scopeId).read().execute(db);
     });
 
     assertEquals(scopeId, record.getScopeId().longValue());
@@ -130,7 +130,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
           .set(TestStore.VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.rootScope().query().execute(db);
+      return jackStore2.rootScope().read().execute(db);
     });
 
     assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
@@ -150,7 +150,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
           .set(TestStore.VALUE, STRING_VALUE, String.valueOf(LONG_VALUE), String.valueOf(BOOLEAN_VALUE))
           .execute();
       // read back new record
-      return jackStore2.rootScope().query()
+      return jackStore2.rootScope().read()
           .selectKey(selectedKeys)
           .execute(db);
     });

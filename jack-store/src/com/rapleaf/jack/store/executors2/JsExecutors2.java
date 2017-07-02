@@ -19,8 +19,8 @@ public class JsExecutors2 {
    *
    * @return {@link JsRecord}
    */
-  public ScopeInquirer query() {
-    return new ScopeInquirer(table, executionScopeId);
+  public ScopeReader read() {
+    return new ScopeReader(table, executionScopeId);
   }
 
   /**
@@ -53,13 +53,23 @@ public class JsExecutors2 {
   }
 
   /**
+   * Read the sub scopes under the current scope.
+   * The result set does not include key value pairs directly under the current scope.
+   *
+   * @return {@link JsRecords} representing the fetched sub scopes
+   */
+  public SubScopeReader readSubScopes() {
+    return new SubScopeReader(table, executionScopeId);
+  }
+
+  /**
    * Query the sub scopes under the current scope.
    * The result set does not include key value pairs directly under the current scope.
    *
    * @return {@link JsRecords} representing the fetched sub scopes
    */
   public SubScopeInquirer querySubScopes() {
-    return new SubScopeInquirer(table, SubScopeInquirer.DEFAULT_SKIP_SUB_SCOPE_VALIDATION, executionScopeId);
+    return new SubScopeInquirer(table, executionScopeId);
   }
 
   /**

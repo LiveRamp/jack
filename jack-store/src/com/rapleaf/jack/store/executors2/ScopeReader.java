@@ -17,7 +17,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-public class ScopeReader extends BaseReaderExecutor2<JsRecord, ScopeReader> {
+public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
 
   ScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);

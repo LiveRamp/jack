@@ -1,59 +1,59 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.queries.GenericConstraint;
-import com.rapleaf.jack.queries.Record;
-import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
-import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
-import com.rapleaf.jack.store.ValueType;
-import com.rapleaf.jack.store.json.JsonDbTuple;
+import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubScopeReader extends BaseReaderExecutor2<JsRecords, SubScopeReader> {
+public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeInquirer> {
 
-  static final boolean DEFAULT_SKIP_SUB_SCOPE_VALIDATION = false;
-
-  private final Set<Long> subScopeIds = Sets.newHashSet();
   /**
-   * This is only used by internal users, (e.g. {@link SubScopeUpdater}), that will always provide valid sub scope IDs.
+   * This is only used by internal users, (e.g. {@link SubScopeUpdater}), that performs query with valid sub scope IDs.
    */
-  private final boolean skipSubScopeValidation;
+  private final Set<Long> subScopeIds = Sets.newHashSet();
+  private final List<GenericConstraint> scopeConstraints = Lists.newArrayList();
+  private final Map<String, List<GenericConstraint>> recordConstraints = Maps.newHashMap();
   private boolean ignoreInvalidSubScopes = false;
 
-  SubScopeReader(JsTable table, boolean skipSubScopeValidation, Long executionScopeId) {
+  SubScopeInquirer(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
-    this.skipSubScopeValidation = skipSubScopeValidation;
+  }
+
+  SubScopeInquirer(JsTable table, Long executionScopeId, Collection<Long> subScopeIds) {
+    super(table, executionScopeId);
+    this.subScopeIds.addAll(subScopeIds);
   }
 
   @Override
-  SubScopeReader getSelf() {
+  SubScopeInquirer getSelf() {
     return this;
   }
 
-  public SubScopeReader whereSubScopeIds(Set<Long> subScopeIds) {
-    this.subScopeIds.addAll(subScopeIds);
+  public SubScopeInquirer whereSubScopeId(IWhereOperator<Long> scopeIdConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
     return this;
   }
 
-  public SubScopeReader whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+  public SubScopeInquirer whereSubScopeName(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public SubScopeReader whereRecord(String key, IWhereOperator<String> valueConstraint) {
+  public SubScopeInquirer whereSubRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
@@ -64,80 +64,22 @@ public class SubScopeReader extends BaseReaderExecutor2<JsRecords, SubScopeReade
     return this;
   }
 
-  public SubScopeReader ignoreInvalidSubScopes() {
+  public SubScopeInquirer ignoreInvalidSubScopes() {
     this.ignoreInvalidSubScopes = true;
     return this;
   }
 
   @Override
   public JsRecords execute(IDb db) throws IOException {
-    Set<Long> validSubScopeIds;
-    if (skipSubScopeValidation) {
-      validSubScopeIds = subScopeIds;
-    } else {
-      validSubScopeIds = getValidSubScopeIds(db, subScopeIds, ignoreInvalidSubScopes);
-    }
-
-    if (validSubScopeIds.isEmpty()) {
-      return JsRecords.empty(executionScopeId);
-    }
-
-    Records records = db.createQuery().from(table.table)
-        .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-        .where(table.scopeColumn.in(validSubScopeIds))
-        .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
-        .orderBy(table.scopeColumn)
-        .orderBy(table.idColumn).fetch();
-
-    if (records.isEmpty()) {
-      List<JsRecord> emptyRecords = Lists.newLinkedList();
-      for (long subScopeId : validSubScopeIds) {
-        emptyRecords.add(JsRecord.empty(subScopeId));
-      }
-      return new JsRecords(executionScopeId, emptyRecords);
-    }
-
-    List<JsRecord> jsRecords = Lists.newLinkedList();
-
-    Long previousScopeId = records.get(0).get(table.scopeColumn);
-    Map<String, ValueType> types = Maps.newHashMap();
-    Map<String, Object> values = Maps.newHashMap();
-    List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
-    Set<String> jsonKeys = Sets.newHashSet();
-
-    Iterator<Record> iterator = records.iterator();
-    while (iterator.hasNext()) {
-      Record record = iterator.next();
-      Long currentScopeId = record.get(table.scopeColumn);
-
-      if (!Objects.equals(previousScopeId, currentScopeId)) {
-        // Scope ID changes
-        // Construct a new record with previous entries
-        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
-
-        types = Maps.newHashMap();
-        values = Maps.newHashMap();
-        jsonTuples = Lists.newLinkedList();
-        jsonKeys = Sets.newHashSet();
-
-        previousScopeId = currentScopeId;
-      }
-
-      appendRecord(types, values, jsonTuples, jsonKeys, record);
-
-      if (!iterator.hasNext()) {
-        // Construct the final record with previous entries
-        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
-      }
-    }
-
-    return new JsRecords(executionScopeId, jsRecords);
+    return null;
   }
 
-  private void addJsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, List<JsRecord> jsRecords) {
-    appendJsonRecord(types, values, jsonTuples, jsonKeys);
-    if (!types.isEmpty()) {
-      jsRecords.add(new JsRecord(scopeId, types, values));
+  private static String processKey(String key) {
+    String[] paths = key.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR));
+    if (paths.length == 1) {
+      return key;
+    } else {
+      return Joiner.on("%.").join(paths) + "%";
     }
   }
 
