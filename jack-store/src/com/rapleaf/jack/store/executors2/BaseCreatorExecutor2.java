@@ -13,14 +13,13 @@ import org.joda.time.DateTime;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
-import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-public abstract class BaseCreatorExecutor2<E extends BaseCreatorExecutor2<E>> extends BaseExecutor2<JsRecord> {
+public abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> extends BaseExecutor2<T> {
 
   final Map<String, ValueType> types;
   final Map<String, Object> values;
@@ -32,8 +31,6 @@ public abstract class BaseCreatorExecutor2<E extends BaseCreatorExecutor2<E>> ex
   }
 
   abstract E getSelf();
-
-  abstract Long getScopeId(IDb db) throws IOException;
 
   public E put(String key, Object value) {
     Preconditions.checkNotNull(value, "Value cannot be null when using the put(String, Object) method");
@@ -173,15 +170,6 @@ public abstract class BaseCreatorExecutor2<E extends BaseCreatorExecutor2<E>> ex
     return getSelf();
   }
 
-  @Override
-  public JsRecord execute(IDb db) throws IOException {
-    Long scopeId = getScopeId(db);
-    if (!types.isEmpty()) {
-      deleteExistingEntries(db, scopeId);
-      insertNewEntries(db, scopeId);
-    }
-    return new JsRecord(scopeId, types, values);
-  }
 
   private List nullifyEmptyList(List valueList) {
     if (valueList != null && valueList.isEmpty()) {
