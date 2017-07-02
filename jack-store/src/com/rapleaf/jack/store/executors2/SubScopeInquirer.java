@@ -12,8 +12,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.queries.GenericConstraint;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
+import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
@@ -43,6 +45,22 @@ public class SubScopeReader extends BaseReaderExecutor2<JsRecords, SubScopeReade
 
   public SubScopeReader whereSubScopeIds(Set<Long> subScopeIds) {
     this.subScopeIds.addAll(subScopeIds);
+    return this;
+  }
+
+  public SubScopeReader whereScopeName(IWhereOperator<String> scopeNameConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
+    return this;
+  }
+
+  public SubScopeReader whereRecord(String key, IWhereOperator<String> valueConstraint) {
+    GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
+    String queryKey = processKey(key);
+    if (this.recordConstraints.containsKey(queryKey)) {
+      this.recordConstraints.get(queryKey).add(constraint);
+    } else {
+      this.recordConstraints.put(queryKey, Lists.newArrayList(constraint));
+    }
     return this;
   }
 
