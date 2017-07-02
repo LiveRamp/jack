@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -20,6 +21,7 @@ import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsScope;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
+import com.rapleaf.jack.store.exceptions.MissingScopeException;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
 /**
@@ -35,6 +37,11 @@ public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExe
   }
 
   public JsRecords execute(IDb db) throws IOException {
+    Optional<JsScope> executionScope = getOptionalExecutionScope(db);
+    if (!executionScope.isPresent()) {
+      throw new MissingScopeException(Joiner.on("/").join(predefinedScopeNames));
+    }
+
     Records records = db.createQuery().from(table.table)
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .where(table.scopeColumn.in(subScopeIds))
@@ -43,7 +50,7 @@ public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExe
         .orderBy(table.idColumn).fetch();
 
     if (records.isEmpty()) {
-      return JsRecords.empty();
+      return JsRecords.empty(executionScope.get().getScopeId());
     }
 
     List<JsRecord> jsRecords = Lists.newLinkedList();
@@ -80,7 +87,7 @@ public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExe
       }
     }
 
-    return new JsRecords(jsRecords);
+    return new JsRecords(executionScope.get().getScopeId(), jsRecords);
   }
 
   private void addJsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, List<JsRecord> jsRecords) {
