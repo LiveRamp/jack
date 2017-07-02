@@ -1,6 +1,7 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
@@ -20,6 +21,8 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class BaseExecutorTestCase2 extends JackTestCase {
+
+  protected static final Random RANDOM = new Random(System.currentTimeMillis());
 
   protected static final JsonParser JSON_PARSER = new JsonParser();
 

@@ -59,7 +59,7 @@ public class JsExecutors2 {
    * @return {@link JsRecords} representing the fetched sub scopes
    */
   public SubScopeReader querySubScopes() {
-    return new SubScopeReader(table, executionScopeId);
+    return new SubScopeReader(table, SubScopeReader.DEFAULT_SKIP_SUB_SCOPE_VALIDATION, executionScopeId);
   }
 
   /**
