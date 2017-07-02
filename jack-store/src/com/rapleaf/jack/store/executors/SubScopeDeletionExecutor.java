@@ -32,6 +32,7 @@ public class SubScopeDeletionExecutor extends BaseExecutor {
     super(table, predefinedScope, predefinedScopeNames);
     this.scopeConstraints = Lists.newArrayList();
     this.allowRecursion = false;
+    this.allowBulkDeletion = false;
   }
 
   public SubScopeDeletionExecutor whereScope(IWhereOperator<String> scopeNameConstraint) {
