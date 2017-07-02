@@ -33,7 +33,7 @@ public abstract class BaseCreatorExecutor2<E extends BaseCreatorExecutor2<E>> ex
 
   abstract E getSelf();
 
-  abstract Long getScopeId();
+  abstract Long getScopeId(IDb db) throws IOException;
 
   public E put(String key, Object value) {
     Preconditions.checkNotNull(value, "Value cannot be null when using the put(String, Object) method");
@@ -175,7 +175,7 @@ public abstract class BaseCreatorExecutor2<E extends BaseCreatorExecutor2<E>> ex
 
   @Override
   public JsRecord execute(IDb db) throws IOException {
-    Long scopeId = getScopeId();
+    Long scopeId = getScopeId(db);
     if (!types.isEmpty()) {
       deleteExistingEntries(db, scopeId);
       insertNewEntries(db, scopeId);

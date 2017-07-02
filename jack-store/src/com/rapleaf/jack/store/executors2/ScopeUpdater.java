@@ -1,14 +1,7 @@
 package com.rapleaf.jack.store.executors2;
 
-import java.io.IOException;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
-import com.rapleaf.jack.store.ValueType;
 
 public class ScopeUpdater extends BaseCreatorExecutor2<ScopeUpdater> {
 
@@ -22,18 +15,8 @@ public class ScopeUpdater extends BaseCreatorExecutor2<ScopeUpdater> {
   }
 
   @Override
-  Long getScopeId() {
+  Long getScopeId(IDb db) {
     return executionScopeId;
-  }
-
-  @Override
-  public JsRecord execute(IDb db) throws IOException {
-    Long scopeId = getScopeId();
-    if (!types.isEmpty()) {
-      deleteExistingEntries(db, scopeId);
-      insertNewEntries(db, scopeId);
-    }
-    return new JsRecord(scopeId, types, values);
   }
 
 }
