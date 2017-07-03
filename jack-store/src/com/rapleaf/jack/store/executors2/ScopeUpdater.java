@@ -13,17 +13,17 @@ public class ScopeUpdater extends BaseCreatorExecutor2<JsRecord, ScopeUpdater> {
   }
 
   @Override
-  ScopeUpdater getSelf() {
-    return this;
-  }
-
-  @Override
   public JsRecord execute(IDb db) throws IOException {
     if (!types.isEmpty()) {
       deleteExistingEntries(db, executionScopeId);
       insertNewEntries(db, executionScopeId);
     }
     return new JsRecord(executionScopeId, types, values);
+  }
+
+  @Override
+  ScopeUpdater getSelf() {
+    return this;
   }
 
 }

@@ -48,11 +48,6 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
   }
 
   @Override
-  SubScopeUpdater getSelf() {
-    return this;
-  }
-
-  @Override
   public JsRecords execute(IDb db) throws IOException {
     if (types.isEmpty()) {
       return JsRecords.empty(executionScopeId);
@@ -62,7 +57,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       throw new JackRuntimeException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
     }
 
-    Set<Long> validSubScopeIds = getValidSubScopeIds(db, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds = InternalScopeInquirer.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }
@@ -75,6 +70,11 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
     return new SubScopeReader(table, executionScopeId)
         .whereSubScopeIds(validSubScopeIds)
         .execute(db);
+  }
+
+  @Override
+  SubScopeUpdater getSelf() {
+    return this;
   }
 
 }

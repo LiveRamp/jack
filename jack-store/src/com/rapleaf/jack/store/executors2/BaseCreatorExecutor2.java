@@ -19,7 +19,7 @@ import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-public abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> extends BaseExecutor2<T> {
+abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> extends BaseExecutor2<T> {
 
   final Map<String, ValueType> types;
   final Map<String, Object> values;
@@ -169,7 +169,6 @@ public abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, 
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
-
 
   private List nullifyEmptyList(List valueList) {
     if (valueList != null && valueList.isEmpty()) {

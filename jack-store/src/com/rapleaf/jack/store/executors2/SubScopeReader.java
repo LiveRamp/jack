@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
@@ -19,7 +17,6 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
-import com.rapleaf.jack.store.json.JsonDbTuple;
 
 public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeReader> {
 
@@ -42,7 +39,7 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
 
   @Override
   public JsRecords execute(IDb db) throws IOException {
-    Set<Long> validSubScopeIds = getValidSubScopeIds(db, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds = InternalScopeInquirer.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }
@@ -52,7 +49,8 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
         .where(table.scopeColumn.in(validSubScopeIds))
         .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.scopeColumn)
-        .orderBy(table.idColumn).fetch();
+        .orderBy(table.idColumn)
+        .fetch();
 
     if (records.isEmpty()) {
       List<JsRecord> emptyRecords = Lists.newLinkedList();
@@ -65,10 +63,7 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
     List<JsRecord> jsRecords = Lists.newLinkedList();
 
     Long previousScopeId = records.get(0).get(table.scopeColumn);
-    Map<String, ValueType> types = Maps.newHashMap();
-    Map<String, Object> values = Maps.newHashMap();
-    List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
-    Set<String> jsonKeys = Sets.newHashSet();
+    InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);
 
     Iterator<Record> iterator = records.iterator();
     while (iterator.hasNext()) {
@@ -78,32 +73,22 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
       if (!Objects.equals(previousScopeId, currentScopeId)) {
         // Scope ID changes
         // Construct a new record with previous entries
-        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
-
-        types = Maps.newHashMap();
-        values = Maps.newHashMap();
-        jsonTuples = Lists.newLinkedList();
-        jsonKeys = Sets.newHashSet();
-
+        if (recordCreator.hasNewRecord()) {
+          jsRecords.add(recordCreator.createNewRecord(currentScopeId));
+        }
+        recordCreator.clear();
         previousScopeId = currentScopeId;
       }
 
-      appendRecord(types, values, jsonTuples, jsonKeys, record);
+      recordCreator.appendRecord(record);
 
-      if (!iterator.hasNext()) {
+      if (!iterator.hasNext() && recordCreator.hasNewRecord()) {
         // Construct the final record with previous entries
-        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
+        jsRecords.add(recordCreator.createNewRecord(currentScopeId));
       }
     }
 
     return new JsRecords(executionScopeId, jsRecords);
-  }
-
-  private void addJsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, List<JsRecord> jsRecords) {
-    appendJsonRecord(types, values, jsonTuples, jsonKeys);
-    if (!types.isEmpty()) {
-      jsRecords.add(new JsRecord(scopeId, types, values));
-    }
   }
 
   @Override

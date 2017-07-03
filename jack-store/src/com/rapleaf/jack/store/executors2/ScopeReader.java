@@ -1,30 +1,34 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
-import com.rapleaf.jack.store.json.JsonDbTuple;
 
-public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
+public class ScopeReader extends BaseExecutor2<JsRecord> {
+
+  final Set<String> selectedKeys = Sets.newHashSet();
 
   ScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
   }
 
-  @Override
-  ScopeReader getSelf() {
+  public ScopeReader selectKey(String key, String... otherKeys) {
+    this.selectedKeys.add(key);
+    this.selectedKeys.addAll(Arrays.asList(otherKeys));
+    return this;
+  }
+
+  public ScopeReader selectKey(Collection<String> keys) {
+    selectedKeys.addAll(keys);
     return this;
   }
 
@@ -37,17 +41,9 @@ public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
         .orderBy(table.idColumn)
         .fetch();
 
-    Map<String, ValueType> types = Maps.newHashMap();
-    Map<String, Object> values = Maps.newHashMap();
-    List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
-    Set<String> jsonKeys = Sets.newHashSet();
-
-    for (Record record : records) {
-      appendRecord(types, values, jsonTuples, jsonKeys, record);
-    }
-    appendJsonRecord(types, values, jsonTuples, jsonKeys);
-
-    return new JsRecord(executionScopeId, types, values);
+    InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);
+    records.stream().forEach(recordCreator::appendRecord);
+    return recordCreator.createNewRecord(executionScopeId);
   }
 
 }

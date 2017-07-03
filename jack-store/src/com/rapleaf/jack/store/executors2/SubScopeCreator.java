@@ -19,11 +19,6 @@ public class SubScopeCreator extends BaseCreatorExecutor2<JsRecord, SubScopeCrea
     super(table, executionScopeId);
   }
 
-  @Override
-  SubScopeCreator getSelf() {
-    return this;
-  }
-
   public SubScopeCreator scopeName(String name) {
     Preconditions.checkArgument(name != null && !name.isEmpty(), "Scope name cannot be null or empty");
     this.scopeName = name;
@@ -51,6 +46,11 @@ public class SubScopeCreator extends BaseCreatorExecutor2<JsRecord, SubScopeCrea
         .set(table.valueColumn, scopeName)
         .execute()
         .getFirstId();
+  }
+
+  @Override
+  SubScopeCreator getSelf() {
+    return this;
   }
 
 }
