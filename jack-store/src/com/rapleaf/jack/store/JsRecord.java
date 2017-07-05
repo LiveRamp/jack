@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
@@ -25,8 +26,8 @@ public class JsRecord {
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
     this.scopeId = scopeId;
-    this.types = types;
-    this.values = values;
+    this.types = Maps.newHashMap(types);
+    this.values = Maps.newHashMap(values);
   }
 
   public static JsRecord empty(Long scopeId) {
@@ -197,7 +198,7 @@ public class JsRecord {
 
   @Override
   public String toString() {
-    return JsScope.class.getSimpleName() +
+    return JsRecord.class.getSimpleName() +
         "{" +
         "types=" + types +
         ",values=" + values +

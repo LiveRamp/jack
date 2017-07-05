@@ -2,6 +2,7 @@ package com.rapleaf.jack.store.executors2;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -9,8 +10,6 @@ import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.rapleaf.jack.queries.Insertions;
-import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbHelper;
@@ -47,15 +46,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
 
   private void createAndReadValue(String key, ValueType type, Object value, boolean nullValue) throws Exception {
     String scopeName = "new scope";
-    long scopeId = transactor.queryAsTransaction(db -> {
-      Insertions scopeInsertion = db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, null)
-          .set(TestStore.TYPE, ValueType.SCOPE.value)
-          .set(TestStore.KEY, JsConstants.SCOPE_KEY)
-          .set(TestStore.VALUE, scopeName)
-          .execute();
-      return scopeInsertion.getFirstId();
-    });
+    long scopeId = createSubScope(Optional.empty(), Optional.of(scopeName));
 
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new record
@@ -82,15 +73,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
   @SuppressWarnings("unchecked")
   private void createAndReadList(String key, ValueType type, List values, boolean nullValue) throws Exception {
     String scopeName = "new scope";
-    long scopeId = transactor.queryAsTransaction(db -> {
-      Insertions scopeInsertion = db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, null)
-          .set(TestStore.TYPE, ValueType.SCOPE.value)
-          .set(TestStore.KEY, JsConstants.SCOPE_KEY)
-          .set(TestStore.VALUE, scopeName)
-          .execute();
-      return scopeInsertion.getFirstId();
-    });
+    long scopeId = createSubScope(Optional.empty(), Optional.of(scopeName));
 
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new list record

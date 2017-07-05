@@ -1,7 +1,9 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
@@ -13,7 +15,10 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JackStore2;
+import com.rapleaf.jack.store.JsConstants;
+import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.BaseJsonTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -67,13 +72,27 @@ public class BaseExecutorTestCase2 extends JackTestCase {
   protected static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");
 
   protected final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  protected final JackStore2 jackStore2 = new JackStore2(JsTable.from(TestStore.TBL).create());
+  protected final JsTable table = JsTable.from(TestStore.TBL).create();
+  protected final JackStore2 jackStore2 = new JackStore2(table);
 
   Records records;
+  JsRecords jsRecords;
 
   @Before
   public void prepare() throws Exception {
     transactor.executeAsTransaction(IDb::deleteAll);
+  }
+
+  long createSubScope(Optional<Long> parentScopeId, Optional<String> name) throws Exception {
+    return transactor.queryAsTransaction(db ->
+        db.createInsertion().into(TestStore.TBL)
+            .set(TestStore.SCOPE, parentScopeId.orElse(null))
+            .set(TestStore.TYPE, ValueType.SCOPE.value)
+            .set(TestStore.KEY, JsConstants.SCOPE_KEY)
+            .set(TestStore.VALUE, name.orElse(UUID.randomUUID().toString()))
+            .execute()
+            .getFirstId()
+    );
   }
 
 }

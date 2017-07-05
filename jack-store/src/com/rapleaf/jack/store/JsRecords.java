@@ -3,10 +3,12 @@ package com.rapleaf.jack.store;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class JsRecords implements Iterable<JsRecord> {
 
@@ -15,7 +17,7 @@ public class JsRecords implements Iterable<JsRecord> {
 
   public JsRecords(Long parentScopeId, List<JsRecord> jsRecords) {
     this.parentScopeId = parentScopeId;
-    this.jsRecords = jsRecords;
+    this.jsRecords = Lists.newLinkedList(jsRecords);
   }
 
   public static JsRecords empty(Long parentScopeId) {
@@ -29,6 +31,10 @@ public class JsRecords implements Iterable<JsRecord> {
   @Override
   public Iterator<JsRecord> iterator() {
     return jsRecords.iterator();
+  }
+
+  public List<Long> getRecordScopeIds() {
+    return jsRecords.stream().map(JsRecord::getScopeId).collect(Collectors.toList());
   }
 
   public List<JsRecord> getRecords() {

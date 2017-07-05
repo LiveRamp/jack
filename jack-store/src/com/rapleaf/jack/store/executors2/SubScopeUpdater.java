@@ -57,7 +57,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       throw new JackRuntimeException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
     }
 
-    Set<Long> validSubScopeIds = InternalScopeInquirer.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }

@@ -39,7 +39,7 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
 
   @Override
   public JsRecords execute(IDb db) throws IOException {
-    Set<Long> validSubScopeIds = InternalScopeInquirer.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }
@@ -76,7 +76,6 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
         if (recordCreator.hasNewRecord()) {
           jsRecords.add(recordCreator.createNewRecord(currentScopeId));
         }
-        recordCreator.clear();
         previousScopeId = currentScopeId;
       }
 

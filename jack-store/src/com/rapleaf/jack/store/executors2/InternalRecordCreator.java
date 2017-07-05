@@ -42,14 +42,9 @@ final class InternalRecordCreator {
       types.put(jsonKey, ValueType.JSON_STRING);
       values.put(jsonKey, json);
     }
-    return new JsRecord(scopeId, types, values);
-  }
-
-  void clear() {
-    types.clear();
-    values.clear();
-    jsonKeys.clear();
-    jsonTuples.clear();
+    JsRecord record = new JsRecord(scopeId, types, values);
+    clear();
+    return record;
   }
 
   void appendRecord(Record record) {
@@ -93,6 +88,13 @@ final class InternalRecordCreator {
 
   private boolean isSelectedKey(String key) {
     return selectedKeys.isEmpty() || selectedKeys.contains(key);
+  }
+
+  private void clear() {
+    types.clear();
+    values.clear();
+    jsonKeys.clear();
+    jsonTuples.clear();
   }
 
 }
