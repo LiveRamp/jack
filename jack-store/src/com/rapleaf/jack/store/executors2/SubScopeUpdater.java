@@ -1,6 +1,7 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 
 public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpdater> {
 
-  private final Set<Long> subScopeIds = Sets.newHashSet();
+  private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean allowBulkUpdate = false;
   private boolean ignoreInvalidSubScopes = false;
 
@@ -24,7 +25,11 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
   }
 
   public SubScopeUpdater whereSubScopeIds(Set<Long> subScopeIds) {
-    this.subScopeIds.addAll(subScopeIds);
+    if (this.subScopeIds.isPresent()) {
+      this.subScopeIds.get().addAll(subScopeIds);
+    } else {
+      this.subScopeIds = Optional.of(Sets.newHashSet(subScopeIds));
+    }
     return this;
   }
 
@@ -53,7 +58,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       return JsRecords.empty(executionScopeId);
     }
 
-    if (subScopeIds.isEmpty() && !allowBulkUpdate) {
+    if (!subScopeIds.isPresent() && !allowBulkUpdate) {
       throw new JackRuntimeException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
     }
 

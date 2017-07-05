@@ -30,7 +30,7 @@ public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
 
   @Override
   ScopeReader getSelf() {
-    return null;
+    return this;
   }
 
 }

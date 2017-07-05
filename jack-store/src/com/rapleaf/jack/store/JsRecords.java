@@ -33,7 +33,7 @@ public class JsRecords implements Iterable<JsRecord> {
     return jsRecords.iterator();
   }
 
-  public List<Long> getRecordScopeIds() {
+  public List<Long> getScopeIds() {
     return jsRecords.stream().map(JsRecord::getScopeId).collect(Collectors.toList());
   }
 

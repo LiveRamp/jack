@@ -193,15 +193,20 @@ public class JsRecord {
 
   @Override
   public int hashCode() {
-    return 19 * (types.keySet().hashCode() + 19 * types.values().hashCode()) + values.values().hashCode();
+    int hashCode = Objects.hashCode(scopeId);
+    hashCode += 19 * types.keySet().hashCode();
+    hashCode += 19 * types.values().hashCode();
+    hashCode += 19 * values.values().hashCode();
+    return hashCode;
   }
 
   @Override
   public String toString() {
     return JsRecord.class.getSimpleName() +
         "{" +
-        "types=" + types +
-        ",values=" + values +
+        "scopeId: " + scopeId +
+        ", types: " + types +
+        ", values: " + values +
         "}";
   }
 
@@ -216,7 +221,9 @@ public class JsRecord {
     }
 
     JsRecord that = (JsRecord)other;
-    return Objects.equals(this.types, that.types) && Objects.equals(this.values, that.values);
+    return Objects.equals(this.scopeId, that.scopeId) &&
+        Objects.equals(this.types, that.types) &&
+        Objects.equals(this.values, that.values);
   }
 
 }

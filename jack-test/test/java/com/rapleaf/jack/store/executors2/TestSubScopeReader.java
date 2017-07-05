@@ -55,12 +55,13 @@ public class TestSubScopeReader extends BaseExecutorTestCase2 {
     LOG.info("Range: [{}, {})", lo, hi);
     List<JsRecord> subRecords = allJsRecords.subList(lo, hi);
     List<Long> subScopeIds = subRecords.stream().map(JsRecord::getScopeId).collect(Collectors.toList());
-    jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScopeId)
-            .readSubScopes()
-            .whereSubScopeIds(subScopeIds)
-            .execute(db)
-    );
+    jsRecords = transactor.queryAsTransaction(db -> {
+      SubScopeReader reader = jackStore2.scope(parentScopeId).readSubScopes();
+      for (long subScopeId : subScopeIds) {
+        reader.whereSubScopeIds(Collections.singleton(subScopeId));
+      }
+      return reader.execute(db);
+    });
     assertEquals(subRecords.size(), jsRecords.size());
     for (int i = 0; i < subRecords.size(); ++i) {
       int index = i + lo;
@@ -105,7 +106,7 @@ public class TestSubScopeReader extends BaseExecutorTestCase2 {
     });
 
     jsRecords = transactor.queryAsTransaction(db -> jackStore2.scope(parentScopeId).readSubScopes().execute(db));
-    assertEquals(subScopeIds, Sets.newHashSet(this.jsRecords.getRecordScopeIds()));
+    assertEquals(subScopeIds, Sets.newHashSet(this.jsRecords.getScopeIds()));
     assertEquals(parentScopeId, jsRecords.getParentScopeId());
     for (int i = 0; i < size; ++i) {
       JsRecord jsRecord = this.jsRecords.get(i);

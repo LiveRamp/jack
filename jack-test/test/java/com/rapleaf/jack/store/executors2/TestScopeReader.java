@@ -134,7 +134,8 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
           .execute();
       // read back new record
       return jackStore2.rootScope().read()
-          .selectKey(selectedKeys)
+          .selectKey(selectedKeys.get(0))
+          .selectKey(Collections.singleton(selectedKeys.get(1)))
           .execute(db);
     });
 

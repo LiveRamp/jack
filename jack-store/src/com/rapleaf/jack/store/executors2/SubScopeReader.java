@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -20,7 +22,7 @@ import com.rapleaf.jack.store.ValueType;
 
 public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeReader> {
 
-  private final Set<Long> subScopeIds = Sets.newHashSet();
+  private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean ignoreInvalidSubScopes = false;
 
   SubScopeReader(JsTable table, Long executionScopeId) {
@@ -28,7 +30,11 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
   }
 
   public SubScopeReader whereSubScopeIds(Collection<Long> subScopeIds) {
-    this.subScopeIds.addAll(subScopeIds);
+    if (this.subScopeIds.isPresent()) {
+      this.subScopeIds.get().addAll(subScopeIds);
+    } else {
+      this.subScopeIds = Optional.of(Sets.newHashSet(subScopeIds));
+    }
     return this;
   }
 
