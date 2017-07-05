@@ -74,7 +74,7 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
         // Scope ID changes
         // Construct a new record with previous entries
         if (recordCreator.hasNewRecord()) {
-          jsRecords.add(recordCreator.createNewRecord(currentScopeId));
+          jsRecords.add(recordCreator.createNewRecord(previousScopeId));
         }
         previousScopeId = currentScopeId;
       }

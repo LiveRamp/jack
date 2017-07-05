@@ -69,7 +69,7 @@ public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExe
       if (!Objects.equals(previousScopeId, currentScopeId)) {
         // Scope ID changes
         // Construct a new record with previous entries
-        addJsRecord(currentScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
+        addJsRecord(previousScopeId, types, values, jsonTuples, jsonKeys, jsRecords);
 
         types = Maps.newHashMap();
         values = Maps.newHashMap();

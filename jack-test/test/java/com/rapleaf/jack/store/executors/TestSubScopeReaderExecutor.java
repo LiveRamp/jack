@@ -50,7 +50,9 @@ public class TestSubScopeReaderExecutor extends BaseExecutorTestCase {
       String scopeName = subScopes.get(i).getScopeName();
       int scopeNameInt = Integer.valueOf(scopeName);
       JsRecord jsRecord = jsRecords.get(i);
+      long scopeId = subScopes.get(i).getScopeId();
 
+      assertEquals(scopeId, jsRecord.getScopeId().longValue());
       assertEquals(scopeNameInt, jsRecord.getLong(LONG_KEY).intValue());
       assertEquals(scopeName, jsRecord.getString(STRING_KEY));
 
