@@ -64,7 +64,7 @@ public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeI
   @Override
   public JsRecords execute(IDb db) throws IOException {
     Set<Long> validSubScopeIds = getSubScopeIds(db);
-    return new SubScopeReader(table, executionScopeId).whereSubScopeIds(validSubScopeIds).execute(db);
+    return new SubScopeReader(table, executionScopeId, validSubScopeIds).execute(db);
   }
 
   private Set<Long> getSubScopeIds(IDb db) throws IOException {

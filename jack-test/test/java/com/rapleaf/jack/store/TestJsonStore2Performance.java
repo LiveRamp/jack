@@ -2,8 +2,10 @@ package com.rapleaf.jack.store;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,34 +18,19 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class TestJsonStorePerformance extends JackTestCase {
+public class TestJsonStore2Performance extends JackTestCase {
 
   private final Random random = new Random(System.currentTimeMillis());
   private final Stopwatch stopwatch = new Stopwatch();
   private final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  private final JackStore jackStore = new JackStore(JsTable.from(TestStore.TBL).create());
+  private final JackStore2 jackStore2 = new JackStore2(JsTable.from(TestStore.TBL).create());
+  private final Set<Long> scopeIds = Sets.newHashSet();
 
   @Before
   public void prepare() throws Exception {
     transactor.executeAsTransaction(IDb::deleteAll);
   }
 
-  /**
-   * Creation of 2000 records
-   * By store: 1535 ms (0.77 ms per record)
-   * By model: 588 ms (0.29 ms per record)
-   * Difference: 2.61
-   * <p>
-   * Update of 2000 records
-   * By store: 1462 ms (0.73 ms per record)
-   * By model: 570 ms (0.29 ms per record)
-   * Difference: 2.56
-   * <p>
-   * Query of 2000 records
-   * By store: 40731 ms (20.37 ms per record)
-   * By model: 7975 ms (3.99 ms per record)
-   * Difference: 5.11
-   */
   @Test
   public void testPerformance() throws Exception {
     int size = 50;
@@ -57,13 +44,14 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        int number = random.nextInt();
-        JsScope scope = jackStore.rootScope().createSubScope(String.valueOf(i)).execute(db);
-        jackStore.scope(scope).indexRecords()
+        int number = random.nextInt(50);
+        JsRecord record = jackStore2.rootScope().createSubScope()
+            .scopeName(String.valueOf(i))
             .putString("handle", String.valueOf(number))
             .putInt("numPosts", i)
             .putString("bio", String.valueOf(number))
             .execute(db);
+        scopeIds.add(record.getScopeId());
       }
     });
     stopwatch.stop();
@@ -73,7 +61,7 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        int number = random.nextInt();
+        int number = random.nextInt(50);
         User user = db.users().create(String.valueOf(number), i);
         user.setBio(String.valueOf(number)).save();
       }
@@ -88,9 +76,10 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.reset();
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
-      for (int i = 0; i < size; ++i) {
-        int number = random.nextInt();
-        jackStore.scope(String.valueOf(i)).indexRecords()
+      for (long scopeId : scopeIds) {
+        int number = random.nextInt(50);
+        jackStore2.rootScope().updateSubScopes()
+            .whereSubScopeIds(scopeId)
             .putString("handle", String.valueOf(number))
             .putInt("numPosts", number)
             .execute(db);
@@ -104,7 +93,7 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (long userId : userIds) {
-        int number = random.nextInt();
+        int number = random.nextInt(50);
         db.users().find(userId)
             .setHandle(String.valueOf(number))
             .setNumPosts(number)
@@ -122,8 +111,10 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        jackStore.rootScope().querySubScopes()
-            .whereRecord("handle", JackMatchers.lessThan(String.valueOf(i)))
+        int number = random.nextInt(50);
+        jackStore2.rootScope()
+            .querySubScopes()
+            .whereSubRecord("handle", JackMatchers.lessThan(String.valueOf(number)))
             .execute(db);
       }
     });
@@ -134,8 +125,9 @@ public class TestJsonStorePerformance extends JackTestCase {
     stopwatch.start();
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
+        int number = random.nextInt(50);
         db.users().query()
-            .whereHandle(JackMatchers.lessThan(String.valueOf(i)))
+            .whereHandle(JackMatchers.lessThan(String.valueOf(number)))
             .find();
       }
     });

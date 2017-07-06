@@ -82,9 +82,6 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase2 {
       assertEquals(INT_VALUE, jsRecord.getInt(INT_KEY).intValue());
     }
 
-    System.out.println(s1);
-    System.out.println(s2);
-    System.out.println(s3);
     // s2 is not updated
     jsRecords = transactor.queryAsTransaction(db ->
         jackStore2.scope(parentScope)

@@ -17,7 +17,7 @@ public class JsRecords implements Iterable<JsRecord> {
 
   public JsRecords(Long parentScopeId, List<JsRecord> jsRecords) {
     this.parentScopeId = parentScopeId;
-    this.jsRecords = Lists.newLinkedList(jsRecords);
+    this.jsRecords = jsRecords;
   }
 
   public static JsRecords empty(Long parentScopeId) {

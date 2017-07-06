@@ -23,10 +23,18 @@ import com.rapleaf.jack.store.ValueType;
 public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeReader> {
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
+  private boolean skipSubScopeIdValidation = false;
   private boolean ignoreInvalidSubScopes = false;
 
   SubScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
+  }
+
+  // For internal use only, when the supplied sub scope IDs are guaranteed to be valid.
+  SubScopeReader(JsTable table, Long executionScopeId, Collection<Long> subScopeIds) {
+    super(table, executionScopeId);
+    this.subScopeIds = Optional.of(Sets.newHashSet(subScopeIds));
+    this.skipSubScopeIdValidation = true;
   }
 
   public SubScopeReader whereSubScopeIds(Collection<Long> subScopeIds) {
@@ -57,7 +65,12 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
 
   @Override
   public JsRecords execute(IDb db) throws IOException {
-    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds;
+    if (skipSubScopeIdValidation && subScopeIds.isPresent()) {
+      validSubScopeIds = subScopeIds.get();
+    } else {
+      validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+    }
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }

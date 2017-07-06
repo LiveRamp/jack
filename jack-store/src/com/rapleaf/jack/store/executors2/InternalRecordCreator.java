@@ -21,10 +21,10 @@ final class InternalRecordCreator {
   private final JsTable table;
   private final Set<String> selectedKeys;
 
-  private final Map<String, ValueType> types = Maps.newHashMap();
-  private final Map<String, Object> values = Maps.newHashMap();
-  private final List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
-  private final Set<String> jsonKeys = Sets.newHashSet();
+  private Map<String, ValueType> types = Maps.newHashMap();
+  private Map<String, Object> values = Maps.newHashMap();
+  private List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
+  private Set<String> jsonKeys = Sets.newHashSet();
 
   InternalRecordCreator(JsTable table, Set<String> selectedKeys) {
     this.table = table;
@@ -91,10 +91,10 @@ final class InternalRecordCreator {
   }
 
   private void clear() {
-    types.clear();
-    values.clear();
-    jsonKeys.clear();
-    jsonTuples.clear();
+    types = Maps.newHashMap();
+    values = Maps.newHashMap();
+    jsonTuples = Lists.newLinkedList();
+    jsonKeys = Sets.newHashSet();
   }
 
 }

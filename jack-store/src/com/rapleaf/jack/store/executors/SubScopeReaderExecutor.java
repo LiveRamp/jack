@@ -47,7 +47,8 @@ public class SubScopeReaderExecutor extends BaseReaderExecutor<SubScopeReaderExe
         .where(table.scopeColumn.in(subScopeIds))
         .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.scopeColumn)
-        .orderBy(table.idColumn).fetch();
+        .orderBy(table.idColumn)
+        .fetch();
 
     if (records.isEmpty()) {
       return JsRecords.empty(executionScope.get().getScopeId());

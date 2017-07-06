@@ -73,9 +73,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       insertNewEntries(db, subScopeId);
     }
 
-    return new SubScopeReader(table, executionScopeId)
-        .whereSubScopeIds(validSubScopeIds)
-        .execute(db);
+    return new SubScopeReader(table, executionScopeId, validSubScopeIds).execute(db);
   }
 
   @Override
