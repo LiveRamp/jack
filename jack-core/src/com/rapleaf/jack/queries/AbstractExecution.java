@@ -6,11 +6,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.exception.BulkOperationException;
 
 public abstract class AbstractExecution {
   protected static int MAX_CONNECTION_RETRIES = 1;
@@ -35,11 +33,8 @@ public abstract class AbstractExecution {
   }
 
   protected void checkBulkOperation(boolean allowBulkOperation, Collection<GenericConstraint> whereConstraints) {
-    if (!allowBulkOperation) {
-      Preconditions.checkState(
-          !whereConstraints.isEmpty(),
-          "Bulk operation is not allowed; either enable it, or specify at least one where constraint"
-      );
+    if (!allowBulkOperation && whereConstraints.isEmpty()) {
+      throw new BulkOperationException("Bulk operation is not allowed; either enable it, or specify at least one where constraint");
     }
   }
 
