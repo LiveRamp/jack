@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
+import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.store.util.ScopeListInsertion;
@@ -170,6 +172,9 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     int newValue = 100;
     List<Integer> oldList = Lists.newArrayList(10, 20, 30);
     List<Integer> newList = Lists.newArrayList(10, 40, 50, 60);
+    JsonObject oldJson = JSON_PARSER.parse(JSON_STRING).getAsJsonObject();
+    JsonObject newJson = JSON_PARSER.parse(JSON_STRING).getAsJsonObject();
+    newJson.addProperty("key1", "new_value");
 
     // primitive value
     records = transactor.queryAsTransaction(db -> {
@@ -189,6 +194,15 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     assertEquals(newList.size(), records.size());
     assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
 
+    // json value
+    JsRecord jsRecord = transactor.queryAsTransaction(db -> {
+      jackStore2.rootScope().update().putJson(key, oldJson).execute(db);
+      jackStore2.rootScope().update().putJson(key, newJson).execute(db);
+      return jackStore2.rootScope().read().execute(db);
+    });
+    assertEquals(Sets.newHashSet(key), jsRecord.keySet());
+    assertEquals(newJson, jsRecord.getJson(key));
+
     // primitive to list
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootScope().update().putIntList(key, newList).execute(db);
@@ -204,6 +218,28 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     });
     assertEquals(1, records.size());
     assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));
+
+    // primitive to json
+    jsRecord = transactor.queryAsTransaction(db -> {
+      jackStore2.rootScope().update().put(key, oldJson).execute(db);
+      return jackStore2.rootScope().read().execute(db);
+    });
+    assertEquals(oldJson, jsRecord.getJson(key));
+
+    // json to list
+    records = transactor.queryAsTransaction(db -> {
+      jackStore2.rootScope().update().put(key, oldList).execute(db);
+      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+    });
+    assertEquals(oldList.size(), records.size());
+    assertEquals(oldList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+
+    // list to json
+    jsRecord = transactor.queryAsTransaction(db -> {
+      jackStore2.rootScope().update().put(key, newJson).execute(db);
+      return jackStore2.rootScope().read().execute(db);
+    });
+    assertEquals(newJson, jsRecord.getJson(key));
   }
 
 }

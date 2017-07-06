@@ -166,7 +166,7 @@ public class JsRecord {
   }
 
   private <T> T checkTypeAndGetNullable(String key, ValueType type, Function<String, T> function) {
-    Preconditions.checkArgument(types.get(key).equals(type));
+    Preconditions.checkArgument(types.get(key).equals(type), "%s is expected to be a %s, but it actually is a %s", key, type.name(), types.get(key).name());
     String value = (String)values.get(key);
     if (value == null) {
       return null;
@@ -176,7 +176,7 @@ public class JsRecord {
   }
 
   private JsonObject checkAndGetJson(String key) {
-    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON));
+    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON), "%s is expected to be a json, it it actually is a %s", key, types.get(key));
     return (JsonObject)values.get(key);
   }
 

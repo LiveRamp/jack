@@ -20,6 +20,7 @@ public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
         .where(table.scopeColumn.equalTo(executionScopeId))
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .select(table.typeColumn, table.keyColumn, table.valueColumn)
+        .orderBy(table.keyColumn)
         .orderBy(table.idColumn)
         .fetch();
 

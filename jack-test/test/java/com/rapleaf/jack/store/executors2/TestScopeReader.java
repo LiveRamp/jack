@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.ValueType;
+import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
@@ -109,7 +110,7 @@ public class TestScopeReader extends BaseExecutorTestCase2 {
       db.createInsertion().into(TestStore.TBL)
           .set(TestStore.SCOPE, Collections.nCopies(tuples.size(), null))
           .set(TestStore.TYPE, tuples.stream().map(t -> t.getType().value).collect(Collectors.toList()))
-          .set(TestStore.KEY, tuples.stream().map(t -> JSON_KEY + "." + t.getFullPaths()).collect(Collectors.toList()))
+          .set(TestStore.KEY, tuples.stream().map(t -> JSON_KEY + JsonDbConstants.PATH_SEPARATOR + t.getFullPaths()).collect(Collectors.toList()))
           .set(TestStore.VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
           .execute();
       // read back new record

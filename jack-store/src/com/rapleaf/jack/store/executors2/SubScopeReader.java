@@ -1,6 +1,7 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -34,6 +34,18 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
       this.subScopeIds.get().addAll(subScopeIds);
     } else {
       this.subScopeIds = Optional.of(Sets.newHashSet(subScopeIds));
+    }
+    return this;
+  }
+
+  public SubScopeReader whereSubScopeIds(Long subScopeId, Long... moreSubScopeIds) {
+    if (this.subScopeIds.isPresent()) {
+      this.subScopeIds.get().add(subScopeId);
+      this.subScopeIds.get().addAll(Arrays.asList(moreSubScopeIds));
+    } else {
+      Set<Long> subScopeIds = Sets.newHashSet(subScopeId);
+      subScopeIds.addAll(Arrays.asList(moreSubScopeIds));
+      this.subScopeIds = Optional.of(subScopeIds);
     }
     return this;
   }

@@ -1,18 +1,16 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.JackRuntimeException;
+import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
-import com.rapleaf.jack.store.json.JsonDbConstants;
 
 public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpdater> {
 
@@ -33,6 +31,18 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
     return this;
   }
 
+  public SubScopeUpdater whereSubScopeIds(Long subScopeId, Long... moreSubScopeIds) {
+    if (this.subScopeIds.isPresent()) {
+      this.subScopeIds.get().add(subScopeId);
+      this.subScopeIds.get().addAll(Arrays.asList(moreSubScopeIds));
+    } else {
+      Set<Long> subScopeIds = Sets.newHashSet(subScopeId);
+      subScopeIds.addAll(Arrays.asList(moreSubScopeIds));
+      this.subScopeIds = Optional.of(subScopeIds);
+    }
+    return this;
+  }
+
   public SubScopeUpdater allowBulkUpdate() {
     this.allowBulkUpdate = true;
     return this;
@@ -43,15 +53,6 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
     return this;
   }
 
-  private static String processKey(String key) {
-    String[] paths = key.split(Pattern.quote(JsonDbConstants.PATH_SEPARATOR));
-    if (paths.length == 1) {
-      return key;
-    } else {
-      return Joiner.on("%.").join(paths) + "%";
-    }
-  }
-
   @Override
   public JsRecords execute(IDb db) throws IOException {
     if (types.isEmpty()) {
@@ -59,7 +60,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
     }
 
     if (!subScopeIds.isPresent() && !allowBulkUpdate) {
-      throw new JackRuntimeException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
+      throw new BulkOperationException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
     }
 
     Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);

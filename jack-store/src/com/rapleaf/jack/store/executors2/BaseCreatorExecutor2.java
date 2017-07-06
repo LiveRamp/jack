@@ -12,10 +12,10 @@ import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.ElementPath;
+import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
@@ -58,7 +58,7 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
     if (value instanceof List) {
       return putList(key, (List<Object>)value);
     }
-    throw new JackRuntimeException("Unsupported value type: " + value.getClass().getSimpleName());
+    throw new IllegalArgumentException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
   public E putBoolean(String key, Boolean value) {
@@ -99,12 +99,8 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
 
   public E putJson(String key, JsonObject json) {
     Preconditions.checkNotNull(json);
-
-    List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), json);
-    for (JsonDbTuple tuple : tuples) {
-      types.put(tuple.getFullPaths(), tuple.getType());
-      values.put(tuple.getFullPaths(), tuple.getValue());
-    }
+    types.put(key, ValueType.JSON_STRING);
+    values.put(key, json);
     return getSelf();
   }
 
@@ -131,7 +127,7 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
     if (value instanceof String) {
       return (E)putStringList(key, (List)valueList);
     }
-    throw new JackRuntimeException("Unsupported value type: " + value.getClass().getSimpleName());
+    throw new IllegalArgumentException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
   public E putBooleanList(String key, List<Boolean> valueList) {
@@ -179,11 +175,13 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
   }
 
   void deleteExistingEntries(IDb db, Long scopeId) throws IOException {
-    db.createDeletion()
-        .from(table.table)
-        .where(table.scopeColumn.equalTo(scopeId))
-        .where(table.keyColumn.in(types.keySet()))
-        .execute();
+    for (String key : types.keySet()) {
+      db.createDeletion()
+          .from(table.table)
+          .where(table.scopeColumn.equalTo(scopeId))
+          .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
+          .execute();
+    }
   }
 
   void insertNewEntries(IDb db, Long scopeId) throws IOException {
@@ -205,6 +203,13 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
           keysToInsert.add(key);
           typesToInsert.add(type.value);
           valuesToInsert.add(String.valueOf(v));
+        }
+      } else if (type.isJson()) {
+        List<JsonDbTuple> tuples = JsonDbHelper.toTupleList(Collections.singletonList(new ElementPath(key)), (JsonObject)value);
+        for (JsonDbTuple tuple : tuples) {
+          keysToInsert.add(tuple.getFullPaths());
+          typesToInsert.add(tuple.getType().value);
+          valuesToInsert.add(tuple.getValue());
         }
       } else {
         keysToInsert.add(key);
