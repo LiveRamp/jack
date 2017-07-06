@@ -8,12 +8,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
+import com.sun.org.apache.bcel.internal.generic.JSR;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.store.JsRecord;
+import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.store.util.ScopeListInsertion;
@@ -74,7 +76,7 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     Map<String, String> tupleMap = Maps.newHashMap();
     for (JsonDbTuple tuple : tuples) {
       // key is prepended to json tuple path
-      tupleMap.put(String.format("%s.%s", JSON_KEY, tuple.getFullPaths()), tuple.getValue());
+      tupleMap.put(String.format("%s%s%s", JSON_KEY, JsonDbConstants.PATH_SEPARATOR, tuple.getFullPaths()), tuple.getValue());
     }
 
     records = transactor.queryAsTransaction(db -> {
