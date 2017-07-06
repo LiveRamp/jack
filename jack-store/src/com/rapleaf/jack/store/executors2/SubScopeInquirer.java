@@ -57,7 +57,7 @@ public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeI
     if (paths.length == 1) {
       return key;
     } else {
-      return Joiner.on("%.").join(paths) + "%";
+      return Joiner.on("%" + JsonDbConstants.PATH_SEPARATOR).join(paths) + "%";
     }
   }
 
