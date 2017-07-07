@@ -161,7 +161,7 @@ public class JsRecord {
 
   private void checkKey(String key) {
     Preconditions.checkNotNull(key);
-    Preconditions.checkArgument(types.containsKey(key), "Key" + key + " does not exist");
+    Preconditions.checkArgument(types.containsKey(key), "Key " + key + " does not exist");
   }
 
   private <T> T checkTypeAndGetNullable(String key, ValueType type, Function<String, T> function) {

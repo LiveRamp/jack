@@ -8,13 +8,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
-import com.sun.org.apache.bcel.internal.generic.JSR;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.store.JsRecord;
+import com.rapleaf.jack.store.exceptions.InvalidScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
@@ -242,6 +242,21 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
       return jackStore2.rootScope().read().execute(db);
     });
     assertEquals(newJson, jsRecord.getJson(key));
+  }
+
+  @Test
+  public void testInsertIntoNonExistingScope() throws Exception {
+    try {
+      transactor.queryAsTransaction(db -> {
+        jackStore2.scope(100L).update()
+            .put(LONG_KEY, LONG_VALUE)
+            .execute(db);
+        return jackStore2.scope(100L).read().execute(db);
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof InvalidScopeException);
+    }
   }
 
 }

@@ -3,13 +3,16 @@ package com.rapleaf.jack.store.executors2;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
@@ -67,6 +70,32 @@ final class InternalScopeGetter {
             .fetch()
             .gets(table.idColumn)
     );
+  }
+
+  static Set<Long> getNestedScopeIds(IDb db, JsTable table, Set<Long> scopeIds) throws IOException {
+    Set<Long> allNestedScopeIds = Sets.newHashSet();
+
+    Set<Long> ids = Sets.newHashSet(scopeIds);
+    Set<Long> nestedIds;
+    while (!ids.isEmpty()) {
+      GenericQuery query = db.createQuery().from(table.table);
+      if (ids.contains(null)) {
+        Set<Long> nonNullIds = ids.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+        query.where(table.scopeColumn.in(nonNullIds).or(table.scopeColumn.isNull()));
+      } else {
+        query.where(table.scopeColumn.in(ids));
+      }
+      nestedIds = Sets.newHashSet(
+          query.where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
+              .select(table.idColumn)
+              .fetch()
+              .gets(table.idColumn)
+      );
+      allNestedScopeIds.addAll(nestedIds);
+      ids = nestedIds;
+    }
+
+    return allNestedScopeIds;
   }
 
 }

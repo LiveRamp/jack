@@ -26,7 +26,7 @@ public class SubScopeCreator extends BaseCreatorExecutor2<JsRecord, SubScopeCrea
   }
 
   @Override
-  public JsRecord execute(IDb db) throws IOException {
+  JsRecord internalExecute(IDb db) throws IOException {
     Long scopeId = createNewScope(db);
     if (!types.isEmpty()) {
       insertNewEntries(db, scopeId);

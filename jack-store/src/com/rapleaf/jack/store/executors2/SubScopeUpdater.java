@@ -54,7 +54,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
   }
 
   @Override
-  public JsRecords execute(IDb db) throws IOException {
+  JsRecords internalExecute(IDb db) throws IOException {
     if (types.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }
@@ -73,7 +73,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       insertNewEntries(db, subScopeId);
     }
 
-    return new SubScopeReader(table, executionScopeId, validSubScopeIds).execute(db);
+    return new SubScopeReader(table, executionScopeId, validSubScopeIds).internalExecute(db);
   }
 
   @Override

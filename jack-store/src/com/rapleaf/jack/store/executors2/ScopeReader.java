@@ -15,7 +15,7 @@ public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
   }
 
   @Override
-  public JsRecord execute(IDb db) throws IOException {
+  JsRecord internalExecute(IDb db) throws IOException {
     Records records = db.createQuery().from(table.table)
         .where(table.scopeColumn.equalTo(executionScopeId))
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))

@@ -61,4 +61,31 @@ public class TestInternalScopeGetter extends BaseExecutorTestCase2 {
     assertEquals(expectedSubScopeIds2, actualSubScopeIds2);
   }
 
+  @Test
+  public void testGetNestedScopeIds() throws Exception {
+    /*
+     * s1 ─┬─ s11 ─┬─ s111 --- s1111
+     *     |       └─ s112
+     *     └─ s12
+     * s2
+     */
+    long s1 = createSubScope(Optional.empty(), Optional.empty());
+    long s2 = createSubScope(Optional.empty(), Optional.empty());
+    long s11 = createSubScope(Optional.of(s1), Optional.empty());
+    long s12 = createSubScope(Optional.of(s1), Optional.empty());
+    long s111 = createSubScope(Optional.of(s11), Optional.empty());
+    long s112 = createSubScope(Optional.of(s11), Optional.empty());
+    long s1111 = createSubScope(Optional.of(s111), Optional.empty());
+
+    transactor.executeAsTransaction(db -> {
+      assertEquals(Sets.newHashSet(s11, s12, s111, s112, s1111), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s1)));
+      assertEquals(Sets.newHashSet(), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s2)));
+      assertEquals(Sets.newHashSet(s111, s112, s1111), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s11)));
+      assertEquals(Sets.newHashSet(s1111), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s111)));
+      assertEquals(Sets.newHashSet(), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s1111)));
+      assertEquals(Sets.newHashSet(), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s112)));
+      assertEquals(Sets.newHashSet(), InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(s12)));
+    });
+  }
+
 }

@@ -64,7 +64,7 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
   }
 
   @Override
-  public JsRecords execute(IDb db) throws IOException {
+  JsRecords internalExecute(IDb db) throws IOException {
     Set<Long> validSubScopeIds;
     if (skipSubScopeIdValidation && subScopeIds.isPresent()) {
       validSubScopeIds = subScopeIds.get();
