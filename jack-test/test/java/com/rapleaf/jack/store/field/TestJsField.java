@@ -8,16 +8,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors.BaseExecutorTestCase;
+import com.rapleaf.jack.store.executors2.BaseExecutorTestCase2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestJsField extends BaseExecutorTestCase {
+public class TestJsField extends BaseExecutorTestCase2 {
 
   @Before
   public void prepare() throws Exception {
-    transactor.execute(db -> jackStore.rootScope().deleteSubScopes().allowBulk().allowRecursion().execute(db));
+    transactor.execute(db -> jackStore2.rootScope().deleteSubScopes().allowBulkDeletion().deleteEntireRecord(true).execute(db));
   }
 
   @Test
@@ -45,8 +45,8 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore.rootScope().indexRecords(), value).execute(db);
-      return jackStore.rootScope().readScope().execute(db);
+      field.getPutFunction().apply(jackStore2.rootScope().update(), value).execute(db);
+      return jackStore2.rootScope().read().execute(db);
     });
 
     if (value instanceof DateTime) {
@@ -60,8 +60,8 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore.rootScope().indexRecords(), value).execute(db);
-      return jackStore.rootScope().readScope().execute(db);
+      field.getPutFunction().apply(jackStore2.rootScope().update(), value).execute(db);
+      return jackStore2.rootScope().read().execute(db);
     });
 
     if (value.get(0) instanceof DateTime) {

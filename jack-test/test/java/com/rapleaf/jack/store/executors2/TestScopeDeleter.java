@@ -20,7 +20,7 @@ public class TestScopeDeleter extends BaseExecutorTestCase2 {
   @Test
   public void testDeleteKey() throws Exception {
     // test deletion under root scope
-    createRecordAndTest(JsConstants.ROOT_SCOPE.getScopeId());
+    createRecordAndTest(JsConstants.ROOT_SCOPE_ID);
 
     // test deletion under custom scope
     createRecordAndTest(createSubScope(Optional.empty(), Optional.empty()));

@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 public class JsRecords implements Iterable<JsRecord> {
 

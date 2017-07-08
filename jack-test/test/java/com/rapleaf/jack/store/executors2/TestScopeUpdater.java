@@ -18,8 +18,8 @@ import com.rapleaf.jack.store.exceptions.InvalidScopeException;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.store.util.ScopeListInsertion;
-import com.rapleaf.jack.store.util.ScopeValueInsertion;
+import com.rapleaf.jack.store.util.InsertList;
+import com.rapleaf.jack.store.util.InsertValue;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -126,7 +126,7 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     }
   }
 
-  private <T> void testInsertion(String key, T value, boolean isNull, ScopeValueInsertion<T> execution) {
+  private <T> void testInsertion(String key, T value, boolean isNull, InsertValue<T> execution) {
     ScopeUpdater executor = jackStore2.rootScope().update();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : value);
@@ -137,7 +137,7 @@ public class TestScopeUpdater extends BaseExecutorTestCase2 {
     assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.VALUE));
   }
 
-  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, ScopeListInsertion<T> execution) {
+  private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, InsertList<T> execution) {
     ScopeUpdater executor = jackStore2.rootScope().update();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : listValue);

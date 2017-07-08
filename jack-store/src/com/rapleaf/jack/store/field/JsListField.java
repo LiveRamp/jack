@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.util.IndexList;
+import com.rapleaf.jack.store.util.InsertList;
 
 public class JsListField<T> extends AbstractJsField<List<T>> {
 
-  JsListField(String key, IndexList<T> putListMethod, BiFunction<JsRecord, String, List<T>> getListMethod) {
+  JsListField(String key, InsertList<T> putListMethod, BiFunction<JsRecord, String, List<T>> getListMethod) {
     super(key, putListMethod, getListMethod);
   }
 

@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.util.IndexValue;
+import com.rapleaf.jack.store.util.InsertValue;
 
 /**
  * Convert enum to name using {@link Enum#name}
@@ -12,11 +12,11 @@ import com.rapleaf.jack.store.util.IndexValue;
  */
 public class JsEnumNameField<E extends Enum<E>> extends AbstractJsField<E> {
 
-  JsEnumNameField(String key, Function<String, E> nameToEnumFunction, IndexValue<String> putMethod, BiFunction<JsRecord, String, String> getMethod) {
+  JsEnumNameField(String key, Function<String, E> nameToEnumFunction, InsertValue<String> putMethod, BiFunction<JsRecord, String, String> getMethod) {
     super(key, convertPutMethod(putMethod), convertGetMethod(nameToEnumFunction, getMethod));
   }
 
-  private static <E extends Enum> IndexValue<E> convertPutMethod(IndexValue<String> putMethod) {
+  private static <E extends Enum> InsertValue<E> convertPutMethod(InsertValue<String> putMethod) {
     return (executor, key, value) -> putMethod.apply(executor, key, value.name());
   }
 

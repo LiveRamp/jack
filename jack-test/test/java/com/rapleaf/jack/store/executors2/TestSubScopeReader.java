@@ -85,7 +85,7 @@ public class TestSubScopeReader extends BaseExecutorTestCase2 {
     jsRecords = transactor.queryAsTransaction(db ->
         jackStore2.rootScope().readSubScopes().execute(db)
     );
-    assertEquals(JsConstants.ROOT_SCOPE.getScopeId(), jsRecords.getParentScopeId());
+    assertEquals(JsConstants.ROOT_SCOPE_ID, jsRecords.getParentScopeId());
     assertTrue(jsRecords.isEmpty());
   }
 

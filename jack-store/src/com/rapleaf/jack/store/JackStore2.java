@@ -15,7 +15,7 @@ public class JackStore2 {
   }
 
   public JsExecutors2 rootScope() {
-    return scope(JsConstants.ROOT_SCOPE.getScopeId());
+    return scope(JsConstants.ROOT_SCOPE_ID);
   }
 
 }
