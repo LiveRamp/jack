@@ -26,6 +26,7 @@ public class RecordReader extends BaseInquirerExecutor<JsRecord, JsRecord, Recor
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .select(table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.keyColumn)
+        .orderBy(table.idColumn)
         .fetch();
 
     InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);

@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.executors.BaseExecutorTestCase;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -56,21 +57,21 @@ public class TestJsField extends BaseExecutorTestCase {
     }
   }
 
-  private <T> void testListField(JsListField<T> field, String key, List<T> value) throws Exception {
+  private <T> void testListField(JsListField<T> field, String key, List<T> values) throws Exception {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore2.rootRecord().update(), value).execute(db);
+      field.getPutFunction().apply(jackStore2.rootRecord().update(), values).execute(db);
       return jackStore2.rootRecord().read().execute(db);
     });
 
-    if (value.get(0) instanceof DateTime) {
+    if (values.get(0) instanceof DateTime) {
       assertEquals(
-          value.stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList()),
+          values.stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList()),
           field.getReadFunction().apply(record).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList())
       );
     } else {
-      assertEquals(value, field.getReadFunction().apply(record));
+      assertEquals(values, field.getReadFunction().apply(record));
     }
   }
 

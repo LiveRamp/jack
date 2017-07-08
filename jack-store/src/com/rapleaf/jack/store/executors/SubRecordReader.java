@@ -79,6 +79,7 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, 
         .where(table.scopeColumn.in(validSubRecordIds))
         .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.scopeColumn)
+        .orderBy(table.keyColumn)
         .orderBy(table.idColumn)
         .fetch();
 
