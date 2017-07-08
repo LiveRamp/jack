@@ -39,14 +39,14 @@ public class TestJsonStorePerformance extends JackTestCase {
    * Difference: 0.99
    * <p>
    * Update of 100000 records
-   * By store: 76783 ms (0.77 ms per record)
-   * By model: 24269 ms (0.24 ms per record)
-   * Difference: 3.16
+   * By store: 44386 ms (0.44 ms per record)
+   * By model: 21601 ms (0.22 ms per record)
+   * Difference: 2.05
    * <p>
    * Query (5 times) of 100000 records
-   * By store: 9797 ms (0.10 ms per record)
-   * By model: 780 ms (0.01 ms per record)
-   * Difference: 12.56
+   * By store: 1718 ms (0.02 ms per record)
+   * By model: 946 ms (0.01 ms per record)
+   * Difference: 1.82
    * <p>
    * Deletion of 100000 records
    * By store: 43240 ms (0.43 ms per record)
@@ -66,13 +66,13 @@ public class TestJsonStorePerformance extends JackTestCase {
     IExecution<IDatabase1> storeExecution = db -> {
       for (int i = 0; i < size; ++i) {
         int number = random.nextInt(50);
-        JsRecord record = jackStore2.rootRecord().createSubRecord()
+        Long recordId = jackStore2.rootRecord().createSubRecord()
             .recordName(String.valueOf(i))
             .putString("handle", String.valueOf(number))
             .putInt("numPosts", i)
             .putString("bio", String.valueOf(number))
-            .execute(db);
-        recordIds.add(record.getRecordId());
+            .exec(db);
+        recordIds.add(recordId);
       }
     };
 
@@ -96,7 +96,7 @@ public class TestJsonStorePerformance extends JackTestCase {
             .whereSubRecordIds(recordId)
             .putString("handle", String.valueOf(number))
             .putInt("numPosts", number)
-            .execute(db);
+            .exec(db);
       }
     };
 
@@ -120,7 +120,7 @@ public class TestJsonStorePerformance extends JackTestCase {
         jackStore2.rootRecord()
             .querySubRecords()
             .whereSubRecord("handle", JackMatchers.lessThan(String.valueOf(number)))
-            .execute(db);
+            .exec(db);
       }
     };
 
@@ -139,7 +139,7 @@ public class TestJsonStorePerformance extends JackTestCase {
   private void testRecordDeletion(int size) throws Exception {
     IExecution<IDatabase1> storeExecution = db -> {
       for (long recordId : recordIds) {
-        jackStore2.record(recordId).delete().deleteEntireRecord().execute(db);
+        jackStore2.record(recordId).delete().deleteEntireRecord().exec(db);
       }
     };
 
