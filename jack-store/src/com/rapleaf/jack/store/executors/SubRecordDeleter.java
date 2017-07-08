@@ -14,7 +14,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubRecordDeleter extends BaseDeleterExecutor<Void, SubRecordDeleter> {
+public class SubRecordDeleter extends BaseDeleterExecutor<Void, Void, SubRecordDeleter> {
 
   private Optional<Set<Long>> subRecordIds = Optional.empty();
   private boolean allowBulkDeletion;
@@ -51,6 +51,11 @@ public class SubRecordDeleter extends BaseDeleterExecutor<Void, SubRecordDeleter
   }
 
   Void internalExecute(IDb db) throws IOException {
+    return internalExec(db);
+  }
+
+  @Override
+  Void internalExec(IDb db) throws IOException {
     if (!allowBulkDeletion && !subRecordIds.isPresent()) {
       throw new BulkOperationException("Bulk deletion is disabled; either enable it or specify at least one sub scope ID");
     }

@@ -11,7 +11,7 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class SubRecordCreator extends BaseCreatorExecutor<JsRecord, SubRecordCreator> {
+public class SubRecordCreator extends BaseCreatorExecutor<JsRecord, Long, SubRecordCreator> {
 
   private String scopeName = null;
 
@@ -27,11 +27,17 @@ public class SubRecordCreator extends BaseCreatorExecutor<JsRecord, SubRecordCre
 
   @Override
   JsRecord internalExecute(IDb db) throws IOException {
+    Long recordId = internalExec(db);
+    return new JsRecord(recordId, types, values);
+  }
+
+  @Override
+  Long internalExec(IDb db) throws IOException {
     Long recordId = createNewScope(db);
     if (!types.isEmpty()) {
       insertNewEntries(db, recordId);
     }
-    return new JsRecord(recordId, types, values);
+    return recordId;
   }
 
   private Long createNewScope(IDb db) throws IOException {

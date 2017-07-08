@@ -19,7 +19,7 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseCreatorExecutor<T, E extends BaseCreatorExecutor<T, E>> extends BaseExecutor<T> {
+abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL, E>> extends BaseExecutor<TF, TL> {
 
   final Map<String, ValueType> types;
   final Map<String, Object> values;

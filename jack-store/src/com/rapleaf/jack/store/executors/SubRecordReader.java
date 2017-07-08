@@ -20,7 +20,7 @@ import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class SubRecordReader extends BaseInquirerExecutor<JsRecords, SubRecordReader> {
+public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, SubRecordReader> {
 
   private Optional<Set<Long>> subRecordIds = Optional.empty();
   private boolean skipSubRecordIdValidation = false;
@@ -59,6 +59,11 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, SubRecordRe
 
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
+    return internalExec(db);
+  }
+
+  @Override
+  JsRecords internalExec(IDb db) throws IOException {
     Set<Long> validSubRecordIds;
     if (skipSubRecordIdValidation && subRecordIds.isPresent()) {
       validSubRecordIds = subRecordIds.get();

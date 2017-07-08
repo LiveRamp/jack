@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.store.JsTable;
 
-abstract class BaseInquirerExecutor<T, E extends BaseInquirerExecutor<T, E>> extends BaseExecutor<T> {
+abstract class BaseInquirerExecutor<TF, TL, E extends BaseInquirerExecutor<TF, TL, E>> extends BaseExecutor<TF, TL> {
 
   final Set<String> selectedKeys = Sets.newHashSet();
 

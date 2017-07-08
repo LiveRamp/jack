@@ -7,7 +7,7 @@ import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.InvalidRecordException;
 
-abstract class BaseExecutor<T> {
+abstract class BaseExecutor<TF, TL> {
 
   protected final JsTable table;
   protected final Long executionRecordId;
@@ -17,14 +17,23 @@ abstract class BaseExecutor<T> {
     this.executionRecordId = executionRecordId;
   }
 
-  public final T execute(IDb db) throws IOException {
+  public final TF execute(IDb db) throws IOException {
     if (executionRecordId != null) {
       validateExecutionScope(db);
     }
     return internalExecute(db);
   }
 
-  abstract T internalExecute(IDb db) throws IOException;
+  public final TL exec(IDb db) throws IOException {
+    if (executionRecordId != null) {
+      validateExecutionScope(db);
+    }
+    return internalExec(db);
+  }
+
+  abstract TF internalExecute(IDb db) throws IOException;
+
+  abstract TL internalExec(IDb db) throws IOException;
 
   private void validateExecutionScope(IDb db) throws IOException {
     Records records = db.createQuery().from(table.table).where(table.idColumn.equalTo(executionRecordId)).fetch();

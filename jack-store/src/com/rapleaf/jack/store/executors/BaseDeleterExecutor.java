@@ -16,7 +16,7 @@ import com.rapleaf.jack.queries.GenericDeletion;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-abstract class BaseDeleterExecutor<T, E extends BaseDeleterExecutor<T, E>> extends BaseExecutor<T> {
+abstract class BaseDeleterExecutor<TF, TL, E extends BaseDeleterExecutor<TF, TL, E>> extends BaseExecutor<TF, TL> {
 
   final Set<String> keysToDelete = Sets.newHashSet();
   boolean deleteAllKeys = false;

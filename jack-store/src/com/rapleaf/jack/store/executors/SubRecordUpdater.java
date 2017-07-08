@@ -2,6 +2,7 @@ package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
-public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, SubRecordUpdater> {
+public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, Set<Long>, SubRecordUpdater> {
 
   private Optional<Set<Long>> subRecordIds = Optional.empty();
   private boolean allowBulkUpdate = false;
@@ -49,8 +50,14 @@ public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, SubRecordUp
 
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
+    Set<Long> validSubRecordIds = internalExec(db);
+    return new SubRecordReader(table, executionRecordId, validSubRecordIds).internalExecute(db);
+  }
+
+  @Override
+  Set<Long> internalExec(IDb db) throws IOException {
     if (types.isEmpty()) {
-      return JsRecords.empty(executionRecordId);
+      return Collections.emptySet();
     }
 
     if (!subRecordIds.isPresent() && !allowBulkUpdate) {
@@ -59,7 +66,7 @@ public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, SubRecordUp
 
     Set<Long> validSubRecordIds = InternalScopeGetter.getValidSubRecordIds(db, table, executionRecordId, subRecordIds);
     if (validSubRecordIds.isEmpty()) {
-      return JsRecords.empty(executionRecordId);
+      return Collections.emptySet();
     }
 
     for (long subRecordId : validSubRecordIds) {
@@ -67,7 +74,7 @@ public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, SubRecordUp
       insertNewEntries(db, subRecordId);
     }
 
-    return new SubRecordReader(table, executionRecordId, validSubRecordIds).internalExecute(db);
+    return validSubRecordIds;
   }
 
   @Override

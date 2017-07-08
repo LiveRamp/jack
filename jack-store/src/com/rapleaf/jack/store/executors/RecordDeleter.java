@@ -12,7 +12,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class RecordDeleter extends BaseDeleterExecutor<Void, RecordDeleter> {
+public class RecordDeleter extends BaseDeleterExecutor<Void, Void, RecordDeleter> {
 
   RecordDeleter(JsTable table, Long executionRecordId) {
     super(table, executionRecordId);
@@ -20,6 +20,11 @@ public class RecordDeleter extends BaseDeleterExecutor<Void, RecordDeleter> {
 
   @Override
   Void internalExecute(IDb db) throws IOException {
+    return internalExec(db);
+  }
+
+  @Override
+  Void internalExec(IDb db) throws IOException {
     if (deleteEntireRecord) {
       executeRecordDeletion(db);
     } else {

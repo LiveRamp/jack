@@ -22,7 +22,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, SubRecordInquirer> {
+public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>, SubRecordInquirer> {
 
   private final List<GenericConstraint> scopeConstraints = Lists.newArrayList();
   private final Map<String, List<GenericConstraint>> recordConstraints = Maps.newHashMap();
@@ -65,11 +65,12 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, SubRecord
 
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
-    Set<Long> validSubRecordIds = getSubRecordIds(db);
+    Set<Long> validSubRecordIds = internalExec(db);
     return new SubRecordReader(table, executionRecordId, validSubRecordIds).internalExecute(db);
   }
 
-  private Set<Long> getSubRecordIds(IDb db) throws IOException {
+  @Override
+  Set<Long> internalExec(IDb db) throws IOException {
     if (recordConstraints.isEmpty()) {
       return querySubScopesByScopeConstraints(db);
     } else {
