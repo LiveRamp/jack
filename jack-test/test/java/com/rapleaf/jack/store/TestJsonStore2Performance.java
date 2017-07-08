@@ -32,12 +32,34 @@ public class TestJsonStore2Performance extends JackTestCase {
     transactor.executeAsTransaction(IDb::deleteAll);
   }
 
+  /**
+   * Creation of 100000 records
+   * By store: 20133 ms (0.20 ms per record)
+   * By model: 17907 ms (0.18 ms per record)
+   * Difference: 1.12
+   * <p>
+   * Update of 100000 records
+   * By store: 76783 ms (0.77 ms per record)
+   * By model: 24269 ms (0.24 ms per record)
+   * Difference: 3.16
+   * <p>
+   * Query (5 times) of 100000 records
+   * By store: 12292 ms (2458.40 ms per record)
+   * By model: 765 ms (153.00 ms per record)
+   * Difference: 16.07
+   * <p>
+   * Deletion of 100000 records
+   * By store: 43240 ms (0.43 ms per record)
+   * By model: 6926 ms (0.07 ms per record)
+   * Difference: 6.24
+   */
   @Test
   public void testPerformance() throws Exception {
-    int size = 50;
+    int size = 200;
     testRecordCreation(size);
     testRecordUpdate(size);
-    testRecordQuery(5);
+    testRecordQuery(5, size);
+    testRecordDeletion(size);
   }
 
   private void testRecordCreation(int size) throws Exception {
@@ -91,9 +113,9 @@ public class TestJsonStore2Performance extends JackTestCase {
     runComparison("Update", size, storeExecution, modelExecution);
   }
 
-  private void testRecordQuery(int size) throws Exception {
+  private void testRecordQuery(int queryCount, int size) throws Exception {
     IExecution<IDatabase1> storeExecution = db -> {
-      for (int i = 0; i < size; ++i) {
+      for (int i = 0; i < queryCount; ++i) {
         int number = random.nextInt(50);
         jackStore2.rootScope()
             .querySubScopes()
@@ -103,7 +125,7 @@ public class TestJsonStore2Performance extends JackTestCase {
     };
 
     IExecution<IDatabase1> modelExecution = db -> {
-      for (int i = 0; i < size; ++i) {
+      for (int i = 0; i < queryCount; ++i) {
         int number = random.nextInt(50);
         db.users().query()
             .whereHandle(JackMatchers.lessThan(String.valueOf(number)))
@@ -111,7 +133,23 @@ public class TestJsonStore2Performance extends JackTestCase {
       }
     };
 
-    runComparison("Query", size, storeExecution, modelExecution);
+    runComparison("Query (" + queryCount + " times)", size, storeExecution, modelExecution);
+  }
+
+  private void testRecordDeletion(int size) throws Exception {
+    IExecution<IDatabase1> storeExecution = db -> {
+      for (long scopeId : scopeIds) {
+        jackStore2.scope(scopeId).delete().deleteEntireRecord().execute(db);
+      }
+    };
+
+    IExecution<IDatabase1> modelExecution = db -> {
+      for (long userId : userIds) {
+        db.users().delete().id(userId).execute();
+      }
+    };
+
+    runComparison("Deletion", size, storeExecution, modelExecution);
   }
 
   private void runComparison(String title, int size, IExecution<IDatabase1> storeExecution, IExecution<IDatabase1> modelExecution) throws Exception {
