@@ -66,8 +66,8 @@ public class TestJsField extends BaseExecutorTestCase {
 
     if (value.get(0) instanceof DateTime) {
       assertEquals(
-          value.stream().map(Object::toString).collect(Collectors.toList()),
-          field.getReadFunction().apply(record).stream().map(Object::toString).collect(Collectors.toList())
+          value.stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList()),
+          field.getReadFunction().apply(record).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList())
       );
     } else {
       assertEquals(value, field.getReadFunction().apply(record));
