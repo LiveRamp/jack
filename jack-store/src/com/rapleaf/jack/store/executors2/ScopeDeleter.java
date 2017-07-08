@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
 public class ScopeDeleter extends BaseDeleterExecutor2<Void, ScopeDeleter> {
@@ -42,12 +43,14 @@ public class ScopeDeleter extends BaseDeleterExecutor2<Void, ScopeDeleter> {
       db.createDeletion()
           .from(table.table)
           .where(table.scopeColumn.equalTo(executionScopeId))
+          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .execute();
     } else if (!keysToDelete.isEmpty()) {
       for (String key : keysToDelete) {
         db.createDeletion()
             .from(table.table)
             .where(table.scopeColumn.equalTo(executionScopeId))
+            .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
             .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
             .execute();
       }

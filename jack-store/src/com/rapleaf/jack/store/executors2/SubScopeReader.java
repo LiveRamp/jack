@@ -24,7 +24,6 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean skipSubScopeIdValidation = false;
-  private boolean ignoreInvalidSubScopes = false;
 
   SubScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
@@ -58,18 +57,13 @@ public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeRea
     return this;
   }
 
-  public SubScopeReader ignoreInvalidSubScopes() {
-    this.ignoreInvalidSubScopes = true;
-    return this;
-  }
-
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
     Set<Long> validSubScopeIds;
     if (skipSubScopeIdValidation && subScopeIds.isPresent()) {
       validSubScopeIds = subScopeIds.get();
     } else {
-      validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+      validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds);
     }
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);

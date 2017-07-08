@@ -128,15 +128,4 @@ public class TestSubScopeReader extends BaseExecutorTestCase2 {
     }
   }
 
-  @Test
-  public void testIgnoreInvalidSubScopeIds() throws Exception {
-    jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.rootScope()
-            .readSubScopes()
-            .whereSubScopeIds(Collections.singleton(5001L))
-            .ignoreInvalidSubScopes()
-            .execute(db)
-    );
-  }
-
 }

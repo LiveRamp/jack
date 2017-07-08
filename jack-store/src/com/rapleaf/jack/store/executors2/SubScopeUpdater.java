@@ -16,7 +16,6 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean allowBulkUpdate = false;
-  private boolean ignoreInvalidSubScopes = false;
 
   SubScopeUpdater(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
@@ -48,11 +47,6 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
     return this;
   }
 
-  public SubScopeUpdater ignoreInvalidSubScopes() {
-    this.ignoreInvalidSubScopes = true;
-    return this;
-  }
-
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
     if (types.isEmpty()) {
@@ -63,7 +57,7 @@ public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpd
       throw new BulkOperationException("Bulk update is disabled; either enable it or specify at least one sub scope ID");
     }
 
-    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds, ignoreInvalidSubScopes);
+    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds);
     if (validSubScopeIds.isEmpty()) {
       return JsRecords.empty(executionScopeId);
     }

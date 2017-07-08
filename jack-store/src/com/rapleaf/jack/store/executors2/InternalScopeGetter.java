@@ -1,7 +1,6 @@
 package com.rapleaf.jack.store.executors2;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,19 +28,14 @@ final class InternalScopeGetter {
    * 1) When subScopeIds is empty, return empty set
    * 2) When subScopeIds is not empty, validate sub scope IDs
    */
-  static Set<Long> getValidSubScopeIds(IDb db, JsTable table, Long executionScopeId, Optional<Set<Long>> subScopeIds, boolean ignoreInvalidSubScopes) throws IOException {
+  static Set<Long> getValidSubScopeIds(IDb db, JsTable table, Long executionScopeId, Optional<Set<Long>> subScopeIds) throws IOException {
     Set<Long> validSubScopeIds;
     if (subScopeIds.isPresent()) {
       if (subScopeIds.get().isEmpty()) {
         return Collections.emptySet();
       }
-      validSubScopeIds = getValidSubScopeIds(db, table, executionScopeId, subScopeIds.get());
-      if (!validSubScopeIds.equals(subScopeIds.get()) && !ignoreInvalidSubScopes) {
-        throw new InvalidScopeException(String.format(
-            "Sub scopes %s does not exist under scope %s; either ignore invalid sub scopes or provide valid sub scope IDs",
-            Joiner.on(", ").join(Sets.difference(subScopeIds.get(), validSubScopeIds)), executionScopeId == null ? JsConstants.ROOT_SCOPE_NAME : executionScopeId
-        ));
-      }
+      validateSubScopeIds(db, table, executionScopeId, subScopeIds.get());
+      validSubScopeIds = subScopeIds.get();
     } else {
       validSubScopeIds = getAllSubScopeIds(db, table, executionScopeId);
     }
@@ -60,8 +54,8 @@ final class InternalScopeGetter {
     );
   }
 
-  static Set<Long> getValidSubScopeIds(IDb db, JsTable table, Long executionScopeId, Collection<Long> subScopeIds) throws IOException {
-    return Sets.newHashSet(
+  static void validateSubScopeIds(IDb db, JsTable table, Long executionScopeId, Set<Long> subScopeIds) throws IOException {
+    Set<Long> validSubScopeIds = Sets.newHashSet(
         db.createQuery().from(table.table)
             .where(table.scopeColumn.equalTo(executionScopeId))
             .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
@@ -70,6 +64,12 @@ final class InternalScopeGetter {
             .fetch()
             .gets(table.idColumn)
     );
+    if (!validSubScopeIds.equals(subScopeIds)) {
+      throw new InvalidScopeException(String.format(
+          "Sub scopes %s does not exist under scope %s; either ignore invalid sub scopes or provide valid sub scope IDs",
+          Joiner.on(", ").join(Sets.difference(subScopeIds, validSubScopeIds)), executionScopeId == null ? JsConstants.ROOT_SCOPE_NAME : executionScopeId
+      ));
+    }
   }
 
   static Set<Long> getNestedScopeIds(IDb db, JsTable table, Set<Long> scopeIds) throws IOException {
@@ -86,7 +86,7 @@ final class InternalScopeGetter {
         query.where(table.scopeColumn.in(ids));
       }
       nestedIds = Sets.newHashSet(
-          query.where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
+          query.where(table.typeColumn.equalTo(ValueType.SCOPE.value))
               .select(table.idColumn)
               .fetch()
               .gets(table.idColumn)

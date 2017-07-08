@@ -104,6 +104,7 @@ public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeI
       GenericQuery query = db.createQuery()
           .from(table.table)
           .where(table.scopeColumn.in(scopeIds))
+          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .select(table.scopeColumn);
 
       if (key.contains("%")) {

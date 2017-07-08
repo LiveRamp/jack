@@ -122,7 +122,7 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase2 {
   }
 
   @Test
-  public void testIgnoreInvalidSubScopes() throws Exception {
+  public void testInvalidSubScopes() throws Exception {
     try {
       transactor.executeAsTransaction(db -> {
         jackStore2.scope(parentScope)
@@ -134,16 +134,6 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase2 {
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof InvalidScopeException);
     }
-
-    jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScope)
-            .updateSubScopes()
-            .ignoreInvalidSubScopes()
-            .whereSubScopeIds(Sets.newHashSet(100L))
-            .put(STRING_KEY, STRING_VALUE)
-            .execute(db)
-    );
-    assertTrue(jsRecords.isEmpty());
   }
 
 }

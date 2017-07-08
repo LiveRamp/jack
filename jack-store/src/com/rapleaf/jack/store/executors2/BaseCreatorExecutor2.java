@@ -179,6 +179,7 @@ abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> ext
       db.createDeletion()
           .from(table.table)
           .where(table.scopeColumn.equalTo(scopeId))
+          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
           .execute();
     }

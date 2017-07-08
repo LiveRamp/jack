@@ -12,8 +12,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
+import com.rapleaf.jack.store.exceptions.InvalidScopeException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestInternalScopeGetter extends BaseExecutorTestCase2 {
   private static final Logger LOG = LoggerFactory.getLogger(TestInternalScopeGetter.class);
@@ -51,23 +55,25 @@ public class TestInternalScopeGetter extends BaseExecutorTestCase2 {
     LOG.info("Range: [{}, {})", lo, hi);
     List<Long> selectedSubScopeIds = subScopeIds.subList(lo, hi);
     Set<Long> expectedSubScopeIds1 = Sets.newHashSet(selectedSubScopeIds);
-    Set<Long> actualSubScopeIds1 = transactor.queryAsTransaction(db -> InternalScopeGetter.getValidSubScopeIds(db, table, parentScopeId, expectedSubScopeIds1));
-    assertEquals(expectedSubScopeIds1, actualSubScopeIds1);
+    transactor.executeAsTransaction(db -> InternalScopeGetter.validateSubScopeIds(db, table, parentScopeId, expectedSubScopeIds1));
 
-    // invalid sub scope IDs are filtered out
+    // throw exception when there is any invalid sub scope ID
     long maxScopeId = Collections.max(selectedSubScopeIds);
-    Set<Long> expectedSubScopeIds2 = Sets.newHashSet(maxScopeId);
-    Set<Long> actualSubScopeIds2 = transactor.queryAsTransaction(db -> InternalScopeGetter.getValidSubScopeIds(db, table, parentScopeId, Sets.newHashSet(maxScopeId, maxScopeId + 100L, maxScopeId + 200L)));
-    assertEquals(expectedSubScopeIds2, actualSubScopeIds2);
+    try {
+      transactor.executeAsTransaction(db -> InternalScopeGetter.validateSubScopeIds(db, table, parentScopeId, Sets.newHashSet(maxScopeId, maxScopeId + 100L, maxScopeId + 200L)));
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      assertTrue(e.getCause() instanceof InvalidScopeException);
+    }
   }
 
   @Test
   public void testGetNestedScopeIds() throws Exception {
     /*
-     * s1 ─┬─ s11 ─┬─ s111 --- s1111
-     *     |       └─ s112
-     *     └─ s12
-     * s2
+     * root ─┬─ s1 ─┬─ s11 ─┬─ s111 ─── s1111
+     *       │      │       └─ s112
+     *       │      └─ s12
+     *       └─ s2
      */
     long s1 = createSubScope(Optional.empty(), Optional.empty());
     long s2 = createSubScope(Optional.empty(), Optional.empty());

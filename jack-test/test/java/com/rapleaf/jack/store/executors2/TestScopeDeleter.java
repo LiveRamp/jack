@@ -44,7 +44,6 @@ public class TestScopeDeleter extends BaseExecutorTestCase2 {
       jackStore2.scope(scopeId)
           .delete()
           .deleteKey(LONG_KEY)
-          .deleteKey(LONG_KEY)
           .execute(db);
       return jackStore2.scope(scopeId)
           .read()
@@ -111,25 +110,13 @@ public class TestScopeDeleter extends BaseExecutorTestCase2 {
           .execute(db);
     });
     assertTrue(record.isEmpty());
-
-    // add key value pairs
-    record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId).update()
-          .put(LONG_KEY, LONG_VALUE)
-          .put(JSON_KEY, JSON_VALUE)
-          .execute(db);
-      return jackStore2.scope(scopeId)
-          .read()
-          .execute(db);
-    });
-    assertEquals(Sets.newHashSet(LONG_KEY, JSON_KEY), record.keySet());
   }
 
   @Test
   public void testDeleteRecord() throws Exception {
     /*
      * Create root and three nested records
-     * root --- n1 --- n2 --- n3
+     * root ─── n1 ─── n2 ─── n3
      */
     JsRecord rootRecord = transactor.queryAsTransaction(db ->
         jackStore2.rootScope().update()
