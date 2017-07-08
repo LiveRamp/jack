@@ -34,9 +34,9 @@ public class TestJsonStore2Performance extends JackTestCase {
 
   /**
    * Creation of 100000 records
-   * By store: 20133 ms (0.20 ms per record)
-   * By model: 17907 ms (0.18 ms per record)
-   * Difference: 1.12
+   * By store: 16730 ms (0.17 ms per record)
+   * By model: 16965 ms (0.17 ms per record)
+   * Difference: 0.99
    * <p>
    * Update of 100000 records
    * By store: 76783 ms (0.77 ms per record)
@@ -44,9 +44,9 @@ public class TestJsonStore2Performance extends JackTestCase {
    * Difference: 3.16
    * <p>
    * Query (5 times) of 100000 records
-   * By store: 12292 ms (2458.40 ms per record)
-   * By model: 765 ms (153.00 ms per record)
-   * Difference: 16.07
+   * By store: 9797 ms (0.10 ms per record)
+   * By model: 780 ms (0.01 ms per record)
+   * Difference: 12.56
    * <p>
    * Deletion of 100000 records
    * By store: 43240 ms (0.43 ms per record)

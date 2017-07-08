@@ -26,18 +26,20 @@ public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeI
 
   private final List<GenericConstraint> scopeConstraints = Lists.newArrayList();
   private final Map<String, List<GenericConstraint>> recordConstraints = Maps.newHashMap();
+  private final JsTable scope; // alias of table used specifically for scope query and self join
 
   SubScopeInquirer(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
+    this.scope = table.as("scope");
   }
 
   public SubScopeInquirer whereSubScopeId(IWhereOperator<Long> scopeIdConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(table.idColumn, scopeIdConstraint));
+    this.scopeConstraints.add(new GenericConstraint<>(scope.idColumn, scopeIdConstraint));
     return this;
   }
 
   public SubScopeInquirer whereSubScopeName(IWhereOperator<String> scopeNameConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(table.valueColumn, scopeNameConstraint));
+    this.scopeConstraints.add(new GenericConstraint<>(scope.valueColumn, scopeNameConstraint));
     return this;
   }
 
@@ -68,51 +70,60 @@ public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeI
   }
 
   private Set<Long> getSubScopeIds(IDb db) throws IOException {
-    Set<Long> subScopeIds = querySubScopesByScopeConstraints(db);
-    return querySubScopesByRecordConstraints(db, subScopeIds);
+    if (recordConstraints.isEmpty()) {
+      return querySubScopesByScopeConstraints(db);
+    } else {
+      return querySubScopesByRecordConstraints(db);
+    }
   }
 
   private Set<Long> querySubScopesByScopeConstraints(IDb db) throws IOException {
     GenericQuery query = db.createQuery()
-        .from(table.table)
-        .where(table.scopeColumn.equalTo(executionScopeId))
-        .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
-        .where(table.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-        .select(table.idColumn);
+        .from(scope.table)
+        .where(scope.scopeColumn.equalTo(executionScopeId))
+        .where(scope.typeColumn.equalTo(ValueType.SCOPE.value))
+        .where(scope.keyColumn.equalTo(JsConstants.SCOPE_KEY))
+        .select(scope.idColumn);
 
     for (GenericConstraint constraint : scopeConstraints) {
       query.where(constraint);
     }
 
-    return Sets.newHashSet(query.fetch().gets(table.idColumn));
+    return Sets.newHashSet(query.fetch().gets(scope.idColumn));
   }
 
-  private Set<Long> querySubScopesByRecordConstraints(IDb db, Set<Long> subScopeIds) throws IOException {
-    if (subScopeIds.isEmpty() || recordConstraints.isEmpty()) {
-      return subScopeIds;
-    }
-
-    Set<Long> scopeIds = Sets.newHashSet(subScopeIds);
+  private Set<Long> querySubScopesByRecordConstraints(IDb db) throws IOException {
+    Set<Long> scopeIds = null;
     for (Map.Entry<String, List<GenericConstraint>> entry : recordConstraints.entrySet()) {
-      if (scopeIds.isEmpty()) {
+      if (scopeIds != null && scopeIds.isEmpty()) {
         return Collections.emptySet();
       }
 
-      String key = entry.getKey();
-      List<GenericConstraint> constraints = entry.getValue();
-
       GenericQuery query = db.createQuery()
           .from(table.table)
-          .where(table.scopeColumn.in(scopeIds))
+          .leftJoin(scope.table)
+          .on(table.scopeColumn.equalTo(scope.idColumn))
           .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .select(table.scopeColumn);
 
+      // scope constraints
+      if (scopeIds != null) {
+        query.where(table.scopeColumn.in(scopeIds));
+      }
+      for (GenericConstraint constraint : scopeConstraints) {
+        query.where(constraint);
+      }
+
+      // key constraints
+      String key = entry.getKey();
       if (key.contains("%")) {
         query.where(table.keyColumn.matches(key));
       } else {
         query.where(table.keyColumn.equalTo(key));
       }
 
+      // record constraints
+      List<GenericConstraint> constraints = entry.getValue();
       for (GenericConstraint constraint : constraints) {
         query.where(constraint);
       }
