@@ -4,16 +4,16 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors.RecordIndexExecutor;
-import com.rapleaf.jack.store.util.IndexValue;
+import com.rapleaf.jack.store.executors.RecordUpdater;
+import com.rapleaf.jack.store.util.InsertValue;
 
 public abstract class AbstractJsField<T> implements JsField<T> {
 
   private final String key;
-  private final BiFunction<RecordIndexExecutor, T, RecordIndexExecutor> putFunction;
+  private final BiFunction<RecordUpdater, T, RecordUpdater> putFunction;
   private final Function<JsRecord, T> readFunction;
 
-  AbstractJsField(String key, IndexValue<T> putMethod, BiFunction<JsRecord, String, T> getMethod) {
+  AbstractJsField(String key, InsertValue<T> putMethod, BiFunction<JsRecord, String, T> getMethod) {
     this.key = key;
     this.putFunction = (recordIndexExecutor, value) -> putMethod.apply(recordIndexExecutor, key, value);
     this.readFunction = record -> getMethod.apply(record, key);
@@ -25,7 +25,7 @@ public abstract class AbstractJsField<T> implements JsField<T> {
   }
 
   @Override
-  public BiFunction<RecordIndexExecutor, T, RecordIndexExecutor> getPutFunction() {
+  public BiFunction<RecordUpdater, T, RecordUpdater> getPutFunction() {
     return putFunction;
   }
 

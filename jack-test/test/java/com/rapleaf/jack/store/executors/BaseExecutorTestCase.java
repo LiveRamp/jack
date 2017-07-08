@@ -1,7 +1,9 @@
 package com.rapleaf.jack.store.executors;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
@@ -13,8 +15,10 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JackStore;
-import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsConstants;
+import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
+import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.BaseJsonTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -22,6 +26,8 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class BaseExecutorTestCase extends JackTestCase {
+
+  protected static final Random RANDOM = new Random(System.currentTimeMillis());
 
   protected static final JsonParser JSON_PARSER = new JsonParser();
 
@@ -66,37 +72,27 @@ public class BaseExecutorTestCase extends JackTestCase {
   protected static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");
 
   protected final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  protected final JackStore jackStore = new JackStore(JsTable.from(TestStore.TBL).create());
+  protected final JsTable table = JsTable.from(TestStore.TBL).create();
+  protected final JackStore jackStore2 = new JackStore(table);
 
   Records records;
+  JsRecords jsRecords;
 
   @Before
   public void prepare() throws Exception {
     transactor.executeAsTransaction(IDb::deleteAll);
   }
 
-  JsScope createScope() {
-    return transactor.queryAsTransaction(db -> jackStore.rootScope().createSubScope().execute(db));
-  }
-
-  JsScope createScope(List<String> parentScopes) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createSubScope().execute(db));
-  }
-
-  JsScope createScope(String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.rootScope().createSubScope(newScope).execute(db));
-  }
-
-  JsScope createScope(List<String> parentScopes, String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScopes).createSubScope(newScope).execute(db));
-  }
-
-  JsScope createScope(JsScope parentScope, String newScope) {
-    return transactor.queryAsTransaction(db -> jackStore.scope(parentScope).createSubScope(newScope).execute(db));
-  }
-
-  protected List<String> list(String element) {
-    return Collections.singletonList(element);
+  long createSubScope(Optional<Long> parentScopeId, Optional<String> name) throws Exception {
+    return transactor.queryAsTransaction(db ->
+        db.createInsertion().into(TestStore.TBL)
+            .set(TestStore.SCOPE, parentScopeId.orElse(null))
+            .set(TestStore.TYPE, ValueType.SCOPE.value)
+            .set(TestStore.KEY, JsConstants.SCOPE_KEY)
+            .set(TestStore.VALUE, name.orElse(UUID.randomUUID().toString()))
+            .execute()
+            .getFirstId()
+    );
   }
 
 }

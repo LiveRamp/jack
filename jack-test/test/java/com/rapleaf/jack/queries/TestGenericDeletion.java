@@ -3,6 +3,7 @@ package com.rapleaf.jack.queries;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.Post;
@@ -48,7 +49,7 @@ public class TestGenericDeletion {
     assertEquals(0, db.posts().findAll().size());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = BulkOperationException.class)
   public void testDeleteAllWithoutBulkOperation() throws Exception {
     db.createDeletion().from(Post.TBL).execute();
   }

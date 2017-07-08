@@ -1,43 +1,21 @@
 package com.rapleaf.jack.store;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-
 import com.rapleaf.jack.store.executors.JsExecutors;
 
 public class JackStore {
 
-  private final JsTable jsTable;
+  private final JsTable table;
 
-  public JackStore(JsTable jsTable) {
-    this.jsTable = jsTable;
+  public JackStore(JsTable table) {
+    this.table = table;
   }
 
-  public JsExecutors scope(String scope, String... moreScopes) {
-    List<String> scopes = Lists.newArrayListWithCapacity(1 + moreScopes.length);
-    scopes.add(scope);
-    scopes.addAll(Arrays.asList(moreScopes));
-    return scope(scopes);
+  public JsExecutors record(Long recordId) {
+    return new JsExecutors(table, recordId);
   }
 
-  public JsExecutors scope(List<String> scopes) {
-    Preconditions.checkArgument(scopes.size() > 0, "Scope list cannot be empty; to specify root scope, please use the `rootScope` method");
-    Preconditions.checkArgument(scopes.stream().noneMatch(String::isEmpty), "Scope name cannot be empty");
-    return new JsExecutors(jsTable, scopes);
+  public JsExecutors rootRecord() {
+    return record(JsConstants.ROOT_RECORD_ID);
   }
 
-  public JsExecutors scope(JsScope scope) {
-    return new JsExecutors(jsTable, scope);
-  }
-
-  public JsExecutors scope(long scopeId) {
-    return new JsExecutors(jsTable, new JsIdScope(scopeId));
-  }
-
-  public JsExecutors rootScope() {
-    return scope(JsConstants.ROOT_SCOPE);
-  }
 }

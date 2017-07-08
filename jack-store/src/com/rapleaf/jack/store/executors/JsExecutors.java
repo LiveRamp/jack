@@ -1,86 +1,94 @@
 package com.rapleaf.jack.store.executors;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.google.common.collect.Sets;
-
-import com.rapleaf.jack.store.JsScope;
-import com.rapleaf.jack.store.JsScopes;
+import com.rapleaf.jack.store.JsRecord;
+import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
 public class JsExecutors {
 
-  private final JsTable jsTable;
-  private final Optional<JsScope> predefinedScope;
-  private final List<String> predefinedScopeNames;
+  private final JsTable table;
+  private final Long executionRecordId;
 
-  public JsExecutors(JsTable jsTable, JsScope executionScope) {
-    this.jsTable = jsTable;
-    this.predefinedScope = Optional.of(executionScope);
-    this.predefinedScopeNames = Collections.emptyList();
+  public JsExecutors(JsTable table, Long executionRecordId) {
+    this.table = table;
+    this.executionRecordId = executionRecordId;
   }
 
-  public JsExecutors(JsTable jsTable, List<String> executionScopeNames) {
-    this.jsTable = jsTable;
-    this.predefinedScope = Optional.empty();
-    this.predefinedScopeNames = executionScopeNames;
+  /**
+   * Query key value pairs under the current record.
+   *
+   * @return {@link JsRecord}
+   */
+  public RecordReader read() {
+    return new RecordReader(table, executionRecordId);
   }
 
-  public SubScopeCreationExecutor createSubScope(String subScopeName) {
-    return new SubScopeCreationExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  /**
+   * Insert or update key value pairs under the current record.
+   *
+   * @return {@link JsRecord}
+   */
+  public RecordUpdater update() {
+    return new RecordUpdater(table, executionRecordId);
   }
 
-  public SubScopeCreationExecutor createSubScope() {
-    return new SubScopeCreationExecutor(jsTable, predefinedScope, predefinedScopeNames);
+  /**
+   * Delete key value pairs under the current record.
+   * Delete the current record.
+   *
+   * @return {@link Void}
+   */
+  public RecordDeleter delete() {
+    return new RecordDeleter(table, executionRecordId);
   }
 
-  public SubScopeModificationExecutor renameSubScope(String currentName, String newName) {
-    return new SubScopeModificationExecutor(jsTable, predefinedScope, predefinedScopeNames, currentName, newName);
+  /**
+   * Create a new record under the current record.
+   * Insert key value pairs under the new record.
+   *
+   * @return {@link JsRecord}
+   */
+  public SubRecordCreator createSubRecord() {
+    return new SubRecordCreator(table, executionRecordId);
   }
 
-  public SubScopeGetterExecutor getSubScope(long subScopeId) {
-    return new SubScopeGetterExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeId);
+  /**
+   * Read the sub records under the current record.
+   * The result set does not include key value pairs directly under the current record.
+   *
+   * @return {@link JsRecords} representing the fetched sub records
+   */
+  public SubRecordReader readSubRecords() {
+    return new SubRecordReader(table, executionRecordId);
   }
 
-  public SubScopeGetterExecutor getSubScope(String subScopeName) {
-    return new SubScopeGetterExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeName);
+  /**
+   * Query the sub records under the current record.
+   * The result set does not include key value pairs directly under the current record.
+   *
+   * @return {@link JsRecords} representing the fetched sub records
+   */
+  public SubRecordInquirer querySubRecords() {
+    return new SubRecordInquirer(table, executionRecordId);
   }
 
-  public SubScopeQueryExecutor querySubScopes() {
-    return new SubScopeQueryExecutor(jsTable, predefinedScope, predefinedScopeNames);
+  /**
+   * Insert or update key value pairs in the sub records under the current record.
+   * Key value pairs directly under the current record will not be affected.
+   *
+   * @return {@link JsRecords} representing the updated sub records
+   */
+  public SubRecordUpdater updateSubRecords() {
+    return new SubRecordUpdater(table, executionRecordId);
   }
 
-  public SubScopeDeletionExecutor deleteSubScopes() {
-    return new SubScopeDeletionExecutor(jsTable, predefinedScope, predefinedScopeNames);
-  }
-
-  public SubScopeReaderExecutor readSubScopesWithIds(Set<Long> subScopeIds) {
-    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopeIds);
-  }
-
-  public SubScopeReaderExecutor readSubScopes(Collection<JsScope> subScopes) {
-    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, subScopes.stream().map(JsScope::getScopeId).collect(Collectors.toSet()));
-  }
-
-  public SubScopeReaderExecutor readSubScopes(JsScopes subScopes) {
-    return new SubScopeReaderExecutor(jsTable, predefinedScope, predefinedScopeNames, Sets.newHashSet(subScopes.getScopeIds()));
-  }
-
-  public RecordReaderExecutor readScope() {
-    return new RecordReaderExecutor(jsTable, predefinedScope, predefinedScopeNames);
-  }
-
-  public RecordIndexExecutor indexRecords() {
-    return new RecordIndexExecutor(jsTable, predefinedScope, predefinedScopeNames);
-  }
-
-  public RecordDeletionExecutor deleteRecords() {
-    return new RecordDeletionExecutor(jsTable, predefinedScope, predefinedScopeNames);
+  /**
+   * Delete sub records under the current record.
+   *
+   * @return {@link Void}
+   */
+  public SubRecordDeleter deleteSubRecords() {
+    return new SubRecordDeleter(table, executionRecordId);
   }
 
 }

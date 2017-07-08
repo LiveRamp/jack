@@ -1,5 +1,7 @@
 package com.rapleaf.jack.store;
 
+import java.util.UUID;
+
 import org.junit.Test;
 
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
@@ -39,6 +41,20 @@ public class TestJsTable {
     table = JsTable.from(TestStore.TBL)
         .setScopeColumn(User.NUM_POSTS.as(Long.class))
         .create();
+  }
+
+  @Test
+  public void testTableAlias() throws Exception {
+    String alias = UUID.randomUUID().toString();
+    table = JsTable.from(TestStore.TBL).create();
+    JsTable aliasTable = table.as(alias);
+    assertEquals(table.table.getName(), aliasTable.table.getName());
+    assertEquals(alias, aliasTable.table.getAlias());
+    assertEquals(alias, aliasTable.idColumn.getTable());
+    assertEquals(alias, aliasTable.scopeColumn.getTable());
+    assertEquals(alias, aliasTable.typeColumn.getTable());
+    assertEquals(alias, aliasTable.keyColumn.getTable());
+    assertEquals(alias, aliasTable.valueColumn.getTable());
   }
 
 }

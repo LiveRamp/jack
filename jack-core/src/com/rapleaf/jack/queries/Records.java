@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import com.rapleaf.jack.AttributesWithId;
@@ -130,6 +131,15 @@ public class Records implements Iterable<Record> {
   @Override
   public Iterator<Record> iterator() {
     return records.iterator();
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() +
+        "{" +
+        "records: " + Joiner.on(", ").join(records) +
+        ", statistics: " + queryStatistics.toString() +
+        "}";
   }
 
   @Override

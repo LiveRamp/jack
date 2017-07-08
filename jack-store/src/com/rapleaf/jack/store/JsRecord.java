@@ -16,25 +16,25 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public class JsRecord {
 
-  private final Long scopeId;
+  private final Long recordId;
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  public JsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values) {
+  public JsRecord(Long recordId, Map<String, ValueType> types, Map<String, Object> values) {
     Preconditions.checkNotNull(types);
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
-    this.scopeId = scopeId;
+    this.recordId = recordId;
     this.types = types;
     this.values = values;
   }
 
-  public static JsRecord empty() {
-    return JsConstants.EMPTY_RECORD;
+  public static JsRecord empty(Long recordId) {
+    return new JsRecord(recordId, Collections.emptyMap(), Collections.emptyMap());
   }
 
-  public Long getScopeId() {
-    return scopeId;
+  public Long getRecordId() {
+    return recordId;
   }
 
   public Set<String> keySet() {
@@ -161,11 +161,11 @@ public class JsRecord {
 
   private void checkKey(String key) {
     Preconditions.checkNotNull(key);
-    Preconditions.checkArgument(types.containsKey(key), "Key" + key + " does not exist");
+    Preconditions.checkArgument(types.containsKey(key), "Key " + key + " does not exist");
   }
 
   private <T> T checkTypeAndGetNullable(String key, ValueType type, Function<String, T> function) {
-    Preconditions.checkArgument(types.get(key).equals(type));
+    Preconditions.checkArgument(types.get(key).equals(type), "%s is expected to be a %s, but it actually is a %s", key, type.name(), types.get(key).name());
     String value = (String)values.get(key);
     if (value == null) {
       return null;
@@ -175,7 +175,7 @@ public class JsRecord {
   }
 
   private JsonObject checkAndGetJson(String key) {
-    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON));
+    Preconditions.checkArgument(types.get(key).category.equals(ValueType.Category.JSON), "%s is expected to be a json, it it actually is a %s", key, types.get(key));
     return (JsonObject)values.get(key);
   }
 
@@ -192,15 +192,20 @@ public class JsRecord {
 
   @Override
   public int hashCode() {
-    return 19 * (types.keySet().hashCode() + 19 * types.values().hashCode()) + values.values().hashCode();
+    int hashCode = Objects.hashCode(recordId);
+    hashCode += 19 * types.keySet().hashCode();
+    hashCode += 19 * types.values().hashCode();
+    hashCode += 19 * values.values().hashCode();
+    return hashCode;
   }
 
   @Override
   public String toString() {
-    return JsScope.class.getSimpleName() +
+    return JsRecord.class.getSimpleName() +
         "{" +
-        "types=" + types +
-        ",values=" + values +
+        "recordId: " + recordId +
+        ", types: " + types +
+        ", values: " + values +
         "}";
   }
 
@@ -215,7 +220,9 @@ public class JsRecord {
     }
 
     JsRecord that = (JsRecord)other;
-    return Objects.equals(this.types, that.types) && Objects.equals(this.values, that.values);
+    return Objects.equals(this.recordId, that.recordId) &&
+        Objects.equals(this.types, that.types) &&
+        Objects.equals(this.values, that.values);
   }
 
 }

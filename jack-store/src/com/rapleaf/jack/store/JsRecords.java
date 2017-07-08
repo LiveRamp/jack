@@ -1,7 +1,9 @@
 package com.rapleaf.jack.store;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
@@ -9,19 +11,29 @@ import com.google.common.base.Preconditions;
 
 public class JsRecords implements Iterable<JsRecord> {
 
+  private final Long parentRecordId;
   private final List<JsRecord> jsRecords;
 
-  public JsRecords(List<JsRecord> jsRecords) {
+  public JsRecords(Long parentRecordId, List<JsRecord> jsRecords) {
+    this.parentRecordId = parentRecordId;
     this.jsRecords = jsRecords;
   }
 
-  public static JsRecords empty() {
-    return JsConstants.EMPTY_RECORDS;
+  public static JsRecords empty(Long parentRecordId) {
+    return new JsRecords(parentRecordId, Collections.emptyList());
+  }
+
+  public Long getParentRecordId() {
+    return parentRecordId;
   }
 
   @Override
   public Iterator<JsRecord> iterator() {
     return jsRecords.iterator();
+  }
+
+  public List<Long> getRecordIds() {
+    return jsRecords.stream().map(JsRecord::getRecordId).collect(Collectors.toList());
   }
 
   public List<JsRecord> getRecords() {
