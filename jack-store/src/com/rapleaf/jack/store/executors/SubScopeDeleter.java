@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubScopeDeleter extends BaseDeleterExecutor2<Void, SubScopeDeleter> {
+public class SubScopeDeleter extends BaseDeleterExecutor<Void, SubScopeDeleter> {
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean allowBulkDeletion;

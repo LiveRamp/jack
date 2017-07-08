@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class ScopeReader extends BaseInquirerExecutor2<JsRecord, ScopeReader> {
+public class ScopeReader extends BaseInquirerExecutor<JsRecord, ScopeReader> {
 
   ScopeReader(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);

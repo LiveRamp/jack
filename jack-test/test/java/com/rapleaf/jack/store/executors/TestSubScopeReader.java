@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +22,7 @@ import com.rapleaf.jack.store.exceptions.InvalidScopeException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestSubScopeReader extends BaseExecutorTestCase2 {
+public class TestSubScopeReader extends BaseExecutorTestCase {
   private static final Logger LOG = LoggerFactory.getLogger(TestSubScopeReader.class);
 
   @Test

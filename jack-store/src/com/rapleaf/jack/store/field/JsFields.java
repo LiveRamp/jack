@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors2.ScopeUpdater;
+import com.rapleaf.jack.store.executors.ScopeUpdater;
 
 public final class JsFields {
 

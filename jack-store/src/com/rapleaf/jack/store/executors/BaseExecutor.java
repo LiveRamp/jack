@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 
@@ -7,12 +7,12 @@ import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.exceptions.InvalidScopeException;
 
-abstract class BaseExecutor2<T> {
+abstract class BaseExecutor<T> {
 
   protected final JsTable table;
   protected final Long executionScopeId;
 
-  BaseExecutor2(JsTable table, Long executionScopeId) {
+  BaseExecutor(JsTable table, Long executionScopeId) {
     this.table = table;
     this.executionScopeId = executionScopeId;
   }

@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestSubScopeCreator extends BaseExecutorTestCase2 {
+public class TestSubScopeCreator extends BaseExecutorTestCase {
 
   @Test
   public void testSubScopeCreation() throws Exception {

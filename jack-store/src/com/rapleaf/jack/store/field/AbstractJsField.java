@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors2.ScopeUpdater;
+import com.rapleaf.jack.store.executors.ScopeUpdater;
 import com.rapleaf.jack.store.util.InsertValue;
 
 public abstract class AbstractJsField<T> implements JsField<T> {

@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,14 +16,14 @@ import com.rapleaf.jack.queries.GenericDeletion;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-abstract class BaseDeleterExecutor2<T, E extends BaseDeleterExecutor2<T, E>> extends BaseExecutor2<T> {
+abstract class BaseDeleterExecutor<T, E extends BaseDeleterExecutor<T, E>> extends BaseExecutor<T> {
 
   final Set<String> keysToDelete = Sets.newHashSet();
   boolean deleteAllKeys = false;
   boolean deleteEntireRecord = false;
   boolean allowRecursion = false;
 
-  BaseDeleterExecutor2(JsTable table, Long executionScopeId) {
+  BaseDeleterExecutor(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
   }
 

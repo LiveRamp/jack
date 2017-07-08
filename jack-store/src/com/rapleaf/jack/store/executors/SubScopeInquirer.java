@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubScopeInquirer extends BaseInquirerExecutor2<JsRecords, SubScopeInquirer> {
+public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeInquirer> {
 
   private final List<GenericConstraint> scopeConstraints = Lists.newArrayList();
   private final Map<String, List<GenericConstraint>> recordConstraints = Maps.newHashMap();

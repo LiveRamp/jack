@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestInternalScopeGetter extends BaseExecutorTestCase2 {
+public class TestInternalScopeGetter extends BaseExecutorTestCase {
   private static final Logger LOG = LoggerFactory.getLogger(TestInternalScopeGetter.class);
 
   @Test

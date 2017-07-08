@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestSubScopeInquirer extends BaseExecutorTestCase2 {
+public class TestSubScopeInquirer extends BaseExecutorTestCase {
 
   @Test
   public void testParentScopeId() throws Exception {

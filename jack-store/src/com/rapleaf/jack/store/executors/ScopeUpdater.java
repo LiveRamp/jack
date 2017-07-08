@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 
-public class ScopeUpdater extends BaseCreatorExecutor2<JsRecord, ScopeUpdater> {
+public class ScopeUpdater extends BaseCreatorExecutor<JsRecord, ScopeUpdater> {
 
   ScopeUpdater(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);

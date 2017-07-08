@@ -1,15 +1,15 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
-public class JsExecutors2 {
+public class JsExecutors {
 
   private final JsTable table;
   private final Long executionScopeId;
 
-  public JsExecutors2(JsTable table, Long executionScopeId) {
+  public JsExecutors(JsTable table, Long executionScopeId) {
     this.table = table;
     this.executionScopeId = executionScopeId;
   }

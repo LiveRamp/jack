@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class ScopeDeleter extends BaseDeleterExecutor2<Void, ScopeDeleter> {
+public class ScopeDeleter extends BaseDeleterExecutor<Void, ScopeDeleter> {
 
   ScopeDeleter(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);

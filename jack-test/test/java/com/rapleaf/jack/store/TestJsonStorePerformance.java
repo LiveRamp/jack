@@ -18,12 +18,12 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.transaction.IExecution;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class TestJsonStore2Performance extends JackTestCase {
+public class TestJsonStorePerformance extends JackTestCase {
 
   private final Random random = new Random(System.currentTimeMillis());
   private final Stopwatch stopwatch = new Stopwatch();
   private final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
-  private final JackStore2 jackStore2 = new JackStore2(JsTable.from(TestStore.TBL).create());
+  private final JackStore jackStore2 = new JackStore(JsTable.from(TestStore.TBL).create());
   private final Set<Long> scopeIds = Sets.newHashSet();
   private final Set<Long> userIds = Sets.newHashSet();
 

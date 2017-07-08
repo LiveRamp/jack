@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class SubScopeReader extends BaseInquirerExecutor2<JsRecords, SubScopeReader> {
+public class SubScopeReader extends BaseInquirerExecutor<JsRecords, SubScopeReader> {
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean skipSubScopeIdValidation = false;

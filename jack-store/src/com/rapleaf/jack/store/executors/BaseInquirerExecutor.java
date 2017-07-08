@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,11 +8,11 @@ import com.google.common.collect.Sets;
 
 import com.rapleaf.jack.store.JsTable;
 
-abstract class BaseInquirerExecutor2<T, E extends BaseInquirerExecutor2<T, E>> extends BaseExecutor2<T> {
+abstract class BaseInquirerExecutor<T, E extends BaseInquirerExecutor<T, E>> extends BaseExecutor<T> {
 
   final Set<String> selectedKeys = Sets.newHashSet();
 
-  BaseInquirerExecutor2(JsTable table, Long executionScopeId) {
+  BaseInquirerExecutor(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
   }
 

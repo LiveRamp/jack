@@ -8,12 +8,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors2.BaseExecutorTestCase2;
+import com.rapleaf.jack.store.executors.BaseExecutorTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestJsField extends BaseExecutorTestCase2 {
+public class TestJsField extends BaseExecutorTestCase {
 
   @Before
   public void prepare() throws Exception {

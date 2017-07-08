@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
-public class SubScopeUpdater extends BaseCreatorExecutor2<JsRecords, SubScopeUpdater> {
+public class SubScopeUpdater extends BaseCreatorExecutor<JsRecords, SubScopeUpdater> {
 
   private Optional<Set<Long>> subScopeIds = Optional.empty();
   private boolean allowBulkUpdate = false;

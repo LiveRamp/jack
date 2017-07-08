@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestScopeUpdater extends BaseExecutorTestCase2 {
+public class TestScopeUpdater extends BaseExecutorTestCase {
 
   @Test
   public void testInsertion() throws Exception {

@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,12 +19,12 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseCreatorExecutor2<T, E extends BaseCreatorExecutor2<T, E>> extends BaseExecutor2<T> {
+abstract class BaseCreatorExecutor<T, E extends BaseCreatorExecutor<T, E>> extends BaseExecutor<T> {
 
   final Map<String, ValueType> types;
   final Map<String, Object> values;
 
-  BaseCreatorExecutor2(JsTable table, Long executionScopeId) {
+  BaseCreatorExecutor(JsTable table, Long executionScopeId) {
     super(table, executionScopeId);
     this.types = Maps.newLinkedHashMap();
     this.values = Maps.newLinkedHashMap();

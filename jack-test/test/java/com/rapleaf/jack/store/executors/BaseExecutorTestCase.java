@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import org.junit.Before;
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.queries.Records;
-import com.rapleaf.jack.store.JackStore2;
+import com.rapleaf.jack.store.JackStore;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
@@ -25,7 +25,7 @@ import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.transaction.ITransactor;
 
-public class BaseExecutorTestCase2 extends JackTestCase {
+public class BaseExecutorTestCase extends JackTestCase {
 
   protected static final Random RANDOM = new Random(System.currentTimeMillis());
 
@@ -73,7 +73,7 @@ public class BaseExecutorTestCase2 extends JackTestCase {
 
   protected final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
   protected final JsTable table = JsTable.from(TestStore.TBL).create();
-  protected final JackStore2 jackStore2 = new JackStore2(table);
+  protected final JackStore jackStore2 = new JackStore(table);
 
   Records records;
   JsRecords jsRecords;

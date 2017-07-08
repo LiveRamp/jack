@@ -1,4 +1,4 @@
-package com.rapleaf.jack.store.executors2;
+package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -11,7 +11,7 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class SubScopeCreator extends BaseCreatorExecutor2<JsRecord, SubScopeCreator> {
+public class SubScopeCreator extends BaseCreatorExecutor<JsRecord, SubScopeCreator> {
 
   private String scopeName = null;
 
