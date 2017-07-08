@@ -12,10 +12,10 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class ScopeDeleter extends BaseDeleterExecutor<Void, ScopeDeleter> {
+public class RecordDeleter extends BaseDeleterExecutor<Void, RecordDeleter> {
 
-  ScopeDeleter(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  RecordDeleter(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
   }
 
   @Override
@@ -29,27 +29,27 @@ public class ScopeDeleter extends BaseDeleterExecutor<Void, ScopeDeleter> {
   }
 
   private void executeRecordDeletion(IDb db) throws IOException {
-    Set<Long> nestedScopeIds = InternalScopeGetter.getNestedScopeIds(db, table, Collections.singleton(executionScopeId));
-    if (!nestedScopeIds.isEmpty() && !allowRecursion) {
+    Set<Long> nestedRecordIds = InternalScopeGetter.getNestedRecordIds(db, table, Collections.singleton(executionRecordId));
+    if (!nestedRecordIds.isEmpty() && !allowRecursion) {
       throw new JackRuntimeException("There are nested scopes under the scopes to delete");
     }
-    Set<Long> scopeIdsToDelete = Sets.newHashSet(executionScopeId);
-    scopeIdsToDelete.addAll(nestedScopeIds);
-    deleteScopes(db, scopeIdsToDelete);
+    Set<Long> recordIdsToDelete = Sets.newHashSet(executionRecordId);
+    recordIdsToDelete.addAll(nestedRecordIds);
+    deleteScopes(db, recordIdsToDelete);
   }
 
   private void executeKeyDeletion(IDb db) throws IOException {
     if (deleteAllKeys) {
       db.createDeletion()
           .from(table.table)
-          .where(table.scopeColumn.equalTo(executionScopeId))
+          .where(table.scopeColumn.equalTo(executionRecordId))
           .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .execute();
     } else if (!keysToDelete.isEmpty()) {
       for (String key : keysToDelete) {
         db.createDeletion()
             .from(table.table)
-            .where(table.scopeColumn.equalTo(executionScopeId))
+            .where(table.scopeColumn.equalTo(executionRecordId))
             .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
             .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
             .execute();
@@ -58,7 +58,7 @@ public class ScopeDeleter extends BaseDeleterExecutor<Void, ScopeDeleter> {
   }
 
   @Override
-  ScopeDeleter getSelf() {
+  RecordDeleter getSelf() {
     return this;
   }
 

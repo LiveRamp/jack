@@ -35,14 +35,14 @@ final class InternalRecordCreator {
     return !types.isEmpty() || !jsonKeys.isEmpty();
   }
 
-  JsRecord createNewRecord(Long scopeId) {
+  JsRecord createNewRecord(Long recordId) {
     JsonObject jsonObject = JsonDbHelper.fromTupleList(jsonTuples);
     for (String jsonKey : jsonKeys) {
       JsonObject json = jsonObject.get(jsonKey).getAsJsonObject();
       types.put(jsonKey, ValueType.JSON_STRING);
       values.put(jsonKey, json);
     }
-    JsRecord record = new JsRecord(scopeId, types, values);
+    JsRecord record = new JsRecord(recordId, types, values);
     clear();
     return record;
   }

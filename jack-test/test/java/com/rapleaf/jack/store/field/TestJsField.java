@@ -17,7 +17,7 @@ public class TestJsField extends BaseExecutorTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactor.execute(db -> jackStore2.rootScope().deleteSubScopes().allowBulkDeletion().deleteEntireRecord(true).execute(db));
+    transactor.execute(db -> jackStore2.rootRecord().deleteSubRecords().allowBulkDeletion().deleteEntireRecord(true).execute(db));
   }
 
   @Test
@@ -45,8 +45,8 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore2.rootScope().update(), value).execute(db);
-      return jackStore2.rootScope().read().execute(db);
+      field.getPutFunction().apply(jackStore2.rootRecord().update(), value).execute(db);
+      return jackStore2.rootRecord().read().execute(db);
     });
 
     if (value instanceof DateTime) {
@@ -60,8 +60,8 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore2.rootScope().update(), value).execute(db);
-      return jackStore2.rootScope().read().execute(db);
+      field.getPutFunction().apply(jackStore2.rootRecord().update(), value).execute(db);
+      return jackStore2.rootRecord().read().execute(db);
     });
 
     if (value.get(0) instanceof DateTime) {

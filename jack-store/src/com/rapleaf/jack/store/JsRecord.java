@@ -16,25 +16,25 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public class JsRecord {
 
-  private final Long scopeId;
+  private final Long recordId;
   private final Map<String, ValueType> types;
   private final Map<String, Object> values;
 
-  public JsRecord(Long scopeId, Map<String, ValueType> types, Map<String, Object> values) {
+  public JsRecord(Long recordId, Map<String, ValueType> types, Map<String, Object> values) {
     Preconditions.checkNotNull(types);
     Preconditions.checkNotNull(values);
     Preconditions.checkArgument(types.keySet().equals(values.keySet()));
-    this.scopeId = scopeId;
+    this.recordId = recordId;
     this.types = types;
     this.values = values;
   }
 
-  public static JsRecord empty(Long scopeId) {
-    return new JsRecord(scopeId, Collections.emptyMap(), Collections.emptyMap());
+  public static JsRecord empty(Long recordId) {
+    return new JsRecord(recordId, Collections.emptyMap(), Collections.emptyMap());
   }
 
-  public Long getScopeId() {
-    return scopeId;
+  public Long getRecordId() {
+    return recordId;
   }
 
   public Set<String> keySet() {
@@ -192,7 +192,7 @@ public class JsRecord {
 
   @Override
   public int hashCode() {
-    int hashCode = Objects.hashCode(scopeId);
+    int hashCode = Objects.hashCode(recordId);
     hashCode += 19 * types.keySet().hashCode();
     hashCode += 19 * types.values().hashCode();
     hashCode += 19 * values.values().hashCode();
@@ -203,7 +203,7 @@ public class JsRecord {
   public String toString() {
     return JsRecord.class.getSimpleName() +
         "{" +
-        "scopeId: " + scopeId +
+        "recordId: " + recordId +
         ", types: " + types +
         ", values: " + values +
         "}";
@@ -220,7 +220,7 @@ public class JsRecord {
     }
 
     JsRecord that = (JsRecord)other;
-    return Objects.equals(this.scopeId, that.scopeId) &&
+    return Objects.equals(this.recordId, that.recordId) &&
         Objects.equals(this.types, that.types) &&
         Objects.equals(this.values, that.values);
   }

@@ -14,64 +14,64 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubScopeDeleter extends BaseDeleterExecutor<Void, SubScopeDeleter> {
+public class SubRecordDeleter extends BaseDeleterExecutor<Void, SubRecordDeleter> {
 
-  private Optional<Set<Long>> subScopeIds = Optional.empty();
+  private Optional<Set<Long>> subRecordIds = Optional.empty();
   private boolean allowBulkDeletion;
 
-  SubScopeDeleter(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  SubRecordDeleter(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
     this.allowBulkDeletion = false;
   }
 
-  public SubScopeDeleter whereSubScopeIds(Set<Long> subScopeIds) {
-    if (this.subScopeIds.isPresent()) {
-      this.subScopeIds.get().addAll(subScopeIds);
+  public SubRecordDeleter whereSubRecordIds(Set<Long> subRecordIds) {
+    if (this.subRecordIds.isPresent()) {
+      this.subRecordIds.get().addAll(subRecordIds);
     } else {
-      this.subScopeIds = Optional.of(Sets.newHashSet(subScopeIds));
+      this.subRecordIds = Optional.of(Sets.newHashSet(subRecordIds));
     }
     return getSelf();
   }
 
-  public SubScopeDeleter whereSubScopeIds(Long subScopeId, Long... moreSubScopeIds) {
-    if (this.subScopeIds.isPresent()) {
-      this.subScopeIds.get().add(subScopeId);
-      this.subScopeIds.get().addAll(Arrays.asList(moreSubScopeIds));
+  public SubRecordDeleter whereSubRecordIds(Long subRecordId, Long... moreSubRecordIds) {
+    if (this.subRecordIds.isPresent()) {
+      this.subRecordIds.get().add(subRecordId);
+      this.subRecordIds.get().addAll(Arrays.asList(moreSubRecordIds));
     } else {
-      Set<Long> subScopeIds = Sets.newHashSet(subScopeId);
-      subScopeIds.addAll(Arrays.asList(moreSubScopeIds));
-      this.subScopeIds = Optional.of(subScopeIds);
+      Set<Long> subRecordIds = Sets.newHashSet(subRecordId);
+      subRecordIds.addAll(Arrays.asList(moreSubRecordIds));
+      this.subRecordIds = Optional.of(subRecordIds);
     }
     return getSelf();
   }
 
-  public SubScopeDeleter allowBulkDeletion() {
+  public SubRecordDeleter allowBulkDeletion() {
     this.allowBulkDeletion = true;
     return getSelf();
   }
 
   Void internalExecute(IDb db) throws IOException {
-    if (!allowBulkDeletion && !subScopeIds.isPresent()) {
+    if (!allowBulkDeletion && !subRecordIds.isPresent()) {
       throw new BulkOperationException("Bulk deletion is disabled; either enable it or specify at least one sub scope ID");
     }
 
-    Set<Long> validSubScopeIds = InternalScopeGetter.getValidSubScopeIds(db, table, executionScopeId, subScopeIds);
+    Set<Long> validSubRecordIds = InternalScopeGetter.getValidSubRecordIds(db, table, executionRecordId, subRecordIds);
     if (deleteEntireRecord) {
-      executeRecordDeletion(db, validSubScopeIds);
+      executeRecordDeletion(db, validSubRecordIds);
     } else {
-      executeKeyDeletion(db, validSubScopeIds);
+      executeKeyDeletion(db, validSubRecordIds);
     }
     return null;
   }
 
   private void executeRecordDeletion(IDb db, Set<Long> subScopesToDelete) throws IOException {
-    Set<Long> nestedScopeIds = InternalScopeGetter.getNestedScopeIds(db, table, subScopesToDelete);
-    if (!nestedScopeIds.isEmpty() && !allowRecursion) {
+    Set<Long> nestedRecordIds = InternalScopeGetter.getNestedRecordIds(db, table, subScopesToDelete);
+    if (!nestedRecordIds.isEmpty() && !allowRecursion) {
       throw new JackRuntimeException("There are nested scopes under the scopes to delete");
     }
-    Set<Long> scopeIdsToDelete = Sets.newHashSet(subScopesToDelete);
-    scopeIdsToDelete.addAll(nestedScopeIds);
-    deleteScopes(db, scopeIdsToDelete);
+    Set<Long> recordIdsToDelete = Sets.newHashSet(subScopesToDelete);
+    recordIdsToDelete.addAll(nestedRecordIds);
+    deleteScopes(db, recordIdsToDelete);
   }
 
   private void executeKeyDeletion(IDb db, Set<Long> subScopesToDelete) throws IOException {
@@ -94,7 +94,7 @@ public class SubScopeDeleter extends BaseDeleterExecutor<Void, SubScopeDeleter> 
   }
 
   @Override
-  SubScopeDeleter getSelf() {
+  SubRecordDeleter getSelf() {
     return this;
   }
 

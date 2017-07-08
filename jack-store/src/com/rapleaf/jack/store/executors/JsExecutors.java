@@ -7,88 +7,88 @@ import com.rapleaf.jack.store.JsTable;
 public class JsExecutors {
 
   private final JsTable table;
-  private final Long executionScopeId;
+  private final Long executionRecordId;
 
-  public JsExecutors(JsTable table, Long executionScopeId) {
+  public JsExecutors(JsTable table, Long executionRecordId) {
     this.table = table;
-    this.executionScopeId = executionScopeId;
+    this.executionRecordId = executionRecordId;
   }
 
   /**
-   * Query key value pairs under the current scope.
+   * Query key value pairs under the current record.
    *
    * @return {@link JsRecord}
    */
-  public ScopeReader read() {
-    return new ScopeReader(table, executionScopeId);
+  public RecordReader read() {
+    return new RecordReader(table, executionRecordId);
   }
 
   /**
-   * Insert or update key value pairs under the current scope.
+   * Insert or update key value pairs under the current record.
    *
    * @return {@link JsRecord}
    */
-  public ScopeUpdater update() {
-    return new ScopeUpdater(table, executionScopeId);
+  public RecordUpdater update() {
+    return new RecordUpdater(table, executionRecordId);
   }
 
   /**
-   * Delete key value pairs under the current scope.
-   * Delete the current scope.
+   * Delete key value pairs under the current record.
+   * Delete the current record.
    *
    * @return {@link Void}
    */
-  public ScopeDeleter delete() {
-    return new ScopeDeleter(table, executionScopeId);
+  public RecordDeleter delete() {
+    return new RecordDeleter(table, executionRecordId);
   }
 
   /**
-   * Create a new scope under the current scope.
-   * Insert key value pairs under the new scope.
+   * Create a new record under the current record.
+   * Insert key value pairs under the new record.
    *
    * @return {@link JsRecord}
    */
-  public SubScopeCreator createSubScope() {
-    return new SubScopeCreator(table, executionScopeId);
+  public SubRecordCreator createSubRecord() {
+    return new SubRecordCreator(table, executionRecordId);
   }
 
   /**
-   * Read the sub scopes under the current scope.
-   * The result set does not include key value pairs directly under the current scope.
+   * Read the sub records under the current record.
+   * The result set does not include key value pairs directly under the current record.
    *
-   * @return {@link JsRecords} representing the fetched sub scopes
+   * @return {@link JsRecords} representing the fetched sub records
    */
-  public SubScopeReader readSubScopes() {
-    return new SubScopeReader(table, executionScopeId);
+  public SubRecordReader readSubRecords() {
+    return new SubRecordReader(table, executionRecordId);
   }
 
   /**
-   * Query the sub scopes under the current scope.
-   * The result set does not include key value pairs directly under the current scope.
+   * Query the sub records under the current record.
+   * The result set does not include key value pairs directly under the current record.
    *
-   * @return {@link JsRecords} representing the fetched sub scopes
+   * @return {@link JsRecords} representing the fetched sub records
    */
-  public SubScopeInquirer querySubScopes() {
-    return new SubScopeInquirer(table, executionScopeId);
+  public SubRecordInquirer querySubRecords() {
+    return new SubRecordInquirer(table, executionRecordId);
   }
 
   /**
-   * Insert or update key value pairs in the sub scopes under the current scope.
-   * Key value pairs directly under the current scope will not be affected.
+   * Insert or update key value pairs in the sub records under the current record.
+   * Key value pairs directly under the current record will not be affected.
    *
-   * @return {@link JsRecords} representing the updated sub scopes
+   * @return {@link JsRecords} representing the updated sub records
    */
-  public SubScopeUpdater updateSubScopes() {
-    return new SubScopeUpdater(table, executionScopeId);
+  public SubRecordUpdater updateSubRecords() {
+    return new SubRecordUpdater(table, executionRecordId);
   }
 
   /**
-   * Delete sub scopes under the current scope.
+   * Delete sub records under the current record.
    *
    * @return {@link Void}
    */
-  public SubScopeDeleter deleteSubScopes() {
-    return new SubScopeDeleter(table, executionScopeId);
+  public SubRecordDeleter deleteSubRecords() {
+    return new SubRecordDeleter(table, executionRecordId);
   }
 
 }

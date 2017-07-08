@@ -10,12 +10,12 @@ import org.junit.Test;
 import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.exceptions.InvalidScopeException;
+import com.rapleaf.jack.store.exceptions.InvalidRecordException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestSubScopeUpdater extends BaseExecutorTestCase {
+public class TestSubRecordUpdater extends BaseExecutorTestCase {
 
   private long parentScope;
   private long s1;
@@ -32,7 +32,7 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
 
   @Test
   public void testUpdateNothing() throws Exception {
-    jsRecords = transactor.queryAsTransaction(db -> jackStore2.rootScope().updateSubScopes().execute(db));
+    jsRecords = transactor.queryAsTransaction(db -> jackStore2.rootRecord().updateSubRecords().execute(db));
     assertTrue(jsRecords.isEmpty());
   }
 
@@ -40,17 +40,17 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
   public void testUpdate() throws Exception {
     // insert new value
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScope)
-            .updateSubScopes()
-            .whereSubScopeIds(s1, s2)
-            .whereSubScopeIds(Sets.newHashSet(s3))
+        jackStore2.record(parentScope)
+            .updateSubRecords()
+            .whereSubRecordIds(s1, s2)
+            .whereSubRecordIds(Sets.newHashSet(s3))
             .put(LONG_KEY, LONG_VALUE)
             .put(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE)
             .put(JSON_KEY, JSON_VALUE)
             .execute(db)
     );
     assertEquals(3, jsRecords.size());
-    assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(jsRecords.getScopeIds()));
+    assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(jsRecords.getRecordIds()));
     for (JsRecord jsRecord : jsRecords) {
       assertEquals(Sets.newHashSet(LONG_KEY, DOUBLE_LIST_KEY, JSON_KEY), jsRecord.keySet());
       assertEquals(LONG_VALUE, jsRecord.getLong(LONG_KEY).longValue());
@@ -60,10 +60,10 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
 
     // update s1 and s3
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScope)
-            .updateSubScopes()
-            .whereSubScopeIds(s1)
-            .whereSubScopeIds(Sets.newHashSet(s3))
+        jackStore2.record(parentScope)
+            .updateSubRecords()
+            .whereSubRecordIds(s1)
+            .whereSubRecordIds(Sets.newHashSet(s3))
             .put(STRING_KEY, BOOLEAN_LIST_VALUE)
             .put(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE)
             .put(JSON_KEY, STRING_VALUE)
@@ -72,7 +72,7 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
     );
 
     assertEquals(2, jsRecords.size());
-    assertEquals(Sets.newHashSet(s1, s3), Sets.newHashSet(jsRecords.getScopeIds()));
+    assertEquals(Sets.newHashSet(s1, s3), Sets.newHashSet(jsRecords.getRecordIds()));
     for (JsRecord jsRecord : jsRecords) {
       assertEquals(Sets.newHashSet(LONG_KEY, STRING_KEY, DOUBLE_LIST_KEY, JSON_KEY, INT_KEY), jsRecord.keySet());
       assertEquals(LONG_VALUE, jsRecord.getLong(LONG_KEY).longValue());
@@ -84,9 +84,9 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
 
     // s2 is not updated
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScope)
-            .readSubScopes()
-            .whereSubScopeIds(s2)
+        jackStore2.record(parentScope)
+            .readSubRecords()
+            .whereSubRecordIds(s2)
             .execute(db)
     );
     assertEquals(1, jsRecords.size());
@@ -100,8 +100,8 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
   public void testBulkUpdate() throws Exception {
     try {
       transactor.executeAsTransaction(db ->
-          jackStore2.scope(parentScope)
-              .updateSubScopes()
+          jackStore2.record(parentScope)
+              .updateSubRecords()
               .put(STRING_KEY, STRING_VALUE)
               .execute(db)
       );
@@ -110,14 +110,14 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
     }
 
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.scope(parentScope)
-            .updateSubScopes()
+        jackStore2.record(parentScope)
+            .updateSubRecords()
             .allowBulkUpdate()
             .put(STRING_KEY, STRING_VALUE)
             .execute(db)
     );
     assertEquals(3, jsRecords.size());
-    assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(jsRecords.getScopeIds()));
+    assertEquals(Sets.newHashSet(s1, s2, s3), Sets.newHashSet(jsRecords.getRecordIds()));
     assertEquals(Sets.newHashSet(STRING_VALUE), jsRecords.stream().map(r -> r.getString(STRING_KEY)).collect(Collectors.toSet()));
   }
 
@@ -125,14 +125,14 @@ public class TestSubScopeUpdater extends BaseExecutorTestCase {
   public void testInvalidSubScopes() throws Exception {
     try {
       transactor.executeAsTransaction(db -> {
-        jackStore2.scope(parentScope)
-            .updateSubScopes()
-            .whereSubScopeIds(Sets.newHashSet(100L))
+        jackStore2.record(parentScope)
+            .updateSubRecords()
+            .whereSubRecordIds(Sets.newHashSet(100L))
             .put(STRING_KEY, STRING_VALUE)
             .execute(db);
       });
     } catch (SqlExecutionFailureException e) {
-      assertTrue(e.getCause() instanceof InvalidScopeException);
+      assertTrue(e.getCause() instanceof InvalidRecordException);
     }
   }
 

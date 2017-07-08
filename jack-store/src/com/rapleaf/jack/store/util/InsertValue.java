@@ -1,10 +1,10 @@
 package com.rapleaf.jack.store.util;
 
-import com.rapleaf.jack.store.executors.ScopeUpdater;
+import com.rapleaf.jack.store.executors.RecordUpdater;
 
 @FunctionalInterface
 public interface InsertValue<T> {
 
-  ScopeUpdater apply(ScopeUpdater executor, String key, T value);
+  RecordUpdater apply(RecordUpdater executor, String key, T value);
 
 }

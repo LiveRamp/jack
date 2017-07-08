@@ -10,12 +10,12 @@ public class JackStore {
     this.table = table;
   }
 
-  public JsExecutors scope(Long scopeId) {
-    return new JsExecutors(table, scopeId);
+  public JsExecutors record(Long recordId) {
+    return new JsExecutors(table, recordId);
   }
 
-  public JsExecutors rootScope() {
-    return scope(JsConstants.ROOT_SCOPE_ID);
+  public JsExecutors rootRecord() {
+    return record(JsConstants.ROOT_RECORD_ID);
   }
 
 }

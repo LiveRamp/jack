@@ -13,7 +13,7 @@ import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestSubScopeCreator extends BaseExecutorTestCase {
+public class TestSubRecordCreator extends BaseExecutorTestCase {
 
   @Test
   public void testSubScopeCreation() throws Exception {
@@ -24,14 +24,14 @@ public class TestSubScopeCreator extends BaseExecutorTestCase {
     final JsRecord[] jsRecords = new JsRecord[size];
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        String name = "scope" + i;
+        String name = "record" + i;
         long value = RANDOM.nextLong();
         names.add(name);
         values.add(value);
 
-        jsRecords[i] = jackStore2.rootScope()
-            .createSubScope()
-            .scopeName(name)
+        jsRecords[i] = jackStore2.rootRecord()
+            .createSubRecord()
+            .recordName(name)
             .put(LONG_KEY, value)
             .execute(db);
       }
@@ -48,8 +48,8 @@ public class TestSubScopeCreator extends BaseExecutorTestCase {
     for (int i = 0; i < size; ++i) {
       Record record = scopeRecords.get(i);
       JsRecord scope = jsRecords[i];
-      assertEquals(scope.getScopeId(), record.get(TestStore.ID));
-      // TODO: get name from scope
+      assertEquals(scope.getRecordId(), record.get(TestStore.ID));
+      // TODO: get name from record
       assertEquals(names.get(i), record.get(TestStore.VALUE));
     }
 

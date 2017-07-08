@@ -11,15 +11,15 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class SubScopeCreator extends BaseCreatorExecutor<JsRecord, SubScopeCreator> {
+public class SubRecordCreator extends BaseCreatorExecutor<JsRecord, SubRecordCreator> {
 
   private String scopeName = null;
 
-  SubScopeCreator(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  SubRecordCreator(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
   }
 
-  public SubScopeCreator scopeName(String name) {
+  public SubRecordCreator recordName(String name) {
     Preconditions.checkArgument(name != null && !name.isEmpty(), "Scope name cannot be null or empty");
     this.scopeName = name;
     return this;
@@ -27,11 +27,11 @@ public class SubScopeCreator extends BaseCreatorExecutor<JsRecord, SubScopeCreat
 
   @Override
   JsRecord internalExecute(IDb db) throws IOException {
-    Long scopeId = createNewScope(db);
+    Long recordId = createNewScope(db);
     if (!types.isEmpty()) {
-      insertNewEntries(db, scopeId);
+      insertNewEntries(db, recordId);
     }
-    return new JsRecord(scopeId, types, values);
+    return new JsRecord(recordId, types, values);
   }
 
   private Long createNewScope(IDb db) throws IOException {
@@ -40,7 +40,7 @@ public class SubScopeCreator extends BaseCreatorExecutor<JsRecord, SubScopeCreat
     }
     return db.createInsertion()
         .into(table.table)
-        .set(table.scopeColumn, executionScopeId)
+        .set(table.scopeColumn, executionRecordId)
         .set(table.keyColumn, JsConstants.SCOPE_KEY)
         .set(table.typeColumn, ValueType.SCOPE.value)
         .set(table.valueColumn, scopeName)
@@ -49,7 +49,7 @@ public class SubScopeCreator extends BaseCreatorExecutor<JsRecord, SubScopeCreat
   }
 
   @Override
-  SubScopeCreator getSelf() {
+  SubRecordCreator getSelf() {
     return this;
   }
 

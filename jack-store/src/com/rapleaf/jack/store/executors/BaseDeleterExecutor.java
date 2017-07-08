@@ -23,8 +23,8 @@ abstract class BaseDeleterExecutor<T, E extends BaseDeleterExecutor<T, E>> exten
   boolean deleteEntireRecord = false;
   boolean allowRecursion = false;
 
-  BaseDeleterExecutor(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  BaseDeleterExecutor(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
   }
 
   abstract E getSelf();
@@ -56,28 +56,28 @@ abstract class BaseDeleterExecutor<T, E extends BaseDeleterExecutor<T, E>> exten
     return getSelf();
   }
 
-  void deleteScopes(IDb db, Set<Long> scopeIds) throws IOException {
-    Set<Long> nonNullScopeIds = scopeIds.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+  void deleteScopes(IDb db, Set<Long> recordIds) throws IOException {
+    Set<Long> nonNullRecordIds = recordIds.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
     // delete records
     GenericDeletion recordDeletion = db.createDeletion().from(table.table);
-    if (scopeIds.contains(null)) {
-      recordDeletion.where(table.scopeColumn.in(nonNullScopeIds).or(table.scopeColumn.isNull()));
+    if (recordIds.contains(null)) {
+      recordDeletion.where(table.scopeColumn.in(nonNullRecordIds).or(table.scopeColumn.isNull()));
     } else {
-      recordDeletion.where(table.scopeColumn.in(scopeIds));
+      recordDeletion.where(table.scopeColumn.in(recordIds));
     }
     recordDeletion.where(table.typeColumn.notEqualTo(ValueType.SCOPE.value)).execute();
 
     // delete scopes
     GenericDeletion scopeDeletion = db.createDeletion().from(table.table);
-    if (scopeIds.contains(null)) {
-      scopeDeletion.where(table.idColumn.in(nonNullScopeIds).or(table.idColumn.isNull()));
+    if (recordIds.contains(null)) {
+      scopeDeletion.where(table.idColumn.in(nonNullRecordIds).or(table.idColumn.isNull()));
     } else {
-      scopeDeletion.where(table.idColumn.in(scopeIds));
+      scopeDeletion.where(table.idColumn.in(recordIds));
     }
     Deletions deletionResult = scopeDeletion.where(table.typeColumn.equalTo(ValueType.SCOPE.value)).execute();
 
-    long expectedDeleteCount = scopeIds.contains(null) ? scopeIds.size() - 1 : scopeIds.size();
+    long expectedDeleteCount = recordIds.contains(null) ? recordIds.size() - 1 : recordIds.size();
     Preconditions.checkState(
         deletionResult.getDeletedRowCount() == expectedDeleteCount,
         "Expect to delete %s scopes, but %s scopes are affected",

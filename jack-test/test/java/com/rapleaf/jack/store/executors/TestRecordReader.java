@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestScopeReader extends BaseExecutorTestCase {
+public class TestRecordReader extends BaseExecutorTestCase {
 
   @Test
   public void testScopeReader() throws Exception {
@@ -46,22 +46,22 @@ public class TestScopeReader extends BaseExecutorTestCase {
   }
 
   private void createAndReadValue(String key, ValueType type, Object value, boolean nullValue) throws Exception {
-    String scopeName = "new scope";
-    long scopeId = createSubScope(Optional.empty(), Optional.of(scopeName));
+    String recordName = "new record";
+    long recordId = createSubScope(Optional.empty(), Optional.of(recordName));
 
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, scopeId)
+          .set(TestStore.SCOPE, recordId)
           .set(TestStore.TYPE, type.value)
           .set(TestStore.KEY, key)
           .set(TestStore.VALUE, nullValue ? null : value.toString())
           .execute();
       // read back new record
-      return jackStore2.scope(scopeId).read().execute(db);
+      return jackStore2.record(recordId).read().execute(db);
     });
 
-    assertEquals(scopeId, record.getScopeId().longValue());
+    assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertNull(record.get(key));
     } else if (value instanceof DateTime) {
@@ -73,22 +73,22 @@ public class TestScopeReader extends BaseExecutorTestCase {
 
   @SuppressWarnings("unchecked")
   private void createAndReadList(String key, ValueType type, List values, boolean nullValue) throws Exception {
-    String scopeName = "new scope";
-    long scopeId = createSubScope(Optional.empty(), Optional.of(scopeName));
+    String recordName = "new record";
+    long recordId = createSubScope(Optional.empty(), Optional.of(recordName));
 
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new list record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, Collections.nCopies(values.size(), scopeId))
+          .set(TestStore.SCOPE, Collections.nCopies(values.size(), recordId))
           .set(TestStore.TYPE, Collections.nCopies(values.size(), type.value))
           .set(TestStore.KEY, Collections.nCopies(values.size(), key))
           .set(TestStore.VALUE, nullValue ? Collections.nCopies(values.size(), null) : ((List<Object>)values).stream().map(Object::toString).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.scope(scopeId).read().execute(db);
+      return jackStore2.record(recordId).read().execute(db);
     });
 
-    assertEquals(scopeId, record.getScopeId().longValue());
+    assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertTrue(record.getList(key).isEmpty());
     } else if (values.get(0) instanceof DateTime) {
@@ -114,7 +114,7 @@ public class TestScopeReader extends BaseExecutorTestCase {
           .set(TestStore.VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.rootScope().read().execute(db);
+      return jackStore2.rootRecord().read().execute(db);
     });
 
     assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
@@ -134,7 +134,7 @@ public class TestScopeReader extends BaseExecutorTestCase {
           .set(TestStore.VALUE, STRING_VALUE, String.valueOf(LONG_VALUE), String.valueOf(BOOLEAN_VALUE))
           .execute();
       // read back new record
-      return jackStore2.rootScope().read()
+      return jackStore2.rootRecord().read()
           .selectKey(selectedKeys.get(0))
           .selectKey(Collections.singleton(selectedKeys.get(1)))
           .execute(db);

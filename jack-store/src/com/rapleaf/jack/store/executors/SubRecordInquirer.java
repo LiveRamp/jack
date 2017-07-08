@@ -22,28 +22,28 @@ import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 
-public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeInquirer> {
+public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, SubRecordInquirer> {
 
   private final List<GenericConstraint> scopeConstraints = Lists.newArrayList();
   private final Map<String, List<GenericConstraint>> recordConstraints = Maps.newHashMap();
   private final JsTable scope; // alias of table used specifically for scope query and self join
 
-  SubScopeInquirer(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  SubRecordInquirer(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
     this.scope = table.as("scope");
   }
 
-  public SubScopeInquirer whereSubScopeId(IWhereOperator<Long> scopeIdConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(scope.idColumn, scopeIdConstraint));
+  public SubRecordInquirer whereSubRecordId(IWhereOperator<Long> recordIdConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(scope.idColumn, recordIdConstraint));
     return this;
   }
 
-  public SubScopeInquirer whereSubScopeName(IWhereOperator<String> scopeNameConstraint) {
+  public SubRecordInquirer whereSubScopeName(IWhereOperator<String> scopeNameConstraint) {
     this.scopeConstraints.add(new GenericConstraint<>(scope.valueColumn, scopeNameConstraint));
     return this;
   }
 
-  public SubScopeInquirer whereSubRecord(String key, IWhereOperator<String> valueConstraint) {
+  public SubRecordInquirer whereSubRecord(String key, IWhereOperator<String> valueConstraint) {
     GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
@@ -65,11 +65,11 @@ public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeIn
 
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
-    Set<Long> validSubScopeIds = getSubScopeIds(db);
-    return new SubScopeReader(table, executionScopeId, validSubScopeIds).internalExecute(db);
+    Set<Long> validSubRecordIds = getSubRecordIds(db);
+    return new SubRecordReader(table, executionRecordId, validSubRecordIds).internalExecute(db);
   }
 
-  private Set<Long> getSubScopeIds(IDb db) throws IOException {
+  private Set<Long> getSubRecordIds(IDb db) throws IOException {
     if (recordConstraints.isEmpty()) {
       return querySubScopesByScopeConstraints(db);
     } else {
@@ -80,7 +80,7 @@ public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeIn
   private Set<Long> querySubScopesByScopeConstraints(IDb db) throws IOException {
     GenericQuery query = db.createQuery()
         .from(scope.table)
-        .where(scope.scopeColumn.equalTo(executionScopeId))
+        .where(scope.scopeColumn.equalTo(executionRecordId))
         .where(scope.typeColumn.equalTo(ValueType.SCOPE.value))
         .where(scope.keyColumn.equalTo(JsConstants.SCOPE_KEY))
         .select(scope.idColumn);
@@ -93,9 +93,9 @@ public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeIn
   }
 
   private Set<Long> querySubScopesByRecordConstraints(IDb db) throws IOException {
-    Set<Long> scopeIds = null;
+    Set<Long> recordIds = null;
     for (Map.Entry<String, List<GenericConstraint>> entry : recordConstraints.entrySet()) {
-      if (scopeIds != null && scopeIds.isEmpty()) {
+      if (recordIds != null && recordIds.isEmpty()) {
         return Collections.emptySet();
       }
 
@@ -107,8 +107,8 @@ public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeIn
           .select(table.scopeColumn);
 
       // scope constraints
-      if (scopeIds != null) {
-        query.where(table.scopeColumn.in(scopeIds));
+      if (recordIds != null) {
+        query.where(table.scopeColumn.in(recordIds));
       }
       for (GenericConstraint constraint : scopeConstraints) {
         query.where(constraint);
@@ -128,14 +128,14 @@ public class SubScopeInquirer extends BaseInquirerExecutor<JsRecords, SubScopeIn
         query.where(constraint);
       }
 
-      scopeIds = Sets.newHashSet(query.fetch().gets(table.scopeColumn));
+      recordIds = Sets.newHashSet(query.fetch().gets(table.scopeColumn));
     }
 
-    return scopeIds;
+    return recordIds;
   }
 
   @Override
-  SubScopeInquirer getSelf() {
+  SubRecordInquirer getSelf() {
     return this;
   }
 

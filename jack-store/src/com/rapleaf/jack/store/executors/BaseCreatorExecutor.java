@@ -24,8 +24,8 @@ abstract class BaseCreatorExecutor<T, E extends BaseCreatorExecutor<T, E>> exten
   final Map<String, ValueType> types;
   final Map<String, Object> values;
 
-  BaseCreatorExecutor(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  BaseCreatorExecutor(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
     this.types = Maps.newLinkedHashMap();
     this.values = Maps.newLinkedHashMap();
   }
@@ -174,18 +174,18 @@ abstract class BaseCreatorExecutor<T, E extends BaseCreatorExecutor<T, E>> exten
     }
   }
 
-  void deleteExistingEntries(IDb db, Long scopeId) throws IOException {
+  void deleteExistingEntries(IDb db, Long recordId) throws IOException {
     for (String key : types.keySet()) {
       db.createDeletion()
           .from(table.table)
-          .where(table.scopeColumn.equalTo(scopeId))
+          .where(table.scopeColumn.equalTo(recordId))
           .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
           .execute();
     }
   }
 
-  void insertNewEntries(IDb db, Long scopeId) throws IOException {
+  void insertNewEntries(IDb db, Long recordId) throws IOException {
     List<Integer> typesToInsert = Lists.newLinkedList();
     List<String> keysToInsert = Lists.newLinkedList();
     List<String> valuesToInsert = Lists.newLinkedList();
@@ -221,7 +221,7 @@ abstract class BaseCreatorExecutor<T, E extends BaseCreatorExecutor<T, E>> exten
 
     db.createInsertion()
         .into(table.table)
-        .set(table.scopeColumn, Collections.nCopies(typesToInsert.size(), scopeId))
+        .set(table.scopeColumn, Collections.nCopies(typesToInsert.size(), recordId))
         .set(table.typeColumn, typesToInsert)
         .set(table.keyColumn, keysToInsert)
         .set(table.valueColumn, valuesToInsert)

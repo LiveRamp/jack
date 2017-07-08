@@ -9,10 +9,10 @@ public class TestJsRecord {
 
   @Test
   public void testEmptyRecord() throws Exception {
-    long scopeId = 51L;
-    JsRecord emptyRecord = JsRecord.empty(scopeId);
+    long recordId = 51L;
+    JsRecord emptyRecord = JsRecord.empty(recordId);
     assertTrue(emptyRecord.isEmpty());
-    assertEquals(scopeId, emptyRecord.getScopeId().longValue());
+    assertEquals(recordId, emptyRecord.getRecordId().longValue());
   }
 
 }

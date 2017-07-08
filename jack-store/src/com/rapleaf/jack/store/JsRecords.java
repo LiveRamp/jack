@@ -11,20 +11,20 @@ import com.google.common.base.Preconditions;
 
 public class JsRecords implements Iterable<JsRecord> {
 
-  private final Long parentScopeId;
+  private final Long parentRecordId;
   private final List<JsRecord> jsRecords;
 
-  public JsRecords(Long parentScopeId, List<JsRecord> jsRecords) {
-    this.parentScopeId = parentScopeId;
+  public JsRecords(Long parentRecordId, List<JsRecord> jsRecords) {
+    this.parentRecordId = parentRecordId;
     this.jsRecords = jsRecords;
   }
 
-  public static JsRecords empty(Long parentScopeId) {
-    return new JsRecords(parentScopeId, Collections.emptyList());
+  public static JsRecords empty(Long parentRecordId) {
+    return new JsRecords(parentRecordId, Collections.emptyList());
   }
 
-  public Long getParentScopeId() {
-    return parentScopeId;
+  public Long getParentRecordId() {
+    return parentRecordId;
   }
 
   @Override
@@ -32,8 +32,8 @@ public class JsRecords implements Iterable<JsRecord> {
     return jsRecords.iterator();
   }
 
-  public List<Long> getScopeIds() {
-    return jsRecords.stream().map(JsRecord::getScopeId).collect(Collectors.toList());
+  public List<Long> getRecordIds() {
+    return jsRecords.stream().map(JsRecord::getRecordId).collect(Collectors.toList());
   }
 
   public List<JsRecord> getRecords() {

@@ -15,21 +15,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestScopeDeleter extends BaseExecutorTestCase {
+public class TestRecordDeleter extends BaseExecutorTestCase {
 
   @Test
   public void testDeleteKey() throws Exception {
-    // test deletion under root scope
-    createRecordAndTest(JsConstants.ROOT_SCOPE_ID);
+    // test deletion under root record
+    createRecordAndTest(JsConstants.ROOT_RECORD_ID);
 
-    // test deletion under custom scope
+    // test deletion under custom record
     createRecordAndTest(createSubScope(Optional.empty(), Optional.empty()));
   }
 
-  private void createRecordAndTest(Long scopeId) throws Exception {
+  private void createRecordAndTest(Long recordId) throws Exception {
     // create a record
     JsRecord record = transactor.queryAsTransaction(db ->
-        jackStore2.scope(scopeId).update()
+        jackStore2.record(recordId).update()
             .put(LONG_KEY, LONG_VALUE)
             .put(DOUBLE_KEY, DOUBLE_VALUE)
             .put(STRING_LIST_KEY, STRING_LIST_VALUE)
@@ -41,11 +41,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete primitive value key
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteKey(LONG_KEY)
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -53,11 +53,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete list key
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteKey(Collections.singleton(STRING_LIST_KEY))
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -65,11 +65,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete json key
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteKey(JSON_KEY)
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -77,11 +77,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete non-existing key
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteKey(LONG_KEY, STRING_LIST_KEY, JSON_KEY)
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -89,11 +89,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete all keys
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteAllKeys()
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -101,11 +101,11 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete non-existing key in empty record
     record = transactor.queryAsTransaction(db -> {
-      jackStore2.scope(scopeId)
+      jackStore2.record(recordId)
           .delete()
           .deleteKey(STRING_KEY)
           .execute(db);
-      return jackStore2.scope(scopeId)
+      return jackStore2.record(recordId)
           .read()
           .execute(db);
     });
@@ -119,36 +119,36 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
      * root ─── n1 ─── n2 ─── n3
      */
     JsRecord rootRecord = transactor.queryAsTransaction(db ->
-        jackStore2.rootScope().update()
+        jackStore2.rootRecord().update()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db)
     );
 
     long n1 = transactor.queryAsTransaction(db ->
-        jackStore2.rootScope().createSubScope()
+        jackStore2.rootRecord().createSubRecord()
             .put(DOUBLE_KEY, DOUBLE_VALUE)
             .execute(db)
-            .getScopeId()
+            .getRecordId()
     );
 
     long n2 = transactor.queryAsTransaction(db ->
-        jackStore2.scope(n1).createSubScope()
+        jackStore2.record(n1).createSubRecord()
             .put(BOOLEAN_KEY, BOOLEAN_VALUE)
             .execute(db)
-            .getScopeId()
+            .getRecordId()
     );
 
     long n3 = transactor.queryAsTransaction(db ->
-        jackStore2.scope(n2).createSubScope()
+        jackStore2.record(n2).createSubRecord()
             .put(BOOLEAN_KEY, BOOLEAN_VALUE)
             .execute(db)
-            .getScopeId()
+            .getRecordId()
     );
 
     // delete n2 without recursion will fail
     try {
       transactor.executeAsTransaction(db ->
-          jackStore2.scope(n2).delete()
+          jackStore2.record(n2).delete()
               .deleteEntireRecord()
               .execute(db)
       );
@@ -159,7 +159,7 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete n2 with recursion will succeed
     transactor.queryAsTransaction(db ->
-        jackStore2.scope(n2).delete()
+        jackStore2.record(n2).delete()
             .deleteEntireRecord(true)
             .execute(db)
     );
@@ -167,7 +167,7 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
     // delete root without recursion will fail
     try {
       transactor.executeAsTransaction(db ->
-          jackStore2.rootScope().delete()
+          jackStore2.rootRecord().delete()
               .deleteEntireRecord()
               .execute(db)
       );
@@ -178,7 +178,7 @@ public class TestScopeDeleter extends BaseExecutorTestCase {
 
     // delete root with recursion will succeed
     transactor.queryAsTransaction(db ->
-        jackStore2.rootScope().delete()
+        jackStore2.rootRecord().delete()
             .deleteEntireRecord(true)
             .execute(db)
     );

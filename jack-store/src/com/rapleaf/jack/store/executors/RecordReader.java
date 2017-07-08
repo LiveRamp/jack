@@ -8,16 +8,16 @@ import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 
-public class ScopeReader extends BaseInquirerExecutor<JsRecord, ScopeReader> {
+public class RecordReader extends BaseInquirerExecutor<JsRecord, RecordReader> {
 
-  ScopeReader(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  RecordReader(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
   }
 
   @Override
   JsRecord internalExecute(IDb db) throws IOException {
     Records records = db.createQuery().from(table.table)
-        .where(table.scopeColumn.equalTo(executionScopeId))
+        .where(table.scopeColumn.equalTo(executionRecordId))
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .select(table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.keyColumn)
@@ -25,11 +25,11 @@ public class ScopeReader extends BaseInquirerExecutor<JsRecord, ScopeReader> {
 
     InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);
     records.stream().forEach(recordCreator::appendRecord);
-    return recordCreator.createNewRecord(executionScopeId);
+    return recordCreator.createNewRecord(executionRecordId);
   }
 
   @Override
-  ScopeReader getSelf() {
+  RecordReader getSelf() {
     return this;
   }
 

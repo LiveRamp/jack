@@ -15,7 +15,7 @@ import com.rapleaf.jack.queries.GenericQuery;
 import com.rapleaf.jack.store.JsConstants;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
-import com.rapleaf.jack.store.exceptions.InvalidScopeException;
+import com.rapleaf.jack.store.exceptions.InvalidRecordException;
 
 final class InternalScopeGetter {
 
@@ -23,30 +23,30 @@ final class InternalScopeGetter {
   }
 
   /**
-   * - When subScopeIds is not present, get all sub scope IDs under execution scope;
-   * - When subScopeIds is present:
-   * 1) When subScopeIds is empty, return empty set
-   * 2) When subScopeIds is not empty, validate sub scope IDs
+   * - When subRecordIds is not present, get all sub scope IDs under execution scope;
+   * - When subRecordIds is present:
+   * 1) When subRecordIds is empty, return empty set
+   * 2) When subRecordIds is not empty, validate sub scope IDs
    */
-  static Set<Long> getValidSubScopeIds(IDb db, JsTable table, Long executionScopeId, Optional<Set<Long>> subScopeIds) throws IOException {
-    Set<Long> validSubScopeIds;
-    if (subScopeIds.isPresent()) {
-      if (subScopeIds.get().isEmpty()) {
+  static Set<Long> getValidSubRecordIds(IDb db, JsTable table, Long executionRecordId, Optional<Set<Long>> subRecordIds) throws IOException {
+    Set<Long> validSubRecordIds;
+    if (subRecordIds.isPresent()) {
+      if (subRecordIds.get().isEmpty()) {
         return Collections.emptySet();
       }
-      validateSubScopeIds(db, table, executionScopeId, subScopeIds.get());
-      validSubScopeIds = subScopeIds.get();
+      validateSubRecordIds(db, table, executionRecordId, subRecordIds.get());
+      validSubRecordIds = subRecordIds.get();
     } else {
-      validSubScopeIds = getAllSubScopeIds(db, table, executionScopeId);
+      validSubRecordIds = getAllSubRecordIds(db, table, executionRecordId);
     }
 
-    return validSubScopeIds;
+    return validSubRecordIds;
   }
 
-  static Set<Long> getAllSubScopeIds(IDb db, JsTable table, Long executionScopeId) throws IOException {
+  static Set<Long> getAllSubRecordIds(IDb db, JsTable table, Long executionRecordId) throws IOException {
     return Sets.newHashSet(
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.equalTo(executionScopeId))
+            .where(table.scopeColumn.equalTo(executionRecordId))
             .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
             .select(table.idColumn)
             .fetch()
@@ -54,28 +54,28 @@ final class InternalScopeGetter {
     );
   }
 
-  static void validateSubScopeIds(IDb db, JsTable table, Long executionScopeId, Set<Long> subScopeIds) throws IOException {
-    Set<Long> validSubScopeIds = Sets.newHashSet(
+  static void validateSubRecordIds(IDb db, JsTable table, Long executionRecordId, Set<Long> subRecordIds) throws IOException {
+    Set<Long> validSubRecordIds = Sets.newHashSet(
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.equalTo(executionScopeId))
+            .where(table.scopeColumn.equalTo(executionRecordId))
             .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
-            .where(table.idColumn.in(subScopeIds))
+            .where(table.idColumn.in(subRecordIds))
             .select(table.idColumn)
             .fetch()
             .gets(table.idColumn)
     );
-    if (!validSubScopeIds.equals(subScopeIds)) {
-      throw new InvalidScopeException(String.format(
+    if (!validSubRecordIds.equals(subRecordIds)) {
+      throw new InvalidRecordException(String.format(
           "Sub scopes %s does not exist under scope %s; either ignore invalid sub scopes or provide valid sub scope IDs",
-          Joiner.on(", ").join(Sets.difference(subScopeIds, validSubScopeIds)), executionScopeId == null ? JsConstants.ROOT_SCOPE_NAME : executionScopeId
+          Joiner.on(", ").join(Sets.difference(subRecordIds, validSubRecordIds)), executionRecordId == null ? JsConstants.ROOT_RECORD_NAME : executionRecordId
       ));
     }
   }
 
-  static Set<Long> getNestedScopeIds(IDb db, JsTable table, Set<Long> scopeIds) throws IOException {
-    Set<Long> allNestedScopeIds = Sets.newHashSet();
+  static Set<Long> getNestedRecordIds(IDb db, JsTable table, Set<Long> recordIds) throws IOException {
+    Set<Long> allNestedRecordIds = Sets.newHashSet();
 
-    Set<Long> ids = Sets.newHashSet(scopeIds);
+    Set<Long> ids = Sets.newHashSet(recordIds);
     Set<Long> nestedIds;
     while (!ids.isEmpty()) {
       GenericQuery query = db.createQuery().from(table.table);
@@ -91,11 +91,11 @@ final class InternalScopeGetter {
               .fetch()
               .gets(table.idColumn)
       );
-      allNestedScopeIds.addAll(nestedIds);
+      allNestedRecordIds.addAll(nestedIds);
       ids = nestedIds;
     }
 
-    return allNestedScopeIds;
+    return allNestedRecordIds;
   }
 
 }

@@ -12,8 +12,8 @@ abstract class BaseInquirerExecutor<T, E extends BaseInquirerExecutor<T, E>> ext
 
   final Set<String> selectedKeys = Sets.newHashSet();
 
-  BaseInquirerExecutor(JsTable table, Long executionScopeId) {
-    super(table, executionScopeId);
+  BaseInquirerExecutor(JsTable table, Long executionRecordId) {
+    super(table, executionRecordId);
   }
 
   abstract E getSelf();
