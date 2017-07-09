@@ -38,8 +38,8 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
     return this;
   }
 
-  public SubRecordInquirer whereSubScopeName(IWhereOperator<String> scopeNameConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(scope.valueColumn, scopeNameConstraint));
+  public SubRecordInquirer whereSubRecordName(IWhereOperator<String> recordNameConstraint) {
+    this.scopeConstraints.add(new GenericConstraint<>(scope.valueColumn, recordNameConstraint));
     return this;
   }
 
@@ -72,13 +72,13 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
   @Override
   Set<Long> internalExec(IDb db) throws IOException {
     if (recordConstraints.isEmpty()) {
-      return querySubScopesByScopeConstraints(db);
+      return querySubRecordsByScopeConstraints(db);
     } else {
-      return querySubScopesByRecordConstraints(db);
+      return querySubRecordsByRecordConstraints(db);
     }
   }
 
-  private Set<Long> querySubScopesByScopeConstraints(IDb db) throws IOException {
+  private Set<Long> querySubRecordsByScopeConstraints(IDb db) throws IOException {
     GenericQuery query = db.createQuery()
         .from(scope.table)
         .where(scope.scopeColumn.equalTo(executionRecordId))
@@ -93,7 +93,7 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
     return Sets.newHashSet(query.fetch().gets(scope.idColumn));
   }
 
-  private Set<Long> querySubScopesByRecordConstraints(IDb db) throws IOException {
+  private Set<Long> querySubRecordsByRecordConstraints(IDb db) throws IOException {
     Set<Long> recordIds = null;
     for (Map.Entry<String, List<GenericConstraint>> entry : recordConstraints.entrySet()) {
       if (recordIds != null && recordIds.isEmpty()) {

@@ -63,7 +63,7 @@ public class TestSubRecordInquirer extends BaseExecutorTestCase {
     jsRecords = transactor.query(db ->
         jackStore2.rootRecord()
             .querySubRecords()
-            .whereSubScopeName(JackMatchers.greaterThan("2"))
+            .whereSubRecordName(JackMatchers.greaterThan("2"))
             .execute(db)
     );
     assertEquals(1, jsRecords.size());
@@ -71,7 +71,7 @@ public class TestSubRecordInquirer extends BaseExecutorTestCase {
 
     jsRecords = transactor.query(db ->
         jackStore2.rootRecord().querySubRecords()
-            .whereSubScopeName(JackMatchers.greaterThanOrEqualTo("2"))
+            .whereSubRecordName(JackMatchers.greaterThanOrEqualTo("2"))
             .execute(db)
     );
     assertEquals(2, jsRecords.size());
@@ -79,14 +79,14 @@ public class TestSubRecordInquirer extends BaseExecutorTestCase {
 
     jsRecords = transactor.query(db ->
         jackStore2.rootRecord().querySubRecords()
-            .whereSubScopeName(JackMatchers.isNull())
+            .whereSubRecordName(JackMatchers.isNull())
             .execute(db)
     );
     assertTrue(jsRecords.isEmpty());
 
     jsRecords = transactor.query(db ->
         jackStore2.rootRecord().querySubRecords()
-            .whereSubScopeName(JackMatchers.equalTo("2"))
+            .whereSubRecordName(JackMatchers.equalTo("2"))
             .execute(db)
     );
     assertEquals(s2, jsRecords.getRecordIds().get(0).longValue());
