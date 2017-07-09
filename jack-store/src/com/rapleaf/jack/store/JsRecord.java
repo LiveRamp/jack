@@ -13,8 +13,9 @@ import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 
 import com.rapleaf.jack.exception.JackRuntimeException;
+import com.rapleaf.jack.store.iface.ValueContainer;
 
-public class JsRecord {
+public class JsRecord implements ValueContainer<JsRecord> {
 
   private final Long recordId;
   private final Map<String, ValueType> types;
@@ -45,6 +46,7 @@ public class JsRecord {
     return types.isEmpty();
   }
 
+  @Override
   public Object get(String key) {
     checkKey(key);
 
@@ -70,41 +72,49 @@ public class JsRecord {
     }
   }
 
+  @Override
   public Boolean getBoolean(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.BOOLEAN, Boolean::valueOf);
   }
 
+  @Override
   public Integer getInt(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.INT, Integer::valueOf);
   }
 
+  @Override
   public Long getLong(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.LONG, Long::valueOf);
   }
 
+  @Override
   public Double getDouble(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.DOUBLE, Double::valueOf);
   }
 
+  @Override
   public DateTime getDateTime(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.DATETIME, DateTime::parse);
   }
 
+  @Override
   public String getString(String key) {
     checkKey(key);
     return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
   }
 
+  @Override
   public JsonObject getJson(String key) {
     checkKey(key);
     return checkAndGetJson(key);
   }
 
+  @Override
   public List getList(String key) {
     checkKey(key);
 
@@ -129,31 +139,37 @@ public class JsRecord {
     }
   }
 
+  @Override
   public List<Boolean> getBooleanList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.BOOLEAN_LIST, Boolean::valueOf);
   }
 
+  @Override
   public List<Integer> getIntList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.INT_LIST, Integer::valueOf);
   }
 
+  @Override
   public List<Long> getLongList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.LONG_LIST, Long::valueOf);
   }
 
+  @Override
   public List<Double> getDoubleList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.DOUBLE_LIST, Double::valueOf);
   }
 
+  @Override
   public List<DateTime> getDateTimeList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.DATETIME_LIST, DateTime::parse);
   }
 
+  @Override
   public List<String> getStringList(String key) {
     checkKey(key);
     return checkTypeAndGetList(key, ValueType.STRING_LIST, Function.identity());

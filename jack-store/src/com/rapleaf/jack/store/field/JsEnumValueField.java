@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.util.InsertValue;
+import com.rapleaf.jack.store.iface.InsertValue;
 
 /**
  * Convert enum to value using {@link Function} Enum -> Integer

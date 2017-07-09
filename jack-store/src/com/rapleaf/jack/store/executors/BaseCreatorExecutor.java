@@ -14,12 +14,13 @@ import org.joda.time.DateTime;
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
+import com.rapleaf.jack.store.iface.ValueIndexer;
 import com.rapleaf.jack.store.json.ElementPath;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL, E>> extends BaseExecutor<TF, TL> {
+abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL, E>> extends BaseExecutor<TF, TL> implements ValueIndexer<E> {
 
   final Map<String, ValueType> types;
   final Map<String, Object> values;
@@ -32,6 +33,7 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
 
   abstract E getSelf();
 
+  @Override
   public E put(String key, Object value) {
     Preconditions.checkNotNull(value, "Value cannot be null when using the put(String, Object) method");
     if (value instanceof Boolean) {
@@ -61,42 +63,49 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     throw new IllegalArgumentException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
+  @Override
   public E putBoolean(String key, Boolean value) {
     types.put(key, ValueType.BOOLEAN);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putInt(String key, Integer value) {
     types.put(key, ValueType.INT);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putLong(String key, Long value) {
     types.put(key, ValueType.LONG);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putDouble(String key, Double value) {
     types.put(key, ValueType.DOUBLE);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putDateTime(String key, DateTime value) {
     types.put(key, ValueType.DATETIME);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putString(String key, String value) {
     types.put(key, ValueType.STRING);
     values.put(key, value);
     return getSelf();
   }
 
+  @Override
   public E putJson(String key, JsonObject json) {
     Preconditions.checkNotNull(json);
     types.put(key, ValueType.JSON_STRING);
@@ -104,6 +113,7 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     return getSelf();
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public E putList(String key, List<Object> valueList) {
     Preconditions.checkArgument(valueList != null && !valueList.isEmpty(), "Value list cannot be null or empty when using the putList method");
@@ -130,36 +140,42 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     throw new IllegalArgumentException("Unsupported value type: " + value.getClass().getSimpleName());
   }
 
+  @Override
   public E putBooleanList(String key, List<Boolean> valueList) {
     types.put(key, ValueType.BOOLEAN_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
 
+  @Override
   public E putIntList(String key, List<Integer> valueList) {
     types.put(key, ValueType.INT_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
 
+  @Override
   public E putLongList(String key, List<Long> valueList) {
     types.put(key, ValueType.LONG_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
 
+  @Override
   public E putDoubleList(String key, List<Double> valueList) {
     types.put(key, ValueType.DOUBLE_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
 
+  @Override
   public E putDateTimeList(String key, List<DateTime> valueList) {
     types.put(key, ValueType.DATETIME_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();
   }
 
+  @Override
   public E putStringList(String key, List<String> valueList) {
     types.put(key, ValueType.STRING_LIST);
     values.put(key, nullifyEmptyList(valueList));

@@ -3,7 +3,7 @@ package com.rapleaf.jack.store.field;
 import java.util.function.BiFunction;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.util.InsertValue;
+import com.rapleaf.jack.store.iface.InsertValue;
 
 public class JsValueField<T> extends AbstractJsField<T> {
 

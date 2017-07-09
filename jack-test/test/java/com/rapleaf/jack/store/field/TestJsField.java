@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.executors.BaseExecutorTestCase;
+import com.rapleaf.jack.store.executors.RecordUpdater;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -46,7 +47,9 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore2.rootRecord().update(), value).execute(db);
+      RecordUpdater updater = jackStore2.rootRecord().update();
+      field.getPutFunction().apply(updater, value);
+      updater.exec(db);
       return jackStore2.rootRecord().read().execute(db);
     });
 
@@ -61,7 +64,9 @@ public class TestJsField extends BaseExecutorTestCase {
     assertEquals(key, field.getKey());
 
     JsRecord record = transactor.queryAsTransaction(db -> {
-      field.getPutFunction().apply(jackStore2.rootRecord().update(), values).execute(db);
+      RecordUpdater updater = jackStore2.rootRecord().update();
+      field.getPutFunction().apply(updater, values);
+      updater.exec(db);
       return jackStore2.rootRecord().read().execute(db);
     });
 

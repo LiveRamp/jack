@@ -15,11 +15,12 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.Record;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.exceptions.InvalidRecordException;
+import com.rapleaf.jack.store.iface.InsertList;
+import com.rapleaf.jack.store.iface.InsertValue;
+import com.rapleaf.jack.store.iface.ValueIndexer;
 import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
-import com.rapleaf.jack.store.util.InsertList;
-import com.rapleaf.jack.store.util.InsertValue;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 
 import static org.junit.Assert.assertEquals;
@@ -36,19 +37,19 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   }
 
   private void testInsertion(boolean isNull) throws Exception {
-    testInsertion(BOOLEAN_KEY, BOOLEAN_VALUE, isNull, RecordUpdater::putBoolean);
-    testInsertion(INT_KEY, INT_VALUE, isNull, RecordUpdater::putInt);
-    testInsertion(LONG_KEY, LONG_VALUE, isNull, RecordUpdater::putLong);
-    testInsertion(DOUBLE_KEY, DOUBLE_VALUE, isNull, RecordUpdater::putDouble);
-    testInsertion(DATETIME_KEY, DATETIME_VALUE, isNull, RecordUpdater::putDateTime);
-    testInsertion(STRING_KEY, STRING_VALUE, isNull, RecordUpdater::putString);
+    testInsertion(BOOLEAN_KEY, BOOLEAN_VALUE, isNull, ValueIndexer::putBoolean);
+    testInsertion(INT_KEY, INT_VALUE, isNull, ValueIndexer::putInt);
+    testInsertion(LONG_KEY, LONG_VALUE, isNull, ValueIndexer::putLong);
+    testInsertion(DOUBLE_KEY, DOUBLE_VALUE, isNull, ValueIndexer::putDouble);
+    testInsertion(DATETIME_KEY, DATETIME_VALUE, isNull, ValueIndexer::putDateTime);
+    testInsertion(STRING_KEY, STRING_VALUE, isNull, ValueIndexer::putString);
 
-    testListInsertion(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE, isNull, RecordUpdater::putBooleanList);
-    testListInsertion(INT_LIST_KEY, INT_LIST_VALUE, isNull, RecordUpdater::putIntList);
-    testListInsertion(LONG_LIST_KEY, LONG_LIST_VALUE, isNull, RecordUpdater::putLongList);
-    testListInsertion(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE, isNull, RecordUpdater::putDoubleList);
-    testListInsertion(DATETIME_LIST_KEY, DATETIME_LIST_VALUE, isNull, RecordUpdater::putDateTimeList);
-    testListInsertion(STRING_LIST_KEY, STRING_LIST_VALUE, isNull, RecordUpdater::putStringList);
+    testListInsertion(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE, isNull, ValueIndexer::putBooleanList);
+    testListInsertion(INT_LIST_KEY, INT_LIST_VALUE, isNull, ValueIndexer::putIntList);
+    testListInsertion(LONG_LIST_KEY, LONG_LIST_VALUE, isNull, ValueIndexer::putLongList);
+    testListInsertion(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE, isNull, ValueIndexer::putDoubleList);
+    testListInsertion(DATETIME_LIST_KEY, DATETIME_LIST_VALUE, isNull, ValueIndexer::putDateTimeList);
+    testListInsertion(STRING_LIST_KEY, STRING_LIST_VALUE, isNull, ValueIndexer::putStringList);
   }
 
   @Test
@@ -99,7 +100,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   @Test
   public void testNullJsonInsertion() throws Exception {
     try {
-      testInsertion(JSON_KEY, JSON_VALUE, true, RecordUpdater::putJson);
+      testInsertion(JSON_KEY, JSON_VALUE, true, ValueIndexer::putJson);
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof NullPointerException);
