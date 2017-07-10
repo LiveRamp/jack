@@ -46,6 +46,15 @@ public class JsRecord implements ValueContainer<JsRecord> {
     return types.isEmpty();
   }
 
+  public Map<String, ValueType> getKeyTypes() {
+    return types;
+  }
+
+  public ValueType getKeyType(String key) {
+    checkKey(key);
+    return types.get(key);
+  }
+
   @Override
   public Object get(String key) {
     checkKey(key);
