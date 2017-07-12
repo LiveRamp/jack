@@ -25,7 +25,7 @@ public class RecordReader extends BaseInquirerExecutor<JsRecord, JsRecord, Recor
         .where(table.scopeColumn.equalTo(executionRecordId))
         .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
         .select(table.typeColumn, table.keyColumn, table.valueColumn)
-        .orderBy(table.keyColumn)
+        // records must be sorted by ID so that json entries are read back in the exact same order as they are written to db
         .orderBy(table.idColumn)
         .fetch();
 

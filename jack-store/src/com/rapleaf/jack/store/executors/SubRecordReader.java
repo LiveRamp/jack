@@ -79,7 +79,7 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, 
         .where(table.scopeColumn.in(validSubRecordIds))
         .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
         .orderBy(table.scopeColumn)
-        .orderBy(table.keyColumn)
+        // records must be sorted by ID so that json entries are read back in the exact same order as they are written to db
         .orderBy(table.idColumn)
         .fetch();
 
