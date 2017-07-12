@@ -30,10 +30,11 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, 
   }
 
   // For internal use only, when the supplied sub scope IDs are guaranteed to be valid.
-  SubRecordReader(JsTable table, Long executionRecordId, Collection<Long> subRecordIds) {
+  SubRecordReader(JsTable table, Long executionRecordId, Collection<Long> subRecordIds, Set<String> selectedKeys) {
     super(table, executionRecordId);
     this.subRecordIds = Optional.of(Sets.newHashSet(subRecordIds));
     this.skipSubRecordIdValidation = true;
+    this.selectedKeys.addAll(selectedKeys);
   }
 
   public SubRecordReader whereSubRecordIds(Collection<Long> subRecordIds) {

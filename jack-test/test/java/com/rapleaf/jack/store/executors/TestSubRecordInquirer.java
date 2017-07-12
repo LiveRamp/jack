@@ -205,6 +205,34 @@ public class TestSubRecordInquirer extends BaseExecutorTestCase {
     assertEquals(Lists.newArrayList(r2, r3, r4), jsRecords.getRecordIds());
   }
 
+  @Test
+  public void testKeySelection() throws Exception {
+    String key1 = "key1";
+    String key2 = "key2";
+    String key3 = "key3";
+
+    transactor.execute(db -> {
+      long subRecordId = jackStore.rootRecord().createSubRecord()
+          .put(key1, 1L)
+          .put(key2, 2L)
+          .put(key3, 3L)
+          .exec(db);
+
+      // when no key is specified, all keys exist in js record
+      jsRecords = jackStore.rootRecord().querySubRecords()
+          .whereSubRecordId(JackMatchers.equalTo(subRecordId))
+          .execute(db);
+      assertEquals(Sets.newHashSet(key1, key2, key3), jsRecords.getOnly().keySet());
+
+      // when keys are specified, only selected keys exist in js record
+      jsRecords = jackStore.rootRecord().querySubRecords()
+          .whereSubRecordId(JackMatchers.equalTo(subRecordId))
+          .selectKey(key1, key3)
+          .execute(db);
+      assertEquals(Sets.newHashSet(key1, key3), jsRecords.getOnly().keySet());
+    });
+  }
+
   private long createJson(JsonParser parser, String subScopeName, String key, String jsonString) throws Exception {
     return transactor.query(db -> {
       long newSubScopeId = createSubScope(Optional.empty(), Optional.of(subScopeName));

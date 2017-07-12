@@ -51,7 +51,7 @@ public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, Set<Long>, 
   @Override
   JsRecords internalExecute(IDb db) throws IOException {
     Set<Long> validSubRecordIds = internalExec(db);
-    return new SubRecordReader(table, executionRecordId, validSubRecordIds).internalExecute(db);
+    return new SubRecordReader(table, executionRecordId, validSubRecordIds, Collections.emptySet()).internalExecute(db);
   }
 
   @Override
