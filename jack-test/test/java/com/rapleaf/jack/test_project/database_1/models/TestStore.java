@@ -33,27 +33,27 @@ import com.rapleaf.jack.util.JackUtility;
 
 public class TestStore extends ModelWithId<TestStore, IDatabases> implements Comparable<TestStore>{
   
-  public static final long serialVersionUID = 3752879203682332959L;
+  public static final long serialVersionUID = -7579351792365343876L;
 
   public static class Tbl extends AbstractTable<TestStore.Attributes, TestStore> {
     public final Column<Long> ID;
-    public final Column<Integer> TYPE;
-    public final Column<Long> SCOPE;
-    public final Column<String> KEY;
-    public final Column<String> VALUE;
+    public final Column<Integer> ENTRY_TYPE;
+    public final Column<Long> ENTRY_SCOPE;
+    public final Column<String> ENTRY_KEY;
+    public final Column<String> ENTRY_VALUE;
     public final Column<Long> CREATED_AT;
     public final Column<Long> UPDATED_AT;
 
     private Tbl(String alias) {
       super("test_store", alias, TestStore.Attributes.class, TestStore.class);
       this.ID = Column.fromId(alias);
-      this.TYPE = Column.fromField(alias, _Fields.type, Integer.class);
-      this.SCOPE = Column.fromField(alias, _Fields.scope, Long.class);
-      this.KEY = Column.fromField(alias, _Fields.key, String.class);
-      this.VALUE = Column.fromField(alias, _Fields.value, String.class);
+      this.ENTRY_TYPE = Column.fromField(alias, _Fields.entry_type, Integer.class);
+      this.ENTRY_SCOPE = Column.fromField(alias, _Fields.entry_scope, Long.class);
+      this.ENTRY_KEY = Column.fromField(alias, _Fields.entry_key, String.class);
+      this.ENTRY_VALUE = Column.fromField(alias, _Fields.entry_value, String.class);
       this.CREATED_AT = Column.fromTimestamp(alias, _Fields.created_at);
       this.UPDATED_AT = Column.fromTimestamp(alias, _Fields.updated_at);
-      Collections.addAll(this.allColumns, ID, TYPE, SCOPE, KEY, VALUE, CREATED_AT, UPDATED_AT);
+      Collections.addAll(this.allColumns, ID, ENTRY_TYPE, ENTRY_SCOPE, ENTRY_KEY, ENTRY_VALUE, CREATED_AT, UPDATED_AT);
     }
 
     public static Tbl as(String alias) {
@@ -63,10 +63,10 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public static final Tbl TBL = new Tbl("test_store");
   public static final Column<Long> ID = TBL.ID;
-  public static final Column<Integer> TYPE = TBL.TYPE;
-  public static final Column<Long> SCOPE = TBL.SCOPE;
-  public static final Column<String> KEY = TBL.KEY;
-  public static final Column<String> VALUE = TBL.VALUE;
+  public static final Column<Integer> ENTRY_TYPE = TBL.ENTRY_TYPE;
+  public static final Column<Long> ENTRY_SCOPE = TBL.ENTRY_SCOPE;
+  public static final Column<String> ENTRY_KEY = TBL.ENTRY_KEY;
+  public static final Column<String> ENTRY_VALUE = TBL.ENTRY_VALUE;
   public static final Column<Long> CREATED_AT = TBL.CREATED_AT;
   public static final Column<Long> UPDATED_AT = TBL.UPDATED_AT;
 
@@ -77,10 +77,10 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   // Associations
 
   public enum _Fields {
-    type,
-    scope,
-    key,
-    value,
+    entry_type,
+    entry_scope,
+    entry_key,
+    entry_value,
     created_at,
     updated_at,
   }
@@ -93,14 +93,14 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     return cachedTypedId;
   }
 
-  public TestStore(long id, final Integer type, final Long scope, final String key, final String value, final Long created_at, final Long updated_at, IDatabases databases) {
+  public TestStore(long id, final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at, IDatabases databases) {
     super(databases);
-    attributes = new Attributes(id, type, scope, key, value, created_at, updated_at);
+    attributes = new Attributes(id, entry_type, entry_scope, entry_key, entry_value, created_at, updated_at);
   }
 
-  public TestStore(long id, final Integer type, final Long scope, final String key, final String value, final Long created_at, final Long updated_at) {
+  public TestStore(long id, final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) {
     super(null);
-    attributes = new Attributes(id, type, scope, key, value, created_at, updated_at);
+    attributes = new Attributes(id, entry_type, entry_scope, entry_key, entry_value, created_at, updated_at);
   }
   
   public TestStore(long id, IDatabases databases) {
@@ -150,42 +150,42 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     return attributes;
   }
 
-  public Integer getType(){
-    return attributes.getType();
+  public Integer getEntryType(){
+    return attributes.getEntryType();
   }
 
-  public TestStore setType(Integer newval){
-    attributes.setType(newval);
+  public TestStore setEntryType(Integer newval){
+    attributes.setEntryType(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getScope(){
-    return attributes.getScope();
+  public Long getEntryScope(){
+    return attributes.getEntryScope();
   }
 
-  public TestStore setScope(Long newval){
-    attributes.setScope(newval);
+  public TestStore setEntryScope(Long newval){
+    attributes.setEntryScope(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getKey(){
-    return attributes.getKey();
+  public String getEntryKey(){
+    return attributes.getEntryKey();
   }
 
-  public TestStore setKey(String newval){
-    attributes.setKey(newval);
+  public TestStore setEntryKey(String newval){
+    attributes.setEntryKey(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getValue(){
-    return attributes.getValue();
+  public String getEntryValue(){
+    return attributes.getEntryValue();
   }
 
-  public TestStore setValue(String newval){
-    attributes.setValue(newval);
+  public TestStore setEntryValue(String newval){
+    attributes.setEntryValue(newval);
     cachedHashCode = 0;
     return this;
   }
@@ -212,17 +212,17 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public void setField(_Fields field, Object value) {
     switch (field) {
-      case type:
-        setType((Integer) value);
+      case entry_type:
+        setEntryType((Integer) value);
         break;
-      case scope:
-        setScope((Long) value);
+      case entry_scope:
+        setEntryScope((Long) value);
         break;
-      case key:
-        setKey((String) value);
+      case entry_key:
+        setEntryKey((String) value);
         break;
-      case value:
-        setValue((String) value);
+      case entry_value:
+        setEntryValue((String) value);
         break;
       case created_at:
         setCreatedAt((Long) value);
@@ -236,20 +236,20 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   }
   
   public void setField(String fieldName, Object value) {
-    if (fieldName.equals("type")) {
-      setType((Integer)  value);
+    if (fieldName.equals("entry_type")) {
+      setEntryType((Integer)  value);
       return;
     }
-    if (fieldName.equals("scope")) {
-      setScope((Long)  value);
+    if (fieldName.equals("entry_scope")) {
+      setEntryScope((Long)  value);
       return;
     }
-    if (fieldName.equals("key")) {
-      setKey((String)  value);
+    if (fieldName.equals("entry_key")) {
+      setEntryKey((String)  value);
       return;
     }
-    if (fieldName.equals("value")) {
-      setValue((String)  value);
+    if (fieldName.equals("entry_value")) {
+      setEntryValue((String)  value);
       return;
     }
     if (fieldName.equals("created_at")) {
@@ -265,13 +265,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public static Class getFieldType(_Fields field) {
     switch (field) {
-      case type:
+      case entry_type:
         return Integer.class;
-      case scope:
+      case entry_scope:
         return Long.class;
-      case key:
+      case entry_key:
         return String.class;
-      case value:
+      case entry_value:
         return String.class;
       case created_at:
         return Long.class;
@@ -283,16 +283,16 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   }
 
   public static Class getFieldType(String fieldName) {    
-    if (fieldName.equals("type")) {
+    if (fieldName.equals("entry_type")) {
       return Integer.class;
     }
-    if (fieldName.equals("scope")) {
+    if (fieldName.equals("entry_scope")) {
       return Long.class;
     }
-    if (fieldName.equals("key")) {
+    if (fieldName.equals("entry_key")) {
       return String.class;
     }
-    if (fieldName.equals("value")) {
+    if (fieldName.equals("entry_value")) {
       return String.class;
     }
     if (fieldName.equals("created_at")) {
@@ -309,17 +309,17 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     if (fieldName.equals("id")) {
       return getId();
     }
-    if (fieldName.equals("type")) {
-      return getType();
+    if (fieldName.equals("entry_type")) {
+      return getEntryType();
     }
-    if (fieldName.equals("scope")) {
-      return getScope();
+    if (fieldName.equals("entry_scope")) {
+      return getEntryScope();
     }
-    if (fieldName.equals("key")) {
-      return getKey();
+    if (fieldName.equals("entry_key")) {
+      return getEntryKey();
     }
-    if (fieldName.equals("value")) {
-      return getValue();
+    if (fieldName.equals("entry_value")) {
+      return getEntryValue();
     }
     if (fieldName.equals("created_at")) {
       return getCreatedAt();
@@ -332,14 +332,14 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public Object getField(_Fields field) {
     switch (field) {
-      case type:
-        return getType();
-      case scope:
-        return getScope();
-      case key:
-        return getKey();
-      case value:
-        return getValue();
+      case entry_type:
+        return getEntryType();
+      case entry_scope:
+        return getEntryScope();
+      case entry_key:
+        return getEntryKey();
+      case entry_value:
+        return getEntryValue();
       case created_at:
         return getCreatedAt();
       case updated_at:
@@ -352,16 +352,16 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     if (fieldName.equals("id")) {
       return true;
     }
-    if (fieldName.equals("type")) {
+    if (fieldName.equals("entry_type")) {
       return true;
     }
-    if (fieldName.equals("scope")) {
+    if (fieldName.equals("entry_scope")) {
       return true;
     }
-    if (fieldName.equals("key")) {
+    if (fieldName.equals("entry_key")) {
       return true;
     }
-    if (fieldName.equals("value")) {
+    if (fieldName.equals("entry_value")) {
       return true;
     }
     if (fieldName.equals("created_at")) {
@@ -375,13 +375,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public static Object getDefaultValue(_Fields field) {
     switch (field) {
-      case type:
+      case entry_type:
         return null;
-      case scope:
+      case entry_scope:
         return null;
-      case key:
+      case entry_key:
         return null;
-      case value:
+      case entry_value:
         return null;
       case created_at:
         return null;
@@ -415,10 +415,10 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   public String toString() {
     return "<TestStore"
       + " id: " + this.getId()
-      + " type: " + getType()
-      + " scope: " + getScope()
-      + " key: " + getKey()
-      + " value: " + getValue()
+      + " entry_type: " + getEntryType()
+      + " entry_scope: " + getEntryScope()
+      + " entry_key: " + getEntryKey()
+      + " entry_value: " + getEntryValue()
       + " created_at: " + getCreatedAt()
       + " updated_at: " + getUpdatedAt()
       + ">";
@@ -435,13 +435,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   
   public static class Attributes extends AttributesWithId {
     
-    public static final long serialVersionUID = 3752879203682332959L;
+    public static final long serialVersionUID = -7579351792365343876L;
 
     // Fields
-    private Integer __type;
-    private Long __scope;
-    private String __key;
-    private String __value;
+    private Integer __entry_type;
+    private Long __entry_scope;
+    private String __entry_key;
+    private String __entry_value;
     private Long __created_at;
     private Long __updated_at;
 
@@ -449,12 +449,12 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       super(id);
     }
 
-    public Attributes(long id, final Integer type, final Long scope, final String key, final String value, final Long created_at, final Long updated_at) {
+    public Attributes(long id, final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) {
       super(id);
-      this.__type = type;
-      this.__scope = scope;
-      this.__key = key;
-      this.__value = value;
+      this.__entry_type = entry_type;
+      this.__entry_scope = entry_scope;
+      this.__entry_key = entry_key;
+      this.__entry_value = entry_value;
       this.__created_at = created_at;
       this.__updated_at = updated_at;
     }
@@ -465,66 +465,66 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      Integer type = (Integer) fieldsMap.get(TestStore._Fields.type);
-      Long scope = (Long) fieldsMap.get(TestStore._Fields.scope);
-      String key = (String) fieldsMap.get(TestStore._Fields.key);
-      String value = (String) fieldsMap.get(TestStore._Fields.value);
+      Integer entry_type = (Integer) fieldsMap.get(TestStore._Fields.entry_type);
+      Long entry_scope = (Long) fieldsMap.get(TestStore._Fields.entry_scope);
+      String entry_key = (String) fieldsMap.get(TestStore._Fields.entry_key);
+      String entry_value = (String) fieldsMap.get(TestStore._Fields.entry_value);
       Long created_at = (Long) fieldsMap.get(TestStore._Fields.created_at);
       Long updated_at = (Long) fieldsMap.get(TestStore._Fields.updated_at);
-      this.__type = type;
-      this.__scope = scope;
-      this.__key = key;
-      this.__value = value;
+      this.__entry_type = entry_type;
+      this.__entry_scope = entry_scope;
+      this.__entry_key = entry_key;
+      this.__entry_value = entry_value;
       this.__created_at = created_at;
       this.__updated_at = updated_at;
     }
 
     public Attributes(Attributes other) {
       super(other.getId());
-      this.__type = other.getType();
-      this.__scope = other.getScope();
-      this.__key = other.getKey();
-      this.__value = other.getValue();
+      this.__entry_type = other.getEntryType();
+      this.__entry_scope = other.getEntryScope();
+      this.__entry_key = other.getEntryKey();
+      this.__entry_value = other.getEntryValue();
       this.__created_at = other.getCreatedAt();
       this.__updated_at = other.getUpdatedAt();
     }
 
-    public Integer getType(){
-      return __type;
+    public Integer getEntryType(){
+      return __entry_type;
     }
 
-    public Attributes setType(Integer newval){
-      this.__type = newval;
+    public Attributes setEntryType(Integer newval){
+      this.__entry_type = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getScope(){
-      return __scope;
+    public Long getEntryScope(){
+      return __entry_scope;
     }
 
-    public Attributes setScope(Long newval){
-      this.__scope = newval;
+    public Attributes setEntryScope(Long newval){
+      this.__entry_scope = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getKey(){
-      return __key;
+    public String getEntryKey(){
+      return __entry_key;
     }
 
-    public Attributes setKey(String newval){
-      this.__key = newval;
+    public Attributes setEntryKey(String newval){
+      this.__entry_key = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getValue(){
-      return __value;
+    public String getEntryValue(){
+      return __entry_value;
     }
 
-    public Attributes setValue(String newval){
-      this.__value = newval;
+    public Attributes setEntryValue(String newval){
+      this.__entry_value = newval;
       cachedHashCode = 0;
       return this;
     }
@@ -551,17 +551,17 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public void setField(_Fields field, Object value) {
       switch (field) {
-        case type:
-          setType((Integer) value);
+        case entry_type:
+          setEntryType((Integer) value);
           break;
-        case scope:
-          setScope((Long) value);
+        case entry_scope:
+          setEntryScope((Long) value);
           break;
-        case key:
-          setKey((String) value);
+        case entry_key:
+          setEntryKey((String) value);
           break;
-        case value:
-          setValue((String) value);
+        case entry_value:
+          setEntryValue((String) value);
           break;
         case created_at:
           setCreatedAt((Long) value);
@@ -575,20 +575,20 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     }
 
     public void setField(String fieldName, Object value) {
-      if (fieldName.equals("type")) {
-        setType((Integer)  value);
+      if (fieldName.equals("entry_type")) {
+        setEntryType((Integer)  value);
         return;
       }
-      if (fieldName.equals("scope")) {
-        setScope((Long)  value);
+      if (fieldName.equals("entry_scope")) {
+        setEntryScope((Long)  value);
         return;
       }
-      if (fieldName.equals("key")) {
-        setKey((String)  value);
+      if (fieldName.equals("entry_key")) {
+        setEntryKey((String)  value);
         return;
       }
-      if (fieldName.equals("value")) {
-        setValue((String)  value);
+      if (fieldName.equals("entry_value")) {
+        setEntryValue((String)  value);
         return;
       }
       if (fieldName.equals("created_at")) {
@@ -604,13 +604,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public static Class getFieldType(_Fields field) {
       switch (field) {
-        case type:
+        case entry_type:
           return Integer.class;
-        case scope:
+        case entry_scope:
           return Long.class;
-        case key:
+        case entry_key:
           return String.class;
-        case value:
+        case entry_value:
           return String.class;
         case created_at:
           return Long.class;
@@ -622,16 +622,16 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     }
 
     public static Class getFieldType(String fieldName) {    
-      if (fieldName.equals("type")) {
+      if (fieldName.equals("entry_type")) {
         return Integer.class;
       }
-      if (fieldName.equals("scope")) {
+      if (fieldName.equals("entry_scope")) {
         return Long.class;
       }
-      if (fieldName.equals("key")) {
+      if (fieldName.equals("entry_key")) {
         return String.class;
       }
-      if (fieldName.equals("value")) {
+      if (fieldName.equals("entry_value")) {
         return String.class;
       }
       if (fieldName.equals("created_at")) {
@@ -648,17 +648,17 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       if (fieldName.equals("id")) {
         return getId();
       }
-      if (fieldName.equals("type")) {
-        return getType();
+      if (fieldName.equals("entry_type")) {
+        return getEntryType();
       }
-      if (fieldName.equals("scope")) {
-        return getScope();
+      if (fieldName.equals("entry_scope")) {
+        return getEntryScope();
       }
-      if (fieldName.equals("key")) {
-        return getKey();
+      if (fieldName.equals("entry_key")) {
+        return getEntryKey();
       }
-      if (fieldName.equals("value")) {
-        return getValue();
+      if (fieldName.equals("entry_value")) {
+        return getEntryValue();
       }
       if (fieldName.equals("created_at")) {
         return getCreatedAt();
@@ -671,14 +671,14 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public Object getField(_Fields field) {
       switch (field) {
-        case type:
-          return getType();
-        case scope:
-          return getScope();
-        case key:
-          return getKey();
-        case value:
-          return getValue();
+        case entry_type:
+          return getEntryType();
+        case entry_scope:
+          return getEntryScope();
+        case entry_key:
+          return getEntryKey();
+        case entry_value:
+          return getEntryValue();
         case created_at:
           return getCreatedAt();
         case updated_at:
@@ -691,16 +691,16 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       if (fieldName.equals("id")) {
         return true;
       }
-      if (fieldName.equals("type")) {
+      if (fieldName.equals("entry_type")) {
         return true;
       }
-      if (fieldName.equals("scope")) {
+      if (fieldName.equals("entry_scope")) {
         return true;
       }
-      if (fieldName.equals("key")) {
+      if (fieldName.equals("entry_key")) {
         return true;
       }
-      if (fieldName.equals("value")) {
+      if (fieldName.equals("entry_value")) {
         return true;
       }
       if (fieldName.equals("created_at")) {
@@ -714,13 +714,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public static Object getDefaultValue(_Fields field) {
       switch (field) {
-        case type:
+        case entry_type:
           return null;
-        case scope:
+        case entry_scope:
           return null;
-        case key:
+        case entry_key:
           return null;
-        case value:
+        case entry_value:
           return null;
         case created_at:
           return null;
@@ -738,10 +738,10 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     
     public String toString() {
       return "<TestStore.Attributes"
-        + " type: " + getType()
-        + " scope: " + getScope()
-        + " key: " + getKey()
-        + " value: " + getValue()
+        + " entry_type: " + getEntryType()
+        + " entry_scope: " + getEntryScope()
+        + " entry_key: " + getEntryKey()
+        + " entry_value: " + getEntryValue()
         + " created_at: " + getCreatedAt()
         + " updated_at: " + getUpdatedAt()
         + ">";

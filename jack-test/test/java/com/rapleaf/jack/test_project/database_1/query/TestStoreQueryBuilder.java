@@ -88,83 +88,83 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreQueryBuilder type(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, JackMatchers.equalTo(value)));
+  public TestStoreQueryBuilder entryType(Integer value) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreQueryBuilder whereType(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, operator));
+  public TestStoreQueryBuilder whereEntryType(IWhereOperator<Integer> operator) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, operator));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByType() {
-    this.addOrder(new OrderCriterion(TestStore._Fields.type, QueryOrder.ASC));
+  public TestStoreQueryBuilder orderByEntryType() {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_type, QueryOrder.ASC));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByType(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(TestStore._Fields.type, queryOrder));
+  public TestStoreQueryBuilder orderByEntryType(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_type, queryOrder));
     return this;
   }
 
-  public TestStoreQueryBuilder scope(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
+  public TestStoreQueryBuilder entryScope(Long value) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreQueryBuilder whereScope(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, operator));
+  public TestStoreQueryBuilder whereEntryScope(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, operator));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByScope() {
-    this.addOrder(new OrderCriterion(TestStore._Fields.scope, QueryOrder.ASC));
+  public TestStoreQueryBuilder orderByEntryScope() {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_scope, QueryOrder.ASC));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByScope(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(TestStore._Fields.scope, queryOrder));
+  public TestStoreQueryBuilder orderByEntryScope(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_scope, queryOrder));
     return this;
   }
 
-  public TestStoreQueryBuilder key(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.key, JackMatchers.equalTo(value)));
+  public TestStoreQueryBuilder entryKey(String value) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreQueryBuilder whereKey(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.key, operator));
+  public TestStoreQueryBuilder whereEntryKey(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, operator));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByKey() {
-    this.addOrder(new OrderCriterion(TestStore._Fields.key, QueryOrder.ASC));
+  public TestStoreQueryBuilder orderByEntryKey() {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_key, QueryOrder.ASC));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByKey(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(TestStore._Fields.key, queryOrder));
+  public TestStoreQueryBuilder orderByEntryKey(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_key, queryOrder));
     return this;
   }
 
-  public TestStoreQueryBuilder value(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.value, JackMatchers.equalTo(value)));
+  public TestStoreQueryBuilder entryValue(String value) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreQueryBuilder whereValue(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.value, operator));
+  public TestStoreQueryBuilder whereEntryValue(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, operator));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByValue() {
-    this.addOrder(new OrderCriterion(TestStore._Fields.value, QueryOrder.ASC));
+  public TestStoreQueryBuilder orderByEntryValue() {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_value, QueryOrder.ASC));
     return this;
   }
 
-  public TestStoreQueryBuilder orderByValue(QueryOrder queryOrder) {
-    this.addOrder(new OrderCriterion(TestStore._Fields.value, queryOrder));
+  public TestStoreQueryBuilder orderByEntryValue(QueryOrder queryOrder) {
+    this.addOrder(new OrderCriterion(TestStore._Fields.entry_value, queryOrder));
     return this;
   }
 
