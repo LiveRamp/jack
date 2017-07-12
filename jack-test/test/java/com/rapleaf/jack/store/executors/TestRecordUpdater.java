@@ -82,12 +82,12 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().putJson(JSON_KEY, JSON_VALUE).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.startsWith(JSON_KEY)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.startsWith(JSON_KEY)).fetch();
     });
     assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
     for (Record record : records) {
-      String key = record.get(TestStore.KEY);
-      String value = record.get(TestStore.VALUE);
+      String key = record.get(TestStore.ENTRY_KEY);
+      String value = record.get(TestStore.ENTRY_VALUE);
       assertTrue(tupleMap.containsKey(key));
       if (value == null) {
         assertNull(tupleMap.get(key));
@@ -132,10 +132,10 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : value);
       executor.execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
-    assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.VALUE));
+    assertEquals(isNull ? null : String.valueOf(value), records.get(0).get(TestStore.ENTRY_VALUE));
   }
 
   private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, InsertList<T> execution) {
@@ -143,29 +143,29 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : listValue);
       executor.execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(isNull ? 1 : listValue.size(), records.size());
-    assertEquals(isNull ? Sets.newHashSet((Object)null) : listValue.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    assertEquals(isNull ? Sets.newHashSet((Object)null) : listValue.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.ENTRY_VALUE)));
   }
 
   private void testGenericInsertion(String key, Object value) throws Exception {
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().put(key, value).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
-    assertEquals(String.valueOf(value), records.get(0).get(TestStore.VALUE));
+    assertEquals(String.valueOf(value), records.get(0).get(TestStore.ENTRY_VALUE));
   }
 
   @SuppressWarnings("unchecked")
   private void testGenericListInsertion(String key, List valueList) throws Exception {
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().putList(key, valueList).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(valueList.size(), records.size());
-    assertEquals(valueList.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    assertEquals(valueList.stream().map(String::valueOf).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.ENTRY_VALUE)));
   }
 
   @Test
@@ -183,19 +183,19 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().put(key, oldValue).execute(db);
       jackStore2.rootRecord().update().put(key, newValue).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
-    assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));
+    assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.ENTRY_VALUE));
 
     // list value
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().putIntList(key, oldList).execute(db);
       jackStore2.rootRecord().update().putIntList(key, newList).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(newList.size(), records.size());
-    assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.ENTRY_VALUE)));
 
     // json value
     JsRecord jsRecord = transactor.queryAsTransaction(db -> {
@@ -209,18 +209,18 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     // primitive to list
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().putIntList(key, newList).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(newList.size(), records.size());
-    assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    assertEquals(newList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.ENTRY_VALUE)));
 
     // list to primitive
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().put(key, newValue).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
-    assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.VALUE));
+    assertEquals(String.valueOf(newValue), records.get(0).get(TestStore.ENTRY_VALUE));
 
     // primitive to json
     jsRecord = transactor.queryAsTransaction(db -> {
@@ -232,10 +232,10 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     // json to list
     records = transactor.queryAsTransaction(db -> {
       jackStore2.rootRecord().update().put(key, oldList).execute(db);
-      return db.createQuery().from(TestStore.TBL).where(TestStore.KEY.equalTo(key)).fetch();
+      return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(oldList.size(), records.size());
-    assertEquals(oldList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.VALUE)));
+    assertEquals(oldList.stream().map(Long::toString).collect(Collectors.toSet()), Sets.newHashSet(records.gets(TestStore.ENTRY_VALUE)));
 
     // list to json
     jsRecord = transactor.queryAsTransaction(db -> {

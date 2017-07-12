@@ -8,7 +8,7 @@ public class JsConstants {
   public static final Long ROOT_RECORD_ID = null;
 
   public enum DefaultTableField {
-    scope, key, type, value
+    entry_scope, entry_key, entry_type, entry_value
   }
 
 }

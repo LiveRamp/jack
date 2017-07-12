@@ -39,8 +39,8 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
 
     Records scopeRecords = transactor.query(db ->
         db.createQuery().from(TestStore.TBL)
-            .where(TestStore.TYPE.equalTo(ValueType.SCOPE.value))
-            .orderBy(TestStore.VALUE)
+            .where(TestStore.ENTRY_TYPE.equalTo(ValueType.SCOPE.value))
+            .orderBy(TestStore.ENTRY_VALUE)
             .fetch()
     );
     assertEquals(size, scopeRecords.size());
@@ -50,20 +50,20 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
       JsRecord scope = jsRecords[i];
       assertEquals(scope.getRecordId(), record.get(TestStore.ID));
       // TODO: get name from record
-      assertEquals(names.get(i), record.get(TestStore.VALUE));
+      assertEquals(names.get(i), record.get(TestStore.ENTRY_VALUE));
     }
 
     Records valueRecords = transactor.query(db ->
         db.createQuery().from(TestStore.TBL)
-            .where(TestStore.TYPE.notEqualTo(ValueType.SCOPE.value))
-            .orderBy(TestStore.SCOPE)
+            .where(TestStore.ENTRY_TYPE.notEqualTo(ValueType.SCOPE.value))
+            .orderBy(TestStore.ENTRY_SCOPE)
             .fetch()
     );
     assertEquals(size, scopeRecords.size());
 
     for (int i = 0; i < size; ++i) {
       Record record = valueRecords.get(i);
-      assertEquals(values.get(i), Long.valueOf(record.get(TestStore.VALUE)));
+      assertEquals(values.get(i), Long.valueOf(record.get(TestStore.ENTRY_VALUE)));
     }
   }
 

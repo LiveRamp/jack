@@ -52,10 +52,10 @@ public class TestRecordReader extends BaseExecutorTestCase {
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, recordId)
-          .set(TestStore.TYPE, type.value)
-          .set(TestStore.KEY, key)
-          .set(TestStore.VALUE, nullValue ? null : value.toString())
+          .set(TestStore.ENTRY_SCOPE, recordId)
+          .set(TestStore.ENTRY_TYPE, type.value)
+          .set(TestStore.ENTRY_KEY, key)
+          .set(TestStore.ENTRY_VALUE, nullValue ? null : value.toString())
           .execute();
       // read back new record
       return jackStore2.record(recordId).read().execute(db);
@@ -79,10 +79,10 @@ public class TestRecordReader extends BaseExecutorTestCase {
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new list record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, Collections.nCopies(values.size(), recordId))
-          .set(TestStore.TYPE, Collections.nCopies(values.size(), type.value))
-          .set(TestStore.KEY, Collections.nCopies(values.size(), key))
-          .set(TestStore.VALUE, nullValue ? Collections.nCopies(values.size(), null) : ((List<Object>)values).stream().map(Object::toString).collect(Collectors.toList()))
+          .set(TestStore.ENTRY_SCOPE, Collections.nCopies(values.size(), recordId))
+          .set(TestStore.ENTRY_TYPE, Collections.nCopies(values.size(), type.value))
+          .set(TestStore.ENTRY_KEY, Collections.nCopies(values.size(), key))
+          .set(TestStore.ENTRY_VALUE, nullValue ? Collections.nCopies(values.size(), null) : ((List<Object>)values).stream().map(Object::toString).collect(Collectors.toList()))
           .execute();
       // read back new record
       return jackStore2.record(recordId).read().execute(db);
@@ -108,10 +108,10 @@ public class TestRecordReader extends BaseExecutorTestCase {
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new list record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, Collections.nCopies(tuples.size(), null))
-          .set(TestStore.TYPE, tuples.stream().map(t -> t.getType().value).collect(Collectors.toList()))
-          .set(TestStore.KEY, tuples.stream().map(t -> JSON_KEY + JsonDbConstants.PATH_SEPARATOR + t.getFullPaths()).collect(Collectors.toList()))
-          .set(TestStore.VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
+          .set(TestStore.ENTRY_SCOPE, Collections.nCopies(tuples.size(), null))
+          .set(TestStore.ENTRY_TYPE, tuples.stream().map(t -> t.getType().value).collect(Collectors.toList()))
+          .set(TestStore.ENTRY_KEY, tuples.stream().map(t -> JSON_KEY + JsonDbConstants.PATH_SEPARATOR + t.getFullPaths()).collect(Collectors.toList()))
+          .set(TestStore.ENTRY_VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
           .execute();
       // read back new record
       return jackStore2.rootRecord().read().execute(db);
@@ -128,10 +128,10 @@ public class TestRecordReader extends BaseExecutorTestCase {
     JsRecord record = transactor.queryAsTransaction(db -> {
       // create new list record
       db.createInsertion().into(TestStore.TBL)
-          .set(TestStore.SCOPE, null, null, null)
-          .set(TestStore.TYPE, ValueType.STRING.value, ValueType.LONG.value, ValueType.BOOLEAN.value)
-          .set(TestStore.KEY, STRING_KEY, LONG_KEY, BOOLEAN_KEY)
-          .set(TestStore.VALUE, STRING_VALUE, String.valueOf(LONG_VALUE), String.valueOf(BOOLEAN_VALUE))
+          .set(TestStore.ENTRY_SCOPE, null, null, null)
+          .set(TestStore.ENTRY_TYPE, ValueType.STRING.value, ValueType.LONG.value, ValueType.BOOLEAN.value)
+          .set(TestStore.ENTRY_KEY, STRING_KEY, LONG_KEY, BOOLEAN_KEY)
+          .set(TestStore.ENTRY_VALUE, STRING_VALUE, String.valueOf(LONG_VALUE), String.valueOf(BOOLEAN_VALUE))
           .execute();
       // read back new record
       return jackStore2.rootRecord().read()
