@@ -115,11 +115,22 @@ public class TestSubRecordInquirer extends BaseExecutorTestCase {
     long s3 = createSubScope(Optional.empty(), Optional.of("3"));
     long s4 = createSubScope(Optional.empty(), Optional.of("4"));
 
+    long s11 = createSubScope(Optional.of(s1), Optional.of("sub record of 1"));
+    long s21 = createSubScope(Optional.of(s2), Optional.of("sub record of 2"));
+    long s31 = createSubScope(Optional.of(s3), Optional.of("sub record of 3"));
+    long s41 = createSubScope(Optional.of(s4), Optional.of("sub record of 4"));
+
     transactor.executeAsTransaction(db -> {
-      jackStore2.record(s1).update().put("count0", 15).put("count1", 50).execute(db);
-      jackStore2.record(s2).update().put("count0", 20).put("count1", 60).execute(db);
-      jackStore2.record(s3).update().put("count0", 25).put("count1", 70).execute(db);
-      jackStore2.record(s4).update().put("count0", 30).put("count1", 80).execute(db);
+      jackStore2.record(s1).update().put("count0", 15).put("count1", 50).exec(db);
+      jackStore2.record(s2).update().put("count0", 20).put("count1", 60).exec(db);
+      jackStore2.record(s3).update().put("count0", 25).put("count1", 70).exec(db);
+      jackStore2.record(s4).update().put("count0", 30).put("count1", 80).exec(db);
+
+      // sub records should not be included in query result
+      jackStore2.record(s11).update().put("count0", 15).put("count1", 50).exec(db);
+      jackStore2.record(s21).update().put("count0", 20).put("count1", 60).exec(db);
+      jackStore2.record(s31).update().put("count0", 25).put("count1", 70).exec(db);
+      jackStore2.record(s41).update().put("count0", 30).put("count1", 80).exec(db);
     });
 
     // single key query

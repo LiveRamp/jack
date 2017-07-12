@@ -104,6 +104,7 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
           .from(table.table)
           .leftJoin(scope.table)
           .on(table.scopeColumn.equalTo(scope.idColumn))
+          .where(scope.scopeColumn.equalTo(executionRecordId))
           .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
           .select(table.scopeColumn);
 
