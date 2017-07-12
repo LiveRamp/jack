@@ -3,8 +3,8 @@ class AddJackStoreTable < ActiveRecord::Migration
     create_table :test_store do |t|
       t.integer :entry_type,  :limit => 4
       t.integer :entry_scope, :limit => 8
-      t.text    :entry_key
-      t.text    :entry_value
+      t.string  :entry_key,   :limit => 2048
+      t.string  :entry_value, :limit => 2048
 
       t.timestamps
     end
