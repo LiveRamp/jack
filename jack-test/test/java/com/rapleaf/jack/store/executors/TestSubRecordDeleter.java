@@ -21,7 +21,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
   public void testDeleteKey() throws Exception {
     // create three records
     JsRecord r1 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .put(DOUBLE_KEY, DOUBLE_VALUE)
             .put(STRING_LIST_KEY, STRING_LIST_VALUE)
@@ -33,7 +33,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
     assertEquals(Sets.newHashSet(LONG_KEY, DOUBLE_KEY, STRING_LIST_KEY, DOUBLE_LIST_KEY, JSON_KEY), r1.keySet());
 
     JsRecord r2 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .put(DOUBLE_KEY, DOUBLE_VALUE)
             .put(STRING_LIST_KEY, STRING_LIST_VALUE)
@@ -45,7 +45,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
     assertEquals(Sets.newHashSet(LONG_KEY, DOUBLE_KEY, STRING_LIST_KEY, DOUBLE_LIST_KEY, JSON_KEY), r2.keySet());
 
     JsRecord r3 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .put(DOUBLE_KEY, DOUBLE_VALUE)
             .put(STRING_LIST_KEY, STRING_LIST_VALUE)
@@ -58,20 +58,20 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete primitive value key in record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1)
           .whereSubRecordIds(Collections.singleton(s2))
           .deleteKey(LONG_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertEquals(Sets.newHashSet(DOUBLE_KEY, STRING_LIST_KEY, DOUBLE_LIST_KEY, JSON_KEY), jsRecord.keySet());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -80,20 +80,20 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete list key in record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1)
           .whereSubRecordIds(Collections.singleton(s2))
           .deleteKey(STRING_LIST_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertEquals(Sets.newHashSet(DOUBLE_KEY, DOUBLE_LIST_KEY, JSON_KEY), jsRecord.keySet());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -102,20 +102,20 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete json key in record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1)
           .whereSubRecordIds(Collections.singleton(s2))
           .deleteKey(JSON_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertEquals(Sets.newHashSet(DOUBLE_KEY, DOUBLE_LIST_KEY), jsRecord.keySet());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -124,20 +124,20 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete non-existing key in record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1)
           .whereSubRecordIds(Collections.singleton(s2))
           .deleteKey(LONG_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertEquals(Sets.newHashSet(DOUBLE_KEY, DOUBLE_LIST_KEY), jsRecord.keySet());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -146,19 +146,19 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete key in all records
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .allowBulkDeletion()
           .deleteKey(DOUBLE_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertEquals(Sets.newHashSet(DOUBLE_LIST_KEY), jsRecord.keySet());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -167,19 +167,19 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete all keys in record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1, s2)
           .deleteAllKeys()
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertTrue(jsRecord.isEmpty());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -188,19 +188,19 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete non-existing key in empty record 1 and 2
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .whereSubRecordIds(s1, s2)
           .deleteKey(LONG_KEY)
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s1, s2)
           .execute(db);
       for (JsRecord jsRecord : jsRecords) {
         assertTrue(jsRecord.isEmpty());
       }
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .whereSubRecordIds(s3)
           .execute(db);
@@ -209,12 +209,12 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete all keys in all records
     transactor.execute(db -> {
-      jackStore2.rootRecord()
+      jackStore.rootRecord()
           .deleteSubRecords()
           .deleteAllKeys()
           .allowBulkDeletion()
           .execute(db);
-      jsRecords = jackStore2.rootRecord()
+      jsRecords = jackStore.rootRecord()
           .readSubRecords()
           .execute(db);
       assertEquals(3, jsRecords.size());
@@ -233,28 +233,28 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
      *       └─ r3
      */
     JsRecord r1 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db)
     );
     long s1 = r1.getRecordId();
 
     JsRecord r11 = transactor.queryAsTransaction(db ->
-        jackStore2.record(s1).createSubRecord()
+        jackStore.record(s1).createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db)
     );
     long s11 = r11.getRecordId();
 
     JsRecord r2 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db)
     );
     long s2 = r2.getRecordId();
 
     JsRecord r3 = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db)
     );
@@ -263,7 +263,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
     // delete s1 without recursion will fail
     try {
       transactor.executeAsTransaction(db ->
-          jackStore2.rootRecord().deleteSubRecords()
+          jackStore.rootRecord().deleteSubRecords()
               .whereSubRecordIds(s1)
               .deleteEntireRecord()
               .execute(db)
@@ -275,11 +275,11 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete s1 with recursion will succeed
     jsRecords = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().deleteSubRecords()
+      jackStore.rootRecord().deleteSubRecords()
           .whereSubRecordIds(s1)
           .deleteEntireRecord(true)
           .execute(db);
-      return jackStore2.rootRecord().readSubRecords()
+      return jackStore.rootRecord().readSubRecords()
           .execute(db);
     });
     assertEquals(Sets.newHashSet(s2, s3), Sets.newHashSet(jsRecords.getRecordIds()));
@@ -287,10 +287,10 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
     // delete all records without allowing bulk deletion will fail
     try {
       transactor.queryAsTransaction(db -> {
-        jackStore2.rootRecord().deleteSubRecords()
+        jackStore.rootRecord().deleteSubRecords()
             .deleteEntireRecord(true)
             .execute(db);
-        return jackStore2.rootRecord().readSubRecords()
+        return jackStore.rootRecord().readSubRecords()
             .execute(db);
       });
       fail();
@@ -300,11 +300,11 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
 
     // delete all records allowing bulk deletion will succeed
     jsRecords = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().deleteSubRecords()
+      jackStore.rootRecord().deleteSubRecords()
           .deleteEntireRecord(true)
           .allowBulkDeletion()
           .execute(db);
-      return jackStore2.rootRecord().readSubRecords()
+      return jackStore.rootRecord().readSubRecords()
           .execute(db);
     });
     assertTrue(jsRecords.isEmpty());
@@ -313,7 +313,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
   @Test
   public void testNoBulkDeletion() throws Exception {
     try {
-      transactor.execute(db -> jackStore2.rootRecord().deleteSubRecords().execute(db));
+      transactor.execute(db -> jackStore.rootRecord().deleteSubRecords().execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof BulkOperationException);
@@ -323,8 +323,8 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
   @Test
   public void testNoDeletion() throws Exception {
     try {
-      transactor.query(db -> jackStore2.rootRecord().deleteSubRecords().allowBulkDeletion().execute(db));
-      transactor.executeAsTransaction(db -> jackStore2.rootRecord().deleteSubRecords().allowBulkDeletion().execute(db));
+      transactor.query(db -> jackStore.rootRecord().deleteSubRecords().allowBulkDeletion().execute(db));
+      transactor.executeAsTransaction(db -> jackStore.rootRecord().deleteSubRecords().allowBulkDeletion().execute(db));
     } catch (Exception e) {
       fail();
     }
@@ -333,7 +333,7 @@ public class TestSubRecordDeleter extends BaseExecutorTestCase {
   @Test
   public void testInvalidSubScope() throws Exception {
     try {
-      transactor.executeAsTransaction(db -> jackStore2.rootRecord().deleteSubRecords().whereSubRecordIds(100L).execute(db));
+      transactor.executeAsTransaction(db -> jackStore.rootRecord().deleteSubRecords().whereSubRecordIds(100L).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof InvalidRecordException);

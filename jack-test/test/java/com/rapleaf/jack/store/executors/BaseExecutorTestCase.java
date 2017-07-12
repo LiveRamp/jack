@@ -73,7 +73,7 @@ public class BaseExecutorTestCase extends JackTestCase {
 
   protected final ITransactor<IDatabase1> transactor = new DatabasesImpl().getDatabase1Transactor().get();
   protected final JsTable table = JsTable.from(TestStore.TBL).create();
-  protected final JackStore jackStore2 = new JackStore(table);
+  protected final JackStore jackStore = new JackStore(table);
 
   Records records;
   JsRecords jsRecords;

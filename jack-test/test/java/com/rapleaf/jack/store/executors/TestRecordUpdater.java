@@ -81,7 +81,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     }
 
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().putJson(JSON_KEY, JSON_VALUE).execute(db);
+      jackStore.rootRecord().update().putJson(JSON_KEY, JSON_VALUE).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.startsWith(JSON_KEY)).fetch();
     });
     assertEquals(StringUtils.countMatches(JSON_STRING, ",") + 1, records.size());
@@ -110,7 +110,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   @Test
   public void testInsertNullWithPutObjectMethod() throws Exception {
     try {
-      transactor.execute(db -> jackStore2.rootRecord().update().put("key", (Object)null).execute(db));
+      transactor.execute(db -> jackStore.rootRecord().update().put("key", (Object)null).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof NullPointerException);
@@ -120,7 +120,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   @Test
   public void testInsertNullWithPutObjectListMethod() throws Exception {
     try {
-      transactor.execute(db -> jackStore2.rootRecord().update().put("key", (List<Object>)null).execute(db));
+      transactor.execute(db -> jackStore.rootRecord().update().put("key", (List<Object>)null).execute(db));
       fail();
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof NullPointerException);
@@ -128,7 +128,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   }
 
   private <T> void testInsertion(String key, T value, boolean isNull, InsertValue<T> execution) {
-    RecordUpdater executor = jackStore2.rootRecord().update();
+    RecordUpdater executor = jackStore.rootRecord().update();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : value);
       executor.execute(db);
@@ -139,7 +139,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   }
 
   private <T> void testListInsertion(String key, List<T> listValue, boolean isNull, InsertList<T> execution) {
-    RecordUpdater executor = jackStore2.rootRecord().update();
+    RecordUpdater executor = jackStore.rootRecord().update();
     records = transactor.queryAsTransaction(db -> {
       execution.apply(executor, key, isNull ? null : listValue);
       executor.execute(db);
@@ -151,7 +151,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
   private void testGenericInsertion(String key, Object value) throws Exception {
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, value).execute(db);
+      jackStore.rootRecord().update().put(key, value).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
@@ -161,7 +161,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
   @SuppressWarnings("unchecked")
   private void testGenericListInsertion(String key, List valueList) throws Exception {
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().putList(key, valueList).execute(db);
+      jackStore.rootRecord().update().putList(key, valueList).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(valueList.size(), records.size());
@@ -181,8 +181,8 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // primitive value
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, oldValue).execute(db);
-      jackStore2.rootRecord().update().put(key, newValue).execute(db);
+      jackStore.rootRecord().update().put(key, oldValue).execute(db);
+      jackStore.rootRecord().update().put(key, newValue).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
@@ -190,8 +190,8 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // list value
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().putIntList(key, oldList).execute(db);
-      jackStore2.rootRecord().update().putIntList(key, newList).execute(db);
+      jackStore.rootRecord().update().putIntList(key, oldList).execute(db);
+      jackStore.rootRecord().update().putIntList(key, newList).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(newList.size(), records.size());
@@ -199,16 +199,16 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // json value
     JsRecord jsRecord = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().putJson(key, oldJson).execute(db);
-      jackStore2.rootRecord().update().putJson(key, newJson).execute(db);
-      return jackStore2.rootRecord().read().execute(db);
+      jackStore.rootRecord().update().putJson(key, oldJson).execute(db);
+      jackStore.rootRecord().update().putJson(key, newJson).execute(db);
+      return jackStore.rootRecord().read().execute(db);
     });
     assertEquals(Sets.newHashSet(key), jsRecord.keySet());
     assertEquals(newJson, jsRecord.getJson(key));
 
     // primitive to list
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().putIntList(key, newList).execute(db);
+      jackStore.rootRecord().update().putIntList(key, newList).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(newList.size(), records.size());
@@ -216,7 +216,7 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // list to primitive
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, newValue).execute(db);
+      jackStore.rootRecord().update().put(key, newValue).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(1, records.size());
@@ -224,14 +224,14 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // primitive to json
     jsRecord = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, oldJson).execute(db);
-      return jackStore2.rootRecord().read().execute(db);
+      jackStore.rootRecord().update().put(key, oldJson).execute(db);
+      return jackStore.rootRecord().read().execute(db);
     });
     assertEquals(oldJson, jsRecord.getJson(key));
 
     // json to list
     records = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, oldList).execute(db);
+      jackStore.rootRecord().update().put(key, oldList).execute(db);
       return db.createQuery().from(TestStore.TBL).where(TestStore.ENTRY_KEY.equalTo(key)).fetch();
     });
     assertEquals(oldList.size(), records.size());
@@ -239,20 +239,41 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
 
     // list to json
     jsRecord = transactor.queryAsTransaction(db -> {
-      jackStore2.rootRecord().update().put(key, newJson).execute(db);
-      return jackStore2.rootRecord().read().execute(db);
+      jackStore.rootRecord().update().put(key, newJson).execute(db);
+      return jackStore.rootRecord().read().execute(db);
     });
     assertEquals(newJson, jsRecord.getJson(key));
+  }
+
+  @Test
+  public void testReadBackAllKeys() throws Exception {
+    String key1 = "key1";
+    String key2 = "key2";
+    String key3 = "key3";
+
+    JsRecord record = transactor.queryAsTransaction(db -> {
+      jackStore.rootRecord().update()
+          .putLong(key1, 1L)
+          .putLong(key2, 2L)
+          .putLong(key3, 3L)
+          .exec(db);
+
+      return jackStore.rootRecord().update()
+          .putLong(key1, 1L)
+          .execute(db);
+    });
+
+    assertEquals(Sets.newHashSet(key1, key2, key3), record.keySet());
   }
 
   @Test
   public void testInsertIntoNonExistingScope() throws Exception {
     try {
       transactor.queryAsTransaction(db -> {
-        jackStore2.record(100L).update()
+        jackStore.record(100L).update()
             .put(LONG_KEY, LONG_VALUE)
             .execute(db);
-        return jackStore2.record(100L).read().execute(db);
+        return jackStore.record(100L).read().execute(db);
       });
       fail();
     } catch (SqlExecutionFailureException e) {

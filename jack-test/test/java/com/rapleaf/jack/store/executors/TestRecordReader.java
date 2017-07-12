@@ -58,7 +58,7 @@ public class TestRecordReader extends BaseExecutorTestCase {
           .set(TestStore.ENTRY_VALUE, nullValue ? null : value.toString())
           .execute();
       // read back new record
-      return jackStore2.record(recordId).read().execute(db);
+      return jackStore.record(recordId).read().execute(db);
     });
 
     assertEquals(recordId, record.getRecordId().longValue());
@@ -85,7 +85,7 @@ public class TestRecordReader extends BaseExecutorTestCase {
           .set(TestStore.ENTRY_VALUE, nullValue ? Collections.nCopies(values.size(), null) : ((List<Object>)values).stream().map(Object::toString).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.record(recordId).read().execute(db);
+      return jackStore.record(recordId).read().execute(db);
     });
 
     assertEquals(recordId, record.getRecordId().longValue());
@@ -114,7 +114,7 @@ public class TestRecordReader extends BaseExecutorTestCase {
           .set(TestStore.ENTRY_VALUE, tuples.stream().map(JsonDbTuple::getValue).collect(Collectors.toList()))
           .execute();
       // read back new record
-      return jackStore2.rootRecord().read().execute(db);
+      return jackStore.rootRecord().read().execute(db);
     });
 
     assertEquals(JSON_VALUE, record.getJson(JSON_KEY));
@@ -134,7 +134,7 @@ public class TestRecordReader extends BaseExecutorTestCase {
           .set(TestStore.ENTRY_VALUE, STRING_VALUE, String.valueOf(LONG_VALUE), String.valueOf(BOOLEAN_VALUE))
           .execute();
       // read back new record
-      return jackStore2.rootRecord().read()
+      return jackStore.rootRecord().read()
           .selectKey(selectedKeys.get(0))
           .selectKey(Collections.singleton(selectedKeys.get(1)))
           .execute(db);

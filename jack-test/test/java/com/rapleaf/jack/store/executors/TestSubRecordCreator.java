@@ -31,7 +31,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
         names.add(name);
         values.add(value);
 
-        jsRecords[i] = jackStore2.rootRecord()
+        jsRecords[i] = jackStore.rootRecord()
             .createSubRecord()
             .recordName(name)
             .put(LONG_KEY, value)
@@ -72,7 +72,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
   @Test
   public void testCreateSubRecordAndRead() throws Exception {
     JsRecord jsRecord = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().createSubRecord()
+        jackStore.rootRecord().createSubRecord()
             .put(BOOLEAN_KEY, BOOLEAN_VALUE)
             .put(INT_KEY, INT_VALUE)
             .put(LONG_KEY, LONG_VALUE)

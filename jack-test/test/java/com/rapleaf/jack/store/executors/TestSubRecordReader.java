@@ -38,7 +38,7 @@ public class TestSubRecordReader extends BaseExecutorTestCase {
     List<JsRecord> allJsRecords = Lists.newLinkedList();
     transactor.executeAsTransaction(db -> {
       for (long i = 0L; i < size; ++i) {
-        JsRecord record = jackStore2.record(parentScopeId)
+        JsRecord record = jackStore.record(parentScopeId)
             .createSubRecord()
             .recordName(String.valueOf(i))
             .putLong(LONG_KEY, i)
@@ -56,7 +56,7 @@ public class TestSubRecordReader extends BaseExecutorTestCase {
     List<JsRecord> subRecords = allJsRecords.subList(lo, hi);
     List<Long> subScopeIds = subRecords.stream().map(JsRecord::getRecordId).collect(Collectors.toList());
     jsRecords = transactor.queryAsTransaction(db -> {
-      SubRecordReader reader = jackStore2.record(parentScopeId).readSubRecords();
+      SubRecordReader reader = jackStore.record(parentScopeId).readSubRecords();
       for (long subScopeId : subScopeIds) {
         reader.whereSubRecordIds(Collections.singleton(subScopeId));
       }
@@ -83,7 +83,7 @@ public class TestSubRecordReader extends BaseExecutorTestCase {
   @Test
   public void testZeroSubScope() throws Exception {
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().readSubRecords().execute(db)
+        jackStore.rootRecord().readSubRecords().execute(db)
     );
     assertEquals(JsConstants.ROOT_RECORD_ID, jsRecords.getParentRecordId());
     assertTrue(jsRecords.isEmpty());
@@ -92,20 +92,20 @@ public class TestSubRecordReader extends BaseExecutorTestCase {
   @Test
   public void testEmptySubScopes() throws Exception {
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.rootRecord().readSubRecords().execute(db)
+        jackStore.rootRecord().readSubRecords().execute(db)
     );
 
     int size = Math.max(3, RANDOM.nextInt(5));
     Set<Long> subScopeIds = Sets.newHashSet();
     Long parentScopeId = transactor.queryAsTransaction(db -> {
-      long recordId = jackStore2.rootRecord().createSubRecord().execute(db).getRecordId();
+      long recordId = jackStore.rootRecord().createSubRecord().execute(db).getRecordId();
       for (int i = 0; i < size; ++i) {
-        subScopeIds.add(jackStore2.record(recordId).createSubRecord().execute(db).getRecordId());
+        subScopeIds.add(jackStore.record(recordId).createSubRecord().execute(db).getRecordId());
       }
       return recordId;
     });
 
-    jsRecords = transactor.queryAsTransaction(db -> jackStore2.record(parentScopeId).readSubRecords().execute(db));
+    jsRecords = transactor.queryAsTransaction(db -> jackStore.record(parentScopeId).readSubRecords().execute(db));
     assertEquals(subScopeIds, Sets.newHashSet(this.jsRecords.getRecordIds()));
     assertEquals(parentScopeId, jsRecords.getParentRecordId());
     for (int i = 0; i < size; ++i) {
@@ -118,7 +118,7 @@ public class TestSubRecordReader extends BaseExecutorTestCase {
   public void testInvalidSubScopeIds() throws Exception {
     try {
       jsRecords = transactor.queryAsTransaction(db ->
-          jackStore2.rootRecord()
+          jackStore.rootRecord()
               .readSubRecords()
               .whereSubRecordIds(Collections.singleton(5001L))
               .execute(db)

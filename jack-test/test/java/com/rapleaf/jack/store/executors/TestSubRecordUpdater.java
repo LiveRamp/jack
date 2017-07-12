@@ -32,7 +32,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
 
   @Test
   public void testUpdateNothing() throws Exception {
-    jsRecords = transactor.queryAsTransaction(db -> jackStore2.rootRecord().updateSubRecords().execute(db));
+    jsRecords = transactor.queryAsTransaction(db -> jackStore.rootRecord().updateSubRecords().execute(db));
     assertTrue(jsRecords.isEmpty());
   }
 
@@ -40,7 +40,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
   public void testUpdate() throws Exception {
     // insert new value
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.record(parentScope)
+        jackStore.record(parentScope)
             .updateSubRecords()
             .whereSubRecordIds(s1, s2)
             .whereSubRecordIds(Sets.newHashSet(s3))
@@ -60,7 +60,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
 
     // update s1 and s3
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.record(parentScope)
+        jackStore.record(parentScope)
             .updateSubRecords()
             .whereSubRecordIds(s1)
             .whereSubRecordIds(Sets.newHashSet(s3))
@@ -84,7 +84,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
 
     // s2 is not updated
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.record(parentScope)
+        jackStore.record(parentScope)
             .readSubRecords()
             .whereSubRecordIds(s2)
             .execute(db)
@@ -100,7 +100,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
   public void testBulkUpdate() throws Exception {
     try {
       transactor.executeAsTransaction(db ->
-          jackStore2.record(parentScope)
+          jackStore.record(parentScope)
               .updateSubRecords()
               .put(STRING_KEY, STRING_VALUE)
               .execute(db)
@@ -110,7 +110,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
     }
 
     jsRecords = transactor.queryAsTransaction(db ->
-        jackStore2.record(parentScope)
+        jackStore.record(parentScope)
             .updateSubRecords()
             .allowBulkUpdate()
             .put(STRING_KEY, STRING_VALUE)
@@ -125,7 +125,7 @@ public class TestSubRecordUpdater extends BaseExecutorTestCase {
   public void testInvalidSubScopes() throws Exception {
     try {
       transactor.executeAsTransaction(db -> {
-        jackStore2.record(parentScope)
+        jackStore.record(parentScope)
             .updateSubRecords()
             .whereSubRecordIds(Sets.newHashSet(100L))
             .put(STRING_KEY, STRING_VALUE)

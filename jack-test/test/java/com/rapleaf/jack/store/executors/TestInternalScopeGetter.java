@@ -33,7 +33,7 @@ public class TestInternalScopeGetter extends BaseExecutorTestCase {
     int size = Math.max(3, RANDOM.nextInt(5));
     transactor.executeAsTransaction(db -> {
       for (int i = 0; i < size; ++i) {
-        subScopeIds.add(jackStore2.record(parentScopeId).createSubRecord().execute(db).getRecordId());
+        subScopeIds.add(jackStore.record(parentScopeId).createSubRecord().execute(db).getRecordId());
       }
     });
     assertEquals(subScopeIds, transactor.queryAsTransaction(db -> InternalScopeGetter.getAllSubRecordIds(db, table, parentScopeId)));

@@ -18,7 +18,7 @@ public class RecordUpdater extends BaseCreatorExecutor<JsRecord, Long, RecordUpd
       deleteExistingEntries(db, executionRecordId);
       insertNewEntries(db, executionRecordId);
     }
-    return new JsRecord(executionRecordId, types, values);
+    return new RecordReader(table, executionRecordId).execute(db);
   }
 
   @Override
