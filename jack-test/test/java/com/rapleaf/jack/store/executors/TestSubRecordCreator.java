@@ -1,8 +1,10 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.rapleaf.jack.queries.Record;
@@ -16,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class TestSubRecordCreator extends BaseExecutorTestCase {
 
   @Test
-  public void testSubScopeCreation() throws Exception {
+  public void testSubScopeCreation2() throws Exception {
     int size = Math.max(3, RANDOM.nextInt(10));
     List<String> names = Lists.newArrayListWithCapacity(size);
     List<Long> values = Lists.newArrayListWithCapacity(size);
@@ -65,6 +67,43 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
       Record record = valueRecords.get(i);
       assertEquals(values.get(i), Long.valueOf(record.get(TestStore.ENTRY_VALUE)));
     }
+  }
+
+  @Test
+  public void testCreateSubRecordAndRead() throws Exception {
+    JsRecord jsRecord = transactor.queryAsTransaction(db ->
+        jackStore2.rootRecord().createSubRecord()
+            .put(BOOLEAN_KEY, BOOLEAN_VALUE)
+            .put(INT_KEY, INT_VALUE)
+            .put(LONG_KEY, LONG_VALUE)
+            .put(DOUBLE_KEY, DOUBLE_VALUE)
+            .put(DATETIME_KEY, DATETIME_VALUE)
+            .put(STRING_KEY, STRING_VALUE)
+            .put(JSON_KEY, JSON_VALUE)
+            .putList(BOOLEAN_LIST_KEY, BOOLEAN_LIST_VALUE)
+            .putList(INT_LIST_KEY, INT_LIST_VALUE)
+            .putList(LONG_LIST_KEY, LONG_LIST_VALUE)
+            .putList(DOUBLE_LIST_KEY, DOUBLE_LIST_VALUE)
+            .putList(DATETIME_LIST_KEY, DATETIME_LIST_VALUE)
+            .putList(STRING_LIST_KEY, STRING_LIST_VALUE)
+            .execute(db)
+    );
+
+    assertEquals(BOOLEAN_VALUE, jsRecord.get(BOOLEAN_KEY));
+    assertEquals(INT_VALUE, jsRecord.get(INT_KEY));
+    assertEquals(LONG_VALUE, jsRecord.get(LONG_KEY));
+    assertEquals(DOUBLE_VALUE, jsRecord.get(DOUBLE_KEY));
+    assertEquals(DATETIME_VALUE.getMillis(), ((DateTime)jsRecord.get(DATETIME_KEY)).getMillis());
+    assertEquals(STRING_VALUE, jsRecord.get(STRING_KEY));
+
+    assertEquals(JSON_VALUE, jsRecord.get(JSON_KEY));
+
+    assertEquals(BOOLEAN_LIST_VALUE, jsRecord.getList(BOOLEAN_LIST_KEY));
+    assertEquals(INT_LIST_VALUE, jsRecord.getList(INT_LIST_KEY));
+    assertEquals(LONG_LIST_VALUE, jsRecord.getList(LONG_LIST_KEY));
+    assertEquals(DOUBLE_LIST_VALUE, jsRecord.getList(DOUBLE_LIST_KEY));
+    assertEquals(DATETIME_LIST_VALUE.stream().map(DateTime::getMillis).collect(Collectors.toList()), ((List<DateTime>)jsRecord.getList(DATETIME_LIST_KEY)).stream().map(DateTime::getMillis).collect(Collectors.toList()));
+    assertEquals(STRING_LIST_VALUE, jsRecord.getList(STRING_LIST_KEY));
   }
 
 }

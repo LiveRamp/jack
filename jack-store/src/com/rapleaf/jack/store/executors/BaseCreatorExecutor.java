@@ -115,27 +115,27 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
 
   @Override
   @SuppressWarnings("unchecked")
-  public E putList(String key, List<Object> valueList) {
+  public E putList(String key, List valueList) {
     Preconditions.checkArgument(valueList != null && !valueList.isEmpty(), "Value list cannot be null or empty when using the putList method");
 
     Object value = valueList.get(0);
     if (value instanceof Boolean) {
-      return (E)putBooleanList(key, (List)valueList);
+      return (E)putBooleanList(key, valueList);
     }
     if (value instanceof Integer) {
-      return (E)putIntList(key, (List)valueList);
+      return (E)putIntList(key, valueList);
     }
     if (value instanceof Long) {
-      return (E)putLongList(key, (List)valueList);
+      return (E)putLongList(key, valueList);
     }
     if (value instanceof Double) {
-      return (E)putDoubleList(key, (List)valueList);
+      return (E)putDoubleList(key, valueList);
     }
     if (value instanceof DateTime) {
-      return (E)putDateTimeList(key, (List)valueList);
+      return (E)putDateTimeList(key, valueList);
     }
     if (value instanceof String) {
-      return (E)putStringList(key, (List)valueList);
+      return (E)putStringList(key, valueList);
     }
     throw new IllegalArgumentException("Unsupported value type: " + value.getClass().getSimpleName());
   }

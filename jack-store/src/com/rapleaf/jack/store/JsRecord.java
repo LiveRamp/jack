@@ -191,11 +191,17 @@ public class JsRecord implements ValueContainer<JsRecord> {
 
   private <T> T checkTypeAndGetNullable(String key, ValueType type, Function<String, T> function) {
     Preconditions.checkArgument(types.get(key).equals(type), "%s is expected to be a %s, but it actually is a %s", key, type.name(), types.get(key).name());
-    String value = (String)values.get(key);
+    Object value = values.get(key);
     if (value == null) {
       return null;
     } else {
-      return function.apply(value);
+      // when values are read from db, they are String
+      // when values are created by user, they are T
+      if (value instanceof String) {
+        return function.apply((String)value);
+      } else {
+        return (T)value;
+      }
     }
   }
 
@@ -207,11 +213,15 @@ public class JsRecord implements ValueContainer<JsRecord> {
   @SuppressWarnings("unchecked")
   private <T> List<T> checkTypeAndGetList(String key, ValueType type, Function<String, T> function) {
     Preconditions.checkArgument(types.get(key).equals(type));
-    List<String> valueList = (List<String>)values.get(key);
+    List valueList = (List)values.get(key);
     if (valueList == null || valueList.isEmpty()) {
       return Collections.emptyList();
     } else {
-      return valueList.stream().map(function).collect(Collectors.toList());
+      if (valueList.get(0) instanceof String) {
+        return ((List<String>)valueList).stream().map(function).collect(Collectors.toList());
+      } else {
+        return (List<T>)valueList;
+      }
     }
   }
 
