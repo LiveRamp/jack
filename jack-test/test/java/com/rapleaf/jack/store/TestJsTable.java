@@ -17,18 +17,18 @@ public class TestJsTable {
   public void testValidTable() throws Exception {
     table = JsTable.from(TestStore.TBL).create();
     assertEquals(TestStore.TBL.ID.getSqlKeyword(), table.idColumn.getSqlKeyword());
-    assertEquals(TestStore.TBL.SCOPE.getSqlKeyword(), table.scopeColumn.getSqlKeyword());
-    assertEquals(TestStore.TBL.TYPE.getSqlKeyword(), table.typeColumn.getSqlKeyword());
-    assertEquals(TestStore.TBL.KEY.getSqlKeyword(), table.keyColumn.getSqlKeyword());
-    assertEquals(TestStore.TBL.VALUE.getSqlKeyword(), table.valueColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_SCOPE.getSqlKeyword(), table.scopeColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_TYPE.getSqlKeyword(), table.typeColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_KEY.getSqlKeyword(), table.keyColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_VALUE.getSqlKeyword(), table.valueColumn.getSqlKeyword());
 
     // switch key and value columns
     table = JsTable.from(TestStore.TBL)
-        .setKeyColumn(TestStore.VALUE)
-        .setValueColumn(TestStore.KEY)
+        .setKeyColumn(TestStore.ENTRY_VALUE)
+        .setValueColumn(TestStore.ENTRY_KEY)
         .create();
-    assertEquals(TestStore.TBL.KEY.getSqlKeyword(), table.valueColumn.getSqlKeyword());
-    assertEquals(TestStore.TBL.VALUE.getSqlKeyword(), table.keyColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_KEY.getSqlKeyword(), table.valueColumn.getSqlKeyword());
+    assertEquals(TestStore.ENTRY_VALUE.getSqlKeyword(), table.keyColumn.getSqlKeyword());
   }
 
   @Test(expected = IllegalArgumentException.class)

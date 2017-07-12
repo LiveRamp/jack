@@ -91,20 +91,20 @@ public class JsTable {
 
     public JsTable create() {
       if (scopeColumn == null) {
-        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.scope.name()));
-        scopeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.scope, Long.class);
+        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_scope.name()));
+        scopeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_scope, Long.class);
       }
       if (typeColumn == null) {
-        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.type.name()));
-        typeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.type, Integer.class);
+        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_type.name()));
+        typeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_type, Integer.class);
       }
       if (keyColumn == null) {
-        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.key.name()));
-        keyColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.key, String.class);
+        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_key.name()));
+        keyColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_key, String.class);
       }
       if (valueColumn == null) {
-        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.value.name()));
-        valueColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.value, String.class);
+        Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_value.name()));
+        valueColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_value, String.class);
       }
       return new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
     }

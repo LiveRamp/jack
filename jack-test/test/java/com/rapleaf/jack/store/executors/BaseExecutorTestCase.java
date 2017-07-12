@@ -86,10 +86,10 @@ public class BaseExecutorTestCase extends JackTestCase {
   long createSubScope(Optional<Long> parentScopeId, Optional<String> name) throws Exception {
     return transactor.queryAsTransaction(db ->
         db.createInsertion().into(TestStore.TBL)
-            .set(TestStore.SCOPE, parentScopeId.orElse(null))
-            .set(TestStore.TYPE, ValueType.SCOPE.value)
-            .set(TestStore.KEY, JsConstants.SCOPE_KEY)
-            .set(TestStore.VALUE, name.orElse(UUID.randomUUID().toString()))
+            .set(TestStore.ENTRY_SCOPE, parentScopeId.orElse(null))
+            .set(TestStore.ENTRY_TYPE, ValueType.SCOPE.value)
+            .set(TestStore.ENTRY_KEY, JsConstants.SCOPE_KEY)
+            .set(TestStore.ENTRY_VALUE, name.orElse(UUID.randomUUID().toString()))
             .execute()
             .getFirstId()
     );

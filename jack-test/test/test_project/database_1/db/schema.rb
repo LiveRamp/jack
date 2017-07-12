@@ -39,15 +39,15 @@ ActiveRecord::Schema.define(version: 20170607113609) do
   end
 
   create_table "test_store", force: :cascade do |t|
-    t.integer  "type",       limit: 4
-    t.integer  "scope",      limit: 8
-    t.string   "key",        limit: 255
-    t.string   "value",      limit: 255
+    t.integer  "entry_type",  limit: 4
+    t.integer  "entry_scope", limit: 8
+    t.string   "entry_key",   limit: 2048
+    t.string   "entry_value", limit: 2048
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "test_store", ["scope", "key", "value"], name: "store_index_on_scope_key_value", length: {"scope"=>nil, "key"=>20, "value"=>60}, using: :btree
+  add_index "test_store", ["entry_scope", "entry_key", "entry_value"], name: "store_index_on_scope_key_value", length: {"entry_scope"=>nil, "entry_key"=>20, "entry_value"=>60}, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "handle",            limit: 255,                             null: false
