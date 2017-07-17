@@ -8,12 +8,12 @@ public class SingleTableReference implements TableReference {
   private final Table table;
   private final Set<IndexHint> indexHints;
 
-  SingleTableReference(Table table) {
+  public SingleTableReference(Table table) {
     this.table = table;
     this.indexHints = Collections.emptySet();
   }
 
-  SingleTableReference(Table table, Set<IndexHint> indexHints) {
+  public SingleTableReference(Table table, Set<IndexHint> indexHints) {
     this.table = table;
     this.indexHints = indexHints;
   }
