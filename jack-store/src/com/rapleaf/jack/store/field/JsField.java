@@ -4,13 +4,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.rapleaf.jack.store.JsRecord;
-import com.rapleaf.jack.store.executors.RecordIndexExecutor;
+import com.rapleaf.jack.store.iface.ValueIndexer;
 
 public interface JsField<T> {
 
   String getKey();
 
-  BiFunction<RecordIndexExecutor, T, RecordIndexExecutor> getPutFunction();
+  BiFunction<ValueIndexer, T, ValueIndexer> getPutFunction();
 
   Function<JsRecord, T> getReadFunction();
 

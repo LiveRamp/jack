@@ -3,6 +3,7 @@ package com.rapleaf.jack.queries;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.Post;
@@ -48,7 +49,7 @@ public class TestGenericUpdate {
     assertEquals(USER_ID_1 * 10, db.posts().find(post2.getId()).getUserId().longValue());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = BulkOperationException.class)
   public void testUpdateAllWithoutBulkOperation() throws Exception {
     db.createUpdate()
         .table(Post.TBL)

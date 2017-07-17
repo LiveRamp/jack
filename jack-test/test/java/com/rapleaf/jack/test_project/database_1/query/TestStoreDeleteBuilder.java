@@ -31,43 +31,43 @@ public class TestStoreDeleteBuilder extends AbstractDeleteBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreDeleteBuilder type(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, JackMatchers.equalTo(value)));
+  public TestStoreDeleteBuilder entryType(Integer value) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreDeleteBuilder whereType(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.type, operator));
+  public TestStoreDeleteBuilder whereEntryType(IWhereOperator<Integer> operator) {
+    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, operator));
     return this;
   }
 
-  public TestStoreDeleteBuilder scope(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, JackMatchers.equalTo(value)));
+  public TestStoreDeleteBuilder entryScope(Long value) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreDeleteBuilder whereScope(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.scope, operator));
+  public TestStoreDeleteBuilder whereEntryScope(IWhereOperator<Long> operator) {
+    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, operator));
     return this;
   }
 
-  public TestStoreDeleteBuilder key(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.key, JackMatchers.equalTo(value)));
+  public TestStoreDeleteBuilder entryKey(String value) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreDeleteBuilder whereKey(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.key, operator));
+  public TestStoreDeleteBuilder whereEntryKey(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, operator));
     return this;
   }
 
-  public TestStoreDeleteBuilder value(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.value, JackMatchers.equalTo(value)));
+  public TestStoreDeleteBuilder entryValue(String value) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, JackMatchers.equalTo(value)));
     return this;
   }
 
-  public TestStoreDeleteBuilder whereValue(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.value, operator));
+  public TestStoreDeleteBuilder whereEntryValue(IWhereOperator<String> operator) {
+    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, operator));
     return this;
   }
 

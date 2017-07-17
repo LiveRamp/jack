@@ -1,55 +1,53 @@
 package com.rapleaf.jack.store.executors;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
 
 import com.rapleaf.jack.queries.Record;
-import com.rapleaf.jack.store.JsScope;
+import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.JsTable;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 
-abstract class BaseReaderExecutor<T extends BaseReaderExecutor<T>> extends BaseExecutor {
+final class InternalRecordCreator {
 
+  private final JsTable table;
   private final Set<String> selectedKeys;
 
-  BaseReaderExecutor(JsTable table, Optional<JsScope> predefinedScope, List<String> predefinedScopeNames) {
-    super(table, predefinedScope, predefinedScopeNames);
-    this.selectedKeys = Sets.newHashSet();
+  private Map<String, ValueType> types = Maps.newHashMap();
+  private Map<String, Object> values = Maps.newHashMap();
+  private List<JsonDbTuple> jsonTuples = Lists.newLinkedList();
+  private Set<String> jsonKeys = Sets.newHashSet();
+
+  InternalRecordCreator(JsTable table, Set<String> selectedKeys) {
+    this.table = table;
+    this.selectedKeys = selectedKeys;
   }
 
-  public T selectKey(String key, String... otherKeys) {
-    this.selectedKeys.add(key);
-    this.selectedKeys.addAll(Arrays.asList(otherKeys));
-    return getSelf();
+  boolean hasNewRecord() {
+    return !types.isEmpty() || !jsonKeys.isEmpty();
   }
 
-  public T selectKey(Collection<String> keys) {
-    selectedKeys.addAll(keys);
-    return getSelf();
-  }
-
-  abstract T getSelf();
-
-  void appendJsonRecord(Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys) {
+  JsRecord createNewRecord(Long recordId) {
     JsonObject jsonObject = JsonDbHelper.fromTupleList(jsonTuples);
     for (String jsonKey : jsonKeys) {
       JsonObject json = jsonObject.get(jsonKey).getAsJsonObject();
       types.put(jsonKey, ValueType.JSON_STRING);
       values.put(jsonKey, json);
     }
+    JsRecord record = new JsRecord(recordId, types, values);
+    clear();
+    return record;
   }
 
-  void appendRecord(Map<String, ValueType> types, Map<String, Object> values, List<JsonDbTuple> jsonTuples, Set<String> jsonKeys, Record record) {
+  void appendRecord(Record record) {
     ValueType type = ValueType.findByValue(record.get(table.typeColumn));
     String key = record.get(table.keyColumn);
     String value = record.get(table.valueColumn);
@@ -90,6 +88,13 @@ abstract class BaseReaderExecutor<T extends BaseReaderExecutor<T>> extends BaseE
 
   private boolean isSelectedKey(String key) {
     return selectedKeys.isEmpty() || selectedKeys.contains(key);
+  }
+
+  private void clear() {
+    types = Maps.newHashMap();
+    values = Maps.newHashMap();
+    jsonTuples = Lists.newLinkedList();
+    jsonKeys = Sets.newHashSet();
   }
 
 }

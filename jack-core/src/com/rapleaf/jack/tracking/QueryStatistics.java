@@ -44,4 +44,14 @@ public class QueryStatistics {
     }
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() +
+        "{" +
+        "executionTimeNanos: " + executionTimeNanos +
+        ", queryPrepTimeNanos: " + queryPrepTimeNanos +
+        ", numTries: " + numTries +
+        "}";
+  }
+
 }

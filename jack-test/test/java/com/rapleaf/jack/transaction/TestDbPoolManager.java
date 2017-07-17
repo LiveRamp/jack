@@ -87,7 +87,7 @@ public class TestDbPoolManager extends JackTestCase {
   public void testKeepAliveTime() throws Exception {
     maxConnections = 15;
     minIdleConnections = 5;
-    keepAliveTime = Duration.standardSeconds(3).getMillis();
+    keepAliveTime = Duration.standardSeconds(1).getMillis();
     initializeDbPoolManager();
     getAndReturnAllConnections();
 
@@ -241,7 +241,7 @@ public class TestDbPoolManager extends JackTestCase {
         assertInRange(waitSeconds, expectedSeconds, expectedSeconds + error);
         break;
       } else {
-        sleepSeconds(1);
+        sleepMillis(500);
       }
     }
   }

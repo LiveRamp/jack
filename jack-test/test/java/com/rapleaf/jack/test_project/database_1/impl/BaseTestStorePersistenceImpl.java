@@ -44,43 +44,43 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   private final IDatabases databases;
 
   public BaseTestStorePersistenceImpl(BaseDatabaseConnection conn, IDatabases databases) {
-    super(conn, "test_store", Arrays.<String>asList("type", "scope", "key", "value", "created_at", "updated_at"));
+    super(conn, "test_store", Arrays.<String>asList("entry_type", "entry_scope", "entry_key", "entry_value", "created_at", "updated_at"));
     this.databases = databases;
   }
 
   @Override
   public TestStore create(Map<Enum, Object> fieldsMap) throws IOException {
-    Integer type = (Integer) fieldsMap.get(TestStore._Fields.type);
-    Long scope = (Long) fieldsMap.get(TestStore._Fields.scope);
-    String key = (String) fieldsMap.get(TestStore._Fields.key);
-    String value = (String) fieldsMap.get(TestStore._Fields.value);
+    Integer entry_type = (Integer) fieldsMap.get(TestStore._Fields.entry_type);
+    Long entry_scope = (Long) fieldsMap.get(TestStore._Fields.entry_scope);
+    String entry_key = (String) fieldsMap.get(TestStore._Fields.entry_key);
+    String entry_value = (String) fieldsMap.get(TestStore._Fields.entry_value);
     Long created_at = (Long) fieldsMap.get(TestStore._Fields.created_at);
     Long updated_at = (Long) fieldsMap.get(TestStore._Fields.updated_at);
-    return create(type, scope, key, value, created_at, updated_at);
+    return create(entry_type, entry_scope, entry_key, entry_value, created_at, updated_at);
   }
 
-  public TestStore create(final Integer type, final Long scope, final String key, final String value, final Long created_at, final Long updated_at) throws IOException {
+  public TestStore create(final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) throws IOException {
     long __id = realCreate(new AttrSetter() {
       public void set(PreparedStatement stmt) throws SQLException {
-        if (type == null) {
+        if (entry_type == null) {
           stmt.setNull(1, java.sql.Types.INTEGER);
         } else {
-          stmt.setInt(1, type);
+          stmt.setInt(1, entry_type);
         }
-        if (scope == null) {
+        if (entry_scope == null) {
           stmt.setNull(2, java.sql.Types.INTEGER);
         } else {
-          stmt.setLong(2, scope);
+          stmt.setLong(2, entry_scope);
         }
-        if (key == null) {
+        if (entry_key == null) {
           stmt.setNull(3, java.sql.Types.CHAR);
         } else {
-          stmt.setString(3, key);
+          stmt.setString(3, entry_key);
         }
-        if (value == null) {
+        if (entry_value == null) {
           stmt.setNull(4, java.sql.Types.CHAR);
         } else {
-          stmt.setString(4, value);
+          stmt.setString(4, entry_value);
         }
         if (created_at == null) {
           stmt.setNull(5, java.sql.Types.DATE);
@@ -93,8 +93,8 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
           stmt.setTimestamp(6, new Timestamp(updated_at));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("type", "scope", "key", "value", "created_at", "updated_at")));
-    TestStore newInst = new TestStore(__id, type, scope, key, value, created_at, updated_at, databases);
+    }, getInsertStatement(Arrays.<String>asList("entry_type", "entry_scope", "entry_key", "entry_value", "created_at", "updated_at")));
+    TestStore newInst = new TestStore(__id, entry_type, entry_scope, entry_key, entry_value, created_at, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
@@ -165,16 +165,16 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
         TestStore._Fields field = nonNullValueFields.get(i);
         try {
           switch (field) {
-            case type:
+            case entry_type:
               preparedStatement.setInt(i+1, (Integer) nonNullValues.get(i));
               break;
-            case scope:
+            case entry_scope:
               preparedStatement.setLong(i+1, (Long) nonNullValues.get(i));
               break;
-            case key:
+            case entry_key:
               preparedStatement.setString(i+1, (String) nonNullValues.get(i));
               break;
-            case value:
+            case entry_value:
               preparedStatement.setString(i+1, (String) nonNullValues.get(i));
               break;
             case created_at:
@@ -216,16 +216,16 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
           } else {
             TestStore._Fields field = (TestStore._Fields)constraint.getField();
             switch (field) {
-              case type:
+              case entry_type:
                 preparedStatement.setInt(++index, (Integer) parameter);
                 break;
-              case scope:
+              case entry_scope:
                 preparedStatement.setLong(++index, (Long) parameter);
                 break;
-              case key:
+              case entry_key:
                 preparedStatement.setString(++index, (String) parameter);
                 break;
-              case value:
+              case entry_value:
                 preparedStatement.setString(++index, (String) parameter);
                 break;
               case created_at:
@@ -245,25 +245,25 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
 
   @Override
   protected void setAttrs(TestStore model, PreparedStatement stmt) throws SQLException {
-    if (model.getType() == null) {
+    if (model.getEntryType() == null) {
       stmt.setNull(1, java.sql.Types.INTEGER);
     } else {
-      stmt.setInt(1, model.getType());
+      stmt.setInt(1, model.getEntryType());
     }
-    if (model.getScope() == null) {
+    if (model.getEntryScope() == null) {
       stmt.setNull(2, java.sql.Types.INTEGER);
     } else {
-      stmt.setLong(2, model.getScope());
+      stmt.setLong(2, model.getEntryScope());
     }
-    if (model.getKey() == null) {
+    if (model.getEntryKey() == null) {
       stmt.setNull(3, java.sql.Types.CHAR);
     } else {
-      stmt.setString(3, model.getKey());
+      stmt.setString(3, model.getEntryKey());
     }
-    if (model.getValue() == null) {
+    if (model.getEntryValue() == null) {
       stmt.setNull(4, java.sql.Types.CHAR);
     } else {
-      stmt.setString(4, model.getValue());
+      stmt.setString(4, model.getEntryValue());
     }
     if (model.getCreatedAt() == null) {
       stmt.setNull(5, java.sql.Types.DATE);
@@ -283,30 +283,30 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new TestStore(id,
-      allFields || selectedFields.contains(TestStore._Fields.type) ? getIntOrNull(rs, "type") : null,
-      allFields || selectedFields.contains(TestStore._Fields.scope) ? getLongOrNull(rs, "scope") : null,
-      allFields || selectedFields.contains(TestStore._Fields.key) ? rs.getString("key") : null,
-      allFields || selectedFields.contains(TestStore._Fields.value) ? rs.getString("value") : null,
+      allFields || selectedFields.contains(TestStore._Fields.entry_type) ? getIntOrNull(rs, "entry_type") : null,
+      allFields || selectedFields.contains(TestStore._Fields.entry_scope) ? getLongOrNull(rs, "entry_scope") : null,
+      allFields || selectedFields.contains(TestStore._Fields.entry_key) ? rs.getString("entry_key") : null,
+      allFields || selectedFields.contains(TestStore._Fields.entry_value) ? rs.getString("entry_value") : null,
       allFields || selectedFields.contains(TestStore._Fields.created_at) ? getDateAsLong(rs, "created_at") : null,
       allFields || selectedFields.contains(TestStore._Fields.updated_at) ? getDateAsLong(rs, "updated_at") : null,
       databases
     );
   }
 
-  public List<TestStore> findByType(final Integer value) throws IOException {
-    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.type, value));
+  public List<TestStore> findByEntryType(final Integer value) throws IOException {
+    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.entry_type, value));
   }
 
-  public List<TestStore> findByScope(final Long value) throws IOException {
-    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.scope, value));
+  public List<TestStore> findByEntryScope(final Long value) throws IOException {
+    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.entry_scope, value));
   }
 
-  public List<TestStore> findByKey(final String value) throws IOException {
-    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.key, value));
+  public List<TestStore> findByEntryKey(final String value) throws IOException {
+    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.entry_key, value));
   }
 
-  public List<TestStore> findByValue(final String value) throws IOException {
-    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.value, value));
+  public List<TestStore> findByEntryValue(final String value) throws IOException {
+    return find(Collections.<Enum, Object>singletonMap(TestStore._Fields.entry_value, value));
   }
 
   public List<TestStore> findByCreatedAt(final Long value) throws IOException {
