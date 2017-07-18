@@ -110,7 +110,6 @@ public class TestDbMetrics {
   @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-
     Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
       sleepMillis(100);
       return stopwatch.elapsedMillis();
@@ -142,11 +141,9 @@ public class TestDbMetrics {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     long lifeTime = dbMetrics.getLifeTime();
     double expectedAverageIdleConnections = (double)idleTime / (double)lifeTime;
-    double averageIdleConnectionsMaxValue = dbMetrics.getAverageIdleConnectionsMaxValue();
-    double averageIdleConnectionsMinValue = dbMetrics.getAverageIdleConnectionsMinValue();
+    double averageIdleConnections = dbMetrics.getAverageIdleConnections();
     transactor.close();
-
-    assertTrue((expectedAverageIdleConnections - .1 <= averageIdleConnectionsMaxValue) && (expectedAverageIdleConnections + .1 >= averageIdleConnectionsMinValue));
+    assertRoughEqual(expectedAverageIdleConnections, averageIdleConnections, .2 * expectedAverageIdleConnections);
   }
 
   @Test

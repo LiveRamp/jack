@@ -17,8 +17,7 @@ public class DbMetricsImpl implements DbMetrics {
   private long maxActiveConnectionsTime;
   private long maxConnectionWaitingTime;
   private long totalConnectionWaitingTime;
-  private long totalIdleTimeMaxValue;
-  private long totalIdleTimeMinValue;
+  private long totalIdleTime;
   private long totalActiveTime;
   private long openedConnections;
 
@@ -53,10 +52,7 @@ public class DbMetricsImpl implements DbMetrics {
       maxConnectionWaitingTime = connectionPool.getMaxBorrowWaitTimeMillis();
       totalActiveTime += numActive * updateToNowTime;
       totalConnectionWaitingTime += numWaiters * updateToNowTime;
-      totalIdleTimeMinValue += numIdle * updateToNowTime;
-      if (currentConnections > numActive) {
-        totalIdleTimeMaxValue += (currentConnections - numActive) * updateToNowTime;
-      }
+      totalIdleTime += numIdle * updateToNowTime;
       if (isOpenConnection) {
         totalQueries += 1;
       }
@@ -100,13 +96,8 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public double getAverageIdleConnectionsMaxValue() {
-    return (double)totalIdleTimeMaxValue / (double)lifeTimeStopwatch.elapsedMillis();
-  }
-
-  @Override
-  public double getAverageIdleConnectionsMinValue() {
-    return (double)totalIdleTimeMinValue / (double)lifeTimeStopwatch.elapsedMillis();
+  public double getAverageIdleConnections() {
+    return (double)totalIdleTime / (double)lifeTimeStopwatch.elapsedMillis();
   }
 
   @Override
@@ -129,7 +120,7 @@ public class DbMetricsImpl implements DbMetrics {
     String summary = "";
     summary += ("\n-----------------------TRANSACTOR METRICS-----------------------\n");
 
-    summary += String.format("\nAverage number of Idle connections is between %,.2f and %,.2f", getAverageIdleConnectionsMinValue(), getAverageIdleConnectionsMaxValue());
+    summary += String.format("\nAverage number of Idle connections : %,.2f", getAverageIdleConnections());
     summary += String.format("\nAverage number of Active connections : %,.2f", getAverageActiveConnections());
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
     summary += ("\nConnections opened : " + getOpenedConnectionsNumber());
