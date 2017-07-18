@@ -100,7 +100,7 @@ public class TestDbMetrics {
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
     double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
-    System.out.println(String.format(("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime));
+    System.out.println(String.format("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime));
     System.out.println(String.format("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime));
     expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
 
