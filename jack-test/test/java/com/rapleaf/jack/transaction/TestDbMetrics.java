@@ -14,13 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import static org.junit.Assert.assertTrue;
 
-public class TestDbMetrics extends JackTestCase {
+public class TestDbMetrics {
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
   private ExecutorService executorService;
   private Stopwatch stopwatch = new Stopwatch();
@@ -84,7 +83,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-    sleepMillis(200);//so that the first connection doesnt have to wait
     Future<Long> future1 = executorService.submit(
         () -> transactor.query(a -> {
           sleepMillis(100);
@@ -102,8 +100,8 @@ public class TestDbMetrics extends JackTestCase {
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
     double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
-    LOG.info("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime);
-    LOG.info("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime);
+    System.out.println(String.format(("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime));
+    System.out.println(String.format("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime));
     expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
 
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
@@ -179,6 +177,15 @@ public class TestDbMetrics extends JackTestCase {
 
   private void assertRoughEqual(double value, double expected, double error) {
     assertTrue(value <= (expected + error) && value >= (expected - error));
+  }
+
+
+  private void sleepMillis(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }
