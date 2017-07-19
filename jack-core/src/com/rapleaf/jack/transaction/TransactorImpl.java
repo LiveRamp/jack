@@ -74,9 +74,10 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   TransactorMetrics getQueryMetrics() {
     if (!metricsTrackingEnabled) {
-      LOG.info("the transactor metrics aren't being tracked, it's useless to access them");
+      return new MockTransactorMetrics();
+    } else {
+      return queryMetrics;
     }
-    return queryMetrics;
   }
 
   DbMetrics getDbMetrics() {

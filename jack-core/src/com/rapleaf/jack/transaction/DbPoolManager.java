@@ -128,10 +128,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DbMetrics getMetrics() {
     if (!metricsTrackingEnabled) {
-      LOG.info("the db metrics aren't being tracked, it's useless to access them");
+      return new MockDbMetrics();
+    } else {
+      metrics.update(false, connectionPool);
+      return metrics;
     }
-    metrics.update(false, connectionPool);
-    return metrics;
   }
 
   @VisibleForTesting

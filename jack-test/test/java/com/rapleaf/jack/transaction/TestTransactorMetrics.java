@@ -40,7 +40,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @Test
   public void testAverageConnectionExecutionTime() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(2).get();
     Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
           long start = stopwatch.elapsedMillis();
           sleepMillis(100);
@@ -65,7 +65,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @Test
   public void testQueryOrder() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).get();
 
     transactor.execute(db -> {sleepMillis(200);});
     transactor.execute(db -> {sleepMillis(100);});
@@ -83,7 +83,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
   @Test
   public void testMaxAverageExecutionTime() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).get();
     Long executionTime = transactor.query(db -> {
       long startTime = System.currentTimeMillis();
       Thread.sleep(200);
@@ -92,7 +92,6 @@ public class TestTransactorMetrics extends JackTestCase {
     TransactorMetrics queryMetrics = transactor.getQueryMetrics();
     double maxExecutionTime = queryMetrics.getLongestQueries().getFirst().getAverageExecutionTime();
     transactor.close();
-
     assertRoughEqual(executionTime, maxExecutionTime, 20);
   }
 
@@ -100,7 +99,8 @@ public class TestTransactorMetrics extends JackTestCase {
   public void testQueryOverhead() throws Exception {
     TransactorImpl<IDatabase1> transactor1 = transactorBuilder.setMetricsTracking(false).get();
     long startTime1 = stopwatch.elapsedMillis();
-    for (int i = 0; i < 10; i++) {
+    int totalRuns = 10;
+    for (int i = 0; i < totalRuns; i++) {
       transactor1.execute(db -> {
         Thread.sleep(20);
       });
