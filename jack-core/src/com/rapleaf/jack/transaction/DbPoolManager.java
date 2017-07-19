@@ -89,7 +89,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       if (metricsTrackingEnabled) {
         metrics.update(true, connectionPool);
       }
-      return connectionPool.borrowObject();
+      DB connection = connectionPool.borrowObject();
+      if (metricsTrackingEnabled) {
+        metrics.update(false, connectionPool);
+      }
+      return connection;
     } catch (NoSuchElementException e) {
       String message = "No available connection; please consider increasing wait time or total connections";
       LOG.error(message, e);
@@ -110,6 +114,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
         metrics.update(false, connectionPool);
       }
       connectionPool.returnObject(connection);
+      metrics.update(false, connectionPool);
     } catch (Exception e) {
       LOG.error("Return connection failed", e);
     }

@@ -3,7 +3,7 @@ package com.rapleaf.jack.transaction;
 public interface DbMetrics {
   long getTotalQueries();
 
-  long getOpenedConnectionsNumber();
+  long getCreatedConnectionsCount();
 
   double getMaxConnectionsProportion();
 
@@ -11,9 +11,7 @@ public interface DbMetrics {
 
   double getAverageConnectionWaitingTime();
 
-  double getAverageIdleConnectionsMaxValue();
-
-  double getAverageIdleConnectionsMinValue();
+  double getAverageIdleConnections();
 
   double getAverageActiveConnections();
 

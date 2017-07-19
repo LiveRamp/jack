@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -28,7 +27,6 @@ public class TestDbMetrics extends JackTestCase {
 
   @Before
   public void prepare() throws Exception {
-    transactorBuilder.get().query(IDb::deleteAll);
     stopwatch.start();
     executorService = Executors.newFixedThreadPool(5);
   }
@@ -53,15 +51,14 @@ public class TestDbMetrics extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
 
     Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
+    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(70);}));
+    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(90);}));
     future1.get();
     future2.get();
     future3.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    double openedConnectionsNumber = dbMetrics.getOpenedConnectionsNumber();
+    double openedConnectionsNumber = dbMetrics.getCreatedConnectionsCount();
     transactor.close();
-
     assertTrue(openedConnectionsNumber == 2);
   }
 
@@ -84,7 +81,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-    sleepMillis(200);//so that the first connection doesnt have to wait
     Future<Long> future1 = executorService.submit(
         () -> transactor.query(a -> {
           sleepMillis(100);
@@ -112,7 +108,6 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).get();
-
     Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
       sleepMillis(100);
       return stopwatch.elapsedMillis();
@@ -144,11 +139,9 @@ public class TestDbMetrics extends JackTestCase {
     DbMetrics dbMetrics = transactor.getDbMetrics();
     long lifeTime = dbMetrics.getLifeTime();
     double expectedAverageIdleConnections = (double)idleTime / (double)lifeTime;
-    double averageIdleConnectionsMaxValue = dbMetrics.getAverageIdleConnectionsMaxValue();
-    double averageIdleConnectionsMinValue = dbMetrics.getAverageIdleConnectionsMinValue();
+    double averageIdleConnections = dbMetrics.getAverageIdleConnections();
     transactor.close();
-
-    assertTrue((expectedAverageIdleConnections - .1 <= averageIdleConnectionsMaxValue) && (expectedAverageIdleConnections + .1 >= averageIdleConnectionsMinValue));
+    assertRoughEqual(expectedAverageIdleConnections, averageIdleConnections, .2 * expectedAverageIdleConnections);
   }
 
   @Test
