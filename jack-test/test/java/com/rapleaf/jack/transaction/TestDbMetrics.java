@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 
 import static org.junit.Assert.assertTrue;
 
-public class TestDbMetrics {
+public class TestDbMetrics extends JackTestCase {
   private TransactorImpl.Builder<IDatabase1> transactorBuilder = new DatabasesImpl().getDatabase1Transactor();
   private ExecutorService executorService;
   private Stopwatch stopwatch = new Stopwatch();
@@ -27,7 +27,6 @@ public class TestDbMetrics {
 
   @Before
   public void prepare() throws Exception {
-    transactorBuilder.get().query(IDb::deleteAll);
     stopwatch.start();
     executorService = Executors.newFixedThreadPool(5);
   }
@@ -52,15 +51,14 @@ public class TestDbMetrics {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(2).get();
 
     Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
+    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(70);}));
+    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(90);}));
     future1.get();
     future2.get();
     future3.get();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    double openedConnectionsNumber = dbMetrics.getOpenedConnectionsNumber();
+    double openedConnectionsNumber = dbMetrics.getCreatedConnectionsCount();
     transactor.close();
-
     assertTrue(openedConnectionsNumber == 2);
   }
 
@@ -176,13 +174,5 @@ public class TestDbMetrics {
     assertTrue(value <= (expected + error) && value >= (expected - error));
   }
 
-
-  private void sleepMillis(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
 }

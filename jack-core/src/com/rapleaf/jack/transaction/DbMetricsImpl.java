@@ -19,7 +19,7 @@ public class DbMetricsImpl implements DbMetrics {
   private long totalConnectionWaitingTime;
   private long totalIdleTime;
   private long totalActiveTime;
-  private long openedConnections;
+  private long createdConnections;
 
   //Transactor parameters
 
@@ -57,9 +57,7 @@ public class DbMetricsImpl implements DbMetrics {
         totalQueries += 1;
       }
       int newConnections = numActive + numIdle;
-      if (newConnections > currentConnections) {
-        openedConnections += newConnections - currentConnections;
-      }
+      createdConnections = connectionPool.getCreatedCount();
       currentConnections = newConnections;
 
       if (numActive == maxTotalConnections) {
@@ -91,8 +89,8 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public long getOpenedConnectionsNumber() {
-    return openedConnections;
+  public long getCreatedConnectionsCount() {
+    return createdConnections;
   }
 
   @Override
@@ -123,7 +121,7 @@ public class DbMetricsImpl implements DbMetrics {
     summary += String.format("\nAverage number of Idle connections : %,.2f", getAverageIdleConnections());
     summary += String.format("\nAverage number of Active connections : %,.2f", getAverageActiveConnections());
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
-    summary += ("\nConnections opened : " + getOpenedConnectionsNumber());
+    summary += ("\nConnections created : " + getCreatedConnectionsCount());
     summary += String.format("\n Max capacity time (%%) : %,.2f %%", 100 * getMaxConnectionsProportion());
     summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitingTime());
     summary += String.format("\nMaximum connection waiting time : %d ms", getMaxConnectionWaitingTime());

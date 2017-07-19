@@ -114,6 +114,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
         metrics.update(false, connectionPool);
       }
       connectionPool.returnObject(connection);
+      metrics.update(false, connectionPool);
     } catch (Exception e) {
       LOG.error("Return connection failed", e);
     }
