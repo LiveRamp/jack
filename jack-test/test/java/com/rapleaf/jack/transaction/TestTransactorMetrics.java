@@ -111,7 +111,7 @@ public class TestTransactorMetrics extends JackTestCase {
 
     TransactorImpl<IDatabase1> transactor2 = transactorBuilder.setMetricsTracking(true).get();
     long startTime2 = stopwatch.elapsedMillis();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < totalRuns; i++) {
       transactor2.execute(db -> {
         Thread.sleep(20);
       });
