@@ -98,8 +98,8 @@ public class TestDbMetrics extends JackTestCase {
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
     double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
-    System.out.println(String.format("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime));
-    System.out.println(String.format("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime));
+    LOG.info("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime);
+    LOG.info("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime);
     expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
 
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
@@ -173,6 +173,5 @@ public class TestDbMetrics extends JackTestCase {
   private void assertRoughEqual(double value, double expected, double error) {
     assertTrue(value <= (expected + error) && value >= (expected - error));
   }
-
 
 }
