@@ -25,7 +25,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
-  public static boolean DEFAULT_METRICS_TRACKING_ENABLED = true;
+  public static boolean DEFAULT_METRICS_TRACKING_ENABLED = false;
   private final DbMetricsImpl metrics;
   private final boolean metricsTrackingEnabled;
   private final GenericObjectPool<DB> connectionPool;

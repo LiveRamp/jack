@@ -25,9 +25,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private final IDbManager<DB> dbManager;
 
-  private static final int queryLogSize = 10;
+  private static final int QUERY_LOG_SIZE = 30;
 
-  private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(queryLogSize);
+  private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(QUERY_LOG_SIZE);
 
   private boolean metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
 
