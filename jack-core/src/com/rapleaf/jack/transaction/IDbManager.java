@@ -13,4 +13,6 @@ interface IDbManager<DB extends IDb> extends Closeable {
   @Override
   void close();
 
+  DbMetrics getMetrics();
+
 }

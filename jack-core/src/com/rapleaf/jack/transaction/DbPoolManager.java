@@ -25,8 +25,10 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
   public static long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
-
-  private final ObjectPool<DB> connectionPool;
+  public static boolean DEFAULT_METRICS_TRACKING_ENABLED = false;
+  private final DbMetricsImpl metrics;
+  private final boolean metricsTrackingEnabled;
+  private final GenericObjectPool<DB> connectionPool;
 
   /**
    * Create a new DbPoolManager.
@@ -42,7 +44,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
    *                            eligible for eviction (with the extra condition that at least {@code minIdleConnections}
    *                            connections remain in the pool).
    */
-  DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime) {
+  DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime, boolean metricsTrackingEnabled) {
     GenericObjectPoolConfig config = new GenericObjectPoolConfig();
     config.setFairness(true);
     config.setBlockWhenExhausted(true);
@@ -71,6 +73,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
 
     this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
+    this.metricsTrackingEnabled = metricsTrackingEnabled;
+    this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config.getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
   }
 
   /**
@@ -82,7 +86,14 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public DB getConnection() {
     try {
-      return connectionPool.borrowObject();
+      if (metricsTrackingEnabled) {
+        metrics.update(true, connectionPool);
+      }
+      DB connection = connectionPool.borrowObject();
+      if (metricsTrackingEnabled) {
+        metrics.update(false, connectionPool);
+      }
+      return connection;
     } catch (NoSuchElementException e) {
       String message = "No available connection; please consider increasing wait time or total connections";
       LOG.error(message, e);
@@ -99,7 +110,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void returnConnection(DB connection) {
     try {
+      if (metricsTrackingEnabled) {
+        metrics.update(false, connectionPool);
+      }
       connectionPool.returnObject(connection);
+      metrics.update(false, connectionPool);
     } catch (Exception e) {
       LOG.error("Return connection failed", e);
     }
@@ -108,6 +123,16 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @Override
   public void close() {
     connectionPool.close();
+  }
+
+  @Override
+  public DbMetrics getMetrics() {
+    if (!metricsTrackingEnabled) {
+      return new MockDbMetrics();
+    } else {
+      metrics.update(false, connectionPool);
+      return metrics;
+    }
   }
 
   @VisibleForTesting
@@ -149,6 +174,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       connection.getObject().setAutoCommit(true);
       connection.getObject().setBulkOperation(false);
     }
+
   }
 
 }

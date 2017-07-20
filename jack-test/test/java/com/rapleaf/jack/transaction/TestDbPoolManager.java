@@ -33,6 +33,7 @@ public class TestDbPoolManager extends JackTestCase {
   private int minIdleConnections;
   private long maxWaitTime;
   private long keepAliveTime;
+  private boolean metricsTrackingEnabled;
 
   @Before
   public void prepare() throws Exception {
@@ -40,6 +41,7 @@ public class TestDbPoolManager extends JackTestCase {
     this.minIdleConnections = DbPoolManager.DEFAULT_MIN_IDLE_CONNECTIONS;
     this.maxWaitTime = DbPoolManager.DEFAULT_MAX_WAIT_TIME;
     this.keepAliveTime = DbPoolManager.DEFAULT_KEEP_ALIVE_TIME;
+    this.metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
   }
 
   @After
@@ -49,7 +51,7 @@ public class TestDbPoolManager extends JackTestCase {
   }
 
   private void initializeDbPoolManager() {
-    dbPoolManager = new DbPoolManager<>(DB_CONSTRUCTOR, maxConnections, minIdleConnections, maxWaitTime, keepAliveTime);
+    dbPoolManager = new DbPoolManager<>(DB_CONSTRUCTOR, maxConnections, minIdleConnections, maxWaitTime, keepAliveTime, metricsTrackingEnabled);
   }
 
   @Test
