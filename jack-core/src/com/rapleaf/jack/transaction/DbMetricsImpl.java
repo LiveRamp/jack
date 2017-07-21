@@ -116,7 +116,7 @@ public class DbMetricsImpl implements DbMetrics {
   @Override
   public String getSummary() {
     String summary = "";
-    summary += ("\n-----------------------TRANSACTOR METRICS-----------------------\n");
+    summary += ("\n--------------TRANSACTOR CONNECTION METRICS--------------\n");
 
     summary += String.format("\nAverage number of Idle connections : %,.2f", getAverageIdleConnections());
     summary += String.format("\nAverage number of Active connections : %,.2f", getAverageActiveConnections());
@@ -127,7 +127,7 @@ public class DbMetricsImpl implements DbMetrics {
     summary += String.format("\nMaximum connection waiting time : %d ms", getMaxConnectionWaitingTime());
     summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + " ms");
 
-    summary += ("\n\n--------------------TRANSACTOR PARAMETERS--------------------");
+    summary += ("\n\n----------------TRANSACTOR PARAMETERS----------------");
     summary += ("\nMin idle connections : " + minIdleConnections);
     summary += ("\nMax total connections : " + maxTotalConnections);
     summary += ("\nKeepAliveTime : " + keepAliveMillis + " ms");

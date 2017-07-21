@@ -138,8 +138,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   @Override
   public void close() {
     if (metricsTrackingEnabled) {
-      LOG.info(dbManager.getMetrics().getSummary());
-      LOG.info("\n{}", queryMetrics.getSummary());
+      LOG.info("{}\n\n{}", dbManager.getMetrics().getSummary(), getQueryMetrics().getSummary());
     }
     dbManager.close();
   }
