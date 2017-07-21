@@ -29,7 +29,7 @@ public class DbMetricsImpl implements DbMetrics {
   private static final Logger LOG = LoggerFactory.getLogger(DbMetricsImpl.class);
 
   public DbMetricsImpl(int maxTotalConnections, int minIdleConnections, long maxWaitMillis, long keepAliveMillis) {
-    startTime = System.currentTimeMillis();
+    this.startTime = System.currentTimeMillis();
     this.maxTotalConnections = maxTotalConnections;
     this.minIdleConnections = minIdleConnections;
     this.maxWaitMillis = maxWaitMillis;
