@@ -1,15 +1,13 @@
 package com.rapleaf.jack.transaction;
 
-import com.google.common.base.Stopwatch;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DbMetricsImpl implements DbMetrics {
 
-  private final Stopwatch lifeTimeStopwatch;
+  private long startTime;
   private long lastUpdateTime = 0;
-  private int currentConnections;
 
   //Raw metrics
 
@@ -31,19 +29,19 @@ public class DbMetricsImpl implements DbMetrics {
   private static final Logger LOG = LoggerFactory.getLogger(DbMetricsImpl.class);
 
   public DbMetricsImpl(int maxTotalConnections, int minIdleConnections, long maxWaitMillis, long keepAliveMillis) {
-    this.lifeTimeStopwatch = new Stopwatch();
-    this.lifeTimeStopwatch.start();
+    startTime = System.currentTimeMillis();
     this.maxTotalConnections = maxTotalConnections;
     this.minIdleConnections = minIdleConnections;
     this.maxWaitMillis = maxWaitMillis;
     this.keepAliveMillis = keepAliveMillis;
   }
 
+
   synchronized void update(boolean isOpenConnection, final GenericObjectPool connectionPool) {
 
     try {
-      long updateToNowTime = lifeTimeStopwatch.elapsedMillis() - lastUpdateTime;
-      lastUpdateTime = lifeTimeStopwatch.elapsedMillis();
+      long updateToNowTime = getLifeTime() - lastUpdateTime;
+      lastUpdateTime = getLifeTime();
 
       int numActive = connectionPool.getNumActive();
       int numIdle = connectionPool.getNumIdle();
@@ -58,7 +56,6 @@ public class DbMetricsImpl implements DbMetrics {
       }
       int newConnections = numActive + numIdle;
       createdConnections = connectionPool.getCreatedCount();
-      currentConnections = newConnections;
 
       if (numActive == maxTotalConnections) {
         maxActiveConnectionsTime += updateToNowTime;
@@ -76,7 +73,7 @@ public class DbMetricsImpl implements DbMetrics {
 
   @Override
   public double getMaxConnectionsProportion() {
-    return (double)maxActiveConnectionsTime / (double)lifeTimeStopwatch.elapsedMillis();
+    return (double)maxActiveConnectionsTime / (double)getLifeTime();
   }
 
   @Override
@@ -95,12 +92,12 @@ public class DbMetricsImpl implements DbMetrics {
 
   @Override
   public double getAverageIdleConnections() {
-    return (double)totalIdleTime / (double)lifeTimeStopwatch.elapsedMillis();
+    return (double)totalIdleTime / (double)getLifeTime();
   }
 
   @Override
   public double getAverageActiveConnections() {
-    return (double)totalActiveTime / (double)lifeTimeStopwatch.elapsedMillis();
+    return (double)totalActiveTime / (double)getLifeTime();
   }
 
   @Override
@@ -108,9 +105,8 @@ public class DbMetricsImpl implements DbMetrics {
     return maxConnectionWaitingTime;
   }
 
-  @Override
   public long getLifeTime() {
-    return lifeTimeStopwatch.elapsedMillis();
+    return System.currentTimeMillis() - startTime;
   }
 
   @Override
@@ -125,7 +121,7 @@ public class DbMetricsImpl implements DbMetrics {
     summary += String.format("\n Max capacity time (%%) : %,.2f %%", 100 * getMaxConnectionsProportion());
     summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitingTime());
     summary += String.format("\nMaximum connection waiting time : %d ms", getMaxConnectionWaitingTime());
-    summary += ("\nTransactor lifetime : " + lifeTimeStopwatch.elapsedMillis() + " ms");
+    summary += ("\nTransactor lifetime : " + getLifeTime() + " ms");
 
     summary += ("\n\n----------------TRANSACTOR PARAMETERS----------------");
     summary += ("\nMin idle connections : " + minIdleConnections);
