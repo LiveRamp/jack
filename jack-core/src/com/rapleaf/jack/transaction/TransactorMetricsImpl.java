@@ -77,15 +77,15 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   @Override
   public String getSummary() {
     LinkedList<TransactorMetricElement> longestQueriesList = getLongestQueries();
-    String log = "";
-    log += "\n Average Query execution time : " + getAverageQueryExecutionTime();
-    log += "\n--------------" + longestQueriesSize + " QUERIES WITH LONGEST AVERAGE EXECUTION TIME-----------------\n";
+    String summary = ("\n-----------------------QUERY METRICS-----------------------\n");
+    summary += String.format("\n Average Query execution time :  %,.2f ms", getAverageQueryExecutionTime());
+    summary += "\n\n------" + longestQueriesSize + " QUERIES WITH LONGEST AVERAGE EXECUTION TIME------\n";
     for (TransactorMetricElement query : longestQueriesList) {
-      log += "\nClass name : " + query.getQueryTrace().getClassName();
-      log += "\nLine number : " + query.getQueryTrace().getLineNumber();
-      log += String.format("\nAverage execution runtime : %,.2f ms", query.getAverageExecutionTime());
-      log += "\nExecution count >= " + query.getCount();
+      summary += "\nClass name : " + query.getQueryTrace().getClassName();
+      summary += "\nLine number : " + query.getQueryTrace().getLineNumber();
+      summary += String.format("\nAverage execution runtime : %,.2f ms", query.getAverageExecutionTime());
+      summary += "\nExecution count >= " + query.getCount();
     }
-    return log;
+    return summary;
   }
 }
