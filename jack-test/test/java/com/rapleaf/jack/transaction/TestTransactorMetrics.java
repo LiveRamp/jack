@@ -78,7 +78,6 @@ public class TestTransactorMetrics extends JackTestCase {
       assertTrue(query.getQueryTrace().getLineNumber() > lastLine);
       lastLine = query.getQueryTrace().getLineNumber();
     }
-    transactor.close();
   }
 
   @Test
