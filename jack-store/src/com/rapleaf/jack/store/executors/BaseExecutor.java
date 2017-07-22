@@ -36,7 +36,7 @@ abstract class BaseExecutor<TF, TL> {
   abstract TL internalExec(IDb db) throws IOException;
 
   private void validateExecutionScope(IDb db) throws IOException {
-    Records records = db.createQuery().from(table.table).where(table.idColumn.equalTo(executionRecordId)).fetch();
+    Records records = db.createQuery().from(table.table).where(table.id.equalTo(executionRecordId)).fetch();
     if (records.size() != 1) {
       throw new InvalidRecordException("Scope " + executionRecordId + " does not exist");
     }

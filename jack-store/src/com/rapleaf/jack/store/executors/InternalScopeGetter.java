@@ -46,23 +46,23 @@ final class InternalScopeGetter {
   static Set<Long> getAllSubRecordIds(IDb db, JsTable table, Long executionRecordId) throws IOException {
     return Sets.newHashSet(
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.equalTo(executionRecordId))
-            .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
-            .select(table.idColumn)
+            .where(table.scope.equalTo(executionRecordId))
+            .where(table.type.equalTo(ValueType.SCOPE.value))
+            .select(table.id)
             .fetch()
-            .gets(table.idColumn)
+            .gets(table.id)
     );
   }
 
   static void validateSubRecordIds(IDb db, JsTable table, Long executionRecordId, Set<Long> subRecordIds) throws IOException {
     Set<Long> validSubRecordIds = Sets.newHashSet(
         db.createQuery().from(table.table)
-            .where(table.scopeColumn.equalTo(executionRecordId))
-            .where(table.typeColumn.equalTo(ValueType.SCOPE.value))
-            .where(table.idColumn.in(subRecordIds))
-            .select(table.idColumn)
+            .where(table.scope.equalTo(executionRecordId))
+            .where(table.type.equalTo(ValueType.SCOPE.value))
+            .where(table.id.in(subRecordIds))
+            .select(table.id)
             .fetch()
-            .gets(table.idColumn)
+            .gets(table.id)
     );
     if (!validSubRecordIds.equals(subRecordIds)) {
       throw new InvalidRecordException(String.format(
@@ -81,15 +81,15 @@ final class InternalScopeGetter {
       GenericQuery query = db.createQuery().from(table.table);
       if (ids.contains(null)) {
         Set<Long> nonNullIds = ids.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-        query.where(table.scopeColumn.in(nonNullIds).or(table.scopeColumn.isNull()));
+        query.where(table.scope.in(nonNullIds).or(table.scope.isNull()));
       } else {
-        query.where(table.scopeColumn.in(ids));
+        query.where(table.scope.in(ids));
       }
       nestedIds = Sets.newHashSet(
-          query.where(table.typeColumn.equalTo(ValueType.SCOPE.value))
-              .select(table.idColumn)
+          query.where(table.type.equalTo(ValueType.SCOPE.value))
+              .select(table.id)
               .fetch()
-              .gets(table.idColumn)
+              .gets(table.id)
       );
       allNestedRecordIds.addAll(nestedIds);
       ids = nestedIds;

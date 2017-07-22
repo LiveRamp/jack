@@ -16,13 +16,13 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 public abstract class GenericTable<T extends GenericTable<T>> {
 
   public final Table<?, ?> table;
-  public final Column<Long> idColumn;
+  public final Column<Long> id;
   private final Class<T> tableType;
   protected final List<Column<?>> columns;
 
   protected GenericTable(Table<?, ?> table, Class<T> tableType, Column<?> firstColumn, Column<?>... otherColumns) {
     this.table = table;
-    this.idColumn = Column.fromId(table.getAlias());
+    this.id = Column.fromId(table.getAlias());
     this.tableType = tableType;
     this.columns = Lists.newLinkedList();
     this.columns.add(firstColumn);

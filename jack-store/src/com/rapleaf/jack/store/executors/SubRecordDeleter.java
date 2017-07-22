@@ -83,16 +83,16 @@ public class SubRecordDeleter extends BaseDeleterExecutor<Void, Void, SubRecordD
     if (deleteAllKeys) {
       db.createDeletion()
           .from(table.table)
-          .where(table.scopeColumn.in(subScopesToDelete))
-          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
+          .where(table.scope.in(subScopesToDelete))
+          .where(table.type.notEqualTo(ValueType.SCOPE.value))
           .execute();
     } else if (!keysToDelete.isEmpty()) {
       for (String key : keysToDelete) {
         db.createDeletion()
             .from(table.table)
-            .where(table.scopeColumn.in(subScopesToDelete))
-            .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-            .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
+            .where(table.scope.in(subScopesToDelete))
+            .where(table.type.notEqualTo(ValueType.SCOPE.value))
+            .where(table.key.equalTo(key).or(table.key.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
             .execute();
       }
     }

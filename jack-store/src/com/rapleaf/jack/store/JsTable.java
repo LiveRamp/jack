@@ -8,18 +8,18 @@ import com.rapleaf.jack.queries.Table;
 
 public class JsTable extends GenericTable<JsTable> {
   public final Table<?, ?> table;
-  public final Column<Long> scopeColumn;
-  public final Column<Integer> typeColumn;
-  public final Column<String> keyColumn;
-  public final Column<String> valueColumn;
+  public final Column<Long> scope;
+  public final Column<Integer> type;
+  public final Column<String> key;
+  public final Column<String> value;
 
-  private JsTable(Table<?, ?> table, Column<Long> scopeColumn, Column<Integer> typeColumn, Column<String> keyColumn, Column<String> valueColumn) {
-    super(table, JsTable.class, scopeColumn, typeColumn, keyColumn, valueColumn);
+  private JsTable(Table<?, ?> table, Column<Long> scope, Column<Integer> type, Column<String> key, Column<String> value) {
+    super(table, JsTable.class, scope, type, key, value);
     this.table = table;
-    this.scopeColumn = scopeColumn;
-    this.typeColumn = typeColumn;
-    this.keyColumn = keyColumn;
-    this.valueColumn = valueColumn;
+    this.scope = scope;
+    this.type = type;
+    this.key = key;
+    this.value = value;
   }
 
   @Override
@@ -32,10 +32,10 @@ public class JsTable extends GenericTable<JsTable> {
   }
 
   public static class Builder extends GenericTable.Builder<JsTable> {
-    private Column<Long> scopeColumn;
-    private Column<Integer> typeColumn;
-    private Column<String> keyColumn;
-    private Column<String> valueColumn;
+    private Column<Long> scope;
+    private Column<Integer> type;
+    private Column<String> key;
+    private Column<String> value;
 
     private Builder(Table<?, ?> table) {
       super(table);
@@ -43,47 +43,47 @@ public class JsTable extends GenericTable<JsTable> {
 
     public Builder setScopeColumn(Column<Long> scopeColumn) {
       checkColumn(scopeColumn);
-      this.scopeColumn = scopeColumn;
+      this.scope = scopeColumn;
       return this;
     }
 
     public Builder setTypeColumn(Column<Integer> typeColumn) {
       checkColumn(typeColumn);
-      this.typeColumn = typeColumn;
+      this.type = typeColumn;
       return this;
     }
 
     public Builder setKeyColumn(Column<String> keyColumn) {
       checkColumn(keyColumn);
-      this.keyColumn = keyColumn;
+      this.key = keyColumn;
       return this;
     }
 
     public Builder setValueColumn(Column<String> valueColumn) {
       checkColumn(valueColumn);
-      this.valueColumn = valueColumn;
+      this.value = valueColumn;
       return this;
     }
 
     @Override
     public JsTable create() {
-      if (scopeColumn == null) {
+      if (scope == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_scope.name()));
-        scopeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_scope, Long.class);
+        scope = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_scope, Long.class);
       }
-      if (typeColumn == null) {
+      if (type == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_type.name()));
-        typeColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_type, Integer.class);
+        type = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_type, Integer.class);
       }
-      if (keyColumn == null) {
+      if (key == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_key.name()));
-        keyColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_key, String.class);
+        key = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_key, String.class);
       }
-      if (valueColumn == null) {
+      if (value == null) {
         Preconditions.checkArgument(allColumns.contains(JsConstants.DefaultTableField.entry_value.name()));
-        valueColumn = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_value, String.class);
+        value = Column.fromField(table.getAlias(), JsConstants.DefaultTableField.entry_value, String.class);
       }
-      return new JsTable(table, scopeColumn, typeColumn, keyColumn, valueColumn);
+      return new JsTable(table, scope, type, key, value);
     }
   }
 

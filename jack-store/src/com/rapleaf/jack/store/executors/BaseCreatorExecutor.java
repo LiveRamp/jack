@@ -194,9 +194,9 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     for (String key : types.keySet()) {
       db.createDeletion()
           .from(table.table)
-          .where(table.scopeColumn.equalTo(recordId))
-          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-          .where(table.keyColumn.equalTo(key).or(table.keyColumn.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
+          .where(table.scope.equalTo(recordId))
+          .where(table.type.notEqualTo(ValueType.SCOPE.value))
+          .where(table.key.equalTo(key).or(table.key.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
           .execute();
     }
   }
@@ -237,10 +237,10 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
 
     db.createInsertion()
         .into(table.table)
-        .set(table.scopeColumn, Collections.nCopies(typesToInsert.size(), recordId))
-        .set(table.typeColumn, typesToInsert)
-        .set(table.keyColumn, keysToInsert)
-        .set(table.valueColumn, valuesToInsert)
+        .set(table.scope, Collections.nCopies(typesToInsert.size(), recordId))
+        .set(table.type, typesToInsert)
+        .set(table.key, keysToInsert)
+        .set(table.value, valuesToInsert)
         .execute();
   }
 

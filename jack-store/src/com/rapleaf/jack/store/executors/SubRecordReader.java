@@ -76,12 +76,12 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, 
     }
 
     Records records = db.createQuery().from(table.table)
-        .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-        .where(table.scopeColumn.in(validSubRecordIds))
-        .select(table.scopeColumn, table.typeColumn, table.keyColumn, table.valueColumn)
-        .orderBy(table.scopeColumn)
+        .where(table.type.notEqualTo(ValueType.SCOPE.value))
+        .where(table.scope.in(validSubRecordIds))
+        .select(table.scope, table.type, table.key, table.value)
+        .orderBy(table.scope)
         // records must be sorted by ID so that json entries are read back in the exact same order as they are written to db
-        .orderBy(table.idColumn)
+        .orderBy(table.id)
         .fetch();
 
     if (records.isEmpty()) {
@@ -94,13 +94,13 @@ public class SubRecordReader extends BaseInquirerExecutor<JsRecords, JsRecords, 
 
     List<JsRecord> jsRecords = Lists.newLinkedList();
 
-    Long previousRecordId = records.get(0).get(table.scopeColumn);
+    Long previousRecordId = records.get(0).get(table.scope);
     InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);
 
     Iterator<Record> iterator = records.iterator();
     while (iterator.hasNext()) {
       Record record = iterator.next();
-      Long currentRecordId = record.get(table.scopeColumn);
+      Long currentRecordId = record.get(table.scope);
 
       if (!Objects.equals(previousRecordId, currentRecordId)) {
         // Scope ID changes

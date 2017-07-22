@@ -62,20 +62,20 @@ abstract class BaseDeleterExecutor<TF, TL, E extends BaseDeleterExecutor<TF, TL,
     // delete records
     GenericDeletion recordDeletion = db.createDeletion().from(table.table);
     if (recordIds.contains(null)) {
-      recordDeletion.where(table.scopeColumn.in(nonNullRecordIds).or(table.scopeColumn.isNull()));
+      recordDeletion.where(table.scope.in(nonNullRecordIds).or(table.scope.isNull()));
     } else {
-      recordDeletion.where(table.scopeColumn.in(recordIds));
+      recordDeletion.where(table.scope.in(recordIds));
     }
-    recordDeletion.where(table.typeColumn.notEqualTo(ValueType.SCOPE.value)).execute();
+    recordDeletion.where(table.type.notEqualTo(ValueType.SCOPE.value)).execute();
 
     // delete scopes
     GenericDeletion scopeDeletion = db.createDeletion().from(table.table);
     if (recordIds.contains(null)) {
-      scopeDeletion.where(table.idColumn.in(nonNullRecordIds).or(table.idColumn.isNull()));
+      scopeDeletion.where(table.id.in(nonNullRecordIds).or(table.id.isNull()));
     } else {
-      scopeDeletion.where(table.idColumn.in(recordIds));
+      scopeDeletion.where(table.id.in(recordIds));
     }
-    Deletions deletionResult = scopeDeletion.where(table.typeColumn.equalTo(ValueType.SCOPE.value)).execute();
+    Deletions deletionResult = scopeDeletion.where(table.type.equalTo(ValueType.SCOPE.value)).execute();
 
     long expectedDeleteCount = recordIds.contains(null) ? recordIds.size() - 1 : recordIds.size();
     Preconditions.checkState(
