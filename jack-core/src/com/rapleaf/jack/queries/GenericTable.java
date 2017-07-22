@@ -65,7 +65,7 @@ public abstract class GenericTable<T extends GenericTable<T>> {
   public String toString() {
     return getClass().getSimpleName() +
         "{" +
-        table.getAlias() + ": " +
+        table.getSqlKeyword() + ": " +
         Joiner.on(", ").join(columns) +
         "}";
   }
@@ -94,7 +94,9 @@ public abstract class GenericTable<T extends GenericTable<T>> {
     }
 
     T that = tableType.cast(other);
-    return Objects.equals(this.table, that.table) && Objects.equals(this.columns, that.columns);
+    return Objects.equals(this.table.getSqlKeyword(), that.table.getSqlKeyword()) &&
+        Objects.equals(this.table.getAllColumns(), that.table.getAllColumns()) &&
+        Objects.equals(this.columns, that.columns);
   }
 
 }
