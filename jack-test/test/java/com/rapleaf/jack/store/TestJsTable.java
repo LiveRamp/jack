@@ -57,4 +57,19 @@ public class TestJsTable {
     assertEquals(alias, aliasTable.valueColumn.getTable());
   }
 
+  @Test
+  public void testEquals() throws Exception {
+    JsTable table1 = JsTable.from(TestStore.TBL).create();
+    JsTable table2 = JsTable.from(TestStore.TBL).create();
+    assertEquals(table1, table1);
+    assertEquals(table1, table2);
+    assertEquals(table1.hashCode(), table2.hashCode());
+
+    table1 = JsTable.from(TestStore.TBL).setKeyColumn(TestStore.ENTRY_KEY).create();
+    table2 = JsTable.from(TestStore.TBL).setTypeColumn(TestStore.ENTRY_TYPE).create();
+    assertEquals(table1, table1);
+    assertEquals(table1, table2);
+    assertEquals(table1.hashCode(), table2.hashCode());
+  }
+
 }
