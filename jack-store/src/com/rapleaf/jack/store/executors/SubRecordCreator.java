@@ -46,10 +46,10 @@ public class SubRecordCreator extends BaseCreatorExecutor<JsRecord, Long, SubRec
     }
     return db.createInsertion()
         .into(table.table)
-        .set(table.scopeColumn, executionRecordId)
-        .set(table.keyColumn, JsConstants.SCOPE_KEY)
-        .set(table.typeColumn, ValueType.SCOPE.value)
-        .set(table.valueColumn, scopeName)
+        .set(table.scope, executionRecordId)
+        .set(table.key, JsConstants.SCOPE_KEY)
+        .set(table.type, ValueType.SCOPE.value)
+        .set(table.value, scopeName)
         .execute()
         .getFirstId();
   }

@@ -48,9 +48,9 @@ final class InternalRecordCreator {
   }
 
   void appendRecord(Record record) {
-    ValueType type = ValueType.findByValue(record.get(table.typeColumn));
-    String key = record.get(table.keyColumn);
-    String value = record.get(table.valueColumn);
+    ValueType type = ValueType.findByValue(record.get(table.type));
+    String key = record.get(table.key);
+    String value = record.get(table.value);
 
     switch (type.category) {
       case PRIMITIVE:

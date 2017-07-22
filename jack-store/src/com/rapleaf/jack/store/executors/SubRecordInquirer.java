@@ -34,17 +34,17 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
   }
 
   public SubRecordInquirer whereSubRecordId(IWhereOperator<Long> recordIdConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(scope.idColumn, recordIdConstraint));
+    this.scopeConstraints.add(new GenericConstraint<>(scope.id, recordIdConstraint));
     return this;
   }
 
   public SubRecordInquirer whereSubRecordName(IWhereOperator<String> recordNameConstraint) {
-    this.scopeConstraints.add(new GenericConstraint<>(scope.valueColumn, recordNameConstraint));
+    this.scopeConstraints.add(new GenericConstraint<>(scope.value, recordNameConstraint));
     return this;
   }
 
   public SubRecordInquirer whereSubRecord(String key, IWhereOperator<String> valueConstraint) {
-    GenericConstraint constraint = new GenericConstraint<>(table.valueColumn, valueConstraint);
+    GenericConstraint constraint = new GenericConstraint<>(table.value, valueConstraint);
     String queryKey = processKey(key);
     if (this.recordConstraints.containsKey(queryKey)) {
       this.recordConstraints.get(queryKey).add(constraint);
@@ -81,16 +81,16 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
   private Set<Long> querySubRecordsByScopeConstraints(IDb db) throws IOException {
     GenericQuery query = db.createQuery()
         .from(scope.table)
-        .where(scope.scopeColumn.equalTo(executionRecordId))
-        .where(scope.typeColumn.equalTo(ValueType.SCOPE.value))
-        .where(scope.keyColumn.equalTo(JsConstants.SCOPE_KEY))
-        .select(scope.idColumn);
+        .where(scope.scope.equalTo(executionRecordId))
+        .where(scope.type.equalTo(ValueType.SCOPE.value))
+        .where(scope.key.equalTo(JsConstants.SCOPE_KEY))
+        .select(scope.id);
 
     for (GenericConstraint constraint : scopeConstraints) {
       query.where(constraint);
     }
 
-    return Sets.newHashSet(query.fetch().gets(scope.idColumn));
+    return Sets.newHashSet(query.fetch().gets(scope.id));
   }
 
   private Set<Long> querySubRecordsByRecordConstraints(IDb db) throws IOException {
@@ -103,14 +103,14 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
       GenericQuery query = db.createQuery()
           .from(table.table)
           .leftJoin(scope.table)
-          .on(table.scopeColumn.equalTo(scope.idColumn))
-          .where(scope.scopeColumn.equalTo(executionRecordId))
-          .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-          .select(table.scopeColumn);
+          .on(table.scope.equalTo(scope.id))
+          .where(scope.scope.equalTo(executionRecordId))
+          .where(table.type.notEqualTo(ValueType.SCOPE.value))
+          .select(table.scope);
 
       // scope constraints
       if (recordIds != null) {
-        query.where(table.scopeColumn.in(recordIds));
+        query.where(table.scope.in(recordIds));
       }
       for (GenericConstraint constraint : scopeConstraints) {
         query.where(constraint);
@@ -119,9 +119,9 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
       // key constraints
       String key = entry.getKey();
       if (key.contains("%")) {
-        query.where(table.keyColumn.matches(key));
+        query.where(table.key.matches(key));
       } else {
-        query.where(table.keyColumn.equalTo(key));
+        query.where(table.key.equalTo(key));
       }
 
       // record constraints
@@ -130,7 +130,7 @@ public class SubRecordInquirer extends BaseInquirerExecutor<JsRecords, Set<Long>
         query.where(constraint);
       }
 
-      recordIds = Sets.newHashSet(query.fetch().gets(table.scopeColumn));
+      recordIds = Sets.newHashSet(query.fetch().gets(table.scope));
     }
 
     return recordIds;

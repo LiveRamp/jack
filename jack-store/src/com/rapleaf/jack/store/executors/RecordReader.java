@@ -22,11 +22,11 @@ public class RecordReader extends BaseInquirerExecutor<JsRecord, JsRecord, Recor
   @Override
   JsRecord internalExec(IDb db) throws IOException {
     Records records = db.createQuery().from(table.table)
-        .where(table.scopeColumn.equalTo(executionRecordId))
-        .where(table.typeColumn.notEqualTo(ValueType.SCOPE.value))
-        .select(table.typeColumn, table.keyColumn, table.valueColumn)
+        .where(table.scope.equalTo(executionRecordId))
+        .where(table.type.notEqualTo(ValueType.SCOPE.value))
+        .select(table.type, table.key, table.value)
         // records must be sorted by ID so that json entries are read back in the exact same order as they are written to db
-        .orderBy(table.idColumn)
+        .orderBy(table.id)
         .fetch();
 
     InternalRecordCreator recordCreator = new InternalRecordCreator(table, selectedKeys);
