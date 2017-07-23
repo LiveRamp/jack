@@ -105,7 +105,7 @@ public class TestDbMetrics extends JackTestCase {
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
   }
 
-  @Test
+  // @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
     Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
