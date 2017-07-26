@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TransactorMetricsImpl implements TransactorMetrics {
   int longestQueriesSize;
   private static Comparator<TransactorMetricElement> queryComparator = new TransactorMetricElementsComparator();
+  private static final Logger LOG = LoggerFactory.getLogger(TransactorMetricsImpl.class);
 
   PriorityQueue<TransactorMetricElement> longestQueries;
   HashMap<StackTraceElement, TransactorMetricElement> longestQueriesMap;
@@ -36,7 +40,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
     this.longestQueries = new PriorityQueue<>(longestQueriesSize, queryComparator);
   }
 
-  void update(long executionTime, StackTraceElement queryStackTrace) {
+  synchronized void update(long executionTime, StackTraceElement queryStackTrace) {
     totalExecutionTime += executionTime;
     queryCount += 1;
 
@@ -50,6 +54,8 @@ public class TransactorMetricsImpl implements TransactorMetrics {
       if (longestQueriesMap.size() < longestQueriesSize) {
         longestQueriesMap.put(queryStackTrace, newQuery);
         longestQueries.add(newQuery);
+      } else if (longestQueries.isEmpty()) {
+        LOG.error("synchronization issue : longestQueries shouldn't be empty if longestQueriesMap.size()>=longestQueriesSize");
       } else if (queryComparator.compare(newQuery, longestQueries.peek()) > 0) {
         TransactorMetricElement removedQuery = longestQueries.poll();
         longestQueriesMap.remove(removedQuery.getQueryTrace());
