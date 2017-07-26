@@ -84,7 +84,7 @@ public class TransactorMetricsImpl implements TransactorMetrics {
   public String getSummary() {
     LinkedList<TransactorMetricElement> longestQueriesList = getLongestQueries();
     String summary = ("\n-----------------------QUERY METRICS-----------------------\n");
-    summary += String.format("\n Average Query execution time :  %,.2f ms", getAverageQueryExecutionTime());
+    summary += String.format("\nAverage Query execution time :  %,.2f ms", getAverageQueryExecutionTime());
     summary += "\n\n------" + longestQueriesSize + " QUERIES WITH LONGEST AVERAGE EXECUTION TIME------\n";
     for (TransactorMetricElement query : longestQueriesList) {
       summary += "\nClass name : " + query.getQueryTrace().getClassName();
