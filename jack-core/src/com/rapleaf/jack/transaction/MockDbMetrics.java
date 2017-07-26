@@ -12,7 +12,7 @@ public class MockDbMetrics implements DbMetrics {
   }
 
   @Override
-  public double getMaxConnectionsProportion() {
+  public double getMaxCapacityProportion() {
     return 0;
   }
 

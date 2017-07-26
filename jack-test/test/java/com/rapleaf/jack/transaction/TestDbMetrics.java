@@ -70,7 +70,7 @@ public class TestDbMetrics extends JackTestCase {
     sleepMillis(100);
     long totalTime = stopwatch.elapsedMillis();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
+    double maxConnectionsProportion = dbMetrics.getMaxCapacityProportion();
     transactor.close();
     double expectedMaxConnectionsProportion = (double)timeActive / (double)totalTime;
 

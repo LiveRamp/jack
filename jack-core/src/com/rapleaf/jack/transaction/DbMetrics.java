@@ -5,7 +5,7 @@ public interface DbMetrics {
 
   long getCreatedConnectionsCount();
 
-  double getMaxConnectionsProportion();
+  double getMaxCapacityProportion();
 
   long getMaxConnectionWaitingTime();
 
