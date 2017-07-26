@@ -133,7 +133,6 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       metrics.update(false, connectionPool);
       return metrics;
     }
-
   }
 
   @VisibleForTesting
