@@ -98,7 +98,7 @@ public class TestTransactorMetrics extends JackTestCase {
   public void testQueryOverhead() throws Exception {
     TransactorImpl<IDatabase1> transactor1 = transactorBuilder.setMetricsTracking(false).get();
     long startTime1 = stopwatch.elapsedMillis();
-    int totalRuns = 10;
+    int totalRuns = 50;
     for (int i = 0; i < totalRuns; i++) {
       transactor1.execute(db -> {
         Thread.sleep(20);
