@@ -78,7 +78,7 @@ public class TestDbMetrics extends JackTestCase {
   }
 
 
-  @Test
+  //@Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
     Future<Long> future1 = executorService.submit(
