@@ -109,8 +109,7 @@ public class TestDbMetrics extends JackTestCase {
     double expectedMaxConnectionsWaitingTime = Math.max(measuredMaxWaitingTime, firstMaxConnectionWaitingTime);
 
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
-    //The first run is a bit different because of the setAutoCommit method,
-    // /we treat it separately and then measure the waiting time for the other runs
+    //The first setAutoCommit method call is slower than later calls. So the first call is treated differently in the test
 
   }
 
@@ -147,8 +146,7 @@ public class TestDbMetrics extends JackTestCase {
     double expectedAverageConnectionsWaitingTime = ((startingTimeSum - schedulingTimeSum) + firstAverageConnectionWaitingTime) / (connectionCount + 1);
 
     assertRoughEqual(averageConnectionsWaitingTime, expectedAverageConnectionsWaitingTime, .2 * expectedAverageConnectionsWaitingTime);
-    //The first run is a bit different because of the setAutoCommit method,
-    // /we treat it separately and then measure the waiting time for the other runs
+    //The first setAutoCommit method call is slower than later calls. So the first call is treated differently in the test
 
   }
 
