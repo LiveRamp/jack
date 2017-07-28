@@ -70,7 +70,7 @@ public class TestDbMetrics extends JackTestCase {
     sleepMillis(100);
     long totalTime = stopwatch.elapsedMillis();
     DbMetrics dbMetrics = transactor.getDbMetrics();
-    double maxConnectionsProportion = dbMetrics.getMaxConnectionsProportion();
+    double maxConnectionsProportion = dbMetrics.getMaxCapacityProportion();
     transactor.close();
     double expectedMaxConnectionsProportion = (double)timeActive / (double)totalTime;
 
@@ -81,52 +81,73 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
-    Future<Long> future1 = executorService.submit(
-        () -> transactor.query(a -> {
+    transactor.execute(a -> {});
+    double firstMaxConnectionWaitingTime = transactor.getDbMetrics().getMaxConnectionWaitingTime();
+    int connectionCount = 5;
+    final Long[] startingTimes = new Long[connectionCount];
+    final Long[] schedulingTimes = new Long[connectionCount];
+    Future[] futures = new Future[connectionCount];
+    for (int i = 0; i < connectionCount; i++) {
+      int finalI = i;
+      futures[i] = executorService.submit(() ->
+      {
+        schedulingTimes[finalI] = stopwatch.elapsedMillis();
+        transactor.execute(a -> {
+          startingTimes[finalI] = stopwatch.elapsedMillis();
           sleepMillis(100);
-          return stopwatch.elapsedMillis();
-        }));
-    final Long[] startingTime2 = new Long[1];
-    Future future2 = executorService.submit(
-        () -> {
-          startingTime2[0] = stopwatch.elapsedMillis();
-          transactor.execute(a -> {sleepMillis(100);});
         });
-    long finishingTime1 = future1.get();
-    future2.get();
+      });
+    }
+    long measuredMaxWaitingTime = 0;
+    for (int i = 0; i < connectionCount; i++) {
+      futures[i].get();
+      measuredMaxWaitingTime = Math.max(measuredMaxWaitingTime, startingTimes[i] - schedulingTimes[i]);
+    }
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double maxConnectionsWaitingTime = dbMetrics.getMaxConnectionWaitingTime();
     transactor.close();
-    double expectedMaxConnectionsWaitingTime = finishingTime1 - startingTime2[0];
-    LOG.info("maxConnectionsWaitingTime : {} ms", maxConnectionsWaitingTime);
-    LOG.info("expected maxConnectionsWaitingTime {} ms", expectedMaxConnectionsWaitingTime);
-    expectedMaxConnectionsWaitingTime = (expectedMaxConnectionsWaitingTime > 0) ? expectedMaxConnectionsWaitingTime : 0;
+    double expectedMaxConnectionsWaitingTime = Math.max(measuredMaxWaitingTime, firstMaxConnectionWaitingTime);
 
     assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
+    //The first setAutoCommit method call is slower than later calls. So the first call is treated differently in the test
+
   }
 
-  // @Test
+  @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
-    Future<Long> future1 = executorService.submit(() -> transactor.query(a -> {
-      sleepMillis(100);
-      return stopwatch.elapsedMillis();
-    }));
-    final Long[] startingTime2 = new Long[1];
-    Future future2 = executorService.submit(
-        () -> {
-          startingTime2[0] = stopwatch.elapsedMillis();
-          transactor.execute(a -> {sleepMillis(100);});
+    transactor.execute(a -> {});
+    double firstAverageConnectionWaitingTime = transactor.getDbMetrics().getAverageConnectionWaitingTime();
+    int connectionCount = 5;
+    final Long[] startingTimes = new Long[connectionCount];
+    final Long[] schedulingTimes = new Long[connectionCount];
+    Future[] futures = new Future[connectionCount];
+    for (int i = 0; i < connectionCount; i++) {
+      int finalI = i;
+      futures[i] = executorService.submit(() ->
+      {
+        schedulingTimes[finalI] = stopwatch.elapsedMillis();
+        transactor.execute(a -> {
+          startingTimes[finalI] = stopwatch.elapsedMillis();
+          sleepMillis(100);
         });
-    long finishingTime1 = future1.get();
-    future2.get();
+      });
+    }
+    long startingTimeSum = 0;
+    long schedulingTimeSum = 0;
+    for (int i = 0; i < connectionCount; i++) {
+      futures[i].get();
+      startingTimeSum += startingTimes[i];
+      schedulingTimeSum += schedulingTimes[i];
+    }
     DbMetrics dbMetrics = transactor.getDbMetrics();
     double averageConnectionsWaitingTime = dbMetrics.getAverageConnectionWaitingTime();
     transactor.close();
-    double expectedAverageConnectionsWaitingTime = (finishingTime1 - startingTime2[0]) / 2;
-    expectedAverageConnectionsWaitingTime = (expectedAverageConnectionsWaitingTime > 0) ? expectedAverageConnectionsWaitingTime : 0;
+    double expectedAverageConnectionsWaitingTime = ((startingTimeSum - schedulingTimeSum) + firstAverageConnectionWaitingTime) / (connectionCount + 1);
 
-    assertRoughEqual(averageConnectionsWaitingTime, expectedAverageConnectionsWaitingTime, 15);
+    assertRoughEqual(averageConnectionsWaitingTime, expectedAverageConnectionsWaitingTime, .2 * expectedAverageConnectionsWaitingTime);
+    //The first setAutoCommit method call is slower than later calls. So the first call is treated differently in the test
+
   }
 
   @Test

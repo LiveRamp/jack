@@ -72,7 +72,7 @@ public class DbMetricsImpl implements DbMetrics {
   }
 
   @Override
-  public double getMaxConnectionsProportion() {
+  public double getMaxCapacityProportion() {
     return (double)maxActiveConnectionsTime / (double)getLifeTime();
   }
 
@@ -118,7 +118,7 @@ public class DbMetricsImpl implements DbMetrics {
     summary += String.format("\nAverage number of Active connections : %,.2f", getAverageActiveConnections());
     summary += ("\nTotal number of queries/executions : " + getTotalQueries());
     summary += ("\nConnections created : " + getCreatedConnectionsCount());
-    summary += String.format("\n Max capacity time (%%) : %,.2f %%", 100 * getMaxConnectionsProportion());
+    summary += String.format("\nMax capacity time (%%) : %,.2f %%", 100 * getMaxCapacityProportion());
     summary += String.format("\nAverage connection waiting time : %,.2f ms", getAverageConnectionWaitingTime());
     summary += String.format("\nMaximum connection waiting time : %d ms", getMaxConnectionWaitingTime());
     summary += ("\nTransactor lifetime : " + getLifeTime() + " ms");
