@@ -148,11 +148,13 @@ public final class JsonDbHelper {
         Preconditions.checkState(childArray.size() == childIndex.get());
         if (type != ValueType.JSON_EMPTY) {
           childArray.add(getJsonElement(type, value));
-        } else if (childSize.get() > 0) {
+        } else if (childSize.get() == 0) {
+          // when tail paths is empty and child size is zero,
+          // it is an empty array and can be ignored: []
+        } else {
           // when tail paths is empty and child size is not zero,
-          // it is an empty object inside an array: [{}]
+          // it is an empty object inside an array: [..., {}, ...]
           childArray.add(new JsonObject());
-          // otherwise, it is just an empty array and can be ignored: []
         }
       }
     } else {

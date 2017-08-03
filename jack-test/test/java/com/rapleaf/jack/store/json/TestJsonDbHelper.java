@@ -114,7 +114,16 @@ public class TestJsonDbHelper extends BaseJsonTestCase {
     jsonString = "{key: [{}]}";
     testJson();
 
+    jsonString = "{key: [{}, {}, {}]}";
+    testJson();
+
+    jsonString = "{key: [{}, 1, 2, 3]}";
+    testJson();
+
     jsonString = "{key: [1, 2, 3, {}]}";
+    testJson();
+
+    jsonString = "{key: [1, 2, {}, 3]}";
     testJson();
   }
 
