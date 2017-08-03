@@ -110,6 +110,15 @@ public class TestJsonDbHelper extends BaseJsonTestCase {
   }
 
   @Test
+  public void testEmptyObjectInArray() throws Exception {
+    jsonString = "{key: [{}]}";
+    testJson();
+
+    jsonString = "{key: [1, 2, 3, {}]}";
+    testJson();
+  }
+
+  @Test
   public void testSimpleObject() throws Exception {
     jsonString = "{object: {k1: v1}, str: value, n1: 1, n2: 2.2, b1: true, b2: false}";
     testJson();
