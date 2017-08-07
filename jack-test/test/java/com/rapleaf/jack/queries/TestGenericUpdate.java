@@ -1,5 +1,6 @@
 package com.rapleaf.jack.queries;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,7 @@ public class TestGenericUpdate {
   private static final String TITLE_2 = "title2";
   private static final int USER_ID_1 = 51;
   private static final int USER_ID_2 = 52;
+  private static final long DATE = DateTime.parse("2017-08-17").getMillis();
 
   private Post post1;
   private Post post2;
@@ -31,7 +33,7 @@ public class TestGenericUpdate {
     db.deleteAll();
     db.setBulkOperation(false);
     post1 = db.posts().create();
-    post1.setTitle(TITLE_1).setUserId(USER_ID_1).save();
+    post1.setTitle(TITLE_1).setUserId(USER_ID_1).setPostedAtMillis(DATE).save();
     post2 = db.posts().create();
     post2.setTitle(TITLE_2).setUserId(USER_ID_2).save();
   }
@@ -55,6 +57,20 @@ public class TestGenericUpdate {
         .table(Post.TBL)
         .set(Post.USER_ID, USER_ID_1 * 10)
         .execute();
+  }
+
+  @Test
+  public void testUpdateDate() throws Exception {
+    long newDate = DateTime.parse("2017-09-10").getMillis();
+    assertEquals(DATE, db.posts().find(post1.getId()).getPostedAtMillis().longValue());
+    Updates updates = db.createUpdate()
+        .table(Post.TBL)
+        .set(Post.POSTED_AT_MILLIS, newDate)
+        .where(Post.ID.equalTo(post1.getId()))
+        .execute();
+
+    assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(newDate, db.posts().find(post1.getId()).getPostedAtMillis().longValue());
   }
 
   @Test

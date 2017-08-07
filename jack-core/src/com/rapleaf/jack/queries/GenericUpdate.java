@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.util.JackUtility;
 
 public class GenericUpdate extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericUpdate.class);
@@ -55,7 +55,12 @@ public class GenericUpdate extends AbstractExecution {
   }
 
   public <T> GenericUpdate set(Column<T> column, T value) {
-    this.values.put(column, value);
+    if (column.isDateColumn()) {
+      String millisString = JackUtility.FORMATTER_FUNCTION_MAP.get(column.getType()).apply(Long.class.cast(value));
+      this.values.put(column, millisString);
+    } else {
+      this.values.put(column, value);
+    }
     return this;
   }
 
