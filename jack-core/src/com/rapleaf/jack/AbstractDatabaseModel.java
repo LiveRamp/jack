@@ -750,6 +750,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     }
   }
 
+  /**
+   * @return true if the record was updated, false otherwise
+   *         A record can fail to be updated if (non-exhaustive list):
+   *           * it has been deleted
+   *           * it's optimistic lockable and someone else grabbed the lock
+   *           * the underlying table uses a non-unique `id` column
+   */
   @Override
   public boolean save(T model) throws IOException {
     return save(System.currentTimeMillis(), model);
