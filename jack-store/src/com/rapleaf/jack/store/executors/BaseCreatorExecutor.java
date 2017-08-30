@@ -192,11 +192,17 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
 
   void deleteExistingEntries(IDb db, Long recordId) throws IOException {
     for (String key : types.keySet()) {
-      db.createDeletion()
+      List<Long> rowIdsToDelete = db.createQuery()
           .from(table.table)
           .where(table.scope.equalTo(recordId))
           .where(table.type.notEqualTo(ValueType.SCOPE.value))
           .where(table.key.equalTo(key).or(table.key.startsWith(key + JsonDbConstants.PATH_SEPARATOR)))
+          .select(table.id)
+          .fetch()
+          .gets(table.id);
+      db.createDeletion()
+          .from(table.table)
+          .where(table.id.in(rowIdsToDelete))
           .execute();
     }
   }

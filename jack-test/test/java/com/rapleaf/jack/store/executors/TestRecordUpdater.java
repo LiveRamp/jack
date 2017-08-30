@@ -2,6 +2,9 @@ package com.rapleaf.jack.store.executors;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -279,6 +282,33 @@ public class TestRecordUpdater extends BaseExecutorTestCase {
     } catch (SqlExecutionFailureException e) {
       assertTrue(e.getCause() instanceof InvalidRecordException);
     }
+  }
+
+  @Test
+  public void testConcurrentUpdate() throws Exception {
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
+    Future future1 = executorService.submit(() -> {
+      for (int i = 0; i < 10; ++i) {
+        transactor.executeAsTransaction(db ->
+            jackStore.rootRecord().update()
+                .put(LONG_LIST_KEY, LONG_LIST_VALUE)
+                .execute(db)
+        );
+      }
+    });
+
+    Future future2 = executorService.submit(() -> {
+      for (int i = 0; i < 10; ++i) {
+        transactor.executeAsTransaction(db ->
+            jackStore.rootRecord().update()
+                .put(INT_LIST_KEY, INT_LIST_VALUE)
+                .execute(db)
+        );
+      }
+    });
+
+    future1.get();
+    future2.get();
   }
 
 }
