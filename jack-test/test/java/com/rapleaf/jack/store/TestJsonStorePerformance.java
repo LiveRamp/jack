@@ -39,9 +39,9 @@ public class TestJsonStorePerformance extends JackTestCase {
    * Difference: 0.99
    * <p>
    * Update of 100000 records
-   * By store: 44386 ms (0.44 ms per record)
-   * By model: 21601 ms (0.22 ms per record)
-   * Difference: 2.05
+   * By store: 67403 ms (0.67 ms per record)
+   * By model: 23117 ms (0.23 ms per record)
+   * Difference: 2.92
    * <p>
    * Query (5 times) of 100000 records
    * By store: 1718 ms (0.02 ms per record)
