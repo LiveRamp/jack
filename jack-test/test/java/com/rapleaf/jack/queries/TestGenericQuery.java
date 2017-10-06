@@ -926,4 +926,21 @@ public class TestGenericQuery {
       // expected
     }
   }
+
+  @Test
+  public void testSelectDistinct() throws Exception {
+    String selectStatement = db.createQuery()
+        .from(User.TBL)
+        .select(User.TBL.getAllColumns())
+        .getQueryStatement();
+
+    String selectDistinctStatement = db.createQuery()
+        .from(User.TBL)
+        .selectDistinct(User.TBL.getAllColumns())
+        .getQueryStatement();
+
+    assertFalse(selectStatement.contains("SELECT DISTINCT"));
+    assertTrue(selectDistinctStatement.contains("SELECT DISTINCT"));
+  }
+
 }
