@@ -33,6 +33,7 @@ public class GenericQuery extends AbstractExecution {
   private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
+  private boolean selectDistinct;
 
   private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
     super(dbConnection);
@@ -45,6 +46,7 @@ public class GenericQuery extends AbstractExecution {
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.empty();
+    this.selectDistinct = false;
   }
 
   public static Builder create(BaseDatabaseConnection dbConnection) {
@@ -163,6 +165,16 @@ public class GenericQuery extends AbstractExecution {
     return this;
   }
 
+  public GenericQuery selectDistinct(Collection<Column> columns) {
+    this.selectDistinct = true;
+    return select(columns);
+  }
+
+  public GenericQuery selectDistinct(Column column, Column... columns) {
+    this.selectDistinct = true;
+    return select(column, columns);
+  }
+
   public Records fetch() throws IOException {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
@@ -234,7 +246,8 @@ public class GenericQuery extends AbstractExecution {
         selectedColumns.addAll(tableReference.getTable().getAllColumns());
       }
     }
-    return getClauseFromColumns(selectedColumns, "SELECT ", ", ", " ");
+    String initialKeyword = selectDistinct ? "SELECT DISTINCT " : "SELECT ";
+    return getClauseFromColumns(selectedColumns, initialKeyword, ", ", " ");
   }
 
   private String getFromClause() {
