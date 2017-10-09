@@ -936,7 +936,7 @@ public class TestGenericQuery {
 
     String selectDistinctStatement = db.createQuery()
         .from(User.TBL)
-        .selectDistinct(User.TBL.getAllColumns())
+        .select(User.TBL.getAllColumns()).distinct()
         .getQueryStatement();
 
     assertFalse(selectStatement.contains("SELECT DISTINCT"));

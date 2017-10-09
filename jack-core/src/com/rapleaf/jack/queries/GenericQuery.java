@@ -165,14 +165,9 @@ public class GenericQuery extends AbstractExecution {
     return this;
   }
 
-  public GenericQuery selectDistinct(Collection<Column> columns) {
+  public GenericQuery distinct() {
     this.selectDistinct = true;
-    return select(columns);
-  }
-
-  public GenericQuery selectDistinct(Column column, Column... columns) {
-    this.selectDistinct = true;
-    return select(column, columns);
+    return this;
   }
 
   public Records fetch() throws IOException {
