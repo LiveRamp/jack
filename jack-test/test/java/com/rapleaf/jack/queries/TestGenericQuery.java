@@ -37,17 +37,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestGenericQuery {
-  private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
+  protected static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
-  private final IUserPersistence users = db.users();
-  private final ICommentPersistence comments = db.comments();
-  private final IPostPersistence posts = db.posts();
+  protected final IUserPersistence users = db.users();
+  protected final ICommentPersistence comments = db.comments();
+  protected final IPostPersistence posts = db.posts();
 
-  private User userA, userB, userC, userD, userE, userF, userG, userH;
-  private Post postA, postB, postC;
-  private Comment commentA, commentB, commentC, commentD;
-  private long date, datetime;
-  private Records results1, results2;
+  protected User userA, userB, userC, userD, userE, userF, userG, userH;
+  protected Post postA, postB, postC;
+  protected Comment commentA, commentB, commentC, commentD;
+  protected long date, datetime;
+  protected Records results1, results2;
 
   @Before
   public void prepare() throws Exception {
@@ -937,12 +937,12 @@ public class TestGenericQuery {
     String selectStatement = db.createQuery()
         .from(User.TBL)
         .select(User.TBL.getAllColumns())
-        .getQueryStatement();
+        .getSqlStatement();
 
     String selectDistinctStatement = db.createQuery()
         .from(User.TBL)
         .select(User.TBL.getAllColumns()).distinct()
-        .getQueryStatement();
+        .getSqlStatement();
 
     assertFalse(selectStatement.contains("SELECT DISTINCT"));
     assertTrue(selectDistinctStatement.contains("SELECT DISTINCT"));
