@@ -97,6 +97,14 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     updateExpiration();
   }
 
+  public Optional<String> getUsername() {
+    return username;
+  }
+
+  public Optional<String> getPassword() {
+    return password;
+  }
+
   /**
    * Get a Connection to a database. If there is no connection, create a new one.
    * If the connection hasn't been used in a long time, close it and create a new one.
