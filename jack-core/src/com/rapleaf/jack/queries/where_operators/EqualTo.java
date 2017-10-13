@@ -1,8 +1,11 @@
 package com.rapleaf.jack.queries.where_operators;
 
+import java.util.Collection;
+
 import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.GenericQuery;
 
 public class EqualTo<V> extends WhereOperator<V> {
 
@@ -19,5 +22,9 @@ public class EqualTo<V> extends WhereOperator<V> {
   public EqualTo(Column<V> column) {
     super("= " + column.getSqlKeyword());
     Preconditions.checkNotNull(column);
+  }
+
+  public EqualTo(GenericQuery subQuery) {
+    super("= (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

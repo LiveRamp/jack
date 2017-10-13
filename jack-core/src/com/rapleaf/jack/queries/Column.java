@@ -118,6 +118,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint equalTo(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new EqualTo<T>(subQuery));
+  }
+
   public GenericConstraint notEqualTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
@@ -138,6 +142,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint notEqualTo(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new NotEqualTo<T>(subQuery));
+  }
+
   public GenericConstraint greaterThan(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new GreaterThan<Long>(Long.class.cast(value)));
@@ -148,6 +156,10 @@ public class Column<T> {
 
   public GenericConstraint greaterThan(Column<T> column) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(column));
+  }
+
+  public GenericConstraint greaterThan(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new GreaterThan<T>(subQuery));
   }
 
   public GenericConstraint greaterThanOrEqualTo(T value) {
@@ -162,6 +174,10 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
+  public GenericConstraint greaterThanOrEqualTo(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(subQuery));
+  }
+
   public GenericConstraint lessThan(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new LessThan<Long>(Long.class.cast(value)));
@@ -174,6 +190,10 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThan<T>(column));
   }
 
+  public GenericConstraint lessThan(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new LessThan<T>(subQuery));
+  }
+
   public GenericConstraint lessThanOrEqualTo(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new LessThanOrEqualTo<Long>(Long.class.cast(value)));
@@ -184,6 +204,10 @@ public class Column<T> {
 
   public GenericConstraint lessThanOrEqualTo(Column<T> value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
+  }
+
+  public GenericConstraint lessThanOrEqualTo(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(subQuery));
   }
 
   public GenericConstraint between(T min, T max) {
