@@ -79,7 +79,7 @@ public class GenericDeletion extends AbstractExecution {
   }
 
   @Override
-  public String getRawStatement() {
+  public String getQueryStatement() {
     return getFromClause() +
         getWhereClause();
   }
