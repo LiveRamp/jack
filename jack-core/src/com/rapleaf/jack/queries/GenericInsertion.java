@@ -111,7 +111,7 @@ public class GenericInsertion extends AbstractExecution {
   }
 
   @Override
-  protected String getQueryStatement() {
+  public String getRawStatement() {
     return getInsertClause()
         + getColumnsClause()
         + getValuesClause();

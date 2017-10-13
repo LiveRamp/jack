@@ -19,6 +19,9 @@ public abstract class AbstractExecution {
     this.dbConnection = dbConnection;
   }
 
+  /**
+   * @return fully prepared SQL statement
+   */
   public String getSqlStatement() {
     return this.getPreparedStatement(Optional.empty()).toString();
   }
@@ -26,8 +29,8 @@ public abstract class AbstractExecution {
   protected PreparedStatement getPreparedStatement(Optional<Integer> options) {
     PreparedStatement preparedStatement;
     preparedStatement = options
-        .map(integer -> dbConnection.getPreparedStatement(getQueryStatement(), integer))
-        .orElseGet(() -> dbConnection.getPreparedStatement(getQueryStatement()));
+        .map(integer -> dbConnection.getPreparedStatement(getRawStatement(), integer))
+        .orElseGet(() -> dbConnection.getPreparedStatement(getRawStatement()));
     setStatementParameters(preparedStatement, getParameters());
     return preparedStatement;
   }
@@ -52,7 +55,10 @@ public abstract class AbstractExecution {
     }
   }
 
-  protected abstract String getQueryStatement();
+  /**
+   * @return SQL statement with ? as placeholders for parameters
+   */
+  public abstract String getRawStatement();
 
   protected abstract Collection<Object> getParameters();
 
