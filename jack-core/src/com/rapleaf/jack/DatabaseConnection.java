@@ -60,6 +60,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
 
 
   private final String connectionString;
+  private final String dbName;
   private final Optional<String> username;
   private final Optional<String> password;
 
@@ -88,13 +89,25 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     if (config.getPort().isPresent()) {
       connectionStringBuilder.append(":").append(config.getPort().get());
     }
-    connectionStringBuilder.append("/").append(getDbName(config.getDatabaseName(), config.enableParallelTests()));
-    connectionString = connectionStringBuilder.toString();
+    dbName = getDbName(config.getDatabaseName(), config.enableParallelTests());
+    connectionString = connectionStringBuilder.append("/").append(dbName).toString();
     username = config.getUsername();
     password = config.getPassword();
 
     this.expiration = expiration;
     updateExpiration();
+  }
+
+  public Optional<String> getUsername() {
+    return username;
+  }
+
+  public Optional<String> getPassword() {
+    return password;
+  }
+
+  public String getDbName() {
+    return dbName;
   }
 
   /**
