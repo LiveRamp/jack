@@ -282,6 +282,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint in(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new In<T>(subQuery));
+  }
+
   public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
       return createDateConstraint(new NotIn<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
@@ -296,6 +300,10 @@ public class Column<T> {
     } else {
       return new GenericConstraint<T>(this, new NotIn<T>(values));
     }
+  }
+
+  public GenericConstraint notIn(GenericQuery subQuery) {
+    return new GenericConstraint<T>(this, new NotIn<T>(subQuery));
   }
 
   public GenericConstraint matches(String pattern) {
