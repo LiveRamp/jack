@@ -221,27 +221,36 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
 
   @Override
   protected void setAttrs(Post model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     if (setNull && model.getTitle() == null) {
-      stmt.setNull(1, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(1, model.getTitle());
+      stmt.setNull(index, java.sql.Types.CHAR);
+      ++index;
+    } else if (model.getTitle() != null) {
+      stmt.setString(index, model.getTitle());
+      ++index;
     }
     if (setNull && model.getPostedAtMillis() == null) {
-      stmt.setNull(2, java.sql.Types.DATE);
-    } else {
-      stmt.setDate(2, new Date(model.getPostedAtMillis()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getPostedAtMillis() != null) {
+      stmt.setDate(index, new Date(model.getPostedAtMillis()));
+      ++index;
     }
     if (setNull && model.getUserId() == null) {
-      stmt.setNull(3, java.sql.Types.INTEGER);
-    } else {
-      stmt.setInt(3, model.getUserId());
+      stmt.setNull(index, java.sql.Types.INTEGER);
+      ++index;
+    } else if (model.getUserId() != null) {
+      stmt.setInt(index, model.getUserId());
+      ++index;
     }
     if (setNull && model.getUpdatedAt() == null) {
-      stmt.setNull(4, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getUpdatedAt() != null) {
+      stmt.setTimestamp(index, new Timestamp(model.getUpdatedAt()));
+      ++index;
     }
-    stmt.setLong(5, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

@@ -245,37 +245,50 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
 
   @Override
   protected void setAttrs(TestStore model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     if (setNull && model.getEntryType() == null) {
-      stmt.setNull(1, java.sql.Types.INTEGER);
-    } else {
-      stmt.setInt(1, model.getEntryType());
+      stmt.setNull(index, java.sql.Types.INTEGER);
+      ++index;
+    } else if (model.getEntryType() != null) {
+      stmt.setInt(index, model.getEntryType());
+      ++index;
     }
     if (setNull && model.getEntryScope() == null) {
-      stmt.setNull(2, java.sql.Types.INTEGER);
-    } else {
-      stmt.setLong(2, model.getEntryScope());
+      stmt.setNull(index, java.sql.Types.INTEGER);
+      ++index;
+    } else if (model.getEntryScope() != null) {
+      stmt.setLong(index, model.getEntryScope());
+      ++index;
     }
     if (setNull && model.getEntryKey() == null) {
-      stmt.setNull(3, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(3, model.getEntryKey());
+      stmt.setNull(index, java.sql.Types.CHAR);
+      ++index;
+    } else if (model.getEntryKey() != null) {
+      stmt.setString(index, model.getEntryKey());
+      ++index;
     }
     if (setNull && model.getEntryValue() == null) {
-      stmt.setNull(4, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(4, model.getEntryValue());
+      stmt.setNull(index, java.sql.Types.CHAR);
+      ++index;
+    } else if (model.getEntryValue() != null) {
+      stmt.setString(index, model.getEntryValue());
+      ++index;
     }
     if (setNull && model.getCreatedAt() == null) {
-      stmt.setNull(5, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(5, new Timestamp(model.getCreatedAt()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getCreatedAt() != null) {
+      stmt.setTimestamp(index, new Timestamp(model.getCreatedAt()));
+      ++index;
     }
     if (setNull && model.getUpdatedAt() == null) {
-      stmt.setNull(6, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(6, new Timestamp(model.getUpdatedAt()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getUpdatedAt() != null) {
+      stmt.setTimestamp(index, new Timestamp(model.getUpdatedAt()));
+      ++index;
     }
-    stmt.setLong(7, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

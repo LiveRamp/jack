@@ -287,53 +287,72 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
   @Override
   protected void setAttrs(User model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     {
-      stmt.setString(1, model.getHandle());
+      stmt.setString(index, model.getHandle());
+      ++index;
     }
     if (setNull && model.getCreatedAtMillis() == null) {
-      stmt.setNull(2, java.sql.Types.INTEGER);
-    } else {
-      stmt.setLong(2, model.getCreatedAtMillis());
+      stmt.setNull(index, java.sql.Types.INTEGER);
+      ++index;
+    } else if (model.getCreatedAtMillis() != null) {
+      stmt.setLong(index, model.getCreatedAtMillis());
+      ++index;
     }
     {
-      stmt.setInt(3, model.getNumPosts());
+      stmt.setInt(index, model.getNumPosts());
+      ++index;
     }
     if (setNull && model.getSomeDate() == null) {
-      stmt.setNull(4, java.sql.Types.DATE);
-    } else {
-      stmt.setDate(4, new Date(model.getSomeDate()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getSomeDate() != null) {
+      stmt.setDate(index, new Date(model.getSomeDate()));
+      ++index;
     }
     if (setNull && model.getSomeDatetime() == null) {
-      stmt.setNull(5, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(5, new Timestamp(model.getSomeDatetime()));
+      stmt.setNull(index, java.sql.Types.DATE);
+      ++index;
+    } else if (model.getSomeDatetime() != null) {
+      stmt.setTimestamp(index, new Timestamp(model.getSomeDatetime()));
+      ++index;
     }
     if (setNull && model.getBio() == null) {
-      stmt.setNull(6, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(6, model.getBio());
+      stmt.setNull(index, java.sql.Types.CHAR);
+      ++index;
+    } else if (model.getBio() != null) {
+      stmt.setString(index, model.getBio());
+      ++index;
     }
     if (setNull && model.getSomeBinary() == null) {
-      stmt.setNull(7, java.sql.Types.BINARY);
-    } else {
-      stmt.setBytes(7, model.getSomeBinary());
+      stmt.setNull(index, java.sql.Types.BINARY);
+      ++index;
+    } else if (model.getSomeBinary() != null) {
+      stmt.setBytes(index, model.getSomeBinary());
+      ++index;
     }
     if (setNull && model.getSomeFloat() == null) {
-      stmt.setNull(8, java.sql.Types.DOUBLE);
-    } else {
-      stmt.setDouble(8, model.getSomeFloat());
+      stmt.setNull(index, java.sql.Types.DOUBLE);
+      ++index;
+    } else if (model.getSomeFloat() != null) {
+      stmt.setDouble(index, model.getSomeFloat());
+      ++index;
     }
     if (setNull && model.getSomeDecimal() == null) {
-      stmt.setNull(9, java.sql.Types.DECIMAL);
-    } else {
-      stmt.setDouble(9, model.getSomeDecimal());
+      stmt.setNull(index, java.sql.Types.DECIMAL);
+      ++index;
+    } else if (model.getSomeDecimal() != null) {
+      stmt.setDouble(index, model.getSomeDecimal());
+      ++index;
     }
     if (setNull && model.isSomeBoolean() == null) {
-      stmt.setNull(10, java.sql.Types.BOOLEAN);
-    } else {
-      stmt.setBoolean(10, model.isSomeBoolean());
+      stmt.setNull(index, java.sql.Types.BOOLEAN);
+      ++index;
+    } else if (model.isSomeBoolean() != null) {
+      stmt.setBoolean(index, model.isSomeBoolean());
+      ++index;
     }
-    stmt.setLong(11, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

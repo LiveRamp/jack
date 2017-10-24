@@ -185,12 +185,15 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
 
   @Override
   protected void setAttrs(Image model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     if (setNull && model.getUserId() == null) {
-      stmt.setNull(1, java.sql.Types.INTEGER);
-    } else {
-      stmt.setInt(1, model.getUserId());
+      stmt.setNull(index, java.sql.Types.INTEGER);
+      ++index;
+    } else if (model.getUserId() != null) {
+      stmt.setInt(index, model.getUserId());
+      ++index;
     }
-    stmt.setLong(2, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override
