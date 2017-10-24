@@ -192,7 +192,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     <% if field_defn.nullable? %>
     if (setNull && model.<%= field_defn.getter %> == null) {
       stmt.setNull(<%= x %>, java.sql.Types.<%= field_defn.sql_type %>);
-    } else {
+    } else if (model.<%= field_defn.getter %> != null) {
     <% else %>
     {
     <% end %>
