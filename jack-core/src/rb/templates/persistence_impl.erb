@@ -186,11 +186,11 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   @Override
-  protected void setAttrs(<%= model_defn.model_name %> model, PreparedStatement stmt) throws SQLException {
+  protected void setAttrs(<%= model_defn.model_name %> model, PreparedStatement stmt, boolean setNull) throws SQLException {
     <% x = 1 %>
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.nullable? %>
-    if (model.<%= field_defn.getter %> == null) {
+    if (setNull && model.<%= field_defn.getter %> == null) {
       stmt.setNull(<%= x %>, java.sql.Types.<%= field_defn.sql_type %>);
     } else {
     <% else %>

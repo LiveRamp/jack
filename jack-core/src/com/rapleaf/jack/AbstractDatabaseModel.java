@@ -252,7 +252,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
       return !rs.isBeforeFirst();
     } catch (SQLException e) {
       throw new IOException(e);
-    }finally {
+    } finally {
       closeQuery(rs, statement);
     }
 
@@ -626,7 +626,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return foundList;
   }
 
-  protected abstract void setAttrs(T model, PreparedStatement stmt)
+  protected abstract void setAttrs(T model, PreparedStatement stmt, boolean setNull)
       throws SQLException;
 
   // ActiveRecord documentation says it supports optimistic locking using integer fields
@@ -670,7 +670,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   private boolean insertStrict(T model, Long oldUpdatedAt) throws JackException, IOException {
     PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
     try {
-      setAttrs(model, insertStmt);
+      setAttrs(model, insertStmt, false);
       insertStmt.setLong(fieldNames.size() + 1, model.getId());
       insertStmt.execute();
       final int updateCount = insertStmt.getUpdateCount();
@@ -929,7 +929,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
       @Override
       public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
-        baseModel.setAttrs(modelInstance, statement);
+        baseModel.setAttrs(modelInstance, statement, true);
         return statement;
       }
     }
@@ -947,7 +947,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
       @Override
       public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
-        baseModel.setAttrs(modelInstance, statement);
+        baseModel.setAttrs(modelInstance, statement, true);
         // the lock_version is after all the field params and the id param
         statement.setLong(numFieldNames + 2, lockVersion);
         return statement;
