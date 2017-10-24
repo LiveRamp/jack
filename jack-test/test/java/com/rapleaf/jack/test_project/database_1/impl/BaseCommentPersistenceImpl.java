@@ -218,23 +218,18 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   protected void setAttrs(Comment model, PreparedStatement stmt, boolean setNull) throws SQLException {
     int index = 1;
     if (setNull && model.getContent() == null) {
-      stmt.setNull(index, java.sql.Types.CHAR);
-      ++index;
+      stmt.setNull(index++, java.sql.Types.CHAR);
     } else if (model.getContent() != null) {
-      stmt.setString(index, model.getContent());
-      ++index;
+      stmt.setString(index++, model.getContent());
     }
     {
-      stmt.setInt(index, model.getCommenterId());
-      ++index;
+      stmt.setInt(index++, model.getCommenterId());
     }
     {
-      stmt.setLong(index, model.getCommentedOnId());
-      ++index;
+      stmt.setLong(index++, model.getCommentedOnId());
     }
     {
-      stmt.setTimestamp(index, new Timestamp(model.getCreatedAt()));
-      ++index;
+      stmt.setTimestamp(index++, new Timestamp(model.getCreatedAt()));
     }
     stmt.setLong(index, model.getId());
   }

@@ -221,29 +221,22 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   protected void setAttrs(LockableModel model, PreparedStatement stmt, boolean setNull) throws SQLException {
     int index = 1;
     {
-      stmt.setInt(index, model.getLockVersion() + 1);
-      ++index;
+      stmt.setInt(index++, model.getLockVersion() + 1);
     }
     if (setNull && model.getMessage() == null) {
-      stmt.setNull(index, java.sql.Types.CHAR);
-      ++index;
+      stmt.setNull(index++, java.sql.Types.CHAR);
     } else if (model.getMessage() != null) {
-      stmt.setString(index, model.getMessage());
-      ++index;
+      stmt.setString(index++, model.getMessage());
     }
     if (setNull && model.getCreatedAt() == null) {
-      stmt.setNull(index, java.sql.Types.DATE);
-      ++index;
+      stmt.setNull(index++, java.sql.Types.DATE);
     } else if (model.getCreatedAt() != null) {
-      stmt.setTimestamp(index, new Timestamp(model.getCreatedAt()));
-      ++index;
+      stmt.setTimestamp(index++, new Timestamp(model.getCreatedAt()));
     }
     if (setNull && model.getUpdatedAt() == null) {
-      stmt.setNull(index, java.sql.Types.DATE);
-      ++index;
+      stmt.setNull(index++, java.sql.Types.DATE);
     } else if (model.getUpdatedAt() != null) {
-      stmt.setTimestamp(index, new Timestamp(model.getUpdatedAt()));
-      ++index;
+      stmt.setTimestamp(index++, new Timestamp(model.getUpdatedAt()));
     }
     stmt.setLong(index, model.getId());
   }

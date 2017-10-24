@@ -191,18 +191,15 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.nullable? %>
     if (setNull && model.<%= field_defn.getter %> == null) {
-      stmt.setNull(index, java.sql.Types.<%= field_defn.sql_type %>);
-      ++index;
+      stmt.setNull(index++, java.sql.Types.<%= field_defn.sql_type %>);
     } else if (model.<%= field_defn.getter %> != null) {
     <% else %>
     {
     <% end %>
     <% if field_defn.name == "lock_version" and field_defn.data_type == :integer  %>
-      stmt.set<%= field_defn.prep_stmt_type %>(index, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
-      ++index;
+      stmt.set<%= field_defn.prep_stmt_type %>(index++, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
     <% else %>
-      stmt.set<%= field_defn.prep_stmt_type %>(index, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
-      ++index;
+      stmt.set<%= field_defn.prep_stmt_type %>(index++, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
     <% end %>
     }
     <% end %>
