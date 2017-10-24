@@ -244,33 +244,33 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   @Override
-  protected void setAttrs(TestStore model, PreparedStatement stmt) throws SQLException {
-    if (model.getEntryType() == null) {
+  protected void setAttrs(TestStore model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    if (setNull && model.getEntryType() == null) {
       stmt.setNull(1, java.sql.Types.INTEGER);
     } else {
       stmt.setInt(1, model.getEntryType());
     }
-    if (model.getEntryScope() == null) {
+    if (setNull && model.getEntryScope() == null) {
       stmt.setNull(2, java.sql.Types.INTEGER);
     } else {
       stmt.setLong(2, model.getEntryScope());
     }
-    if (model.getEntryKey() == null) {
+    if (setNull && model.getEntryKey() == null) {
       stmt.setNull(3, java.sql.Types.CHAR);
     } else {
       stmt.setString(3, model.getEntryKey());
     }
-    if (model.getEntryValue() == null) {
+    if (setNull && model.getEntryValue() == null) {
       stmt.setNull(4, java.sql.Types.CHAR);
     } else {
       stmt.setString(4, model.getEntryValue());
     }
-    if (model.getCreatedAt() == null) {
+    if (setNull && model.getCreatedAt() == null) {
       stmt.setNull(5, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(5, new Timestamp(model.getCreatedAt()));
     }
-    if (model.getUpdatedAt() == null) {
+    if (setNull && model.getUpdatedAt() == null) {
       stmt.setNull(6, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(6, new Timestamp(model.getUpdatedAt()));

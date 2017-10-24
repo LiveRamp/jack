@@ -220,23 +220,23 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  protected void setAttrs(Post model, PreparedStatement stmt) throws SQLException {
-    if (model.getTitle() == null) {
+  protected void setAttrs(Post model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    if (setNull && model.getTitle() == null) {
       stmt.setNull(1, java.sql.Types.CHAR);
     } else {
       stmt.setString(1, model.getTitle());
     }
-    if (model.getPostedAtMillis() == null) {
+    if (setNull && model.getPostedAtMillis() == null) {
       stmt.setNull(2, java.sql.Types.DATE);
     } else {
       stmt.setDate(2, new Date(model.getPostedAtMillis()));
     }
-    if (model.getUserId() == null) {
+    if (setNull && model.getUserId() == null) {
       stmt.setNull(3, java.sql.Types.INTEGER);
     } else {
       stmt.setInt(3, model.getUserId());
     }
-    if (model.getUpdatedAt() == null) {
+    if (setNull && model.getUpdatedAt() == null) {
       stmt.setNull(4, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));

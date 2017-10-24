@@ -218,21 +218,21 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   @Override
-  protected void setAttrs(LockableModel model, PreparedStatement stmt) throws SQLException {
+  protected void setAttrs(LockableModel model, PreparedStatement stmt, boolean setNull) throws SQLException {
     {
       stmt.setInt(1, model.getLockVersion() + 1);
     }
-    if (model.getMessage() == null) {
+    if (setNull && model.getMessage() == null) {
       stmt.setNull(2, java.sql.Types.CHAR);
     } else {
       stmt.setString(2, model.getMessage());
     }
-    if (model.getCreatedAt() == null) {
+    if (setNull && model.getCreatedAt() == null) {
       stmt.setNull(3, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(3, new Timestamp(model.getCreatedAt()));
     }
-    if (model.getUpdatedAt() == null) {
+    if (setNull && model.getUpdatedAt() == null) {
       stmt.setNull(4, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));

@@ -215,8 +215,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
-    if (model.getContent() == null) {
+  protected void setAttrs(Comment model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    if (setNull && model.getContent() == null) {
       stmt.setNull(1, java.sql.Types.CHAR);
     } else {
       stmt.setString(1, model.getContent());

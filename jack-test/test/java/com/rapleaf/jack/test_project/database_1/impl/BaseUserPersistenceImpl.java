@@ -286,11 +286,11 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
+  protected void setAttrs(User model, PreparedStatement stmt, boolean setNull) throws SQLException {
     {
       stmt.setString(1, model.getHandle());
     }
-    if (model.getCreatedAtMillis() == null) {
+    if (setNull && model.getCreatedAtMillis() == null) {
       stmt.setNull(2, java.sql.Types.INTEGER);
     } else {
       stmt.setLong(2, model.getCreatedAtMillis());
@@ -298,37 +298,37 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     {
       stmt.setInt(3, model.getNumPosts());
     }
-    if (model.getSomeDate() == null) {
+    if (setNull && model.getSomeDate() == null) {
       stmt.setNull(4, java.sql.Types.DATE);
     } else {
       stmt.setDate(4, new Date(model.getSomeDate()));
     }
-    if (model.getSomeDatetime() == null) {
+    if (setNull && model.getSomeDatetime() == null) {
       stmt.setNull(5, java.sql.Types.DATE);
     } else {
       stmt.setTimestamp(5, new Timestamp(model.getSomeDatetime()));
     }
-    if (model.getBio() == null) {
+    if (setNull && model.getBio() == null) {
       stmt.setNull(6, java.sql.Types.CHAR);
     } else {
       stmt.setString(6, model.getBio());
     }
-    if (model.getSomeBinary() == null) {
+    if (setNull && model.getSomeBinary() == null) {
       stmt.setNull(7, java.sql.Types.BINARY);
     } else {
       stmt.setBytes(7, model.getSomeBinary());
     }
-    if (model.getSomeFloat() == null) {
+    if (setNull && model.getSomeFloat() == null) {
       stmt.setNull(8, java.sql.Types.DOUBLE);
     } else {
       stmt.setDouble(8, model.getSomeFloat());
     }
-    if (model.getSomeDecimal() == null) {
+    if (setNull && model.getSomeDecimal() == null) {
       stmt.setNull(9, java.sql.Types.DECIMAL);
     } else {
       stmt.setDouble(9, model.getSomeDecimal());
     }
-    if (model.isSomeBoolean() == null) {
+    if (setNull && model.isSomeBoolean() == null) {
       stmt.setNull(10, java.sql.Types.BOOLEAN);
     } else {
       stmt.setBoolean(10, model.isSomeBoolean());
