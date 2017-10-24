@@ -33,16 +33,12 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
 
   @Test
   public void testIsEmpty() throws IOException {
-
     ICommentPersistence comments = dbs.getDatabase1().comments();
     assertTrue(comments.isEmpty());
 
     comments.create("comment", 1, 1, 1);
-
     assertFalse(comments.isEmpty());
-
   }
-
 
   @Test
   public void testFindAllByForeignKeyCache() throws Exception {
@@ -91,7 +87,7 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
   public void testOptimisticLockingHasNoEffectWhileCaching() throws IOException {
     final IUserPersistence users = dbs.getDatabase1().users();
     final User user = users.create("handle1", 1);
-    user.setCreatedAtMillis(1l);
+    user.setCreatedAtMillis(1L);
     if (!user.save()) {
       fail("Failed to setup test properly");
     }
@@ -99,15 +95,15 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     final User user1 = users.find(user.getId());
     final User user2 = users.find(user.getId());
 
-    user1.setCreatedAtMillis(2l);
+    user1.setCreatedAtMillis(2L);
     user1.save();
 
-    user2.setCreatedAtMillis(3l);
+    user2.setCreatedAtMillis(3L);
     user2.save();
 
     final User finalUser = users.find(user.getId());
 
-    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+    assertEquals(3L, finalUser.getCreatedAtMillis().longValue());
 
     final ILockableModelPersistence lockableModels = dbs.getDatabase1().lockableModels();
     final LockableModel lockableModel = lockableModels.createDefaultInstance();
@@ -137,7 +133,7 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     dbs.getDatabase1().disableCaching();
     final IUserPersistence users = dbs.getDatabase1().users();
     final User user = users.create("handle1", 1);
-    user.setCreatedAtMillis(1l);
+    user.setCreatedAtMillis(1L);
     if (!user.save()) {
       fail("Failed to setup test properly");
     }
@@ -145,15 +141,15 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     final User user1 = users.find(user.getId());
     final User user2 = users.find(user.getId());
 
-    user1.setCreatedAtMillis(2l);
+    user1.setCreatedAtMillis(2L);
     user1.save();
 
-    user2.setCreatedAtMillis(3l);
+    user2.setCreatedAtMillis(3L);
     user2.save();
 
     final User finalUser = users.find(user.getId());
 
-    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+    assertEquals(3L, finalUser.getCreatedAtMillis().longValue());
   }
 
   @Test
