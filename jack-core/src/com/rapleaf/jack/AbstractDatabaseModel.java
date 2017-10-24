@@ -30,8 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +94,17 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   protected String getInsertWithIdStatement(List<String> fieldNames) {
     return String.format("INSERT INTO %s (%s , id) VALUES(%s, ?);", tableName,
         escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
+  }
+
+  private List<String> getNonNullFields(T model, List<String> allFields) {
+    Set<String> existingFieldNames = model.getFieldSet().stream().map(Enum::name).collect(Collectors.toSet());
+    List<String> nonNullFieldNames = Lists.newLinkedList();
+    for (String fieldName : allFields) {
+      if (existingFieldNames.contains(fieldName) && model.getField(fieldName) != null) {
+        nonNullFieldNames.add(fieldName);
+      }
+    }
+    return nonNullFieldNames;
   }
 
   private String getSetFieldsPrepStatementSection() {
@@ -668,10 +681,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   private boolean insertStrict(T model, Long oldUpdatedAt) throws JackException, IOException {
-    PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
+    List<String> nonNullFields = getNonNullFields(model, fieldNames);
+    PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(nonNullFields));
     try {
       setAttrs(model, insertStmt, false);
-      insertStmt.setLong(fieldNames.size() + 1, model.getId());
+      insertStmt.setLong(nonNullFields.size() + 1, model.getId());
       insertStmt.execute();
       final int updateCount = insertStmt.getUpdateCount();
       insertStmt.close();

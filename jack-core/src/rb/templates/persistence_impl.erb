@@ -187,24 +187,26 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
   @Override
   protected void setAttrs(<%= model_defn.model_name %> model, PreparedStatement stmt, boolean setNull) throws SQLException {
-    <% x = 1 %>
+    int index = 1;
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.nullable? %>
     if (setNull && model.<%= field_defn.getter %> == null) {
-      stmt.setNull(<%= x %>, java.sql.Types.<%= field_defn.sql_type %>);
+      stmt.setNull(index, java.sql.Types.<%= field_defn.sql_type %>);
+      ++index;
     } else if (model.<%= field_defn.getter %> != null) {
     <% else %>
     {
     <% end %>
     <% if field_defn.name == "lock_version" and field_defn.data_type == :integer  %>
-      stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
+      stmt.set<%= field_defn.prep_stmt_type %>(index, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
+      ++index;
     <% else %>
-      stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
+      stmt.set<%= field_defn.prep_stmt_type %>(index, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
+      ++index;
     <% end %>
     }
-      <% x+= 1 %>
     <% end %>
-    stmt.setLong(<%= x %>, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override
