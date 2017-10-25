@@ -21,25 +21,44 @@
 
 <% end %>
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-<% x = 1 %>
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
 <% model_defn.fields.each do |field_defn| %>
   <% if !field_defn.nullable? || !only_not_null %>
     <% if field_defn.nullable? %>
-        if (<%= field_defn.name %> == null) {
-          stmt.setNull(<%=x%>, java.sql.Types.<%= field_defn.sql_type%>);
-        } else {
-    <% end %>
-          stmt.set<%=field_defn.prep_stmt_type%>(<%=x%>, <%=field_defn.prep_stmt_modifier(field_defn.name)%>);
-    <% if field_defn.nullable? %>
+        if (<%=field_defn.name%> != null) {
+          nonNullFields.add("<%=field_defn.name%>");
+          int fieldIndex<%= field_defn.ordinal %> = index++;
+          statementSetters.add(stmt -> stmt.set<%=field_defn.prep_stmt_type%>(fieldIndex<%= field_defn.ordinal %>, <%=field_defn.prep_stmt_modifier(field_defn.name)%>));
         }
+    <% else %>
+        nonNullFields.add("<%=field_defn.name%>");
+        int fieldIndex<%= field_defn.ordinal %> = index++;
+        statementSetters.add(stmt -> stmt.set<%=field_defn.prep_stmt_type%>(fieldIndex<%= field_defn.ordinal %>, <%=field_defn.prep_stmt_modifier(field_defn.name)%>));
     <% end %>
-    <% x+= 1 %>
   <% end %>
 <% end %>
       }
-    }, getInsertStatement(<%= "Arrays.<String>asList(" + model_defn.field_names_list(only_not_null) + ")"  %>));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
 <% names_only = model_defn.fields.map{|field_defn| !field_defn.nullable? || !only_not_null ? field_defn.name : "null"}.join(", ") %>
     <%= model_defn.model_name %> newInst = new <%= model_defn.model_name %>(__id<%= names_only.empty? ? "" : ", "%><%= names_only %>, databases);
     newInst.setCreated(true);
@@ -47,4 +66,3 @@
     clearForeignKeyCache();
     return newInst;
   }
-

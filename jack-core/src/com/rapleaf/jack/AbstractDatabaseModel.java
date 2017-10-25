@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Optional;
@@ -56,8 +57,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   private final String setFieldsPrepStatementSection;
   private final String lockFieldName;
 
-  protected static interface AttrSetter {
-    public void set(PreparedStatement stmt) throws SQLException;
+  protected interface InsertStatementCreator {
+    String getStatement();
+
+    void setStatement(PreparedStatement statement) throws SQLException;
+  }
+
+  protected interface AttrSetter {
+    void set(PreparedStatement stmt) throws SQLException;
   }
 
   private final BaseDatabaseConnection conn;
@@ -150,16 +157,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
 
-  protected long realCreate(AttrSetter attrSetter, String insertStatement)
-      throws IOException {
+  protected long realCreate(InsertStatementCreator statementCreator) throws IOException {
     int retryCount = 0;
 
     PreparedStatement stmt = null;
     ResultSet generatedKeys = null;
     while (true) {
       try {
-        stmt = conn.getPreparedStatement(insertStatement, Statement.RETURN_GENERATED_KEYS);
-        attrSetter.set(stmt);
+        stmt = conn.getPreparedStatement(statementCreator.getStatement(), Statement.RETURN_GENERATED_KEYS);
+        statementCreator.setStatement(stmt);
         stmt.execute();
         generatedKeys = stmt.getGeneratedKeys();
         generatedKeys.next();
