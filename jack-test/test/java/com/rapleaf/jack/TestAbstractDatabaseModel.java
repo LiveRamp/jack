@@ -16,6 +16,7 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -24,7 +25,8 @@ import static org.junit.Assert.fail;
  * test cases here unless you have a really good reason to do so.
  */
 public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
+  private static final String DB_NAME_KEY = "database1";
+  private static final LoggingMysqlConnection DATABASE_CONNECTION1 = new LoggingMysqlConnection(DB_NAME_KEY);
 
   @Override
   public IDatabases getDBS() {
@@ -180,4 +182,55 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     assertEquals("First", finalLockableModel.getMessage()); // first success should have taken effect
     assertEquals(lockableModel2Copy, lockableModel2); // second should be unaffected by saveAttempt
   }
+
+  @Test
+  public void testIgnoreNullWhenCreatingModel() throws IOException {
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    User user1 = dbs.getDatabase1().users().create("handle", null, 100, null, null, null, null, null, null, null);
+    User user2 = dbs.getDatabase1().users().create("handle", 100);
+
+    // check insertion statement
+    String expectedStatement = "INSERT INTO users (`handle`, `num_posts`) VALUES(?, ?);";
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(2, actualStatements.size());
+    assertEquals(expectedStatement, actualStatements.get(0));
+    assertEquals(expectedStatement, actualStatements.get(1));
+
+    // check model
+    assertEquals("handle", user1.getHandle());
+    assertNull(user1.getCreatedAtMillis());
+    assertEquals("handle", user2.getHandle());
+    assertNull(user2.getCreatedAtMillis());
+  }
+
+  @Test
+  public void testIgnoreNullWhenSavingNewModel() throws IOException {
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    User user = new User(1000L, "handle", null, 100, null, null, null, null, null, null, null);
+    dbs.getDatabase1().users().save(user);
+
+    // check insertion statement
+    String expectedStatement = "INSERT INTO users (`handle`, `num_posts` , id) VALUES(?, ?, ?);";
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(1, actualStatements.size());
+    assertEquals(expectedStatement, actualStatements.get(0));
+
+    // check model
+    assertEquals("handle", user.getHandle());
+    assertNull(user.getCreatedAtMillis());
+  }
+
+  @Test
+  public void testIncludeNullWhenUpdatingExistingModel() throws IOException {
+    User user = dbs.getDatabase1().users().create("handle", 100);
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    dbs.getDatabase1().users().save(user);
+
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(1, actualStatements.size());
+    // Field created_at_millis is null, but it should be included in the save statement
+    assertNull(user.getCreatedAtMillis());
+    assertTrue(actualStatements.get(0).contains("created_at_millis"));
+  }
+
 }
