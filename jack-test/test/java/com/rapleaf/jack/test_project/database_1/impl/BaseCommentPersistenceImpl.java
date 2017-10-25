@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -62,18 +63,42 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return this.create(content, commenter_id, commented_on_id, System.currentTimeMillis());
   }
   public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (content == null) {
-          stmt.setNull(1, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(1, content);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        if (content != null) {
+          nonNullFields.add("content");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex0, content));
         }
-          stmt.setInt(2, commenter_id);
-          stmt.setLong(3, commented_on_id);
-          stmt.setTimestamp(4, new Timestamp(created_at));
+        nonNullFields.add("commenter_id");
+        int fieldIndex1 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex1, commenter_id));
+        nonNullFields.add("commented_on_id");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setLong(fieldIndex2, commented_on_id));
+        nonNullFields.add("created_at");
+        int fieldIndex3 = index++;
+        statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(created_at)));
       }
-    }, getInsertStatement(Arrays.<String>asList("content", "commenter_id", "commented_on_id", "created_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -81,22 +106,44 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return newInst;
   }
 
-
   public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, commenter_id);
-          stmt.setLong(2, commented_on_id);
-          stmt.setTimestamp(3, new Timestamp(created_at));
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        nonNullFields.add("commenter_id");
+        int fieldIndex1 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex1, commenter_id));
+        nonNullFields.add("commented_on_id");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setLong(fieldIndex2, commented_on_id));
+        nonNullFields.add("created_at");
+        int fieldIndex3 = index++;
+        statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(created_at)));
       }
-    }, getInsertStatement(Arrays.<String>asList("commenter_id", "commented_on_id", "created_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Comment newInst = new Comment(__id, null, commenter_id, commented_on_id, created_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public Comment createDefaultInstance() throws IOException {
     return create(0, 0L, 0L);

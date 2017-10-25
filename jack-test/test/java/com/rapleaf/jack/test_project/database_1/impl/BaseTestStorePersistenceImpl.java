@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -60,40 +61,58 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   public TestStore create(final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (entry_type == null) {
-          stmt.setNull(1, java.sql.Types.INTEGER);
-        } else {
-          stmt.setInt(1, entry_type);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        if (entry_type != null) {
+          nonNullFields.add("entry_type");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setInt(fieldIndex0, entry_type));
         }
-        if (entry_scope == null) {
-          stmt.setNull(2, java.sql.Types.INTEGER);
-        } else {
-          stmt.setLong(2, entry_scope);
+        if (entry_scope != null) {
+          nonNullFields.add("entry_scope");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setLong(fieldIndex1, entry_scope));
         }
-        if (entry_key == null) {
-          stmt.setNull(3, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(3, entry_key);
+        if (entry_key != null) {
+          nonNullFields.add("entry_key");
+          int fieldIndex2 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex2, entry_key));
         }
-        if (entry_value == null) {
-          stmt.setNull(4, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(4, entry_value);
+        if (entry_value != null) {
+          nonNullFields.add("entry_value");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex3, entry_value));
         }
-        if (created_at == null) {
-          stmt.setNull(5, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(5, new Timestamp(created_at));
+        if (created_at != null) {
+          nonNullFields.add("created_at");
+          int fieldIndex4 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex4, new Timestamp(created_at)));
         }
-        if (updated_at == null) {
-          stmt.setNull(6, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(6, new Timestamp(updated_at));
+        if (updated_at != null) {
+          nonNullFields.add("updated_at");
+          int fieldIndex5 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex5, new Timestamp(updated_at)));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("entry_type", "entry_scope", "entry_key", "entry_value", "created_at", "updated_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     TestStore newInst = new TestStore(__id, entry_type, entry_scope, entry_key, entry_value, created_at, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -101,19 +120,35 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     return newInst;
   }
 
-
   public TestStore create() throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
       }
-    }, getInsertStatement(Arrays.<String>asList()));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     TestStore newInst = new TestStore(__id, null, null, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public TestStore createDefaultInstance() throws IOException {
     return create();

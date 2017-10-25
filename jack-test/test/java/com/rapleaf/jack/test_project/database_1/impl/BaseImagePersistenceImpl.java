@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -55,15 +56,33 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Image create(final Integer user_id) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (user_id == null) {
-          stmt.setNull(1, java.sql.Types.INTEGER);
-        } else {
-          stmt.setInt(1, user_id);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        if (user_id != null) {
+          nonNullFields.add("user_id");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setInt(fieldIndex0, user_id));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("user_id")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Image newInst = new Image(__id, user_id, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -71,19 +90,35 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return newInst;
   }
 
-
   public Image create() throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
       }
-    }, getInsertStatement(Arrays.<String>asList()));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Image newInst = new Image(__id, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public Image createDefaultInstance() throws IOException {
     return create();

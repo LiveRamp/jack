@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -58,30 +59,48 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public Post create(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (title == null) {
-          stmt.setNull(1, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(1, title);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        if (title != null) {
+          nonNullFields.add("title");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex0, title));
         }
-        if (posted_at_millis == null) {
-          stmt.setNull(2, java.sql.Types.DATE);
-        } else {
-          stmt.setDate(2, new Date(posted_at_millis));
+        if (posted_at_millis != null) {
+          nonNullFields.add("posted_at_millis");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setDate(fieldIndex1, new Date(posted_at_millis)));
         }
-        if (user_id == null) {
-          stmt.setNull(3, java.sql.Types.INTEGER);
-        } else {
-          stmt.setInt(3, user_id);
+        if (user_id != null) {
+          nonNullFields.add("user_id");
+          int fieldIndex2 = index++;
+          statementSetters.add(stmt -> stmt.setInt(fieldIndex2, user_id));
         }
-        if (updated_at == null) {
-          stmt.setNull(4, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(4, new Timestamp(updated_at));
+        if (updated_at != null) {
+          nonNullFields.add("updated_at");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(updated_at)));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("title", "posted_at_millis", "user_id", "updated_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Post newInst = new Post(__id, title, posted_at_millis, user_id, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -89,19 +108,35 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return newInst;
   }
 
-
   public Post create() throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
       }
-    }, getInsertStatement(Arrays.<String>asList()));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Post newInst = new Post(__id, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public Post createDefaultInstance() throws IOException {
     return create();

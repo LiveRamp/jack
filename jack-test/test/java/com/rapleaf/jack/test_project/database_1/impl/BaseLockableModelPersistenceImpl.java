@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -59,26 +60,46 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   public LockableModel create(final int lock_version, final String message, final Long created_at, final Long updated_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, lock_version);
-        if (message == null) {
-          stmt.setNull(2, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(2, message);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        nonNullFields.add("lock_version");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));
+        if (message != null) {
+          nonNullFields.add("message");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex1, message));
         }
-        if (created_at == null) {
-          stmt.setNull(3, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(3, new Timestamp(created_at));
+        if (created_at != null) {
+          nonNullFields.add("created_at");
+          int fieldIndex2 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex2, new Timestamp(created_at)));
         }
-        if (updated_at == null) {
-          stmt.setNull(4, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(4, new Timestamp(updated_at));
+        if (updated_at != null) {
+          nonNullFields.add("updated_at");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(updated_at)));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("lock_version", "message", "created_at", "updated_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     LockableModel newInst = new LockableModel(__id, lock_version, message, created_at, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -86,20 +107,38 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     return newInst;
   }
 
-
   public LockableModel create(final int lock_version) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, lock_version);
+    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+        nonNullFields.add("lock_version");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));
       }
-    }, getInsertStatement(Arrays.<String>asList("lock_version")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     LockableModel newInst = new LockableModel(__id, lock_version, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public LockableModel createDefaultInstance() throws IOException {
     return create(0);
