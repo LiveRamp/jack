@@ -50,7 +50,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public Post create(final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   public Post create() throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 

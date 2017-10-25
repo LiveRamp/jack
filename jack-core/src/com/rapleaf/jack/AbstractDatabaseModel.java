@@ -56,7 +56,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   private final String setFieldsPrepStatementSection;
   private final String lockFieldName;
 
-  protected interface InsertStatementCreator {
+  protected interface StatementCreator {
     String getStatement();
 
     void setStatement(PreparedStatement statement) throws SQLException;
@@ -156,7 +156,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
 
-  protected long realCreate(InsertStatementCreator statementCreator) throws IOException {
+  protected long realCreate(StatementCreator statementCreator) throws IOException {
     int retryCount = 0;
 
     PreparedStatement stmt = null;

@@ -52,7 +52,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   public TestStore create(final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
@@ -118,7 +118,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   public TestStore create() throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 

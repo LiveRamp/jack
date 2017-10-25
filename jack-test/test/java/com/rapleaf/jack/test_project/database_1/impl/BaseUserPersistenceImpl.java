@@ -56,7 +56,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
@@ -142,7 +142,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public User create(final String handle, final int num_posts) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 

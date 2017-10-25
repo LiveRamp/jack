@@ -47,7 +47,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Image create(final Integer user_id) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Image create() throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 

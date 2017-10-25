@@ -54,7 +54,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return this.create(content, commenter_id, commented_on_id, System.currentTimeMillis());
   }
   public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
@@ -102,7 +102,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 

@@ -21,7 +21,7 @@
 
 <% end %>
   public <%= model_defn.model_name %> create(<%= signature %>) throws IOException {
-    InsertStatementCreator statementCreator = new InsertStatementCreator() {
+    StatementCreator statementCreator = new StatementCreator() {
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
