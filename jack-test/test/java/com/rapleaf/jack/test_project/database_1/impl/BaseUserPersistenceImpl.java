@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +20,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.UserDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -71,47 +62,57 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
       {
         int index = 1;
+
         nonNullFields.add("handle");
         int fieldIndex0 = index++;
         statementSetters.add(stmt -> stmt.setString(fieldIndex0, handle));
+
         if (created_at_millis != null) {
           nonNullFields.add("created_at_millis");
           int fieldIndex1 = index++;
           statementSetters.add(stmt -> stmt.setLong(fieldIndex1, created_at_millis));
         }
+
         nonNullFields.add("num_posts");
         int fieldIndex2 = index++;
         statementSetters.add(stmt -> stmt.setInt(fieldIndex2, num_posts));
+
         if (some_date != null) {
           nonNullFields.add("some_date");
           int fieldIndex3 = index++;
           statementSetters.add(stmt -> stmt.setDate(fieldIndex3, new Date(some_date)));
         }
+
         if (some_datetime != null) {
           nonNullFields.add("some_datetime");
           int fieldIndex4 = index++;
           statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex4, new Timestamp(some_datetime)));
         }
+
         if (bio != null) {
           nonNullFields.add("bio");
           int fieldIndex5 = index++;
           statementSetters.add(stmt -> stmt.setString(fieldIndex5, bio));
         }
+
         if (some_binary != null) {
           nonNullFields.add("some_binary");
           int fieldIndex6 = index++;
           statementSetters.add(stmt -> stmt.setBytes(fieldIndex6, some_binary));
         }
+
         if (some_float != null) {
           nonNullFields.add("some_float");
           int fieldIndex7 = index++;
           statementSetters.add(stmt -> stmt.setDouble(fieldIndex7, some_float));
         }
+
         if (some_decimal != null) {
           nonNullFields.add("some_decimal");
           int fieldIndex8 = index++;
           statementSetters.add(stmt -> stmt.setDouble(fieldIndex8, some_decimal));
         }
+
         if (some_boolean != null) {
           nonNullFields.add("some_boolean");
           int fieldIndex9 = index++;
@@ -147,9 +148,11 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
 
       {
         int index = 1;
+
         nonNullFields.add("handle");
         int fieldIndex0 = index++;
         statementSetters.add(stmt -> stmt.setString(fieldIndex0, handle));
+
         nonNullFields.add("num_posts");
         int fieldIndex2 = index++;
         statementSetters.add(stmt -> stmt.setInt(fieldIndex2, num_posts));

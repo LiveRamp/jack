@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +20,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.function.Supplier;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.models.LockableModel;
 import com.rapleaf.jack.test_project.database_1.query.LockableModelQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.LockableModelDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -66,19 +57,23 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
       {
         int index = 1;
+
         nonNullFields.add("lock_version");
         int fieldIndex0 = index++;
         statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));
+
         if (message != null) {
           nonNullFields.add("message");
           int fieldIndex1 = index++;
           statementSetters.add(stmt -> stmt.setString(fieldIndex1, message));
         }
+
         if (created_at != null) {
           nonNullFields.add("created_at");
           int fieldIndex2 = index++;
           statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex2, new Timestamp(created_at)));
         }
+
         if (updated_at != null) {
           nonNullFields.add("updated_at");
           int fieldIndex3 = index++;
@@ -114,6 +109,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
 
       {
         int index = 1;
+
         nonNullFields.add("lock_version");
         int fieldIndex0 = index++;
         statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));

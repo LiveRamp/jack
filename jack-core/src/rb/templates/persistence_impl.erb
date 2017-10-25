@@ -20,9 +20,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,21 +30,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.function.Supplier;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
-import <%= JACK_NAMESPACE %>.queries.where_operators.IWhereOperator;
 import <%= JACK_NAMESPACE %>.queries.WhereConstraint;
 import <%= JACK_NAMESPACE %>.queries.WhereClause;
-import <%= JACK_NAMESPACE %>.queries.ModelQuery;
-import <%= JACK_NAMESPACE %>.ModelWithId;
-import <%= JACK_NAMESPACE %>.util.JackUtility;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 import <%= root_package %>.query.<%= model_defn.delete_builder_name %>;
-
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 

@@ -27,16 +27,17 @@
 
       {
         int index = 1;
-
 <% model_defn.fields.each do |field_defn| %>
   <% if !field_defn.nullable? || !only_not_null %>
     <% if field_defn.nullable? %>
+
         if (<%=field_defn.name%> != null) {
           nonNullFields.add("<%=field_defn.name%>");
           int fieldIndex<%= field_defn.ordinal %> = index++;
           statementSetters.add(stmt -> stmt.set<%=field_defn.prep_stmt_type%>(fieldIndex<%= field_defn.ordinal %>, <%=field_defn.prep_stmt_modifier(field_defn.name)%>));
         }
     <% else %>
+
         nonNullFields.add("<%=field_defn.name%>");
         int fieldIndex<%= field_defn.ordinal %> = index++;
         statementSetters.add(stmt -> stmt.set<%=field_defn.prep_stmt_type%>(fieldIndex<%= field_defn.ordinal %>, <%=field_defn.prep_stmt_modifier(field_defn.name)%>));
