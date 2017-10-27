@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 class DatabaseDefn
-  attr_reader :namespace, :name, :schema_rb, :models_dir, :support_missing_id, :adapter
+  attr_reader :namespace, :name, :schema_rb, :models_dir, :support_missing_id, :adapter, :inflections_file
 
   def initialize(map)
     @namespace = map["root_namespace"]
     @name = map["db_name"]
     @schema_rb = map["schema_rb"]
     @models_dir = map["models"]
+    @inflections_file = map["inflections_file"]
     @support_missing_id = map["support_missing_id"]
     @adapter = map["adapter"] ? map["adapter"] : "mysql"
   end

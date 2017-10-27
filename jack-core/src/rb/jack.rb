@@ -27,6 +27,11 @@ class Jack
 
     # initial pass to establish all the tables
     project_defn.databases.each do |database_defn|
+
+      if database_defn.inflections_file
+        require "#{base_dir}/#{database_defn.inflections_file}"
+      end
+
       model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
 
       model_defns, migration_number = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
