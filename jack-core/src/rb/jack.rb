@@ -28,6 +28,9 @@ class Jack
     # initial pass to establish all the tables
     project_defn.databases.each do |database_defn|
 
+      # NOTE: if you are loading multiple databases, the inflections loaded for databases will NOT be unloaded
+      #       for subsequently processed databases.  hopefully this does not cause problems in any production environment
+      #       if it does, we'll need to fork the process or load these some other way.
       if database_defn.inflections_file
         require "#{base_dir}/#{database_defn.inflections_file}"
       end
