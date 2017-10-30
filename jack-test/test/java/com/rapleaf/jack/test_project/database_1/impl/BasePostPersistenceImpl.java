@@ -108,10 +108,6 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
       private final List<String> nonNullFields = new ArrayList<>();
       private final List<AttrSetter> statementSetters = new ArrayList<>();
 
-      {
-        int index = 1;
-      }
-
       @Override
       public String getStatement() {
         return getInsertStatement(nonNullFields);
