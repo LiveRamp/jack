@@ -16,6 +16,7 @@ import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -24,7 +25,8 @@ import static org.junit.Assert.fail;
  * test cases here unless you have a really good reason to do so.
  */
 public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
-  private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
+  private static final String DB_NAME_KEY = "database1";
+  private static final LoggingMysqlConnection DATABASE_CONNECTION1 = new LoggingMysqlConnection(DB_NAME_KEY);
 
   @Override
   public IDatabases getDBS() {
@@ -33,16 +35,12 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
 
   @Test
   public void testIsEmpty() throws IOException {
-
     ICommentPersistence comments = dbs.getDatabase1().comments();
     assertTrue(comments.isEmpty());
 
     comments.create("comment", 1, 1, 1);
-
     assertFalse(comments.isEmpty());
-
   }
-
 
   @Test
   public void testFindAllByForeignKeyCache() throws Exception {
@@ -91,7 +89,7 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
   public void testOptimisticLockingHasNoEffectWhileCaching() throws IOException {
     final IUserPersistence users = dbs.getDatabase1().users();
     final User user = users.create("handle1", 1);
-    user.setCreatedAtMillis(1l);
+    user.setCreatedAtMillis(1L);
     if (!user.save()) {
       fail("Failed to setup test properly");
     }
@@ -99,15 +97,15 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     final User user1 = users.find(user.getId());
     final User user2 = users.find(user.getId());
 
-    user1.setCreatedAtMillis(2l);
+    user1.setCreatedAtMillis(2L);
     user1.save();
 
-    user2.setCreatedAtMillis(3l);
+    user2.setCreatedAtMillis(3L);
     user2.save();
 
     final User finalUser = users.find(user.getId());
 
-    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+    assertEquals(3L, finalUser.getCreatedAtMillis().longValue());
 
     final ILockableModelPersistence lockableModels = dbs.getDatabase1().lockableModels();
     final LockableModel lockableModel = lockableModels.createDefaultInstance();
@@ -137,7 +135,7 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     dbs.getDatabase1().disableCaching();
     final IUserPersistence users = dbs.getDatabase1().users();
     final User user = users.create("handle1", 1);
-    user.setCreatedAtMillis(1l);
+    user.setCreatedAtMillis(1L);
     if (!user.save()) {
       fail("Failed to setup test properly");
     }
@@ -145,15 +143,15 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     final User user1 = users.find(user.getId());
     final User user2 = users.find(user.getId());
 
-    user1.setCreatedAtMillis(2l);
+    user1.setCreatedAtMillis(2L);
     user1.save();
 
-    user2.setCreatedAtMillis(3l);
+    user2.setCreatedAtMillis(3L);
     user2.save();
 
     final User finalUser = users.find(user.getId());
 
-    assertEquals(3l, finalUser.getCreatedAtMillis().longValue());
+    assertEquals(3L, finalUser.getCreatedAtMillis().longValue());
   }
 
   @Test
@@ -184,4 +182,55 @@ public class TestAbstractDatabaseModel extends BaseDatabaseModelTestCase {
     assertEquals("First", finalLockableModel.getMessage()); // first success should have taken effect
     assertEquals(lockableModel2Copy, lockableModel2); // second should be unaffected by saveAttempt
   }
+
+  @Test
+  public void testIgnoreNullWhenCreatingModel() throws IOException {
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    User user1 = dbs.getDatabase1().users().create("handle", null, 100, null, null, null, null, null, null, null);
+    User user2 = dbs.getDatabase1().users().create("handle", 100);
+
+    // check insertion statement
+    String expectedStatement = "INSERT INTO users (`handle`, `num_posts`) VALUES(?, ?);";
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(2, actualStatements.size());
+    assertEquals(expectedStatement, actualStatements.get(0));
+    assertEquals(expectedStatement, actualStatements.get(1));
+
+    // check model
+    assertEquals("handle", user1.getHandle());
+    assertNull(user1.getCreatedAtMillis());
+    assertEquals("handle", user2.getHandle());
+    assertNull(user2.getCreatedAtMillis());
+  }
+
+  @Test
+  public void testIgnoreNullWhenSavingNewModel() throws IOException {
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    User user = new User(1000L, "handle", null, 100, null, null, null, null, null, null, null);
+    dbs.getDatabase1().users().save(user);
+
+    // check insertion statement
+    String expectedStatement = "INSERT INTO users (`handle`, `num_posts` , id) VALUES(?, ?, ?);";
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(1, actualStatements.size());
+    assertEquals(expectedStatement, actualStatements.get(0));
+
+    // check model
+    assertEquals("handle", user.getHandle());
+    assertNull(user.getCreatedAtMillis());
+  }
+
+  @Test
+  public void testIncludeNullWhenUpdatingExistingModel() throws IOException {
+    User user = dbs.getDatabase1().users().create("handle", 100);
+    DATABASE_CONNECTION1.clearPreparedStatements();
+    dbs.getDatabase1().users().save(user);
+
+    List<String> actualStatements = DATABASE_CONNECTION1.getPreparedStatements();
+    assertEquals(1, actualStatements.size());
+    // Field created_at_millis is null, but it should be included in the save statement
+    assertNull(user.getCreatedAtMillis());
+    assertTrue(actualStatements.get(0).contains("created_at_millis"));
+  }
+
 }

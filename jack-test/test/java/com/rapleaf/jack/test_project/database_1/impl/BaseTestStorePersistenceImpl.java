@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,12 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ITestStorePersistence;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.test_project.database_1.query.TestStoreQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.TestStoreDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -60,40 +52,64 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   public TestStore create(final Integer entry_type, final Long entry_scope, final String entry_key, final String entry_value, final Long created_at, final Long updated_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (entry_type == null) {
-          stmt.setNull(1, java.sql.Types.INTEGER);
-        } else {
-          stmt.setInt(1, entry_type);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        if (entry_type != null) {
+          nonNullFields.add("entry_type");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setInt(fieldIndex0, entry_type));
         }
-        if (entry_scope == null) {
-          stmt.setNull(2, java.sql.Types.INTEGER);
-        } else {
-          stmt.setLong(2, entry_scope);
+
+        if (entry_scope != null) {
+          nonNullFields.add("entry_scope");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setLong(fieldIndex1, entry_scope));
         }
-        if (entry_key == null) {
-          stmt.setNull(3, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(3, entry_key);
+
+        if (entry_key != null) {
+          nonNullFields.add("entry_key");
+          int fieldIndex2 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex2, entry_key));
         }
-        if (entry_value == null) {
-          stmt.setNull(4, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(4, entry_value);
+
+        if (entry_value != null) {
+          nonNullFields.add("entry_value");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex3, entry_value));
         }
-        if (created_at == null) {
-          stmt.setNull(5, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(5, new Timestamp(created_at));
+
+        if (created_at != null) {
+          nonNullFields.add("created_at");
+          int fieldIndex4 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex4, new Timestamp(created_at)));
         }
-        if (updated_at == null) {
-          stmt.setNull(6, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(6, new Timestamp(updated_at));
+
+        if (updated_at != null) {
+          nonNullFields.add("updated_at");
+          int fieldIndex5 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex5, new Timestamp(updated_at)));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("entry_type", "entry_scope", "entry_key", "entry_value", "created_at", "updated_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     TestStore newInst = new TestStore(__id, entry_type, entry_scope, entry_key, entry_value, created_at, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -101,19 +117,31 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
     return newInst;
   }
 
-
   public TestStore create() throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
       }
-    }, getInsertStatement(Arrays.<String>asList()));
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     TestStore newInst = new TestStore(__id, null, null, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public TestStore createDefaultInstance() throws IOException {
     return create();
@@ -244,38 +272,39 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   @Override
-  protected void setAttrs(TestStore model, PreparedStatement stmt) throws SQLException {
-    if (model.getEntryType() == null) {
-      stmt.setNull(1, java.sql.Types.INTEGER);
-    } else {
-      stmt.setInt(1, model.getEntryType());
+  protected void setAttrs(TestStore model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
+    if (setNull && model.getEntryType() == null) {
+      stmt.setNull(index++, java.sql.Types.INTEGER);
+    } else if (model.getEntryType() != null) {
+      stmt.setInt(index++, model.getEntryType());
     }
-    if (model.getEntryScope() == null) {
-      stmt.setNull(2, java.sql.Types.INTEGER);
-    } else {
-      stmt.setLong(2, model.getEntryScope());
+    if (setNull && model.getEntryScope() == null) {
+      stmt.setNull(index++, java.sql.Types.INTEGER);
+    } else if (model.getEntryScope() != null) {
+      stmt.setLong(index++, model.getEntryScope());
     }
-    if (model.getEntryKey() == null) {
-      stmt.setNull(3, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(3, model.getEntryKey());
+    if (setNull && model.getEntryKey() == null) {
+      stmt.setNull(index++, java.sql.Types.CHAR);
+    } else if (model.getEntryKey() != null) {
+      stmt.setString(index++, model.getEntryKey());
     }
-    if (model.getEntryValue() == null) {
-      stmt.setNull(4, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(4, model.getEntryValue());
+    if (setNull && model.getEntryValue() == null) {
+      stmt.setNull(index++, java.sql.Types.CHAR);
+    } else if (model.getEntryValue() != null) {
+      stmt.setString(index++, model.getEntryValue());
     }
-    if (model.getCreatedAt() == null) {
-      stmt.setNull(5, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(5, new Timestamp(model.getCreatedAt()));
+    if (setNull && model.getCreatedAt() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getCreatedAt() != null) {
+      stmt.setTimestamp(index++, new Timestamp(model.getCreatedAt()));
     }
-    if (model.getUpdatedAt() == null) {
-      stmt.setNull(6, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(6, new Timestamp(model.getUpdatedAt()));
+    if (setNull && model.getUpdatedAt() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getUpdatedAt() != null) {
+      stmt.setTimestamp(index++, new Timestamp(model.getUpdatedAt()));
     }
-    stmt.setLong(7, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

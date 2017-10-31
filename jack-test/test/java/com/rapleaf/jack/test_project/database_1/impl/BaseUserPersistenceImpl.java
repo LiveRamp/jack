@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,12 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.UserDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -64,52 +56,84 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   public User create(final String handle, final Long created_at_millis, final int num_posts, final Long some_date, final Long some_datetime, final String bio, final byte[] some_binary, final Double some_float, final Double some_decimal, final Boolean some_boolean) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setString(1, handle);
-        if (created_at_millis == null) {
-          stmt.setNull(2, java.sql.Types.INTEGER);
-        } else {
-          stmt.setLong(2, created_at_millis);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        nonNullFields.add("handle");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setString(fieldIndex0, handle));
+
+        if (created_at_millis != null) {
+          nonNullFields.add("created_at_millis");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setLong(fieldIndex1, created_at_millis));
         }
-          stmt.setInt(3, num_posts);
-        if (some_date == null) {
-          stmt.setNull(4, java.sql.Types.DATE);
-        } else {
-          stmt.setDate(4, new Date(some_date));
+
+        nonNullFields.add("num_posts");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex2, num_posts));
+
+        if (some_date != null) {
+          nonNullFields.add("some_date");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setDate(fieldIndex3, new Date(some_date)));
         }
-        if (some_datetime == null) {
-          stmt.setNull(5, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(5, new Timestamp(some_datetime));
+
+        if (some_datetime != null) {
+          nonNullFields.add("some_datetime");
+          int fieldIndex4 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex4, new Timestamp(some_datetime)));
         }
-        if (bio == null) {
-          stmt.setNull(6, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(6, bio);
+
+        if (bio != null) {
+          nonNullFields.add("bio");
+          int fieldIndex5 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex5, bio));
         }
-        if (some_binary == null) {
-          stmt.setNull(7, java.sql.Types.BINARY);
-        } else {
-          stmt.setBytes(7, some_binary);
+
+        if (some_binary != null) {
+          nonNullFields.add("some_binary");
+          int fieldIndex6 = index++;
+          statementSetters.add(stmt -> stmt.setBytes(fieldIndex6, some_binary));
         }
-        if (some_float == null) {
-          stmt.setNull(8, java.sql.Types.DOUBLE);
-        } else {
-          stmt.setDouble(8, some_float);
+
+        if (some_float != null) {
+          nonNullFields.add("some_float");
+          int fieldIndex7 = index++;
+          statementSetters.add(stmt -> stmt.setDouble(fieldIndex7, some_float));
         }
-        if (some_decimal == null) {
-          stmt.setNull(9, java.sql.Types.DECIMAL);
-        } else {
-          stmt.setDouble(9, some_decimal);
+
+        if (some_decimal != null) {
+          nonNullFields.add("some_decimal");
+          int fieldIndex8 = index++;
+          statementSetters.add(stmt -> stmt.setDouble(fieldIndex8, some_decimal));
         }
-        if (some_boolean == null) {
-          stmt.setNull(10, java.sql.Types.BOOLEAN);
-        } else {
-          stmt.setBoolean(10, some_boolean);
+
+        if (some_boolean != null) {
+          nonNullFields.add("some_boolean");
+          int fieldIndex9 = index++;
+          statementSetters.add(stmt -> stmt.setBoolean(fieldIndex9, some_boolean));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("handle", "created_at_millis", "num_posts", "some_date", "some_datetime", "bio", "some_binary", "some_float", "some_decimal", "some_boolean")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     User newInst = new User(__id, handle, created_at_millis, num_posts, some_date, some_datetime, bio, some_binary, some_float, some_decimal, some_boolean, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -117,21 +141,43 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return newInst;
   }
 
-
   public User create(final String handle, final int num_posts) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setString(1, handle);
-          stmt.setInt(2, num_posts);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        nonNullFields.add("handle");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setString(fieldIndex0, handle));
+
+        nonNullFields.add("num_posts");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex2, num_posts));
       }
-    }, getInsertStatement(Arrays.<String>asList("handle", "num_posts")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     User newInst = new User(__id, handle, null, num_posts, null, null, null, null, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public User createDefaultInstance() throws IOException {
     return create("", 0);
@@ -286,54 +332,55 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected void setAttrs(User model, PreparedStatement stmt) throws SQLException {
+  protected void setAttrs(User model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     {
-      stmt.setString(1, model.getHandle());
+      stmt.setString(index++, model.getHandle());
     }
-    if (model.getCreatedAtMillis() == null) {
-      stmt.setNull(2, java.sql.Types.INTEGER);
-    } else {
-      stmt.setLong(2, model.getCreatedAtMillis());
+    if (setNull && model.getCreatedAtMillis() == null) {
+      stmt.setNull(index++, java.sql.Types.INTEGER);
+    } else if (model.getCreatedAtMillis() != null) {
+      stmt.setLong(index++, model.getCreatedAtMillis());
     }
     {
-      stmt.setInt(3, model.getNumPosts());
+      stmt.setInt(index++, model.getNumPosts());
     }
-    if (model.getSomeDate() == null) {
-      stmt.setNull(4, java.sql.Types.DATE);
-    } else {
-      stmt.setDate(4, new Date(model.getSomeDate()));
+    if (setNull && model.getSomeDate() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getSomeDate() != null) {
+      stmt.setDate(index++, new Date(model.getSomeDate()));
     }
-    if (model.getSomeDatetime() == null) {
-      stmt.setNull(5, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(5, new Timestamp(model.getSomeDatetime()));
+    if (setNull && model.getSomeDatetime() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getSomeDatetime() != null) {
+      stmt.setTimestamp(index++, new Timestamp(model.getSomeDatetime()));
     }
-    if (model.getBio() == null) {
-      stmt.setNull(6, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(6, model.getBio());
+    if (setNull && model.getBio() == null) {
+      stmt.setNull(index++, java.sql.Types.CHAR);
+    } else if (model.getBio() != null) {
+      stmt.setString(index++, model.getBio());
     }
-    if (model.getSomeBinary() == null) {
-      stmt.setNull(7, java.sql.Types.BINARY);
-    } else {
-      stmt.setBytes(7, model.getSomeBinary());
+    if (setNull && model.getSomeBinary() == null) {
+      stmt.setNull(index++, java.sql.Types.BINARY);
+    } else if (model.getSomeBinary() != null) {
+      stmt.setBytes(index++, model.getSomeBinary());
     }
-    if (model.getSomeFloat() == null) {
-      stmt.setNull(8, java.sql.Types.DOUBLE);
-    } else {
-      stmt.setDouble(8, model.getSomeFloat());
+    if (setNull && model.getSomeFloat() == null) {
+      stmt.setNull(index++, java.sql.Types.DOUBLE);
+    } else if (model.getSomeFloat() != null) {
+      stmt.setDouble(index++, model.getSomeFloat());
     }
-    if (model.getSomeDecimal() == null) {
-      stmt.setNull(9, java.sql.Types.DECIMAL);
-    } else {
-      stmt.setDouble(9, model.getSomeDecimal());
+    if (setNull && model.getSomeDecimal() == null) {
+      stmt.setNull(index++, java.sql.Types.DECIMAL);
+    } else if (model.getSomeDecimal() != null) {
+      stmt.setDouble(index++, model.getSomeDecimal());
     }
-    if (model.isSomeBoolean() == null) {
-      stmt.setNull(10, java.sql.Types.BOOLEAN);
-    } else {
-      stmt.setBoolean(10, model.isSomeBoolean());
+    if (setNull && model.isSomeBoolean() == null) {
+      stmt.setNull(index++, java.sql.Types.BOOLEAN);
+    } else if (model.isSomeBoolean() != null) {
+      stmt.setBoolean(index++, model.isSomeBoolean());
     }
-    stmt.setLong(11, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

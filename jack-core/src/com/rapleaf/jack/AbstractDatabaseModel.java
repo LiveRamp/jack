@@ -30,8 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +56,14 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   private final String setFieldsPrepStatementSection;
   private final String lockFieldName;
 
-  protected static interface AttrSetter {
-    public void set(PreparedStatement stmt) throws SQLException;
+  protected interface StatementCreator {
+    String getStatement();
+
+    void setStatement(PreparedStatement statement) throws SQLException;
+  }
+
+  protected interface AttrSetter {
+    void set(PreparedStatement stmt) throws SQLException;
   }
 
   private final BaseDatabaseConnection conn;
@@ -92,6 +100,17 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   protected String getInsertWithIdStatement(List<String> fieldNames) {
     return String.format("INSERT INTO %s (%s , id) VALUES(%s, ?);", tableName,
         escapedFieldNames(fieldNames), qmarks(fieldNames.size()));
+  }
+
+  private List<String> getNonNullFields(T model, List<String> allFields) {
+    Set<String> existingFieldNames = model.getFieldSet().stream().map(Enum::name).collect(Collectors.toSet());
+    List<String> nonNullFieldNames = Lists.newLinkedList();
+    for (String fieldName : allFields) {
+      if (existingFieldNames.contains(fieldName) && model.getField(fieldName) != null) {
+        nonNullFieldNames.add(fieldName);
+      }
+    }
+    return nonNullFieldNames;
   }
 
   private String getSetFieldsPrepStatementSection() {
@@ -137,16 +156,15 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
 
-  protected long realCreate(AttrSetter attrSetter, String insertStatement)
-      throws IOException {
+  protected long realCreate(StatementCreator statementCreator) throws IOException {
     int retryCount = 0;
 
     PreparedStatement stmt = null;
     ResultSet generatedKeys = null;
     while (true) {
       try {
-        stmt = conn.getPreparedStatement(insertStatement, Statement.RETURN_GENERATED_KEYS);
-        attrSetter.set(stmt);
+        stmt = conn.getPreparedStatement(statementCreator.getStatement(), Statement.RETURN_GENERATED_KEYS);
+        statementCreator.setStatement(stmt);
         stmt.execute();
         generatedKeys = stmt.getGeneratedKeys();
         generatedKeys.next();
@@ -252,7 +270,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
       return !rs.isBeforeFirst();
     } catch (SQLException e) {
       throw new IOException(e);
-    }finally {
+    } finally {
       closeQuery(rs, statement);
     }
 
@@ -626,7 +644,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return foundList;
   }
 
-  protected abstract void setAttrs(T model, PreparedStatement stmt)
+  protected abstract void setAttrs(T model, PreparedStatement stmt, boolean setNull)
       throws SQLException;
 
   // ActiveRecord documentation says it supports optimistic locking using integer fields
@@ -668,10 +686,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   private boolean insertStrict(T model, Long oldUpdatedAt) throws JackException, IOException {
-    PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(fieldNames));
+    List<String> nonNullFields = getNonNullFields(model, fieldNames);
+    PreparedStatement insertStmt = conn.getPreparedStatement(getInsertWithIdStatement(nonNullFields));
     try {
-      setAttrs(model, insertStmt);
-      insertStmt.setLong(fieldNames.size() + 1, model.getId());
+      setAttrs(model, insertStmt, false);
+      insertStmt.setLong(nonNullFields.size() + 1, model.getId());
       insertStmt.execute();
       final int updateCount = insertStmt.getUpdateCount();
       insertStmt.close();
@@ -929,7 +948,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
       @Override
       public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
-        baseModel.setAttrs(modelInstance, statement);
+        baseModel.setAttrs(modelInstance, statement, true);
         return statement;
       }
     }
@@ -947,7 +966,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
       @Override
       public PreparedStatement setParams(AbstractDatabaseModel<A> baseModel, A modelInstance, PreparedStatement statement) throws SQLException {
-        baseModel.setAttrs(modelInstance, statement);
+        baseModel.setAttrs(modelInstance, statement, true);
         // the lock_version is after all the field params and the id param
         statement.setLong(numFieldNames + 2, lockVersion);
         return statement;

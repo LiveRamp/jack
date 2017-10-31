@@ -20,9 +20,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +33,12 @@ import java.sql.Timestamp;
 
 import <%= JACK_NAMESPACE %>.AbstractDatabaseModel;
 import <%= JACK_NAMESPACE %>.BaseDatabaseConnection;
-import <%= JACK_NAMESPACE %>.queries.where_operators.IWhereOperator;
 import <%= JACK_NAMESPACE %>.queries.WhereConstraint;
 import <%= JACK_NAMESPACE %>.queries.WhereClause;
-import <%= JACK_NAMESPACE %>.queries.ModelQuery;
-import <%= JACK_NAMESPACE %>.ModelWithId;
-import <%= JACK_NAMESPACE %>.util.JackUtility;
 import <%= root_package %>.iface.<%= model_defn.iface_name %>;
 import <%= root_package %>.models.<%= model_defn.model_name %>;
 import <%= root_package %>.query.<%= model_defn.query_builder_name %>;
 import <%= root_package %>.query.<%= model_defn.delete_builder_name %>;
-
 
 import <%= project_defn.databases_namespace %>.IDatabases;
 
@@ -186,25 +178,24 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   @Override
-  protected void setAttrs(<%= model_defn.model_name %> model, PreparedStatement stmt) throws SQLException {
-    <% x = 1 %>
+  protected void setAttrs(<%= model_defn.model_name %> model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     <% model_defn.fields.each do |field_defn| %>
     <% if field_defn.nullable? %>
-    if (model.<%= field_defn.getter %> == null) {
-      stmt.setNull(<%= x %>, java.sql.Types.<%= field_defn.sql_type %>);
-    } else {
+    if (setNull && model.<%= field_defn.getter %> == null) {
+      stmt.setNull(index++, java.sql.Types.<%= field_defn.sql_type %>);
+    } else if (model.<%= field_defn.getter %> != null) {
     <% else %>
     {
     <% end %>
     <% if field_defn.name == "lock_version" and field_defn.data_type == :integer  %>
-      stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
+      stmt.set<%= field_defn.prep_stmt_type %>(index++, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter} + 1") %>);
     <% else %>
-      stmt.set<%= field_defn.prep_stmt_type %>(<%= x %>, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
+      stmt.set<%= field_defn.prep_stmt_type %>(index++, <%= field_defn.prep_stmt_modifier("model.#{field_defn.getter}") %>);
     <% end %>
     }
-      <% x+= 1 %>
     <% end %>
-    stmt.setLong(<%= x %>, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

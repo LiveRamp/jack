@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,12 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ILockableModelPersistence;
 import com.rapleaf.jack.test_project.database_1.models.LockableModel;
 import com.rapleaf.jack.test_project.database_1.query.LockableModelQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.LockableModelDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -59,26 +51,50 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   public LockableModel create(final int lock_version, final String message, final Long created_at, final Long updated_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, lock_version);
-        if (message == null) {
-          stmt.setNull(2, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(2, message);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        nonNullFields.add("lock_version");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));
+
+        if (message != null) {
+          nonNullFields.add("message");
+          int fieldIndex1 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex1, message));
         }
-        if (created_at == null) {
-          stmt.setNull(3, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(3, new Timestamp(created_at));
+
+        if (created_at != null) {
+          nonNullFields.add("created_at");
+          int fieldIndex2 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex2, new Timestamp(created_at)));
         }
-        if (updated_at == null) {
-          stmt.setNull(4, java.sql.Types.DATE);
-        } else {
-          stmt.setTimestamp(4, new Timestamp(updated_at));
+
+        if (updated_at != null) {
+          nonNullFields.add("updated_at");
+          int fieldIndex3 = index++;
+          statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(updated_at)));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("lock_version", "message", "created_at", "updated_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     LockableModel newInst = new LockableModel(__id, lock_version, message, created_at, updated_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -86,20 +102,39 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     return newInst;
   }
 
-
   public LockableModel create(final int lock_version) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, lock_version);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        nonNullFields.add("lock_version");
+        int fieldIndex0 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex0, lock_version));
       }
-    }, getInsertStatement(Arrays.<String>asList("lock_version")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     LockableModel newInst = new LockableModel(__id, lock_version, null, null, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public LockableModel createDefaultInstance() throws IOException {
     return create(0);
@@ -218,26 +253,27 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
   }
 
   @Override
-  protected void setAttrs(LockableModel model, PreparedStatement stmt) throws SQLException {
+  protected void setAttrs(LockableModel model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
     {
-      stmt.setInt(1, model.getLockVersion() + 1);
+      stmt.setInt(index++, model.getLockVersion() + 1);
     }
-    if (model.getMessage() == null) {
-      stmt.setNull(2, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(2, model.getMessage());
+    if (setNull && model.getMessage() == null) {
+      stmt.setNull(index++, java.sql.Types.CHAR);
+    } else if (model.getMessage() != null) {
+      stmt.setString(index++, model.getMessage());
     }
-    if (model.getCreatedAt() == null) {
-      stmt.setNull(3, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(3, new Timestamp(model.getCreatedAt()));
+    if (setNull && model.getCreatedAt() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getCreatedAt() != null) {
+      stmt.setTimestamp(index++, new Timestamp(model.getCreatedAt()));
     }
-    if (model.getUpdatedAt() == null) {
-      stmt.setNull(4, java.sql.Types.DATE);
-    } else {
-      stmt.setTimestamp(4, new Timestamp(model.getUpdatedAt()));
+    if (setNull && model.getUpdatedAt() == null) {
+      stmt.setNull(index++, java.sql.Types.DATE);
+    } else if (model.getUpdatedAt() != null) {
+      stmt.setTimestamp(index++, new Timestamp(model.getUpdatedAt()));
     }
-    stmt.setLong(5, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

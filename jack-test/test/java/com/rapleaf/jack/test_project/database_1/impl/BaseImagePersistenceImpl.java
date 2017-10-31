@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,12 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.models.Image;
 import com.rapleaf.jack.test_project.database_1.query.ImageQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.ImageDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -55,15 +47,34 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   public Image create(final Integer user_id) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (user_id == null) {
-          stmt.setNull(1, java.sql.Types.INTEGER);
-        } else {
-          stmt.setInt(1, user_id);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        if (user_id != null) {
+          nonNullFields.add("user_id");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setInt(fieldIndex0, user_id));
         }
       }
-    }, getInsertStatement(Arrays.<String>asList("user_id")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Image newInst = new Image(__id, user_id, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -71,19 +82,31 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return newInst;
   }
 
-
   public Image create() throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
       }
-    }, getInsertStatement(Arrays.<String>asList()));
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Image newInst = new Image(__id, null, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public Image createDefaultInstance() throws IOException {
     return create();
@@ -184,13 +207,14 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   @Override
-  protected void setAttrs(Image model, PreparedStatement stmt) throws SQLException {
-    if (model.getUserId() == null) {
-      stmt.setNull(1, java.sql.Types.INTEGER);
-    } else {
-      stmt.setInt(1, model.getUserId());
+  protected void setAttrs(Image model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
+    if (setNull && model.getUserId() == null) {
+      stmt.setNull(index++, java.sql.Types.INTEGER);
+    } else if (model.getUserId() != null) {
+      stmt.setInt(index++, model.getUserId());
     }
-    stmt.setLong(2, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override

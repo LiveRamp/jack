@@ -10,9 +10,6 @@ import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +23,12 @@ import java.sql.Timestamp;
 
 import com.rapleaf.jack.AbstractDatabaseModel;
 import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
-import com.rapleaf.jack.queries.ModelQuery;
-import com.rapleaf.jack.ModelWithId;
-import com.rapleaf.jack.util.JackUtility;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.query.CommentQueryBuilder;
 import com.rapleaf.jack.test_project.database_1.query.CommentDeleteBuilder;
-
 
 import com.rapleaf.jack.test_project.IDatabases;
 
@@ -62,18 +54,46 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return this.create(content, commenter_id, commented_on_id, System.currentTimeMillis());
   }
   public Comment create(final String content, final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-        if (content == null) {
-          stmt.setNull(1, java.sql.Types.CHAR);
-        } else {
-          stmt.setString(1, content);
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        if (content != null) {
+          nonNullFields.add("content");
+          int fieldIndex0 = index++;
+          statementSetters.add(stmt -> stmt.setString(fieldIndex0, content));
         }
-          stmt.setInt(2, commenter_id);
-          stmt.setLong(3, commented_on_id);
-          stmt.setTimestamp(4, new Timestamp(created_at));
+
+        nonNullFields.add("commenter_id");
+        int fieldIndex1 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex1, commenter_id));
+
+        nonNullFields.add("commented_on_id");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setLong(fieldIndex2, commented_on_id));
+
+        nonNullFields.add("created_at");
+        int fieldIndex3 = index++;
+        statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(created_at)));
       }
-    }, getInsertStatement(Arrays.<String>asList("content", "commenter_id", "commented_on_id", "created_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Comment newInst = new Comment(__id, content, commenter_id, commented_on_id, created_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
@@ -81,22 +101,47 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return newInst;
   }
 
-
   public Comment create(final int commenter_id, final long commented_on_id, final long created_at) throws IOException {
-    long __id = realCreate(new AttrSetter() {
-      public void set(PreparedStatement stmt) throws SQLException {
-          stmt.setInt(1, commenter_id);
-          stmt.setLong(2, commented_on_id);
-          stmt.setTimestamp(3, new Timestamp(created_at));
+    StatementCreator statementCreator = new StatementCreator() {
+      private final List<String> nonNullFields = new ArrayList<>();
+      private final List<AttrSetter> statementSetters = new ArrayList<>();
+
+      {
+        int index = 1;
+
+        nonNullFields.add("commenter_id");
+        int fieldIndex1 = index++;
+        statementSetters.add(stmt -> stmt.setInt(fieldIndex1, commenter_id));
+
+        nonNullFields.add("commented_on_id");
+        int fieldIndex2 = index++;
+        statementSetters.add(stmt -> stmt.setLong(fieldIndex2, commented_on_id));
+
+        nonNullFields.add("created_at");
+        int fieldIndex3 = index++;
+        statementSetters.add(stmt -> stmt.setTimestamp(fieldIndex3, new Timestamp(created_at)));
       }
-    }, getInsertStatement(Arrays.<String>asList("commenter_id", "commented_on_id", "created_at")));
+
+      @Override
+      public String getStatement() {
+        return getInsertStatement(nonNullFields);
+      }
+
+      @Override
+      public void setStatement(PreparedStatement statement) throws SQLException {
+        for (AttrSetter setter : statementSetters) {
+          setter.set(statement);
+        }
+      }
+    };
+
+    long __id = realCreate(statementCreator);
     Comment newInst = new Comment(__id, null, commenter_id, commented_on_id, created_at, databases);
     newInst.setCreated(true);
     cachedById.put(__id, newInst);
     clearForeignKeyCache();
     return newInst;
   }
-
 
   public Comment createDefaultInstance() throws IOException {
     return create(0, 0L, 0L);
@@ -215,22 +260,23 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   @Override
-  protected void setAttrs(Comment model, PreparedStatement stmt) throws SQLException {
-    if (model.getContent() == null) {
-      stmt.setNull(1, java.sql.Types.CHAR);
-    } else {
-      stmt.setString(1, model.getContent());
+  protected void setAttrs(Comment model, PreparedStatement stmt, boolean setNull) throws SQLException {
+    int index = 1;
+    if (setNull && model.getContent() == null) {
+      stmt.setNull(index++, java.sql.Types.CHAR);
+    } else if (model.getContent() != null) {
+      stmt.setString(index++, model.getContent());
     }
     {
-      stmt.setInt(2, model.getCommenterId());
+      stmt.setInt(index++, model.getCommenterId());
     }
     {
-      stmt.setLong(3, model.getCommentedOnId());
+      stmt.setLong(index++, model.getCommentedOnId());
     }
     {
-      stmt.setTimestamp(4, new Timestamp(model.getCreatedAt()));
+      stmt.setTimestamp(index++, new Timestamp(model.getCreatedAt()));
     }
-    stmt.setLong(5, model.getId());
+    stmt.setLong(index, model.getId());
   }
 
   @Override
