@@ -13,7 +13,10 @@ class RecordStreamIterator implements Iterator<Record> {
   private int blockSize;
   private GenericQuery query;
 
-  RecordStreamIterator(int blockSize, GenericQuery query, Optional<LimitCriterion> preSetLimit) {
+  RecordStreamIterator(int blockSize,
+                       GenericQuery query,
+                       Optional<LimitCriterion> preSetLimit,
+                       List<OrderCriterion> orderCriteria) {
     this.blockSize = blockSize;
     this.query = query;
     if (preSetLimit.isPresent()) {
@@ -26,7 +29,7 @@ class RecordStreamIterator implements Iterator<Record> {
   private void fetchBlock() {
     int numToFetch = Math.min(blockSize, (limitIndex - offset));
     query.limit(offset, numToFetch);
-    try {
+    query.or
       List<Record> fetch = query.fetch().getRecords();
       currentBlockPointer = fetch.iterator();
       if (fetch.size() < numToFetch) {

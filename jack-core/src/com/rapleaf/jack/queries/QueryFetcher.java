@@ -5,7 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
@@ -16,6 +21,54 @@ public class QueryFetcher extends BaseFetcher {
 
     try {
       resultSet = preparedStatement.executeQuery();
+      Records results = new Records();
+      while (resultSet.next()) {
+        Record record = parseResultSet(resultSet, selectedColumns);
+        if (record != null) {
+          results.addRecord(record);
+        }
+      }
+      return results;
+    } catch (SQLRecoverableException e) {
+      dbConnection.resetConnection();
+      throw new RuntimeException(e);
+    } finally {
+      closeQuery(resultSet, preparedStatement, dbConnection);
+    }
+  }
+
+  public static Stream<Record> getQueryResultsStream(PreparedStatement preparedStatement, Set<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
+    try {
+      ResultSet resultSet = preparedStatement.executeQuery();
+      boolean firstRecordValid = resultSet.next();
+
+      UnmodifiableIterator<Record> nonNullRecords = Iterators.filter(new Iterator<Record>() {
+        private boolean hasNext = firstRecordValid;
+        private ResultSet results = resultSet;
+
+        @Override
+        public boolean hasNext() {
+          return hasNext;
+        }
+
+        @Override
+        public Record next() {
+          try {
+            Record record = parseResultSet(resultSet, selectedColumns);
+            hasNext = results.next();
+            if (!hasNext) {
+              closeQuery(results, preparedStatement, dbConnection);
+            }
+            return record;
+          } catch (SQLRecoverableException recoverable) {
+            dbConnection.resetConnection();
+            throw new RuntimeException(recoverable);
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        }
+      }, r -> r != null);
+
       Records results = new Records();
       while (resultSet.next()) {
         Record record = parseResultSet(resultSet, selectedColumns);
