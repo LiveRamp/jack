@@ -26,6 +26,7 @@ public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
+
   private final List<TableReference> tableReferences;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
@@ -208,9 +209,31 @@ public class GenericQuery extends AbstractExecution {
     }
   }
 
-  public Stream<Record> fetchAsStream(int recordsPerQuery) throws IOException {
-    Iterable<Record> i = () -> new RecordStreamIterator(recordsPerQuery, this, this.limitCriteria);
-    return StreamSupport.stream(i.spliterator(), false);
+  public Stream<Record> fetchAsStream() throws IOException {
+    int retryCount = 0;
+    final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
+    statTracker.recordQueryPrepStart();
+    PreparedStatement preparedStatement = getPreparedStatement(Optional.empty());
+    statTracker.recordQueryPrepEnd();
+    while (true) {
+      try {
+        statTracker.recordQueryExecStart();
+        RecordIterator itr =
+            QueryFetcher.getQueryResultsStream(preparedStatement, selectedColumns, dbConnection);
+        itr.addStatisticsMeasurer(statTracker);
+        Iterable<Record> i = () -> itr;
+        Stream<Record> stream = StreamSupport.stream(i.spliterator(), false);
+        stream = stream.onClose(() -> itr.close());
+        return stream;
+      } catch (SQLRecoverableException e) {
+        LOG.error(e.toString());
+        if (++retryCount > MAX_CONNECTION_RETRIES) {
+          throw new IOException(e);
+        }
+      } catch (SQLException e) {
+        throw new IOException(e);
+      }
+    }
   }
 
   @Override

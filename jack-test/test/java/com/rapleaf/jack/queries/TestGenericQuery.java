@@ -950,7 +950,7 @@ public class TestGenericQuery {
   }
 
   @Test
-  public void testFetchAsStream() throws Exception {
+  public void testFetchAsStreamSimple() throws Exception {
     userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
     userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
     userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
@@ -990,7 +990,7 @@ public class TestGenericQuery {
         .from(User.TBL)
         .select(User.ID);
     c.accept(select);
-    Stream<Record> recordStream = select.fetchAsStream(recordsPerQuery);
+    Stream<Record> recordStream = select.fetchAsStream();
     return recordStream.map(r -> r.getLong(User.ID))
         .collect(Collectors.toSet());
   }
