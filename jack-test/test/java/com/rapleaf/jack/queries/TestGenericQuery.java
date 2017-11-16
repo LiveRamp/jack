@@ -990,9 +990,10 @@ public class TestGenericQuery {
         .from(User.TBL)
         .select(User.ID);
     c.accept(select);
-    Stream<Record> recordStream = select.fetchAsStream();
-    return recordStream.map(r -> r.getLong(User.ID))
-        .collect(Collectors.toSet());
+    try (Stream<Record> recordStream = select.fetchAsStream()) {
+      return recordStream.map(r -> r.getLong(User.ID))
+          .collect(Collectors.toSet());
+    }
   }
 
 }
