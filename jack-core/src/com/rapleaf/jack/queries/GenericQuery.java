@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -204,6 +206,11 @@ public class GenericQuery extends AbstractExecution {
         throw new IOException(e);
       }
     }
+  }
+
+  public Stream<Record> fetchAsStream(int recordsPerQuery) throws IOException {
+    Iterable<Record> i = () -> new RecordStreamIterator(recordsPerQuery, this, this.limitCriteria);
+    return StreamSupport.stream(i.spliterator(), false);
   }
 
   @Override

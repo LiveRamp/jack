@@ -133,6 +133,10 @@ public class Records implements Iterable<Record> {
     return records.iterator();
   }
 
+  public List<Record> getRecords() {
+    return records;
+  }
+
   @Override
   public String toString() {
     return getClass().getSimpleName() +

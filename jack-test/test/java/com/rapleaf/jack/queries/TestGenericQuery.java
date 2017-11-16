@@ -1,7 +1,13 @@
 package com.rapleaf.jack.queries;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -941,6 +947,52 @@ public class TestGenericQuery {
 
     assertFalse(selectStatement.contains("SELECT DISTINCT"));
     assertTrue(selectDistinctStatement.contains("SELECT DISTINCT"));
+  }
+
+  @Test
+  public void testFetchAsStream() throws Exception {
+    userA = users.createDefaultInstance().setHandle("A").setBio("Trader").setNumPosts(1);
+    userB = users.createDefaultInstance().setHandle("B").setBio("Trader").setNumPosts(2);
+    userC = users.createDefaultInstance().setHandle("C").setBio("CEO").setNumPosts(2);
+    userD = users.createDefaultInstance().setHandle("D").setBio("Janitor").setNumPosts(3);
+    userA.save();
+    userB.save();
+    userC.save();
+    userD.save();
+
+    //fetch 1 by 1
+    Set<Long> ids = fetchAsStreamHelper(1);
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId(), userD.getId()), ids);
+
+    //fetch more than are there in a single block
+    ids = fetchAsStreamHelper(10);
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId(), userC.getId(), userD.getId()), ids);
+
+    //respect simple limit
+    ids = fetchAsStreamHelper(10, (q) -> q.orderBy(User.ID, ASC).limit(2));
+    assertEquals(Sets.newHashSet(userA.getId(), userB.getId()), ids);
+
+    //respect offset and limit
+    ids = fetchAsStreamHelper(10, (q) -> q.orderBy(User.ID, ASC).limit(2, 2));
+    assertEquals(Sets.newHashSet(userC.getId(), userD.getId()), ids);
+
+    //check for off by 1
+    ids = fetchAsStreamHelper(10, (q) -> q.orderBy(User.ID, ASC).limit(1, 2));
+    assertEquals(Sets.newHashSet(userB.getId(), userC.getId()), ids);
+  }
+
+  private Set<Long> fetchAsStreamHelper(int recordsPerQuery) throws IOException {
+    return fetchAsStreamHelper(recordsPerQuery, q -> {});
+  }
+
+  private Set<Long> fetchAsStreamHelper(int recordsPerQuery, Consumer<GenericQuery> c) throws IOException {
+    GenericQuery select = db.createQuery()
+        .from(User.TBL)
+        .select(User.ID);
+    c.accept(select);
+    Stream<Record> recordStream = select.fetchAsStream(recordsPerQuery);
+    return recordStream.map(r -> r.getLong(User.ID))
+        .collect(Collectors.toSet());
   }
 
 }
