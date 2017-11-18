@@ -4,6 +4,7 @@ require "bundler/setup"
 require 'erb'
 require "fileutils"
 require 'yaml'
+require 'digest'
 
 gem 'activesupport', ">=3.0.0"
 require "active_support/all"

@@ -5,7 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
@@ -26,13 +32,19 @@ public class QueryFetcher extends BaseFetcher {
       return results;
     } catch (SQLRecoverableException e) {
       dbConnection.resetConnection();
-      throw e;
+      throw new RuntimeException(e);
     } finally {
       closeQuery(resultSet, preparedStatement, dbConnection);
     }
   }
 
-  private static Record parseResultSet(ResultSet resultSet, Set<Column> selectedColumns) throws SQLException {
+  public static RecordIterator getQueryResultsStream(PreparedStatement preparedStatement, Set<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
+    preparedStatement.setFetchSize(Integer.MIN_VALUE);
+    ResultSet results = preparedStatement.executeQuery();
+    return new RecordIterator(preparedStatement, selectedColumns, results, dbConnection);
+  }
+
+  static Record parseResultSet(ResultSet resultSet, Set<Column> selectedColumns) throws SQLException {
     if (selectedColumns.isEmpty()) {
       return null;
     }
