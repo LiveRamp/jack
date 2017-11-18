@@ -995,5 +995,4 @@ public class TestGenericQuery {
           .collect(Collectors.toSet());
     }
   }
-
 }

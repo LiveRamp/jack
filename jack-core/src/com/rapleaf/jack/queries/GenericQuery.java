@@ -26,7 +26,6 @@ public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
-
   private final List<TableReference> tableReferences;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;

@@ -95,5 +95,4 @@ public class RecordIterator implements Iterator<Record>, AutoCloseable {
   public QueryStatistics getQueryStatistics() {
     return queryStatistics;
   }
-
 }
