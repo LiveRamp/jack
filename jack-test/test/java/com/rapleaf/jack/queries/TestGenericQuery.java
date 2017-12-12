@@ -3,7 +3,6 @@ package com.rapleaf.jack.queries;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -691,7 +690,7 @@ public class TestGenericQuery {
         .select(User.HANDLE, User.BIO)
         .groupBy(User.HANDLE, User.BIO)
         .orderBy(User.HANDLE)
-        .orderBy(User.ID)
+        .orderBy(AggregatedColumn.MAX(User.ID))
         .fetch();
     assertEquals(3, results1.size());
     assertEquals(Lists.newArrayList("A", "A", "C"), results1.gets(User.HANDLE));
