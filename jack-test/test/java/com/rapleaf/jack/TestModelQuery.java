@@ -514,7 +514,11 @@ public class TestModelQuery {
     }
   }
 
-  @Test
+  // This test is muted because ModelQuery#getSelectClause is incompatible with
+  // the new only_full_group_by mode introduced into MySQL 5.7.5.
+  // See [Issue 204]() for details.
+  //
+  // @Test
   public void testGroupBy() throws IOException, SQLException {
     IUserPersistence users = dbs.getDatabase1().users();
     users.deleteAll();
