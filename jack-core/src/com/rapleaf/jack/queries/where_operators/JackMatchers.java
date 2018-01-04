@@ -2,6 +2,8 @@ package com.rapleaf.jack.queries.where_operators;
 
 import java.util.Collection;
 
+import com.rapleaf.jack.queries.GenericQuery;
+
 public class JackMatchers {
 
   public static <T> IWhereOperator<T> equalTo(T value) {
@@ -11,11 +13,25 @@ public class JackMatchers {
     return new EqualTo<T>(value);
   }
 
+  public static <T> IWhereOperator<T> equalTo(GenericQuery subQuery) {
+    if (subQuery == null) {
+      return new IsNull<T>();
+    }
+    return new EqualTo<T>(subQuery);
+  }
+
   public static <T> IWhereOperator<T> notEqualTo(T value) {
     if (value == null) {
       return new IsNotNull<T>();
     }
     return new NotEqualTo<T>(value);
+  }
+
+  public static <T> IWhereOperator<T> notEqualTo(GenericQuery subQuery) {
+    if (subQuery == null) {
+      return new IsNotNull<T>();
+    }
+    return new NotEqualTo<T>(subQuery);
   }
 
   public static <T> IsNull<T> isNull() {
@@ -34,6 +50,10 @@ public class JackMatchers {
     return new In<T>(values);
   }
 
+  public static <T> In<T> in(GenericQuery subQuery) {
+    return new In<T>(subQuery);
+  }
+
   public static <T> NotIn<T> notIn(T value1, T... otherValues) {
     return new NotIn<T>(value1, otherValues);
   }
@@ -45,20 +65,40 @@ public class JackMatchers {
     return new NotIn<T>(values);
   }
 
+  public static <T> NotIn<T> notIn(GenericQuery subQuery) {
+    return new NotIn<T>(subQuery);
+  }
+
   public static <T extends Comparable<T>> GreaterThan<T> greaterThan(T value) {
     return new GreaterThan<T>(value);
+  }
+
+  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(GenericQuery subQuery) {
+    return new GreaterThan<T>(subQuery);
   }
 
   public static <T extends Comparable<T>> LessThan<T> lessThan(T value) {
     return new LessThan<T>(value);
   }
 
+  public static <T extends Comparable<T>> LessThan<T> lessThan(GenericQuery subQuery) {
+    return new LessThan<T>(subQuery);
+  }
+
   public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(T value) {
     return new GreaterThanOrEqualTo<T>(value);
   }
 
+  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(GenericQuery subQuery) {
+    return new GreaterThanOrEqualTo<T>(subQuery);
+  }
+
   public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(T value) {
     return new LessThanOrEqualTo<T>(value);
+  }
+
+  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(GenericQuery subQuery) {
+    return new LessThanOrEqualTo<T>(subQuery);
   }
 
   public static <T extends Comparable<T>> Between<T> between(T min, T max) {
