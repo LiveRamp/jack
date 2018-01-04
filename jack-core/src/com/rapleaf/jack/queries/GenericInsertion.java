@@ -118,7 +118,7 @@ public class GenericInsertion extends AbstractExecution {
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  protected List<Object> getParameters() {
     List<Object> parameters = Lists.newLinkedList();
     for (int i = 0; i < rowCount; ++i) {
       for (List<Object> list : values.values()) {

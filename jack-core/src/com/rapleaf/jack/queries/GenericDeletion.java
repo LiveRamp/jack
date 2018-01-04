@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,7 +92,7 @@ public class GenericDeletion extends AbstractExecution {
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  protected List<Object> getParameters() {
     return whereParameters;
   }
 }

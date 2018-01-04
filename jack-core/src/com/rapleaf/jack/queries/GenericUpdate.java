@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +129,7 @@ public class GenericUpdate extends AbstractExecution {
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  protected List<Object> getParameters() {
     List<Object> parameters = Lists.newLinkedList();
     parameters.addAll(values.values());
     parameters.addAll(whereParameters);

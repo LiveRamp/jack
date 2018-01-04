@@ -1,5 +1,7 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import com.rapleaf.jack.AttributesWithId;
@@ -18,5 +20,9 @@ public interface Table<A extends AttributesWithId, M extends ModelWithId> {
   public Class<A> getAttributesType();
 
   public Class<M> getModelType();
+
+  default List<?> getParameters() {
+    return Collections.emptyList();
+  }
 
 }

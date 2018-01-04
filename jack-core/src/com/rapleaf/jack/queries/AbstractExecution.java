@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
@@ -60,7 +61,7 @@ public abstract class AbstractExecution {
    */
   public abstract String getQueryStatement();
 
-  protected abstract Collection<Object> getParameters();
+  protected abstract List<Object> getParameters();
 
   static String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator, String terminalKeyword) {
     if (columns.isEmpty()) {

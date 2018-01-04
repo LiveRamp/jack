@@ -26,13 +26,13 @@ public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
-  private final List<Table> includedTables;
+  final List<Table> includedTables;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
-  private final Set<Column> selectedColumns;
+  final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
   private boolean selectDistinct;
@@ -44,6 +44,7 @@ public class GenericQuery extends AbstractExecution {
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
+    parameters.addAll(table.getParameters());
     this.orderCriteria = Lists.newArrayList();
     this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
@@ -79,14 +80,17 @@ public class GenericQuery extends AbstractExecution {
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
   public JoinConditionBuilder rightJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
   public JoinConditionBuilder innerJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 
@@ -154,6 +158,10 @@ public class GenericQuery extends AbstractExecution {
   public GenericQuery distinct() {
     this.selectDistinct = true;
     return this;
+  }
+
+  public SubTable asSubTable(String alias) {
+    return new SubTable(this, alias);
   }
 
   public Records fetch() throws IOException {
@@ -231,7 +239,7 @@ public class GenericQuery extends AbstractExecution {
   }
 
   @Override
-  public Collection<Object> getParameters() {
+  public List<Object> getParameters() {
     return parameters;
   }
 

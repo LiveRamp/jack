@@ -58,8 +58,16 @@ public class Column<T> {
     return new Column<Long>(table, field, java.sql.Date.class);
   }
 
+  public static <T> Column<T> from(String table, Column<T> column) {
+    return new Column<T>(table, column.field, column.type);
+  }
+
   public <M> Column<M> as(Class<M> type) {
     return new Column<M>(this.table, this.field, type);
+  }
+
+  <T> Column<T> asIn(String tableAlias) {
+    return new Column<>(tableAlias, this.field, type);
   }
 
   public String getTable() {
