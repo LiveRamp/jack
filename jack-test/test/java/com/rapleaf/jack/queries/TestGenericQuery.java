@@ -981,7 +981,8 @@ public class TestGenericQuery {
   }
 
   private Set<Long> fetchAsStreamHelper(int recordsPerQuery) throws IOException {
-    return fetchAsStreamHelper(recordsPerQuery, q -> {});
+    return fetchAsStreamHelper(recordsPerQuery, q -> {
+    });
   }
 
   private Set<Long> fetchAsStreamHelper(int recordsPerQuery, Consumer<GenericQuery> c) throws IOException {
