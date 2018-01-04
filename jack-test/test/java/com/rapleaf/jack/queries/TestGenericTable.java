@@ -34,7 +34,7 @@ public class TestGenericTable {
       handle, num_posts
     }
 
-    private UserTable(Table<?, ?> table, Column<String> handle, Column<Integer> numPosts) {
+    private UserTable(AbstractTable<?, ?> table, Column<String> handle, Column<Integer> numPosts) {
       super(table, UserTable.class, handle, numPosts);
       this.handle = handle;
       this.numPosts = numPosts;

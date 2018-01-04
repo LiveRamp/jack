@@ -15,12 +15,12 @@ import com.rapleaf.jack.exception.JackRuntimeException;
 
 public abstract class GenericTable<T extends GenericTable<T>> {
 
-  public final Table<?, ?> table;
+  public final AbstractTable<?, ?> table;
   public final Column<Long> id;
   private final Class<T> tableType;
   protected final List<Column<?>> columns;
 
-  protected GenericTable(Table<?, ?> table, Class<T> tableType, Column<?> firstColumn, Column<?>... otherColumns) {
+  protected GenericTable(AbstractTable<?, ?> table, Class<T> tableType, Column<?> firstColumn, Column<?>... otherColumns) {
     this.table = table;
     this.id = Column.fromId(table.getAlias());
     this.tableType = tableType;
@@ -31,20 +31,20 @@ public abstract class GenericTable<T extends GenericTable<T>> {
 
   public abstract T as(String alias);
 
-  protected Table<?, ?> getAliasTable(String alias) {
+  protected AbstractTable<?, ?> getAliasTable(String alias) {
     try {
       Method method = table.getClass().getMethod("as", String.class);
-      return (Table<?, ?>)method.invoke(null, alias);
+      return (AbstractTable<?, ?>)method.invoke(null, alias);
     } catch (Exception e) {
       throw new JackRuntimeException(e);
     }
   }
 
   public static abstract class Builder<T extends GenericTable<T>> {
-    protected final Table<?, ?> table;
+    protected final AbstractTable<?, ?> table;
     protected final Set<String> allColumns;
 
-    protected Builder(Table<?, ?> table) {
+    protected Builder(AbstractTable<?, ?> table) {
       this.table = table;
       this.allColumns = table.getAllColumns().stream()
           .map(Column::getField)
