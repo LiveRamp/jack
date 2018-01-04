@@ -64,7 +64,6 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     return modelType;
   }
 
-  @Override
   public IndexedTable<A, M> with(final IndexHint indexHint, final IndexHint... indexHints) {
     Set<IndexHint> indexHintList = Sets.newHashSet(indexHint);
     indexHintList.addAll(Arrays.asList(indexHints));

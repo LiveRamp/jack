@@ -19,6 +19,4 @@ public interface Table<A extends AttributesWithId, M extends ModelWithId> {
 
   public Class<M> getModelType();
 
-  public IndexedTable<A, M> with(IndexHint indexHint, IndexHint... indexHints);
-
 }
