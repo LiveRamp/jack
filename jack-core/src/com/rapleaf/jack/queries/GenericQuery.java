@@ -164,6 +164,14 @@ public class GenericQuery extends AbstractExecution {
     return new SubTable(this, alias);
   }
 
+  public SingleValue asSingleValue(Column column) {
+    return new SingleValue(getQueryStatement(), getParameters());
+  }
+
+  public MultiValue asMultiValue(Column column) {
+    return new MultiValue(getQueryStatement(), getParameters());
+  }
+
   public Records fetch() throws IOException {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();

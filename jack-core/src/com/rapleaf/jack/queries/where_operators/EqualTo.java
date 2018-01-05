@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.google.common.base.Preconditions;
 
 import com.rapleaf.jack.queries.Column;
-import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.SingleValue;
 
 public class EqualTo<V> extends WhereOperator<V> {
 
@@ -24,7 +24,7 @@ public class EqualTo<V> extends WhereOperator<V> {
     Preconditions.checkNotNull(column);
   }
 
-  public EqualTo(GenericQuery subQuery) {
+  public EqualTo(SingleValue subQuery) {
     super("= (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

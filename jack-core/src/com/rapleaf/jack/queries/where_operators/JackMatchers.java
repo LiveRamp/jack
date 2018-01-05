@@ -2,7 +2,8 @@ package com.rapleaf.jack.queries.where_operators;
 
 import java.util.Collection;
 
-import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.MultiValue;
+import com.rapleaf.jack.queries.SingleValue;
 
 public class JackMatchers {
 
@@ -13,7 +14,7 @@ public class JackMatchers {
     return new EqualTo<T>(value);
   }
 
-  public static <T> IWhereOperator<T> equalTo(GenericQuery subQuery) {
+  public static <T> IWhereOperator<T> equalTo(SingleValue subQuery) {
     if (subQuery == null) {
       return new IsNull<T>();
     }
@@ -27,7 +28,7 @@ public class JackMatchers {
     return new NotEqualTo<T>(value);
   }
 
-  public static <T> IWhereOperator<T> notEqualTo(GenericQuery subQuery) {
+  public static <T> IWhereOperator<T> notEqualTo(SingleValue subQuery) {
     if (subQuery == null) {
       return new IsNotNull<T>();
     }
@@ -50,7 +51,7 @@ public class JackMatchers {
     return new In<T>(values);
   }
 
-  public static <T> In<T> in(GenericQuery subQuery) {
+  public static <T> In<T> in(MultiValue subQuery) {
     return new In<T>(subQuery);
   }
 
@@ -65,7 +66,7 @@ public class JackMatchers {
     return new NotIn<T>(values);
   }
 
-  public static <T> NotIn<T> notIn(GenericQuery subQuery) {
+  public static <T> NotIn<T> notIn(MultiValue subQuery) {
     return new NotIn<T>(subQuery);
   }
 
@@ -73,7 +74,7 @@ public class JackMatchers {
     return new GreaterThan<T>(value);
   }
 
-  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(GenericQuery subQuery) {
+  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(SingleValue subQuery) {
     return new GreaterThan<T>(subQuery);
   }
 
@@ -81,7 +82,7 @@ public class JackMatchers {
     return new LessThan<T>(value);
   }
 
-  public static <T extends Comparable<T>> LessThan<T> lessThan(GenericQuery subQuery) {
+  public static <T extends Comparable<T>> LessThan<T> lessThan(SingleValue subQuery) {
     return new LessThan<T>(subQuery);
   }
 
@@ -89,7 +90,7 @@ public class JackMatchers {
     return new GreaterThanOrEqualTo<T>(value);
   }
 
-  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(GenericQuery subQuery) {
+  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(SingleValue subQuery) {
     return new GreaterThanOrEqualTo<T>(subQuery);
   }
 
@@ -97,7 +98,7 @@ public class JackMatchers {
     return new LessThanOrEqualTo<T>(value);
   }
 
-  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(GenericQuery subQuery) {
+  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(SingleValue subQuery) {
     return new LessThanOrEqualTo<T>(subQuery);
   }
 

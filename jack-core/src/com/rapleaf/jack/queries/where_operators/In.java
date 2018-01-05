@@ -2,7 +2,7 @@ package com.rapleaf.jack.queries.where_operators;
 
 import java.util.Collection;
 
-import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.MultiValue;
 
 public class In<V> extends WhereOperator<V> {
 
@@ -16,7 +16,7 @@ public class In<V> extends WhereOperator<V> {
     this.sqlStatement = createSqlStatement();
   }
 
-  public In(GenericQuery subQuery) {
+  public In(MultiValue subQuery) {
     super("IN (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
     this.sqlStatement = getSqlStatement();
   }

@@ -143,7 +143,7 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint equalTo(GenericQuery subQuery) {
+  public GenericConstraint equalTo(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new EqualTo<T>(subQuery));
   }
 
@@ -167,7 +167,7 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint notEqualTo(GenericQuery subQuery) {
+  public GenericConstraint notEqualTo(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new NotEqualTo<T>(subQuery));
   }
 
@@ -183,7 +183,7 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThan<T>(column));
   }
 
-  public GenericConstraint greaterThan(GenericQuery subQuery) {
+  public GenericConstraint greaterThan(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(subQuery));
   }
 
@@ -199,7 +199,7 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
-  public GenericConstraint greaterThanOrEqualTo(GenericQuery subQuery) {
+  public GenericConstraint greaterThanOrEqualTo(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(subQuery));
   }
 
@@ -215,7 +215,7 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThan<T>(column));
   }
 
-  public GenericConstraint lessThan(GenericQuery subQuery) {
+  public GenericConstraint lessThan(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new LessThan<T>(subQuery));
   }
 
@@ -231,7 +231,7 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public GenericConstraint lessThanOrEqualTo(GenericQuery subQuery) {
+  public GenericConstraint lessThanOrEqualTo(SingleValue subQuery) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(subQuery));
   }
 
@@ -307,7 +307,7 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint in(GenericQuery subQuery) {
+  public GenericConstraint in(MultiValue subQuery) {
     return new GenericConstraint<T>(this, new In<T>(subQuery));
   }
 
@@ -327,7 +327,7 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint notIn(GenericQuery subQuery) {
+  public GenericConstraint notIn(MultiValue subQuery) {
     return new GenericConstraint<T>(this, new NotIn<T>(subQuery));
   }
 

@@ -2,7 +2,7 @@ package com.rapleaf.jack.queries.where_operators;
 
 import java.util.Collection;
 
-import com.rapleaf.jack.queries.GenericQuery;
+import com.rapleaf.jack.queries.MultiValue;
 
 public class NotIn<V> extends WhereOperator<V> {
 
@@ -19,7 +19,7 @@ public class NotIn<V> extends WhereOperator<V> {
     this.sqlStatement = createSqlStatement();
   }
 
-  public NotIn(GenericQuery subQuery) {
+  public NotIn(MultiValue subQuery) {
     super("NOT IN (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 
