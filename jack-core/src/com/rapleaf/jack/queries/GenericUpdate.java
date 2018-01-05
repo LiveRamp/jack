@@ -21,12 +21,12 @@ public class GenericUpdate extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericUpdate.class);
 
   private final boolean allowBulkOperation;
-  private final Table table;
+  private final AbstractTable table;
   private final Map<Column, Object> values;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> whereParameters;
 
-  private GenericUpdate(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, Table table) {
+  private GenericUpdate(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, AbstractTable table) {
     super(dbConnection);
     this.allowBulkOperation = allowBulkOperation;
     this.table = table;
@@ -48,7 +48,7 @@ public class GenericUpdate extends AbstractExecution {
       this.allowBulkOperation = allowBulkOperation;
     }
 
-    public GenericUpdate table(Table table) {
+    public GenericUpdate table(AbstractTable table) {
       return new GenericUpdate(dbConnection, allowBulkOperation, table);
     }
   }
