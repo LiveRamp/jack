@@ -4,10 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.rapleaf.jack.AttributesWithId;
-import com.rapleaf.jack.ModelWithId;
-
-public interface Table<A extends AttributesWithId, M extends ModelWithId> {
+public interface Table {
 
   public String getName();
 
@@ -16,10 +13,6 @@ public interface Table<A extends AttributesWithId, M extends ModelWithId> {
   public Set<Column> getAllColumns();
 
   public String getSqlKeyword();
-
-  public Class<A> getAttributesType();
-
-  public Class<M> getModelType();
 
   default List<?> getParameters() {
     return Collections.emptyList();

@@ -7,7 +7,7 @@ import com.rapleaf.jack.ModelWithId;
 
 public class IndexedTable<A extends AttributesWithId, M extends ModelWithId> extends AbstractTable<A, M> {
 
-  private final Table<A, M> table;
+  private final AbstractTable<A, M> table;
   private final Set<IndexHint> indexHints;
 
   public IndexedTable(AbstractTable<A, M> table, Set<IndexHint> indexHints) {

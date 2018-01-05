@@ -13,22 +13,20 @@ public class SubTable implements Table {
 
   private final GenericQuery subQuery;
   private final String alias;
-  private final Set<Column> selectedColumns;
 
   SubTable(GenericQuery subQuery, String alias) {
     this.subQuery = subQuery;
     this.alias = ALIAS_PREFIX + alias;
-    this.selectedColumns = Sets.newHashSet();
   }
 
   @Override
   public String getName() {
-    return null;
+    return alias;
   }
 
   @Override
   public String getAlias() {
-    return null;
+    return alias;
   }
 
   @Override
@@ -36,7 +34,7 @@ public class SubTable implements Table {
     Set<Column> columns = Sets.newHashSet();
 
     if (subQuery.selectedColumns.isEmpty()) {
-      for (Table<?, ?> table : subQuery.includedTables) {
+      for (Table table : subQuery.includedTables) {
         for (Column column : table.getAllColumns()) {
           columns.add(column.asIn(alias));
         }
@@ -53,16 +51,6 @@ public class SubTable implements Table {
   @Override
   public String getSqlKeyword() {
     return String.format("(%s) as %s", subQuery.getQueryStatement(), alias);
-  }
-
-  @Override
-  public Class getAttributesType() {
-    return null;
-  }
-
-  @Override
-  public Class getModelType() {
-    return null;
   }
 
   @Override
