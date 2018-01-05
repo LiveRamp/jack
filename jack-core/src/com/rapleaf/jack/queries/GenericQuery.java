@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class GenericQuery extends AbstractExecution {
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final List<Table> includedTables;
-  private final Set<Column> selectedColumns;
+  private Set<Column> selectedColumns;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
@@ -165,10 +166,12 @@ public class GenericQuery extends AbstractExecution {
   }
 
   public <T> SingleValue<T> asSingleValue(Column<T> column) {
+    selectedColumns = Collections.singleton(column);
     return new SingleValue<>(getQueryStatement(), getParameters());
   }
 
   public <T> MultiValue<T> asMultiValue(Column<T> column) {
+    selectedColumns = Collections.singleton(column);
     return new MultiValue<>(getQueryStatement(), getParameters());
   }
 
