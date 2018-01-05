@@ -42,31 +42,48 @@ public class Column<T> {
     this.type = that.type;
   }
 
+  /**
+   * Construct ID column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromId(String table) {
     return new Column<Long>(table, null, Long.class);
   }
 
+  /**
+   * Construct column other than ID, timestamp or date. This constructor is mainly for internal use.
+   */
   public static <T> Column<T> fromField(String table, Enum field, Class<T> fieldType) {
     return new Column<T>(table, field, fieldType);
   }
 
+  /**
+   * Construct timestamp column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromTimestamp(String table, Enum field) {
     return new Column<Long>(table, field, java.sql.Timestamp.class);
   }
 
+  /**
+   * Construct date column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromDate(String table, Enum field) {
     return new Column<Long>(table, field, java.sql.Date.class);
   }
 
-  public static <T> Column<T> from(String table, Column<T> column) {
-    return new Column<T>(table, column.field, column.type);
-  }
-
+  /**
+   * Convert column type.
+   * <p>
+   * This method is typically used in WHERE clause. For example:
+   * User.ID.equalTo(Post.USER_ID.as(Long.class))
+   */
   public <M> Column<M> as(Class<M> type) {
     return new Column<M>(this.table, this.field, type);
   }
 
-  <T> Column<T> asIn(String tableAlias) {
+  /**
+   * Change column alias.
+   */
+  <K> Column<K> asIn(String tableAlias) {
     return new Column<>(tableAlias, this.field, type);
   }
 
