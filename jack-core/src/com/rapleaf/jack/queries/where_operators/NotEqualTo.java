@@ -24,7 +24,7 @@ public class NotEqualTo<V> extends WhereOperator<V> {
     Preconditions.checkNotNull(column);
   }
 
-  public NotEqualTo(SingleValue subQuery) {
+  public NotEqualTo(SingleValue<V> subQuery) {
     super("<> (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

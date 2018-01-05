@@ -143,8 +143,8 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint equalTo(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new EqualTo<T>(subQuery));
+  public GenericConstraint equalTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new EqualTo<T>(singleValue));
   }
 
   public GenericConstraint notEqualTo(T value) {
@@ -167,8 +167,8 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint notEqualTo(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new NotEqualTo<T>(subQuery));
+  public GenericConstraint notEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new NotEqualTo<T>(singleValue));
   }
 
   public GenericConstraint greaterThan(T value) {
@@ -183,8 +183,8 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThan<T>(column));
   }
 
-  public GenericConstraint greaterThan(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new GreaterThan<T>(subQuery));
+  public GenericConstraint greaterThan(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new GreaterThan<T>(singleValue));
   }
 
   public GenericConstraint greaterThanOrEqualTo(T value) {
@@ -199,8 +199,8 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
-  public GenericConstraint greaterThanOrEqualTo(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(subQuery));
+  public GenericConstraint greaterThanOrEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(singleValue));
   }
 
   public GenericConstraint lessThan(T value) {
@@ -215,8 +215,8 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThan<T>(column));
   }
 
-  public GenericConstraint lessThan(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new LessThan<T>(subQuery));
+  public GenericConstraint lessThan(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new LessThan<T>(singleValue));
   }
 
   public GenericConstraint lessThanOrEqualTo(T value) {
@@ -231,8 +231,8 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
   }
 
-  public GenericConstraint lessThanOrEqualTo(SingleValue subQuery) {
-    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(subQuery));
+  public GenericConstraint lessThanOrEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(singleValue));
   }
 
   public GenericConstraint between(T min, T max) {
@@ -307,8 +307,8 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint in(MultiValue subQuery) {
-    return new GenericConstraint<T>(this, new In<T>(subQuery));
+  public GenericConstraint in(MultiValue<T> multiValue) {
+    return new GenericConstraint<T>(this, new In<T>(multiValue));
   }
 
   public GenericConstraint notIn(T value, T... otherValues) {
@@ -327,8 +327,8 @@ public class Column<T> {
     }
   }
 
-  public GenericConstraint notIn(MultiValue subQuery) {
-    return new GenericConstraint<T>(this, new NotIn<T>(subQuery));
+  public GenericConstraint notIn(MultiValue<T> multiValue) {
+    return new GenericConstraint<T>(this, new NotIn<T>(multiValue));
   }
 
   public GenericConstraint matches(String pattern) {

@@ -18,7 +18,7 @@ public class LessThan<V> extends WhereOperator<V> {
     Preconditions.checkNotNull(column);
   }
 
-  public LessThan(SingleValue subQuery) {
+  public LessThan(SingleValue<V> subQuery) {
     super("< (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

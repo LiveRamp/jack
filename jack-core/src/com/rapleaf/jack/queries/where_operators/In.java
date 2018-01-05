@@ -16,7 +16,7 @@ public class In<V> extends WhereOperator<V> {
     this.sqlStatement = createSqlStatement();
   }
 
-  public In(MultiValue subQuery) {
+  public In(MultiValue<V> subQuery) {
     super("IN (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
     this.sqlStatement = getSqlStatement();
   }

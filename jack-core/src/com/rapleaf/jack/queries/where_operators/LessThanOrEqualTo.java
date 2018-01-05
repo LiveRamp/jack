@@ -15,7 +15,7 @@ public class LessThanOrEqualTo<V> extends WhereOperator<V> {
     super("<= " + column.getSqlKeyword());
   }
 
-  public LessThanOrEqualTo(SingleValue subQuery) {
+  public LessThanOrEqualTo(SingleValue<V> subQuery) {
     super("<= (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

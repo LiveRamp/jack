@@ -14,11 +14,11 @@ public class JackMatchers {
     return new EqualTo<T>(value);
   }
 
-  public static <T> IWhereOperator<T> equalTo(SingleValue subQuery) {
-    if (subQuery == null) {
+  public static <T> IWhereOperator<T> equalTo(SingleValue<T> singleValue) {
+    if (singleValue == null) {
       return new IsNull<T>();
     }
-    return new EqualTo<T>(subQuery);
+    return new EqualTo<T>(singleValue);
   }
 
   public static <T> IWhereOperator<T> notEqualTo(T value) {
@@ -28,11 +28,11 @@ public class JackMatchers {
     return new NotEqualTo<T>(value);
   }
 
-  public static <T> IWhereOperator<T> notEqualTo(SingleValue subQuery) {
-    if (subQuery == null) {
+  public static <T> IWhereOperator<T> notEqualTo(SingleValue<T> singleValue) {
+    if (singleValue == null) {
       return new IsNotNull<T>();
     }
-    return new NotEqualTo<T>(subQuery);
+    return new NotEqualTo<T>(singleValue);
   }
 
   public static <T> IsNull<T> isNull() {
@@ -51,8 +51,8 @@ public class JackMatchers {
     return new In<T>(values);
   }
 
-  public static <T> In<T> in(MultiValue subQuery) {
-    return new In<T>(subQuery);
+  public static <T> In<T> in(MultiValue<T> multiValue) {
+    return new In<T>(multiValue);
   }
 
   public static <T> NotIn<T> notIn(T value1, T... otherValues) {
@@ -66,40 +66,40 @@ public class JackMatchers {
     return new NotIn<T>(values);
   }
 
-  public static <T> NotIn<T> notIn(MultiValue subQuery) {
-    return new NotIn<T>(subQuery);
+  public static <T> NotIn<T> notIn(MultiValue<T> multiValue) {
+    return new NotIn<T>(multiValue);
   }
 
   public static <T extends Comparable<T>> GreaterThan<T> greaterThan(T value) {
     return new GreaterThan<T>(value);
   }
 
-  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(SingleValue subQuery) {
-    return new GreaterThan<T>(subQuery);
+  public static <T extends Comparable<T>> GreaterThan<T> greaterThan(SingleValue<T> singleValue) {
+    return new GreaterThan<T>(singleValue);
   }
 
   public static <T extends Comparable<T>> LessThan<T> lessThan(T value) {
     return new LessThan<T>(value);
   }
 
-  public static <T extends Comparable<T>> LessThan<T> lessThan(SingleValue subQuery) {
-    return new LessThan<T>(subQuery);
+  public static <T extends Comparable<T>> LessThan<T> lessThan(SingleValue<T> singleValue) {
+    return new LessThan<T>(singleValue);
   }
 
   public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(T value) {
     return new GreaterThanOrEqualTo<T>(value);
   }
 
-  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(SingleValue subQuery) {
-    return new GreaterThanOrEqualTo<T>(subQuery);
+  public static <T extends Comparable<T>> GreaterThanOrEqualTo<T> greaterThanOrEqualTo(SingleValue<T> singleValue) {
+    return new GreaterThanOrEqualTo<T>(singleValue);
   }
 
   public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(T value) {
     return new LessThanOrEqualTo<T>(value);
   }
 
-  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(SingleValue subQuery) {
-    return new LessThanOrEqualTo<T>(subQuery);
+  public static <T extends Comparable<T>> LessThanOrEqualTo<T> lessThanOrEqualTo(SingleValue<T> singleValue) {
+    return new LessThanOrEqualTo<T>(singleValue);
   }
 
   public static <T extends Comparable<T>> Between<T> between(T min, T max) {

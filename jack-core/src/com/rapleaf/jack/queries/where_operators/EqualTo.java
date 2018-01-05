@@ -24,7 +24,7 @@ public class EqualTo<V> extends WhereOperator<V> {
     Preconditions.checkNotNull(column);
   }
 
-  public EqualTo(SingleValue subQuery) {
+  public EqualTo(SingleValue<V> subQuery) {
     super("= (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

@@ -19,7 +19,7 @@ public class NotIn<V> extends WhereOperator<V> {
     this.sqlStatement = createSqlStatement();
   }
 
-  public NotIn(MultiValue subQuery) {
+  public NotIn(MultiValue<V> subQuery) {
     super("NOT IN (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 

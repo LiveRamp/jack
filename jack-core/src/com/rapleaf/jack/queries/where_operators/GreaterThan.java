@@ -18,7 +18,7 @@ public class GreaterThan<V> extends WhereOperator<V> {
     Preconditions.checkNotNull(column);
   }
 
-  public GreaterThan(SingleValue subQuery) {
+  public GreaterThan(SingleValue<V> subQuery) {
     super("> (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

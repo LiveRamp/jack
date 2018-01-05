@@ -15,7 +15,7 @@ public class GreaterThanOrEqualTo<V> extends WhereOperator<V> {
     super(">= " + column.getSqlKeyword());
   }
 
-  public GreaterThanOrEqualTo(SingleValue subQuery) {
+  public GreaterThanOrEqualTo(SingleValue<V> subQuery) {
     super(">= (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 }

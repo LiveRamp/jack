@@ -164,12 +164,12 @@ public class GenericQuery extends AbstractExecution {
     return new SubTable(this, alias);
   }
 
-  public SingleValue asSingleValue(Column column) {
-    return new SingleValue(getQueryStatement(), getParameters());
+  public <T> SingleValue<T> asSingleValue(Column<T> column) {
+    return new SingleValue<>(getQueryStatement(), getParameters());
   }
 
-  public MultiValue asMultiValue(Column column) {
-    return new MultiValue(getQueryStatement(), getParameters());
+  public <T> MultiValue<T> asMultiValue(Column<T> column) {
+    return new MultiValue<>(getQueryStatement(), getParameters());
   }
 
   public Records fetch() throws IOException {
