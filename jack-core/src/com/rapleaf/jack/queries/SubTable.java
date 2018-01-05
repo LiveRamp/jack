@@ -33,14 +33,14 @@ public class SubTable implements Table {
   public Set<Column> getAllColumns() {
     Set<Column> columns = Sets.newHashSet();
 
-    if (subQuery.selectedColumns.isEmpty()) {
-      for (Table table : subQuery.includedTables) {
+    if (subQuery.getSelectedColumns().isEmpty()) {
+      for (Table table : subQuery.getIncludedTables()) {
         for (Column column : table.getAllColumns()) {
           columns.add(column.asIn(alias));
         }
       }
     } else {
-      for (Column column : subQuery.selectedColumns) {
+      for (Column column : subQuery.getSelectedColumns()) {
         columns.add(column.asIn(alias));
       }
     }

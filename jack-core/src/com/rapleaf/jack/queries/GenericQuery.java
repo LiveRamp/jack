@@ -26,13 +26,13 @@ public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
-  final List<Table> includedTables;
+  private final List<Table> includedTables;
+  private final Set<Column> selectedColumns;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
-  final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
   private boolean selectDistinct;
@@ -40,13 +40,13 @@ public class GenericQuery extends AbstractExecution {
   private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
     super(dbConnection);
     this.includedTables = Lists.newArrayList(table);
+    this.selectedColumns = Sets.newHashSet();
     this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
     parameters.addAll(table.getParameters());
     this.orderCriteria = Lists.newArrayList();
-    this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.empty();
     this.selectDistinct = false;
@@ -241,6 +241,14 @@ public class GenericQuery extends AbstractExecution {
   @Override
   public List<Object> getParameters() {
     return parameters;
+  }
+
+  List<Table> getIncludedTables() {
+    return includedTables;
+  }
+
+  Set<Column> getSelectedColumns() {
+    return selectedColumns;
   }
 
   private String getSelectClause() {
