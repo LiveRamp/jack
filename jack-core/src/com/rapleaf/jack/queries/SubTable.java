@@ -9,14 +9,12 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 
 public class SubTable implements Table {
-  private static final String ALIAS_PREFIX = "t";
-
   private final GenericQuery subQuery;
   private final String alias;
 
   SubTable(GenericQuery subQuery, String alias) {
     this.subQuery = subQuery;
-    this.alias = ALIAS_PREFIX + alias;
+    this.alias = alias;
   }
 
   @Override
