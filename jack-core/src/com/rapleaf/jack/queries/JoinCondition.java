@@ -4,21 +4,21 @@ import java.util.List;
 
 public class JoinCondition implements QueryCondition {
   private final JoinType joinType;
-  private final TableReference tableReference;
+  private final Table table;
   private final List<GenericConstraint> constraints;
 
-  JoinCondition(JoinType joinType, TableReference tableReference, List<GenericConstraint> constraints) {
+  JoinCondition(JoinType joinType, Table table, List<GenericConstraint> constraints) {
     this.joinType = joinType;
-    this.tableReference = tableReference;
+    this.table = table;
     this.constraints = constraints;
   }
 
-  TableReference getTableReference() {
-    return tableReference;
+  Table getTable() {
+    return table;
   }
 
   @Override
   public String getSqlStatement() {
-    return joinType.getSqlKeyword() + " " + tableReference.getSqlStatement() + " ON " + AbstractExecution.getClauseFromQueryConditions(constraints, "", " AND ", "");
+    return joinType.getSqlKeyword() + " " + table.getSqlKeyword() + " ON " + AbstractExecution.getClauseFromQueryConditions(constraints, "", " AND ", "");
   }
 }

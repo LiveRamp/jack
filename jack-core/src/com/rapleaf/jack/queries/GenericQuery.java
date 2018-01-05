@@ -26,7 +26,7 @@ public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
-  private final List<TableReference> tableReferences;
+  private final List<Table> includedTables;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
@@ -37,9 +37,9 @@ public class GenericQuery extends AbstractExecution {
   private Optional<LimitCriterion> limitCriteria;
   private boolean selectDistinct;
 
-  private GenericQuery(BaseDatabaseConnection dbConnection, TableReference tableReference, PostQueryAction postQueryAction) {
+  private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
     super(dbConnection);
-    this.tableReferences = Lists.newArrayList(tableReference);
+    this.includedTables = Lists.newArrayList(table);
     this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
@@ -74,40 +74,24 @@ public class GenericQuery extends AbstractExecution {
     }
 
     public GenericQuery from(Table table) {
-      return from(new SingleTableReference(table));
-    }
-
-    public GenericQuery from(TableReference tableReference) {
-      return new GenericQuery(dbConnection, tableReference, postQueryAction);
+      return new GenericQuery(dbConnection, table, postQueryAction);
     }
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
-    return leftJoin(new SingleTableReference(table));
-  }
-
-  public JoinConditionBuilder leftJoin(TableReference tableReference) {
-    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, tableReference);
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
   public JoinConditionBuilder rightJoin(Table table) {
-    return rightJoin(new SingleTableReference(table));
-  }
-
-  public JoinConditionBuilder rightJoin(TableReference tableReference) {
-    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, tableReference);
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
   public JoinConditionBuilder innerJoin(Table table) {
-    return innerJoin(new SingleTableReference(table));
-  }
-
-  public JoinConditionBuilder innerJoin(TableReference tableReference) {
-    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, tableReference);
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 
   void addJoinCondition(JoinCondition joinCondition) {
-    this.tableReferences.add(joinCondition.getTableReference());
+    this.includedTables.add(joinCondition.getTable());
     this.joinConditions.add(joinCondition);
   }
 
@@ -266,8 +250,8 @@ public class GenericQuery extends AbstractExecution {
     }
 
     if (selectedColumns.isEmpty()) {
-      for (TableReference tableReference : tableReferences) {
-        selectedColumns.addAll(tableReference.getTable().getAllColumns());
+      for (Table table : includedTables) {
+        selectedColumns.addAll(table.getAllColumns());
       }
     }
     String initialKeyword = selectDistinct ? "SELECT DISTINCT " : "SELECT ";
@@ -275,7 +259,7 @@ public class GenericQuery extends AbstractExecution {
   }
 
   private String getFromClause() {
-    return "FROM " + tableReferences.get(0).getSqlStatement() + " ";
+    return "FROM " + includedTables.get(0).getSqlKeyword() + " ";
   }
 
   private String getJoinClause() {

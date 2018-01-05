@@ -27,6 +27,14 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     this.allColumns = Sets.newHashSet();
   }
 
+  protected AbstractTable(AbstractTable<A, M> table) {
+    this.name = table.name;
+    this.alias = table.alias;
+    this.attributesType = table.attributesType;
+    this.modelType = table.modelType;
+    this.allColumns = table.allColumns;
+  }
+
   @Override
   public String getName() {
     return name;
@@ -56,11 +64,10 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     return modelType;
   }
 
-  @Override
-  public TableReference with(final IndexHint indexHint, final IndexHint... indexHints) {
+  public IndexedTable<A, M> with(final IndexHint indexHint, final IndexHint... indexHints) {
     Set<IndexHint> indexHintList = Sets.newHashSet(indexHint);
     indexHintList.addAll(Arrays.asList(indexHints));
-    return new SingleTableReference(this, IndexHint.validate(indexHintList));
+    return new IndexedTable<>(this, IndexHint.validate(indexHintList));
   }
 
 }

@@ -7,12 +7,12 @@ import com.google.common.collect.Lists;
 public class JoinConditionBuilder {
   private final GenericQuery genericQuery;
   private final JoinType joinType;
-  private final TableReference tableReference;
+  private final Table table;
 
-  JoinConditionBuilder(GenericQuery genericQuery, JoinType joinType, TableReference tableReference) {
+  JoinConditionBuilder(GenericQuery genericQuery, JoinType joinType, Table table) {
     this.genericQuery = genericQuery;
     this.joinType = joinType;
-    this.tableReference = tableReference;
+    this.table = table;
   }
 
   public GenericQuery on(GenericConstraint constraint, GenericConstraint... constraints) {
@@ -22,7 +22,7 @@ public class JoinConditionBuilder {
       joinConstraints.add(genericConstraint);
       genericQuery.addParameters(genericConstraint.getParameters());
     }
-    genericQuery.addJoinCondition(new JoinCondition(joinType, tableReference, joinConstraints));
+    genericQuery.addJoinCondition(new JoinCondition(joinType, table, joinConstraints));
     return genericQuery;
   }
 }
