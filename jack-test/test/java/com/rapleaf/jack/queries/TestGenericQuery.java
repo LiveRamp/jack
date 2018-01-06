@@ -39,15 +39,15 @@ import static org.junit.Assert.fail;
 public class TestGenericQuery {
   protected static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
-  protected final IUserPersistence users = db.users();
-  protected final ICommentPersistence comments = db.comments();
-  protected final IPostPersistence posts = db.posts();
+  private final IUserPersistence users = db.users();
+  private final ICommentPersistence comments = db.comments();
+  private final IPostPersistence posts = db.posts();
 
-  protected User userA, userB, userC, userD, userE, userF, userG, userH;
-  protected Post postA, postB, postC;
-  protected Comment commentA, commentB, commentC, commentD;
-  protected long date, datetime;
-  protected Records results1, results2;
+  private User userA, userB, userC, userD, userE, userF, userG, userH;
+  private Post postA, postB, postC;
+  private Comment commentA, commentB, commentC, commentD;
+  private long date, datetime;
+  private Records results1, results2;
 
   @Before
   public void prepare() throws Exception {
