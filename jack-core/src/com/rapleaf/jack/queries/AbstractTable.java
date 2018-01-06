@@ -35,6 +35,10 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     this.allColumns = table.allColumns;
   }
 
+  public AbstractTable<A, M> alias(String alias) {
+    return new AbstractTable<>(name, alias, attributesType, modelType);
+  }
+
   @Override
   public String getName() {
     return name;

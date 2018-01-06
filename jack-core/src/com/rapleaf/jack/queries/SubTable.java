@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
+import com.rapleaf.jack.AttributesWithId;
+import com.rapleaf.jack.ModelWithId;
+
 public class SubTable implements Table {
   private final GenericQuery subQuery;
   private final String alias;
@@ -69,5 +72,9 @@ public class SubTable implements Table {
     aliasedColumns.add(column.asIn(alias));
     aliasedColumns.addAll(Arrays.stream(columns).map(c -> c.asIn(alias)).collect(Collectors.toSet()));
     return aliasedColumns;
+  }
+
+  public <A extends AttributesWithId, M extends ModelWithId> AbstractTable<A, M> model(AbstractTable<A, M> table) {
+    return table.alias(alias);
   }
 }
