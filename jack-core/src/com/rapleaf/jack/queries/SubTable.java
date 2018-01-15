@@ -37,12 +37,12 @@ public class SubTable implements Table {
     if (subQuery.getSelectedColumns().isEmpty()) {
       for (Table table : subQuery.getIncludedTables()) {
         for (Column column : table.getAllColumns()) {
-          columns.add(column.asIn(alias));
+          columns.add(column.forTable(alias));
         }
       }
     } else {
       for (Column column : subQuery.getSelectedColumns()) {
-        columns.add(column.asIn(alias));
+        columns.add(column.forTable(alias));
       }
     }
 
@@ -60,17 +60,17 @@ public class SubTable implements Table {
   }
 
   public <T> Column<T> column(Column<T> column) {
-    return column.asIn(alias);
+    return column.forTable(alias);
   }
 
   public Collection<Column> columns(Collection<Column> columns) {
-    return columns.stream().map(c -> c.asIn(alias)).collect(Collectors.toSet());
+    return columns.stream().map(c -> c.forTable(alias)).collect(Collectors.toSet());
   }
 
   public Collection<Column> columns(Column column, Column... columns) {
     Set<Column> aliasedColumns = Sets.newHashSetWithExpectedSize(1 + columns.length);
-    aliasedColumns.add(column.asIn(alias));
-    aliasedColumns.addAll(Arrays.stream(columns).map(c -> c.asIn(alias)).collect(Collectors.toSet()));
+    aliasedColumns.add(column.forTable(alias));
+    aliasedColumns.addAll(Arrays.stream(columns).map(c -> c.forTable(alias)).collect(Collectors.toSet()));
     return aliasedColumns;
   }
 

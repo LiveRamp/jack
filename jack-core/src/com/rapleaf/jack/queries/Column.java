@@ -81,9 +81,9 @@ public class Column<T> {
   }
 
   /**
-   * Change column alias.
+   * Change table alias.
    */
-  <K> Column<K> asIn(String tableAlias) {
+  <K> Column<K> forTable(String tableAlias) {
     return new Column<>(tableAlias, this.field, type);
   }
 
