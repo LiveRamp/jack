@@ -42,24 +42,49 @@ public class Column<T> {
     this.type = that.type;
   }
 
+  /**
+   * Construct ID column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromId(String table) {
     return new Column<Long>(table, null, Long.class);
   }
 
+  /**
+   * Construct column other than ID, timestamp or date. This constructor is mainly for internal use.
+   */
   public static <T> Column<T> fromField(String table, Enum field, Class<T> fieldType) {
     return new Column<T>(table, field, fieldType);
   }
 
+  /**
+   * Construct timestamp column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromTimestamp(String table, Enum field) {
     return new Column<Long>(table, field, java.sql.Timestamp.class);
   }
 
+  /**
+   * Construct date column. This constructor is mainly for internal use.
+   */
   public static Column<Long> fromDate(String table, Enum field) {
     return new Column<Long>(table, field, java.sql.Date.class);
   }
 
+  /**
+   * Convert column type.
+   * <p>
+   * This method is typically used in WHERE clause. For example:
+   * User.ID.equalTo(Post.USER_ID.as(Long.class))
+   */
   public <M> Column<M> as(Class<M> type) {
     return new Column<M>(this.table, this.field, type);
+  }
+
+  /**
+   * Change table alias.
+   */
+  <K> Column<K> forTable(String tableAlias) {
+    return new Column<>(tableAlias, this.field, type);
   }
 
   public String getTable() {
@@ -118,6 +143,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint equalTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new EqualTo<T>(singleValue));
+  }
+
   public GenericConstraint notEqualTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
@@ -138,6 +167,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint notEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new NotEqualTo<T>(singleValue));
+  }
+
   public GenericConstraint greaterThan(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new GreaterThan<Long>(Long.class.cast(value)));
@@ -148,6 +181,10 @@ public class Column<T> {
 
   public GenericConstraint greaterThan(Column<T> column) {
     return new GenericConstraint<T>(this, new GreaterThan<T>(column));
+  }
+
+  public GenericConstraint greaterThan(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new GreaterThan<T>(singleValue));
   }
 
   public GenericConstraint greaterThanOrEqualTo(T value) {
@@ -162,6 +199,10 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
   }
 
+  public GenericConstraint greaterThanOrEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(singleValue));
+  }
+
   public GenericConstraint lessThan(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new LessThan<Long>(Long.class.cast(value)));
@@ -174,6 +215,10 @@ public class Column<T> {
     return new GenericConstraint<T>(this, new LessThan<T>(column));
   }
 
+  public GenericConstraint lessThan(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new LessThan<T>(singleValue));
+  }
+
   public GenericConstraint lessThanOrEqualTo(T value) {
     if (isDateColumn()) {
       return createDateConstraint(new LessThanOrEqualTo<Long>(Long.class.cast(value)));
@@ -184,6 +229,10 @@ public class Column<T> {
 
   public GenericConstraint lessThanOrEqualTo(Column<T> value) {
     return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
+  }
+
+  public GenericConstraint lessThanOrEqualTo(SingleValue<T> singleValue) {
+    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(singleValue));
   }
 
   public GenericConstraint between(T min, T max) {
@@ -258,6 +307,10 @@ public class Column<T> {
     }
   }
 
+  public GenericConstraint in(MultiValue<T> multiValue) {
+    return new GenericConstraint<T>(this, new In<T>(multiValue));
+  }
+
   public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
       return createDateConstraint(new NotIn<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
@@ -272,6 +325,10 @@ public class Column<T> {
     } else {
       return new GenericConstraint<T>(this, new NotIn<T>(values));
     }
+  }
+
+  public GenericConstraint notIn(MultiValue<T> multiValue) {
+    return new GenericConstraint<T>(this, new NotIn<T>(multiValue));
   }
 
   public GenericConstraint matches(String pattern) {

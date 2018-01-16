@@ -104,7 +104,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public <A extends AttributesWithId, M extends ModelWithId> List<A> getAttributes(Table<A, M> tableType) {
+  public <A extends AttributesWithId, M extends ModelWithId> List<A> getAttributes(AbstractTable<A, M> tableType) {
     List<A> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getAttributes(tableType));
@@ -112,7 +112,7 @@ public class Records implements Iterable<Record> {
     return results;
   }
 
-  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> List<M> getModels(Table<A, M> tableType, D databases) {
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> List<M> getModels(AbstractTable<A, M> tableType, D databases) {
     List<M> results = Lists.newArrayList();
     for (Record record : records) {
       results.add(record.getModel(tableType, databases));

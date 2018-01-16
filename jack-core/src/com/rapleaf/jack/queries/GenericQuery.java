@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,12 +28,12 @@ public class GenericQuery extends AbstractExecution {
   protected static int MAX_CONNECTION_RETRIES = 1;
 
   private final List<Table> includedTables;
+  private Set<Column> selectedColumns;
   private final PostQueryAction postQueryAction;
   private final List<JoinCondition> joinConditions;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> parameters;
   private final List<OrderCriterion> orderCriteria;
-  private final Set<Column> selectedColumns;
   private final Set<Column> groupByColumns;
   private Optional<LimitCriterion> limitCriteria;
   private boolean selectDistinct;
@@ -40,12 +41,13 @@ public class GenericQuery extends AbstractExecution {
   private GenericQuery(BaseDatabaseConnection dbConnection, Table table, PostQueryAction postQueryAction) {
     super(dbConnection);
     this.includedTables = Lists.newArrayList(table);
+    this.selectedColumns = Sets.newHashSet();
     this.postQueryAction = postQueryAction;
     this.joinConditions = Lists.newArrayList();
     this.whereConstraints = Lists.newArrayList();
     this.parameters = Lists.newArrayList();
+    parameters.addAll(table.getParameters());
     this.orderCriteria = Lists.newArrayList();
-    this.selectedColumns = Sets.newHashSet();
     this.groupByColumns = Sets.newHashSet();
     this.limitCriteria = Optional.empty();
     this.selectDistinct = false;
@@ -79,14 +81,17 @@ public class GenericQuery extends AbstractExecution {
   }
 
   public JoinConditionBuilder leftJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
   public JoinConditionBuilder rightJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
   public JoinConditionBuilder innerJoin(Table table) {
+    this.parameters.addAll(table.getParameters());
     return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 
@@ -156,6 +161,20 @@ public class GenericQuery extends AbstractExecution {
     return this;
   }
 
+  public SubTable asSubTable(String alias) {
+    return new SubTable(this, alias);
+  }
+
+  public <T> SingleValue<T> asSingleValue(Column<T> column) {
+    selectedColumns = Collections.singleton(column);
+    return new SingleValue<>(getQueryStatement(), getParameters());
+  }
+
+  public <T> MultiValue<T> asMultiValue(Column<T> column) {
+    selectedColumns = Collections.singleton(column);
+    return new MultiValue<>(getQueryStatement(), getParameters());
+  }
+
   public Records fetch() throws IOException {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
@@ -220,7 +239,7 @@ public class GenericQuery extends AbstractExecution {
   }
 
   @Override
-  protected String getQueryStatement() {
+  public String getQueryStatement() {
     return getSelectClause()
         + getFromClause()
         + getJoinClause()
@@ -231,8 +250,16 @@ public class GenericQuery extends AbstractExecution {
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  public List<Object> getParameters() {
     return parameters;
+  }
+
+  List<Table> getIncludedTables() {
+    return includedTables;
+  }
+
+  Set<Column> getSelectedColumns() {
+    return selectedColumns;
   }
 
   private String getSelectClause() {

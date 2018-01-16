@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.ModelWithId;
 
-public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> implements Table<A, M> {
+public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> implements Table {
   protected final String name;
   protected final String alias;
   protected final Class<A> attributesType;
@@ -33,6 +33,10 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     this.attributesType = table.attributesType;
     this.modelType = table.modelType;
     this.allColumns = table.allColumns;
+  }
+
+  public AbstractTable<A, M> alias(String alias) {
+    return new AbstractTable<>(name, alias, attributesType, modelType);
   }
 
   @Override
@@ -59,7 +63,6 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     return attributesType;
   }
 
-  @Override
   public Class<M> getModelType() {
     return modelType;
   }

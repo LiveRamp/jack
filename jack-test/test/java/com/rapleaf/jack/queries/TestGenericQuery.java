@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestGenericQuery {
-  private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
+  protected static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
   private final IUserPersistence users = db.users();
   private final ICommentPersistence comments = db.comments();
@@ -937,12 +937,12 @@ public class TestGenericQuery {
     String selectStatement = db.createQuery()
         .from(User.TBL)
         .select(User.TBL.getAllColumns())
-        .getQueryStatement();
+        .getSqlStatement();
 
     String selectDistinctStatement = db.createQuery()
         .from(User.TBL)
         .select(User.TBL.getAllColumns()).distinct()
-        .getQueryStatement();
+        .getSqlStatement();
 
     assertFalse(selectStatement.contains("SELECT DISTINCT"));
     assertTrue(selectDistinctStatement.contains("SELECT DISTINCT"));

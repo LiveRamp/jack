@@ -2,18 +2,18 @@ package com.rapleaf.jack.store;
 
 import com.google.common.base.Preconditions;
 
+import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 import com.rapleaf.jack.queries.GenericTable;
-import com.rapleaf.jack.queries.Table;
 
 public class JsTable extends GenericTable<JsTable> {
-  public final Table<?, ?> table;
+  public final AbstractTable<?, ?> table;
   public final Column<Long> scope;
   public final Column<Integer> type;
   public final Column<String> key;
   public final Column<String> value;
 
-  private JsTable(Table<?, ?> table, Column<Long> scope, Column<Integer> type, Column<String> key, Column<String> value) {
+  private JsTable(AbstractTable<?, ?> table, Column<Long> scope, Column<Integer> type, Column<String> key, Column<String> value) {
     super(table, JsTable.class, scope, type, key, value);
     this.table = table;
     this.scope = scope;
@@ -27,7 +27,7 @@ public class JsTable extends GenericTable<JsTable> {
     return JsTable.from(getAliasTable(alias)).create();
   }
 
-  public static Builder from(Table<?, ?> table) {
+  public static Builder from(AbstractTable<?, ?> table) {
     return new Builder(table);
   }
 
@@ -37,7 +37,7 @@ public class JsTable extends GenericTable<JsTable> {
     private Column<String> key;
     private Column<String> value;
 
-    private Builder(Table<?, ?> table) {
+    private Builder(AbstractTable<?, ?> table) {
       super(table);
     }
 

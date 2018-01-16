@@ -6,13 +6,11 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -25,11 +23,11 @@ import com.rapleaf.jack.util.JackUtility;
 public class GenericInsertion extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericInsertion.class);
 
-  private final Table table;
+  private final AbstractTable table;
   private final Map<Column, List<Object>> values;
   private int rowCount = 0;
 
-  private GenericInsertion(BaseDatabaseConnection dbConnection, Table table) {
+  private GenericInsertion(BaseDatabaseConnection dbConnection, AbstractTable table) {
     super(dbConnection);
     this.table = table;
     this.values = Maps.newLinkedHashMap();
@@ -46,7 +44,7 @@ public class GenericInsertion extends AbstractExecution {
       this.dbConnection = dbConnection;
     }
 
-    public GenericInsertion into(Table table) {
+    public GenericInsertion into(AbstractTable table) {
       return new GenericInsertion(dbConnection, table);
     }
   }
@@ -111,14 +109,14 @@ public class GenericInsertion extends AbstractExecution {
   }
 
   @Override
-  protected String getQueryStatement() {
+  public String getQueryStatement() {
     return getInsertClause()
         + getColumnsClause()
         + getValuesClause();
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  protected List<Object> getParameters() {
     List<Object> parameters = Lists.newLinkedList();
     for (int i = 0; i < rowCount; ++i) {
       for (List<Object> list : values.values()) {

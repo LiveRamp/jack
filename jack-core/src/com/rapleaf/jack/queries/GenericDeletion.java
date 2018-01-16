@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +17,11 @@ public class GenericDeletion extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericDeletion.class);
 
   private final boolean allowBulkOperation;
-  private final Table table;
+  private final AbstractTable table;
   private final List<GenericConstraint> whereConstraints;
   private final List<Object> whereParameters;
 
-  private GenericDeletion(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, Table table) {
+  private GenericDeletion(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, AbstractTable table) {
     super(dbConnection);
     this.allowBulkOperation = allowBulkOperation;
     this.table = table;
@@ -43,7 +42,7 @@ public class GenericDeletion extends AbstractExecution {
       this.allowBulkOperation = allowBulkOperation;
     }
 
-    public GenericDeletion from(Table table) {
+    public GenericDeletion from(AbstractTable table) {
       return new GenericDeletion(dbConnection, allowBulkOperation, table);
     }
   }
@@ -79,7 +78,7 @@ public class GenericDeletion extends AbstractExecution {
   }
 
   @Override
-  protected String getQueryStatement() {
+  public String getQueryStatement() {
     return getFromClause() +
         getWhereClause();
   }
@@ -93,7 +92,7 @@ public class GenericDeletion extends AbstractExecution {
   }
 
   @Override
-  protected Collection<Object> getParameters() {
+  protected List<Object> getParameters() {
     return whereParameters;
   }
 }

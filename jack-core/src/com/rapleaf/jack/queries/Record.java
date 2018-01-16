@@ -83,7 +83,7 @@ public class Record {
     return value == null ? null : (Boolean)value;
   }
 
-  public <A extends AttributesWithId, M extends ModelWithId> A getAttributes(Table<A, M> tableType) {
+  public <A extends AttributesWithId, M extends ModelWithId> A getAttributes(AbstractTable<A, M> tableType) {
     String tableName = tableType.getAlias();
     Constructor<A> constructor;
     try {
@@ -128,7 +128,7 @@ public class Record {
     return attribute;
   }
 
-  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> M getModel(Table<A, M> tableType, D databases) {
+  public <A extends AttributesWithId, M extends ModelWithId, D extends GenericDatabases> M getModel(AbstractTable<A, M> tableType, D databases) {
     try {
       AttributesWithId attributes = getAttributes(tableType);
       if (attributes == null) {
