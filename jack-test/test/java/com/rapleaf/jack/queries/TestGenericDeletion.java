@@ -7,6 +7,7 @@ import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.test_project.database_1.models.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -82,6 +83,24 @@ public class TestGenericDeletion {
         .execute();
 
     assertEquals(0, deletions3.getDeletedRowCount());
+  }
+
+  @Test
+  public void testDeleteWithJoin() throws Exception {
+    User userA = db.users().create("A", 1);
+    User userB = db.users().create("B", 2);
+    post1.setUserId(userA.getIntId()).save();
+    post2.setUserId(userB.getIntId()).save();
+
+    Deletions deletions = db.createDeletion()
+        .from(Post.TBL)
+        .innerJoin(User.TBL)
+        .on(User.ID.as(Integer.class).equalTo(Post.USER_ID))
+        .where(User.HANDLE.equalTo("A"))
+        .execute();
+
+    assertEquals(1, deletions.getDeletedRowCount());
+    assertEquals(post2, db.posts().findAll().get(0));
   }
 
 }
