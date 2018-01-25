@@ -1,5 +1,7 @@
 package com.rapleaf.jack.queries;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,11 +25,14 @@ public class TestGenericDeletion {
 
   private static final String TITLE_1 = "title1";
   private static final String TITLE_2 = "title2";
+  private static final String TITLE_3 = "title3";
   private static final int USER_ID_1 = 51;
   private static final int USER_ID_2 = 52;
+  private static final int USER_ID_3 = 53;
 
   private Post post1;
   private Post post2;
+  private Post post3;
 
   @Before
   public void prepare() throws Exception {
@@ -37,6 +42,8 @@ public class TestGenericDeletion {
     post1.setTitle(TITLE_1).setUserId(USER_ID_1).save();
     post2 = db.posts().create();
     post2.setTitle(TITLE_2).setUserId(USER_ID_2).save();
+    post3 = db.posts().create();
+    post3.setTitle(TITLE_3).setUserId(USER_ID_3).save();
   }
 
   @Test
@@ -89,18 +96,33 @@ public class TestGenericDeletion {
   public void testDeleteWithJoin() throws Exception {
     User userA = db.users().create("A", 1);
     User userB = db.users().create("B", 2);
+    User userC = db.users().create("C", 3);
+
     post1.setUserId(userA.getIntId()).save();
     post2.setUserId(userB.getIntId()).save();
+    post3.setUserId(userC.getIntId()).save();
 
+    // delete post2 and post3
     Deletions deletions = db.createDeletion()
         .from(Post.TBL)
         .innerJoin(User.TBL)
         .on(User.ID.as(Integer.class).equalTo(Post.USER_ID))
-        .where(User.HANDLE.equalTo("A"))
+        .where(User.NUM_POSTS.greaterThan(1))
         .execute();
 
-    assertEquals(1, deletions.getDeletedRowCount());
-    assertEquals(post2, db.posts().findAll().get(0));
+    // posts should have been deleted correctly
+    assertEquals(2, deletions.getDeletedRowCount());
+    List<Post> remainingPosts = db.posts().findAll();
+
+    assertEquals(1, remainingPosts.size());
+    assertEquals(post1, remainingPosts.get(0));
+
+    // users should not have been deleted
+    List<User> remainingUsers = db.users().findAll();
+    assertEquals(3, remainingUsers.size());
+    assertEquals(userA, remainingUsers.get(0));
+    assertEquals(userB, remainingUsers.get(1));
+    assertEquals(userC, remainingUsers.get(2));
   }
 
 }
