@@ -53,7 +53,7 @@ public class TestGenericDeletion {
         .from(Post.TBL)
         .execute();
 
-    assertEquals(2, deletions.getDeletedRowCount());
+    assertEquals(3, deletions.getDeletedRowCount());
     assertEquals(0, db.posts().findAll().size());
   }
 
@@ -70,7 +70,7 @@ public class TestGenericDeletion {
         .execute();
 
     assertEquals(1, deletions1.getDeletedRowCount());
-    assertEquals(1, db.posts().findAll().size());
+    assertEquals(2, db.posts().findAll().size());
     assertNull(db.posts().find(post1.getId()));
     assertNotNull(db.posts().find(post2.getId()));
 
@@ -80,7 +80,7 @@ public class TestGenericDeletion {
         .execute();
 
     assertEquals(0, deletions2.getDeletedRowCount());
-    assertEquals(1, db.posts().findAll().size());
+    assertEquals(2, db.posts().findAll().size());
     assertNull(db.posts().find(post1.getId()));
     assertNotNull(db.posts().find(post2.getId()));
 
