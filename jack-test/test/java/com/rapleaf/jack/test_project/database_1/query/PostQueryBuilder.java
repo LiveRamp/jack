@@ -6,7 +6,6 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
 import java.util.Collection;
-import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
 import com.rapleaf.jack.queries.Column;

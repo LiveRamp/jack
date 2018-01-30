@@ -7,7 +7,13 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -378,7 +384,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+  protected User instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new User(id,

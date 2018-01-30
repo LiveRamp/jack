@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -17,7 +18,7 @@ import com.rapleaf.jack.BaseDatabaseConnection;
 
 public class QueryFetcher extends BaseFetcher {
 
-  public static Records getQueryResults(PreparedStatement preparedStatement, Set<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
+  public static Records getQueryResults(PreparedStatement preparedStatement, Collection<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
     ResultSet resultSet = null;
 
     try {
@@ -44,7 +45,7 @@ public class QueryFetcher extends BaseFetcher {
     return new RecordIterator(preparedStatement, selectedColumns, results, dbConnection);
   }
 
-  static Record parseResultSet(ResultSet resultSet, Set<Column> selectedColumns) throws SQLException {
+  static Record parseResultSet(ResultSet resultSet, Collection<Column> selectedColumns) throws SQLException {
     if (selectedColumns.isEmpty()) {
       return null;
     }

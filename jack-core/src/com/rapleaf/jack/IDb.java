@@ -17,6 +17,7 @@ package com.rapleaf.jack;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -65,6 +66,6 @@ public interface IDb extends Serializable, Closeable {
 
   GenericDeletion.Builder createDeletion();
 
-  Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException;
+  Records findBySql(String statement, List<?> params, Collection<Column> columns) throws IOException;
 
 }

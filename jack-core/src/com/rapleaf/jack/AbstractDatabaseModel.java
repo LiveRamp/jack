@@ -154,7 +154,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return instanceFromResultSet(rs, null);
   }
 
-  protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
+  protected abstract T instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException;
 
   protected long realCreate(StatementCreator statementCreator) throws IOException {
     int retryCount = 0;
@@ -416,7 +416,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     executeQuery(foundSet, stmt, null);
   }
 
-  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws SQLException {
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Collection<Enum> selectedFields) throws SQLException {
     ResultSet rs = null;
 
     try {
