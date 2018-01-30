@@ -212,9 +212,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   @Override
-  public List<T> find(Set<Long> ids) throws IOException {
+  public List<T> find(Collection<Long> ids) throws IOException {
     List<T> foundList = new ArrayList<T>();
-    Set<Long> notCachedIds = new HashSet<Long>();
+    Collection<Long> notCachedIds = new HashSet<Long>();
     if (useCache) {
       for (Long id : ids) {
         if (cachedById.containsKey(id)) {
@@ -233,7 +233,29 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return foundList;
   }
 
+<<<<<<< Updated upstream:src/java/com/rapleaf/jack/AbstractDatabaseModel.java
   public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
+=======
+  @Override
+  public boolean isEmpty() throws IOException {
+
+    PreparedStatement statement = null;
+    ResultSet rs = null;
+
+    try {
+      statement = conn.getPreparedStatement("SELECT 1 FROM " + tableName + " LIMIT 1");
+      rs = statement.executeQuery();
+      return !rs.isBeforeFirst();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    } finally {
+      closeQuery(rs, statement);
+    }
+
+  }
+
+  public List<T> findWithOrder(Collection<Long> ids, ModelQuery query) throws IOException {
+>>>>>>> Stashed changes:jack-core/src/com/rapleaf/jack/AbstractDatabaseModel.java
     List<T> foundList = new ArrayList<T>();
     if (!ids.isEmpty()) {
       String statement = query.getSelectClause();
@@ -353,7 +375,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
     return selectedFields;
   }
 
-  protected String getIdSetCondition(Set<Long> ids) {
+  protected String getIdSetCondition(Collection<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
     while (iter.hasNext()) {
@@ -535,11 +557,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId> implements
   }
 
   @Override
-  public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids)
+  public List<T> findAllByForeignKey(String foreignKey, Collection<Long> ids)
       throws IOException {
     Map<Long, List<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     List<T> foundList = new ArrayList<T>();
-    Set<Long> notCachedIds = new HashSet<Long>();
+    Collection<Long> notCachedIds = new HashSet<Long>();
     if (foreignKeyCache != null && useCache) {
       for (Long id : ids) {
         List<T> results = foreignKeyCache.get(id);

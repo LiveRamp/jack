@@ -1,10 +1,6 @@
 package com.rapleaf.jack.queries;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.base.Optional;
 
@@ -53,7 +49,7 @@ public class ModelQuery {
     whereClause.addConstraint(constraint);
   }
 
-  public void addIds(Set<Long> ids) {
+  public void addIds(Collection<Long> ids) {
     whereClause.addIds(ids);
   }
 

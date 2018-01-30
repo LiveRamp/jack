@@ -16,9 +16,9 @@ package com.rapleaf.jack;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;
@@ -49,11 +49,11 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
    */
   public T find(long id) throws IOException;
 
-  public List<T> find(Set<Long> ids) throws IOException;
+  public List<T> find(Collection<Long> ids) throws IOException;
 
   public List<T> find(Map<Enum, Object> fieldsMap) throws IOException;
 
-  public List<T> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
+  public List<T> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException;
 
   public List<T> find(ModelQuery query) throws IOException;
   
@@ -65,7 +65,7 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
 
   public List<T> findAllByForeignKey(String foreignKey, long id) throws IOException;
 
-  public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids) throws IOException;
+  public List<T> findAllByForeignKey(String foreignKey, Collection<Long> ids) throws IOException;
 
   public void clearCacheByForeignKey(String foreignKey, long id);
 

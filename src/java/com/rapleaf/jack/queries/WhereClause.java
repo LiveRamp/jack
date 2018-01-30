@@ -26,7 +26,7 @@ public class WhereClause {
     whereConstraints.add(constraint);
   }
 
-  public void addIds(Set<Long> ids) {
+  public void addIds(Collection<Long> ids) {
     if (!selectedIds.isPresent()) {
       selectedIds = Optional.<Set<Long>>of(Sets.<Long>newHashSet());
     }

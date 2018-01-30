@@ -1,6 +1,6 @@
 package com.rapleaf.jack.queries;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Represents a delete statement that may not explicitly list IDs.
@@ -20,7 +20,7 @@ public class ModelDelete {
     whereClause.addConstraint(constraint);
   }
 
-  public void addIds(Set<Long> ids) {
+  public void addIds(Collection<Long> ids) {
     whereClause.addIds(ids);
   }
 

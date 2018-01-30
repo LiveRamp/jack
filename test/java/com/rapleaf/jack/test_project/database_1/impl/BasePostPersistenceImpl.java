@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
+<<<<<<< Updated upstream:test/java/com/rapleaf/jack/test_project/database_1/impl/BasePostPersistenceImpl.java
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.util.*;
+>>>>>>> Stashed changes:jack-test/test/java/com/rapleaf/jack/test_project/database_1/impl/BasePostPersistenceImpl.java
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,8 +33,11 @@ import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
+<<<<<<< Updated upstream:test/java/com/rapleaf/jack/test_project/database_1/impl/BasePostPersistenceImpl.java
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+=======
+>>>>>>> Stashed changes:jack-test/test/java/com/rapleaf/jack/test_project/database_1/impl/BasePostPersistenceImpl.java
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.query.PostQueryBuilder;
@@ -110,7 +117,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return find(null, fieldsMap);
   }
 
-  public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Post> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Post> foundList = new ArrayList<Post>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {

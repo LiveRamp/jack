@@ -1,6 +1,6 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
 import com.rapleaf.jack.queries.FieldSelector;
@@ -37,7 +37,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
     return this;
   }
 
-  public PostQueryBuilder idIn(Set<Long> values) {
+  public PostQueryBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

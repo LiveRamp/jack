@@ -7,6 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
+<<<<<<< Updated upstream:test/java/com/rapleaf/jack/test_project/database_1/impl/BaseUserPersistenceImpl.java
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.util.*;
+>>>>>>> Stashed changes:jack-test/test/java/com/rapleaf/jack/test_project/database_1/impl/BaseUserPersistenceImpl.java
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,8 +33,11 @@ import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
 import com.rapleaf.jack.queries.WhereConstraint;
 import com.rapleaf.jack.queries.WhereClause;
+<<<<<<< Updated upstream:test/java/com/rapleaf/jack/test_project/database_1/impl/BaseUserPersistenceImpl.java
 import com.rapleaf.jack.queries.ModelQuery;
 import com.rapleaf.jack.ModelWithId;
+=======
+>>>>>>> Stashed changes:jack-test/test/java/com/rapleaf/jack/test_project/database_1/impl/BaseUserPersistenceImpl.java
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.User;
 import com.rapleaf.jack.test_project.database_1.query.UserQueryBuilder;
@@ -140,7 +147,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return find(null, fieldsMap);
   }
 
-  public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<User> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<User> foundList = new ArrayList<User>();
     
     if (fieldsMap == null || fieldsMap.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
@@ -37,7 +38,7 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> {
     return this;
   }
 
-  public UserQueryBuilder idIn(Set<Long> values) {
+  public UserQueryBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }
