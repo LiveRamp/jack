@@ -1,5 +1,6 @@
 package com.rapleaf.jack.queries;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -20,7 +21,7 @@ public class ModelDelete {
     whereClause.addConstraint(constraint);
   }
 
-  public void addIds(Set<Long> ids) {
+  public void addIds(Collection<Long> ids) {
     whereClause.addIds(ids);
   }
 

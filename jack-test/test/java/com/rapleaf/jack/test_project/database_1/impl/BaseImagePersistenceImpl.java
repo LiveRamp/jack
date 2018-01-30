@@ -7,13 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,7 +111,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return find(null, fieldsMap);
   }
 
-  public List<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Image> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Image> foundList = new ArrayList<Image>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {

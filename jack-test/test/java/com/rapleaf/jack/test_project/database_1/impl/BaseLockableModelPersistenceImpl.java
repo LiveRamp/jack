@@ -7,13 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -145,7 +139,7 @@ public class BaseLockableModelPersistenceImpl extends AbstractDatabaseModel<Lock
     return find(null, fieldsMap);
   }
 
-  public List<LockableModel> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<LockableModel> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<LockableModel> foundList = new ArrayList<LockableModel>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {

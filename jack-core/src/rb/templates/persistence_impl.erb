@@ -77,7 +77,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
     return find(null, fieldsMap);
   }
 
-  public List<<%= model_defn.model_name %>> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<<%= model_defn.model_name %>> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {

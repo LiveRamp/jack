@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public abstract class AbstractQueryBuilder<M extends ModelWithId> implements IQu
     query.addGroupByFields(fields);
   }
 
-  protected void addIds(Set<Long> ids) {
+  protected void addIds(Collection<Long> ids) {
     query.addIds(ids);
   }
 

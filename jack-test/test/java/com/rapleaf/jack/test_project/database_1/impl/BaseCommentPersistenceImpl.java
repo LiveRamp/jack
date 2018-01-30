@@ -7,13 +7,7 @@
 package com.rapleaf.jack.test_project.database_1.impl;
 
 import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -152,7 +146,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
     return find(null, fieldsMap);
   }
 
-  public List<Comment> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Comment> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Comment> foundList = new ArrayList<Comment>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {

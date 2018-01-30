@@ -5,6 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractDeleteBuilder;
@@ -26,7 +27,7 @@ public class PostDeleteBuilder extends AbstractDeleteBuilder<Post> {
     return this;
   }
 
-  public PostDeleteBuilder idIn(Set<Long> values) {
+  public PostDeleteBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

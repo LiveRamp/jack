@@ -5,6 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.rapleaf.jack.queries.AbstractDeleteBuilder;
@@ -26,7 +27,7 @@ public class LockableModelDeleteBuilder extends AbstractDeleteBuilder<LockableMo
     return this;
   }
 
-  public LockableModelDeleteBuilder idIn(Set<Long> values) {
+  public LockableModelDeleteBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

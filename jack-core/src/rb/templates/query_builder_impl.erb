@@ -39,7 +39,7 @@ public class <%= model_defn.query_builder_name %> extends AbstractQueryBuilder<<
     return this;
   }
 
-  public <%= model_defn.query_builder_name %> idIn(Set<Long> values) {
+  public <%= model_defn.query_builder_name %> idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }
