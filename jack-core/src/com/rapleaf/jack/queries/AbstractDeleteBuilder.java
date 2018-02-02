@@ -1,11 +1,10 @@
 package com.rapleaf.jack.queries;
 
-import com.rapleaf.jack.IModelPersistence;
-import com.rapleaf.jack.ModelWithId;
-
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Set;
+
+import com.rapleaf.jack.IModelPersistence;
+import com.rapleaf.jack.ModelWithId;
 
 public abstract class AbstractDeleteBuilder<M extends ModelWithId> {
   private ModelDelete delete;

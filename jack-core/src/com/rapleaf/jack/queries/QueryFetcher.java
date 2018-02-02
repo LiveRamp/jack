@@ -6,13 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.UnmodifiableIterator;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 

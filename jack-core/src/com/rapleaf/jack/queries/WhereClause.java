@@ -1,9 +1,14 @@
 package com.rapleaf.jack.queries;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-
-import java.util.*;
 
 public class WhereClause {
   List<WhereConstraint> whereConstraints;

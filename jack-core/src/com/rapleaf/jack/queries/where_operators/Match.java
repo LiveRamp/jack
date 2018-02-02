@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries.where_operators;
 
 import com.google.common.base.Preconditions;
+
 import com.rapleaf.jack.queries.Column;
 
 public class Match extends WhereOperator<String> {

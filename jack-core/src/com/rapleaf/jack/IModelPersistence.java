@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.rapleaf.jack.queries.ModelDelete;
 import com.rapleaf.jack.queries.ModelQuery;

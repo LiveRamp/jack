@@ -1,7 +1,6 @@
 package com.rapleaf.jack.queries;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Represents a delete statement that may not explicitly list IDs.
