@@ -6,7 +6,7 @@ import com.rapleaf.jack.IDb;
 
 public interface ITransactor<DB extends IDb> extends Closeable {
 
-  ITransactor<DB> asTransaction(boolean asTransaction);
+  ITransactor<DB> asTransaction();
 
   ITransactor<DB> withNumRetries(int numRetries);
 

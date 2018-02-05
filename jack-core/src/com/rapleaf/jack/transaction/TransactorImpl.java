@@ -43,8 +43,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
 
   @Override
-  public ITransactor<DB> asTransaction(boolean asTransaction) {
-    contextBuilder.setAsTransaction(asTransaction);
+  public ITransactor<DB> asTransaction() {
+    contextBuilder.setAsTransaction(true);
     return this;
   }
 
@@ -57,14 +57,14 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   @Override
   @Deprecated
   public <T> T queryAsTransaction(IQuery<DB, T> query) {
-    asTransaction(true);
+    asTransaction();
     return query(query);
   }
 
   @Override
   @Deprecated
   public void executeAsTransaction(IExecution<DB> execution) {
-    asTransaction(true);
+    asTransaction();
     execute(execution);
   }
 
