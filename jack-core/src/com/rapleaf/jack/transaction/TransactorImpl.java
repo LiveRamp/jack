@@ -22,14 +22,15 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
+  private static final int QUERY_LOG_SIZE = 30;
 
   private final IDbManager<DB> dbManager;
-
-  private static final int QUERY_LOG_SIZE = 30;
 
   private TransactorMetricsImpl queryMetrics = new TransactorMetricsImpl(QUERY_LOG_SIZE);
 
   private boolean metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
+
+  private ExecutionContext.Builder contextBuilder = new ExecutionContext.Builder();
 
   TransactorImpl(IDbManager<DB> dbManager, boolean metricsTrackingEnabled) {
     this.dbManager = dbManager;
@@ -40,24 +41,100 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return new Builder<>(dbConstructor);
   }
 
+
   @Override
-  public <T> T query(IQuery<DB, T> query) {
-    return query(query, false);
+  public ITransactor<DB> asTransaction(boolean asTransaction) {
+    contextBuilder.setAsTransaction(asTransaction);
+    return this;
   }
 
   @Override
+  public ITransactor<DB> withNumRetries(int numRetries) {
+    contextBuilder.setRetryTimes(numRetries);
+    return this;
+  }
+
+  @Override
+  @Deprecated
   public <T> T queryAsTransaction(IQuery<DB, T> query) {
-    return query(query, true);
+    asTransaction(true);
+    return query(query);
+  }
+
+  @Override
+  @Deprecated
+  public void executeAsTransaction(IExecution<DB> execution) {
+    asTransaction(true);
+    execute(execution);
+  }
+
+
+  @Override
+  public <T> T query(IQuery<DB, T> query) {
+    DB connection = dbManager.getConnection();
+    ExecutionContext context = contextBuilder.build();
+
+    connection.setAutoCommit(!context.isAsTransaction());
+    try {
+      long startTime = System.currentTimeMillis();
+      T value = query.query(connection);
+      if (context.isAsTransaction()) {
+        connection.commit();
+      }
+      long executionTime = System.currentTimeMillis() - startTime;
+      if (metricsTrackingEnabled) {
+        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      }
+      return value;
+    } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
+      if (context.isAsTransaction()) {
+        connection.rollback();
+      }
+      throw new SqlExecutionFailureException(e);
+    } finally {
+      // connection should be reset in PooledObjectFactory
+      dbManager.returnConnection(connection);
+      contextBuilder.reset();
+    }
   }
 
   @Override
   public void execute(IExecution<DB> execution) {
-    execute(execution, false);
+    DB connection = dbManager.getConnection();
+    ExecutionContext context = contextBuilder.build();
+
+
+    connection.setAutoCommit(!context.isAsTransaction());
+    try {
+      long startTime = System.currentTimeMillis();
+      execution.execute(connection);
+      if (context.isAsTransaction()) {
+        connection.commit();
+      }
+      long executionTime = System.currentTimeMillis() - startTime;
+      if (metricsTrackingEnabled) {
+        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+      }
+    } catch (Exception e) {
+      LOG.error("SQL execution failure", e);
+      if (context.isAsTransaction()) {
+        connection.rollback();
+      }
+      throw new SqlExecutionFailureException(e);
+    } finally {
+      // connection should be reset in PooledObjectFactory
+      dbManager.returnConnection(connection);
+      contextBuilder.reset();
+    }
   }
 
   @Override
-  public void executeAsTransaction(IExecution<DB> execution) {
-    execute(execution, true);
+  public void close() {
+    if (metricsTrackingEnabled) {
+      LOG.info("{}\n\n{}", dbManager.getMetrics().getSummary(), getQueryMetrics().getSummary());
+    }
+    dbManager.close();
   }
 
   TransactorMetrics getQueryMetrics() {
@@ -70,65 +147,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   DbMetrics getDbMetrics() {
     return dbManager.getMetrics();
-  }
-
-  private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
-    DB connection = dbManager.getConnection();
-    connection.setAutoCommit(!asTransaction);
-    try {
-      long startTime = System.currentTimeMillis();
-      T value = query.query(connection);
-      if (asTransaction) {
-        connection.commit();
-      }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-      return value;
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (asTransaction) {
-        connection.rollback();
-      }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-    }
-  }
-
-  private void execute(IExecution<DB> execution, boolean asTransaction) {
-    DB connection = dbManager.getConnection();
-    connection.setAutoCommit(!asTransaction);
-    try {
-      long startTime = System.currentTimeMillis();
-      execution.execute(connection);
-      if (asTransaction) {
-        connection.commit();
-      }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (asTransaction) {
-        connection.rollback();
-      }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-    }
-  }
-
-  @Override
-  public void close() {
-    if (metricsTrackingEnabled) {
-      LOG.info("{}\n\n{}", dbManager.getMetrics().getSummary(), getQueryMetrics().getSummary());
-    }
-    dbManager.close();
   }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {

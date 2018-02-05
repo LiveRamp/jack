@@ -175,7 +175,5 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       connection.getObject().setAutoCommit(true);
       connection.getObject().setBulkOperation(false);
     }
-
   }
-
 }
