@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
+import com.rapleaf.jack.util.ExponentialBackoff;
 
 /**
  * If there is any exception while executing the query, throws {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
@@ -68,64 +69,78 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     execute(execution);
   }
 
-
   @Override
   public <T> T query(IQuery<DB, T> query) {
-    DB connection = dbManager.getConnection();
     ExecutionContext context = contextBuilder.build();
+    ExponentialBackoff backoffPolicy = new ExponentialBackoff(context.getMaxRetries());
 
-    connection.setAutoCommit(!context.isAsTransaction());
-    try {
-      long startTime = System.currentTimeMillis();
-      T value = query.query(connection);
-      if (context.isAsTransaction()) {
-        connection.commit();
+    while (true) {
+      DB connection = dbManager.getConnection();
+      connection.setAutoCommit(!context.isAsTransaction());
+      try {
+        long startTime = System.currentTimeMillis();
+        T value = query.query(connection);
+        if (context.isAsTransaction()) {
+          connection.commit();
+        }
+        long executionTime = System.currentTimeMillis() - startTime;
+        if (metricsTrackingEnabled) {
+          queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+        }
+        return value;
+      } catch (Exception e) {
+        LOG.error("SQL execution failure", e);
+        if (context.isAsTransaction()) {
+          connection.rollback();
+        }
+        if (backoffPolicy.isMaxedOut()) {
+          throw new SqlExecutionFailureException(e);
+        } else {
+          backoffPolicy.backoff();
+        }
+      } finally {
+        // connection should be reset in PooledObjectFactory
+        dbManager.returnConnection(connection);
+        contextBuilder.reset();
       }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-      return value;
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (context.isAsTransaction()) {
-        connection.rollback();
-      }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-      contextBuilder.reset();
     }
   }
 
   @Override
   public void execute(IExecution<DB> execution) {
-    DB connection = dbManager.getConnection();
     ExecutionContext context = contextBuilder.build();
+    ExponentialBackoff backoffPolicy = new ExponentialBackoff(context.getMaxRetries());
 
+    while (true) {
+      DB connection = dbManager.getConnection();
+      connection.setAutoCommit(!context.isAsTransaction());
+      try {
+        long startTime = System.currentTimeMillis();
+        execution.execute(connection);
+        if (context.isAsTransaction()) {
+          connection.commit();
+        }
+        long executionTime = System.currentTimeMillis() - startTime;
+        if (metricsTrackingEnabled) {
+          queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+        }
+        return;
+      } catch (Exception e) {
+        LOG.error("SQL execution failure", e);
+        if (context.isAsTransaction()) {
+          connection.rollback();
+        }
 
-    connection.setAutoCommit(!context.isAsTransaction());
-    try {
-      long startTime = System.currentTimeMillis();
-      execution.execute(connection);
-      if (context.isAsTransaction()) {
-        connection.commit();
+        if (backoffPolicy.isMaxedOut()) {
+          throw new SqlExecutionFailureException(e);
+        } else {
+          backoffPolicy.backoff();
+        }
+      } finally {
+        // connection should be reset in PooledObjectFactory
+        dbManager.returnConnection(connection);
+        contextBuilder.reset();
       }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (context.isAsTransaction()) {
-        connection.rollback();
-      }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-      contextBuilder.reset();
     }
   }
 
