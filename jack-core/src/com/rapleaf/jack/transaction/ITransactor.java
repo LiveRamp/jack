@@ -6,9 +6,20 @@ import com.rapleaf.jack.IDb;
 
 public interface ITransactor<DB extends IDb> extends Closeable {
 
+  /**
+   * Run the next operation as a transaction.
+   *
+   * @return
+   */
   ITransactor<DB> asTransaction();
 
-  ITransactor<DB> withNumRetries(int numRetries);
+  /**
+   * If the operation fails, retries it up to numRetries before failing and returning the operation to the client.
+   *
+   * @param numRetries
+   * @return
+   */
+  ITransactor<DB> withMaxRetry(int numRetries);
 
   <T> T query(IQuery<DB, T> query);
 

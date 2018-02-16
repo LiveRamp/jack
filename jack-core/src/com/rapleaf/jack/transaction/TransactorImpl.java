@@ -49,7 +49,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   }
 
   @Override
-  public ITransactor<DB> withNumRetries(int numRetries) {
+  public ITransactor<DB> withMaxRetry(int numRetries) {
     contextBuilder.setRetryTimes(numRetries);
     return this;
   }
