@@ -6,16 +6,16 @@ public class ExecutionContext {
   public static final int DEFAULT_RETRY_TIMES = 1;
   public static final boolean DEFAULT_AS_TRANSACTION = false;
 
-  private final int retryTimes;
+  private final int maxRetries;
   private final boolean asTransaction;
 
-  ExecutionContext(int retryTimes, boolean asTransaction) {
-    this.retryTimes = retryTimes;
+  ExecutionContext(int maxRetries, boolean asTransaction) {
+    this.maxRetries = maxRetries;
     this.asTransaction = asTransaction;
   }
 
-  public int getRetryTimes() {
-    return retryTimes;
+  public int getMaxRetries() {
+    return maxRetries;
   }
 
   public boolean isAsTransaction() {
