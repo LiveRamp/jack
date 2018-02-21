@@ -2,6 +2,7 @@ package com.rapleaf.jack.transaction;
 
 import java.util.concurrent.Callable;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
@@ -162,6 +163,11 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   DbMetrics getDbMetrics() {
     return dbManager.getMetrics();
+  }
+
+  @VisibleForTesting
+  ExecutionContext getExecutionContext() {
+    return contextBuilder.build();
   }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
