@@ -1,9 +1,11 @@
 package com.rapleaf.jack.transaction;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.joda.time.Duration;
 import org.junit.After;
@@ -53,17 +55,40 @@ public class TestDbTransactorImpl extends JackTestCase {
   }
 
   @Test
-  public void testSingleExecutionAsTransaction() throws Exception {
+  public void testExecutionContextIsResetAfterExecution() throws Exception {
+
+  }
+
+  @Test
+  public void testSingleExecutionAsTransactionOldIface() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
-    String expectedBio = "test";
+    String expecetedBio = "test";
+
+    // old transaction iface
     String actualBio = transactor.queryAsTransaction(db -> {
       User user = db.users().createDefaultInstance();
-      user.setBio(expectedBio).save();
+      user.setBio(expecetedBio).save();
       return user.getBio();
     });
 
-    assertEquals(expectedBio, actualBio);
+    assertEquals(expecetedBio, actualBio);
+  }
+
+  @Test
+  public void testSingleExecutionAsTransaction() throws Exception {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+
+    String expecetedBio = "test";
+
+    // old transaction iface
+    String actualBio = transactor.asTransaction().query(db -> {
+      User user = db.users().createDefaultInstance();
+      user.setBio(expecetedBio).save();
+      return user.getBio();
+    });
+
+    assertEquals(expecetedBio, actualBio);
   }
 
   @Test(expected = SqlExecutionFailureException.class)
@@ -75,8 +100,88 @@ public class TestDbTransactorImpl extends JackTestCase {
     });
   }
 
+  @Test(timeout = 5 * 1000l)
+  public void testTransactionSucceedsAfterTransientFailure() throws IOException {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    String expectedBio = "mygreatbio";
+    AtomicInteger attemptsMade = new AtomicInteger(0);
+    int maxRetries = 3;
+
+    List<User> users = transactor.withMaxRetry(maxRetries)
+        .asTransaction()
+        .query(db -> {
+          db.users().createDefaultInstance().setBio(expectedBio).save();
+          if (attemptsMade.get() < maxRetries - 1) {
+            attemptsMade.incrementAndGet();
+            throw new SqlExecutionFailureException(new Exception());
+          }
+          return db.users().findAll();
+        });
+
+    assertEquals(1, users.size());
+    assertEquals(expectedBio, users.get(0).getBio());
+  }
+
   @Test
-  public void testTransactionRollbackSqlException() throws Exception {
+  public void testTransactionRollbackWithRetry() throws IOException {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    String expectedBio = "mygreatbio";
+    int maxRetries = 3;
+
+    try {
+      transactor.withMaxRetry(maxRetries)
+          .asTransaction()
+          .query(db -> {
+            db.users().createDefaultInstance().setBio(expectedBio).save();
+            throw new SqlExecutionFailureException(new Exception());
+          });
+    } catch (Exception e) {
+      // failure of transactions should leave the db unchanged
+    }
+
+    List<User> users = transactor.query(db -> db.users().findAll());
+    assertEquals(0, users.size());
+  }
+
+  @Test(expected = SqlExecutionFailureException.class, timeout = 5 * 1000l)
+  public void testSingleQueryRetryFailsAfterMaxRetries() throws IOException {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    String expectedBio = "mygreatbio";
+
+    transactor.execute(db -> db.users().createDefaultInstance().setBio(expectedBio).save());
+    transactor.withMaxRetry(3).query(db -> {
+      throw new SqlExecutionFailureException(new IOException());
+    });
+
+    // shouldn't execute this line below since a failure above should have happened
+    fail();
+  }
+
+  @Test
+  public void testSingleQueryRetrySucceedsAfterTransientFailure() throws IOException {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    String expectedBio = "mygreatbio";
+    int numRetries = 3;
+    AtomicInteger attemptsMade = new AtomicInteger(0);
+
+    transactor.execute(db -> db.users().createDefaultInstance().setBio(expectedBio).save());
+
+    List<User> users = transactor.withMaxRetry(numRetries).query(db -> {
+      // max out the number of retries; the last query should be able to succeed
+      if (attemptsMade.get() < numRetries - 1) {
+        attemptsMade.getAndIncrement();
+        throw new SqlExecutionFailureException(new IOException());
+      } else {
+        return db.users().findAll();
+      }
+    });
+
+    assertEquals(1, users.size());
+    assertEquals(expectedBio, users.get(0).getBio());
+  }
+
+  @Test
+  public void testTransactionRollbackSqlExceptionOldIface() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String originalBio = "original";
@@ -102,6 +207,35 @@ public class TestDbTransactorImpl extends JackTestCase {
       assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
     }
   }
+
+  @Test
+  public void testTransactionRollbackSqlException() throws Exception {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+
+    String originalBio = "original";
+    User user = transactor.asTransaction().query(db -> {
+      User u = db.users().createDefaultInstance();
+      u.setBio(originalBio).save();
+      return u;
+    });
+
+    assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
+
+    try {
+      transactor.asTransaction().execute(db -> {
+        String newBio = "new";
+        user.setBio(newBio).save();
+        // within the transaction, the change is visible
+        assertEquals(newBio, db.users().find(user.getId()).getBio());
+        throw new IOException();
+      });
+      fail();
+    } catch (SqlExecutionFailureException e) {
+      // after rollback, there is no change
+      assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
+    }
+  }
+
 
   @Test(timeout = 5 * 1000) // 5s
   public void testSimultaneousQuery() throws Exception {
@@ -258,5 +392,16 @@ public class TestDbTransactorImpl extends JackTestCase {
     });
     // after execution, the connection bulk operation status should have been reset
     assertFalse(testDbInstance.getBulkOperation());
+  }
+
+  @Test
+  public void testExecutionContextResetsAfterOperation() throws IOException {
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+    transactor.asTransaction().withMaxRetry(5);
+    transactor.execute(db -> db.users().createDefaultInstance());
+
+    ExecutionContext context = transactor.getExecutionContext();
+    assertEquals(false, context.isAsTransaction());
+    assertEquals(ExecutionContext.DEFAULT_RETRY_TIMES, context.getMaxRetries());
   }
 }
