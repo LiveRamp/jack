@@ -1,7 +1,7 @@
 package com.rapleaf.jack.util;
 
 public class ExponentialBackoff {
-  private static final long INITIAL_BACKOFF_INTERVAL = 1000l;
+  private static final long INITIAL_BACKOFF_INTERVAL = 500l;
 
   private final int maxRetries;
 
