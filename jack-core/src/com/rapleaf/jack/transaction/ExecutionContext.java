@@ -3,7 +3,7 @@ package com.rapleaf.jack.transaction;
 import com.google.common.base.Preconditions;
 
 public class ExecutionContext {
-  public static final int DEFAULT_RETRY_TIMES = 1;
+  public static final int DEFAULT_RETRY_TIMES = 0;
   public static final boolean DEFAULT_AS_TRANSACTION = false;
 
   private final int maxRetries;
