@@ -14,7 +14,9 @@ public interface ITransactor<DB extends IDb> extends Closeable {
   ITransactor<DB> asTransaction();
 
   /**
-   * If the operation fails, retries it up to numRetries before failing and returning the operation to the client.
+   * If the next operation fails, retries it up to numRetries before failing and returning the operation to the client.
+   * Note that this does not take into account the initial attempt i.e: setting this number to 1 would result in a
+   * maximum of 2 total executions.
    *
    * @param numRetries
    * @return
