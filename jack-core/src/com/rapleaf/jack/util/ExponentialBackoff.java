@@ -9,9 +9,13 @@ public class ExponentialBackoff {
   private long backoffMs;
 
   public ExponentialBackoff(int maxRetries) {
+    this(maxRetries, INITIAL_BACKOFF_INTERVAL);
+  }
+
+  public ExponentialBackoff(int maxRetries, long backoffMs) {
     this.maxRetries = maxRetries;
     this.numRetries = 0;
-    this.backoffMs = INITIAL_BACKOFF_INTERVAL;
+    this.backoffMs = backoffMs;
   }
 
   public void backoff() {
