@@ -23,7 +23,6 @@ public class NotIn<V> extends WhereOperator<V> {
     super("NOT IN (" + subQuery.getQueryStatement() + ")", (Collection<V>)subQuery.getParameters());
   }
 
-  @Override
   private String createSqlStatement() {
     StringBuilder sb = new StringBuilder("NOT IN (");
 
