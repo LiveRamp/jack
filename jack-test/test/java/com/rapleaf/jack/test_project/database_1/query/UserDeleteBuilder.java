@@ -5,7 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.rapleaf.jack.queries.AbstractDeleteBuilder;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
@@ -26,7 +26,7 @@ public class UserDeleteBuilder extends AbstractDeleteBuilder<User> {
     return this;
   }
 
-  public UserDeleteBuilder idIn(Set<Long> values) {
+  public UserDeleteBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

@@ -2,6 +2,7 @@ package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class SubRecordDeleter extends BaseDeleterExecutor<Void, Void, SubRecordD
     this.allowBulkDeletion = false;
   }
 
-  public SubRecordDeleter whereSubRecordIds(Set<Long> subRecordIds) {
+  public SubRecordDeleter whereSubRecordIds(Collection<Long> subRecordIds) {
     if (this.subRecordIds.isPresent()) {
       this.subRecordIds.get().addAll(subRecordIds);
     } else {
@@ -69,7 +70,7 @@ public class SubRecordDeleter extends BaseDeleterExecutor<Void, Void, SubRecordD
     return null;
   }
 
-  private void executeRecordDeletion(IDb db, Set<Long> subScopesToDelete) throws IOException {
+  private void executeRecordDeletion(IDb db, Collection<Long> subScopesToDelete) throws IOException {
     Set<Long> nestedRecordIds = InternalScopeGetter.getNestedRecordIds(db, table, subScopesToDelete);
     if (!nestedRecordIds.isEmpty() && !allowRecursion) {
       throw new JackRuntimeException("There are nested scopes under the scopes to delete");
@@ -79,7 +80,7 @@ public class SubRecordDeleter extends BaseDeleterExecutor<Void, Void, SubRecordD
     deleteScopes(db, recordIdsToDelete);
   }
 
-  private void executeKeyDeletion(IDb db, Set<Long> subScopesToDelete) throws IOException {
+  private void executeKeyDeletion(IDb db, Collection<Long> subScopesToDelete) throws IOException {
     if (deleteAllKeys) {
       db.createDeletion()
           .from(table.table)

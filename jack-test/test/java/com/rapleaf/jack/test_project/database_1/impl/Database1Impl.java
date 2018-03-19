@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Set;
+import java.util.Collection;
 import java.util.List;
 
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -107,7 +108,7 @@ public class Database1Impl implements IDatabase1 {
   }
 
   @Override
-  public Records findBySql(String statement, List<?> params, Set<Column> columns) throws IOException {
+  public Records findBySql(String statement, List<?> params, Collection<Column> columns) throws IOException {
     final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
     try {
       for (int i=0; i<params.size(); i++) {

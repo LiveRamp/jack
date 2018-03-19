@@ -56,7 +56,7 @@ abstract class BaseDeleterExecutor<TF, TL, E extends BaseDeleterExecutor<TF, TL,
     return getSelf();
   }
 
-  void deleteScopes(IDb db, Set<Long> recordIds) throws IOException {
+  void deleteScopes(IDb db, Collection<Long> recordIds) throws IOException {
     Set<Long> nonNullRecordIds = recordIds.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
     // delete records
