@@ -25,11 +25,17 @@ public interface ITransactor<DB extends IDb> extends Closeable {
 
   <T> T query(IQuery<DB, T> query);
 
+  /**
+   * @deprecated use {@link #asTransaction()}
+   */
   @Deprecated
   <T> T queryAsTransaction(IQuery<DB, T> query);
 
   void execute(IExecution<DB> execution);
 
+  /**
+   * @deprecated Use {@link #asTransaction}
+   */
   @Deprecated
   void executeAsTransaction(IExecution<DB> execution);
 
