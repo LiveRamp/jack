@@ -31,9 +31,9 @@ class ModelsDirProcessor
     table_name = class_name.split('::').last.underscore.pluralize
 
     if md = model_defns_by_table_name[table_name]
-      md.associations = parse_associations(model_content_lines, "belongs_to ", md) +
-        parse_associations(model_content_lines, "has_many ", md, ":through") +
-        parse_associations(model_content_lines, "has_one ", md)
+      md.associations = parse_associations(model_content_lines, "belongs_to", md) +
+        parse_associations(model_content_lines, "has_many", md, ":through") +
+        parse_associations(model_content_lines, "has_one", md)
     else
       puts "Warning: Couldn't find any table '#{table_name}' that corresponded to model '#{class_name}'. No code will be generated for this model."
     end
