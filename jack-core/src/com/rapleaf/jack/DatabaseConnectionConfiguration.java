@@ -46,26 +46,24 @@ public class DatabaseConnectionConfiguration {
   public static DatabaseConnectionConfiguration loadFromEnvironment(String dbNameKey) {
     Map<String, Object> envInfo;
     Map<String, Object> dbInfo;
-    // load database info from config folder with highest priority
-    // then try working directory, then see if the entire file has been passed
-    // as a system property or env var
+    // load database info from some file - first check env, then props, then default location
     envInfo = fetchInfoMap(
-        new FileReaderProvider("config/environment.yml"),
-        new FileReaderProvider("environment.yml"),
-        new FileReaderProvider(System.getProperty(ENVIRONMENT_PATH_PROP)),
-        new FileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
+        new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)),
         new PropertyProvider(ENVIRONMENT_YML_PROP),
-        new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)));
+        new FileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
+        new FileReaderProvider(System.getProperty(ENVIRONMENT_PATH_PROP)),
+        new FileReaderProvider("config/environment.yml"),
+        new FileReaderProvider("environment.yml"));
 
     String db_info_name = (String)envInfo.get(dbNameKey);
 
     dbInfo = (Map<String, Object>)fetchInfoMap(
-        new FileReaderProvider("config/database.yml"),
-        new FileReaderProvider("database.yml"),
-        new FileReaderProvider(System.getProperty(DATABASE_PATH_PROP)),
-        new FileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
+        new EnvVarProvider(envVar(DATABASE_YML_PROP)),
         new PropertyProvider(DATABASE_YML_PROP),
-        new EnvVarProvider(envVar(DATABASE_YML_PROP))).get(db_info_name);
+        new FileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
+        new FileReaderProvider(System.getProperty(DATABASE_PATH_PROP)),
+        new FileReaderProvider("config/database.yml"),
+        new FileReaderProvider("database.yml")).get(db_info_name);
 
     String adapter = load("adapter", dbInfo, "adapter", "database",
         envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), new StringIdentity());
