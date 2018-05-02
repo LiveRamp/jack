@@ -23,7 +23,7 @@ class DatabaseDefn
     @inflections_file = map["inflections_file"]
     @support_missing_id = map["support_missing_id"]
     @adapter = map["adapter"] ? map["adapter"] : "mysql"
-    @ignored_tables = map["ignored_tables"].present? ? map["ignored_tables"].split(/\s+/) : []
+    @ignored_tables = map["ignored_tables"].try(:split, /\s+/) || []
   end
 
   def connection_name
