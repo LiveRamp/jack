@@ -39,6 +39,10 @@ The project definition file is a YAML file that tells Jack where to find your Ra
         schema_rb: database_1/db/schema.rb
         # The path to the app/models dir in your Rails project.
         models: database_1/app/models
+        # Tables to be ignored. No code will be generated for them.
+        ignored_tables:
+          table_1
+          table_2
       -
         root_namespace: com.rapleaf.jack.test_project.database_2
         db_name: Database2
