@@ -17,7 +17,7 @@ FORBIDDEN_FIELD_NAMES = ["tbl", "id"]
 class SchemaRbParser
   extend HashRegexHelpers
 
-  def self.parse(schema_rb)
+  def self.parse(schema_rb, ignored_tables = [])
     file_lines = File.read(schema_rb).split("\n")
     file_lines.reject{|l| l =~ /^\s*$/}
 
@@ -30,6 +30,7 @@ class SchemaRbParser
         migration_number = extract_numeric_hash_value(line, :version)
       elsif line =~ /create_table/ && line !~ /schema_info/
         model_defn = ModelDefn.new(line, migration_number)
+        next if ignored_tables.include?(model_defn.table_name)
 
         ordinal = 0
         line = file_lines.shift

@@ -30,6 +30,8 @@ class ModelsDirProcessor
     class_name = get_class_name(model_content_lines)
     table_name = class_name.split('::').last.underscore.pluralize
 
+    return if database_defn.ignored_tables.include?(table_name)
+
     if md = model_defns_by_table_name[table_name]
       md.associations = parse_associations(model_content_lines, "belongs_to", md) +
         parse_associations(model_content_lines, "has_many", md, ":through") +

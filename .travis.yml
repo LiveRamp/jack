@@ -27,3 +27,4 @@ before_script:
 
 script:
   - mvn test -B -Pmysql
+  - bundle exec rspec
