@@ -12,49 +12,118 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'fattr'
+
 FORBIDDEN_FIELD_NAMES = ["tbl", "id"]
 
-class SchemaRbParser
-  extend HashRegexHelpers
+module FromHash
+  def from_hash(ops)
+    ops.each do |k,v|
+      send("#{k}=",v)
+    end
+    self
+  end
+  def initialize(ops={})
+    from_hash(ops)
+  end
+end
 
-  def self.parse(schema_rb, ignored_tables = [])
-    file_lines = File.read(schema_rb).split("\n")
-    file_lines.reject{|l| l =~ /^\s*$/}
+module ActiveRecord
+  class Schema
+    def self.define(ops = {}, &b)
+      $schema = s = new(ops)
+      s.instance_eval(&b)
+      s
+    end
 
-    models = []
-    migration_number = nil
+    include FromHash
+    fattr(:indexes) { [] }
+    fattr(:tables) { [] }
+    attr_accessor :version
 
-    until file_lines.empty?
-      line = file_lines.shift
-      if line =~ /ActiveRecord::Schema.define/
-        migration_number = extract_numeric_hash_value(line, :version)
-      elsif line =~ /create_table/ && line !~ /schema_info/
-        model_defn = ModelDefn.new(line, migration_number)
-        next if ignored_tables.include?(model_defn.table_name)
+    def create_table(name, ops = {}, &b)
+      table = Table.new(ops.merge(name: name, schema: self))
+      table.instance_eval(&b)
+      self.tables << table
+    end
 
-        ordinal = 0
-        line = file_lines.shift
-        while line =~ /^\s*t\.[a-z]+ / && !file_lines.empty?
-          matches = line.match(/^\s*t\.([a-z]+)\s*"([^"]+)",?(.*)$/)
-          raise "problem with #{model_defn.table_name}" if !matches
-          field_name = matches[2]
-          unless FORBIDDEN_FIELD_NAMES.include?(field_name)
-            field_defn = FieldDefn.new(
-                field_name,
-                matches[1].to_sym,
-                ordinal,
-                FieldDefn.parse_option_fields(matches[3])
-            )
+    def add_index(table, fields, ops = {})
+      self.indexes << Index.new(ops.merge(table: table, fields: fields))
+    end
+  end
 
-            model_defn.fields << field_defn
-            ordinal += 1
-          end
-          line = file_lines.shift
-        end
-        models << model_defn
+  class Index
+    include FromHash
+    attr_accessor :name, :fields, :unique, :length, :table
+  end
+
+  class Table
+    include FromHash
+    attr_accessor :name, :force, :id, :schema
+    fattr(:columns) { [] }
+
+    def __column(type, name, ops = {})
+      self.columns << Column.new(ops.merge(type: type, name: name))
+    end
+
+    %w(integer text datetime boolean string float binary date decimal varbinary).each do |f|
+      define_method(f) do |*args|
+        self.__column(f, *args)
       end
     end
-    return models, migration_number
+    def to_model_defn
+      return nil if name == 'schema_info'
+      res = ModelDefn.new(42)
+      res.table_name = name
+      res.model_name = name.singularize.camelize
+      res.fields = columns.each_with_index.map { |x,i| x.to_model_defn(i) }.compact
+      res.migration_number = schema.version.to_s
+      res
+    end
+  end
+
+  class Column
+    include FromHash
+    attr_accessor :type, :name, :limit, :null, :default, :precision, :scale
+
+    def to_model_defn(col_index)
+      f = to_h
+
+      name = f.delete('name')
+      type = f.delete('type').to_sym
+      raise "bad" unless name && type
+      return nil if FORBIDDEN_FIELD_NAMES.include?(f['name'])
+
+      if default.kind_of?(Numeric) && [:float,:decimal].include?(type)
+        f['default'] = default.to_f
+      elsif default.kind_of?(String)
+        f['default'] = '"' + default + '"'
+      end
+
+      FieldDefn.new(
+        name,
+        type,
+        col_index,
+        f.symbolize_keys
+      )
+    end
+
+    def to_h
+      res = {}
+      [:precision, :scale, :limit, :default, :type, :name, :null].each do |f|
+        v = send(f)
+        res[f.to_s] = v if !v.nil?
+      end
+      res
+    end
+  end
+end
+
+class SchemaRbParser
+  def self.parse(schema_rb, ignored_tables)
+    load schema_rb
+    defns = $schema.tables.map(&:to_model_defn).compact.reject { |x| ignored_tables.include?(x.table_name) }
+    [defns, $schema.version.to_s]
   end
 end
 

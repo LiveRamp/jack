@@ -14,27 +14,15 @@
 
 class ModelDefn
   attr_accessor :namespace, :database_defn
-  attr_reader :fields, :table_name, :model_name, :migration_number
+  attr_accessor :fields, :table_name, :model_name, :migration_number
   attr_accessor :associations
 
   include HashRegexHelpers
 
-  def initialize(decl_line, migration_number)
+  def initialize(migration_number)
     @fields = []
     @associations = []
     @migration_number = migration_number
-
-    @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
-    @model_name = @table_name.singularize.camelcase
-
-    if extract_hash_value(decl_line, :id, false)
-      raise "Table #{@table_name} appears not to have a primary key, which is currently unsupported."
-    end
-
-    # check if the primary key has been renamed
-    if extract_hash_value(decl_line, :primary_key, /"(?<value>|')/)
-      raise "Table #{@table_name} appears to have a renamed primary key, which is currently unsupported."
-    end
   end
 
   def create_signature(only_not_null = false, excluded_field_name = nil)
