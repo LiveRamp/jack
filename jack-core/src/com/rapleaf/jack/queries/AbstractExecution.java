@@ -27,6 +27,15 @@ public abstract class AbstractExecution {
     return this.getPreparedStatement(Optional.empty()).toString();
   }
 
+  protected PreparedStatement getPreparedStatementStreaming() {
+    PreparedStatement preparedStatement = dbConnection.getPreparedStatement(getQueryStatement(),
+        java.sql.ResultSet.TYPE_FORWARD_ONLY,
+        java.sql.ResultSet.CONCUR_READ_ONLY);
+    setStatementParameters(preparedStatement, getParameters());
+    return preparedStatement;
+  }
+
+
   protected PreparedStatement getPreparedStatement(Optional<Integer> options) {
     PreparedStatement preparedStatement;
     preparedStatement = options
