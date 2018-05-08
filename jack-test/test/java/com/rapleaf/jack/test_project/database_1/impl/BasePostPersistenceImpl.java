@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -138,7 +138,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
     return find(null, fieldsMap);
   }
 
-  public List<Post> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Post> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Post> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -273,7 +273,7 @@ public class BasePostPersistenceImpl extends AbstractDatabaseModel<Post> impleme
   }
 
   @Override
-  protected Post instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+  protected Post instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new Post(id,

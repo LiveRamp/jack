@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -188,7 +188,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
     return find(null, fieldsMap);
   }
 
-  public List<User> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<User> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<User> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -385,7 +385,7 @@ public class BaseUserPersistenceImpl extends AbstractDatabaseModel<User> impleme
   }
 
   @Override
-  protected User instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+  protected User instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new User(id,

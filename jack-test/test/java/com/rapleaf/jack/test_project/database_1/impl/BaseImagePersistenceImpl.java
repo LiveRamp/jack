@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,7 +117,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
     return find(null, fieldsMap);
   }
 
-  public List<Image> find(Set<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
+  public List<Image> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
     List<Image> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
@@ -219,7 +219,7 @@ public class BaseImagePersistenceImpl extends AbstractDatabaseModel<Image> imple
   }
 
   @Override
-  protected Image instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException {
+  protected Image instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException {
     boolean allFields = selectedFields == null || selectedFields.isEmpty();
     long id = rs.getLong("id");
     return new Image(id,
