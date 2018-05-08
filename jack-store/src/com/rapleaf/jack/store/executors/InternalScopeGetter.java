@@ -1,10 +1,7 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
@@ -72,7 +69,7 @@ final class InternalScopeGetter {
     }
   }
 
-  static Set<Long> getNestedRecordIds(IDb db, JsTable table, Set<Long> recordIds) throws IOException {
+  static Set<Long> getNestedRecordIds(IDb db, JsTable table, Collection<Long> recordIds) throws IOException {
     Set<Long> allNestedRecordIds = Sets.newHashSet();
 
     Set<Long> ids = Sets.newHashSet(recordIds);

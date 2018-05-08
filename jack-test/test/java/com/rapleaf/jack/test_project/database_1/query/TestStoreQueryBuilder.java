@@ -5,7 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
 import com.rapleaf.jack.queries.Column;
@@ -43,7 +43,7 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreQueryBuilder idIn(Set<Long> values) {
+  public TestStoreQueryBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

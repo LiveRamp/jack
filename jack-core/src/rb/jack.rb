@@ -37,7 +37,7 @@ class Jack
 
       model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
 
-      model_defns, migration_number = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
+      model_defns, migration_number = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb, database_defn.ignored_tables)
       model_defns.each do |model_defn|
         model_defn.database_defn = database_defn
         model_defn.namespace = database_defn.namespace

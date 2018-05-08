@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -14,7 +15,7 @@ import com.rapleaf.jack.BaseDatabaseConnection;
 
 public class QueryFetcher extends BaseFetcher {
 
-  public static Records getQueryResults(PreparedStatement preparedStatement, Set<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
+  public static Records getQueryResults(PreparedStatement preparedStatement, Collection<Column> selectedColumns, BaseDatabaseConnection dbConnection) throws SQLException {
     ResultSet resultSet = null;
 
     try {
@@ -67,7 +68,7 @@ public class QueryFetcher extends BaseFetcher {
     return timestamp == null ? null : timestamp.getTime();
   }
 
-  public static Record parseResultSet(ResultSet resultSet, Set<Column> selectedColumns) throws SQLException {
+  public static Record parseResultSet(ResultSet resultSet, Collection<Column> selectedColumns) throws SQLException {
     if (selectedColumns.isEmpty()) {
       return null;
     }

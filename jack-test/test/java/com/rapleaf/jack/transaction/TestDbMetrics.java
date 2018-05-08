@@ -108,7 +108,7 @@ public class TestDbMetrics extends JackTestCase {
     transactor.close();
     double expectedMaxConnectionsWaitingTime = Math.max(measuredMaxWaitingTime, firstMaxConnectionWaitingTime);
 
-    assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 20);
+    assertRoughEqual(maxConnectionsWaitingTime, expectedMaxConnectionsWaitingTime, 100);
     //The first setAutoCommit method call is slower than later calls. So the first call is treated differently in the test
 
   }

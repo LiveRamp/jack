@@ -215,7 +215,7 @@ public class GenericQuery extends AbstractExecution {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
     statTracker.recordQueryPrepStart();
-    PreparedStatement preparedStatement = getPreparedStatement(Optional.empty());
+    PreparedStatement preparedStatement = getPreparedStatementStreaming();
     statTracker.recordQueryPrepEnd();
     while (true) {
       try {

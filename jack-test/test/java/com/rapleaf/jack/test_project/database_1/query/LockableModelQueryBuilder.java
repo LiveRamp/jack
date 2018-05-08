@@ -5,7 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.rapleaf.jack.queries.AbstractQueryBuilder;
 import com.rapleaf.jack.queries.Column;
@@ -43,7 +43,7 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
     return this;
   }
 
-  public LockableModelQueryBuilder idIn(Set<Long> values) {
+  public LockableModelQueryBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

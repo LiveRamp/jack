@@ -5,7 +5,7 @@
  */
 package com.rapleaf.jack.test_project.database_1.query;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.rapleaf.jack.queries.AbstractDeleteBuilder;
 import com.rapleaf.jack.queries.where_operators.IWhereOperator;
@@ -26,7 +26,7 @@ public class TestStoreDeleteBuilder extends AbstractDeleteBuilder<TestStore> {
     return this;
   }
 
-  public TestStoreDeleteBuilder idIn(Set<Long> values) {
+  public TestStoreDeleteBuilder idIn(Collection<Long> values) {
     addIds(values);
     return this;
   }

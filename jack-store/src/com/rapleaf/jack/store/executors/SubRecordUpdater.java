@@ -1,10 +1,7 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.Sets;
 
@@ -13,7 +10,7 @@ import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.store.JsRecords;
 import com.rapleaf.jack.store.JsTable;
 
-public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, Set<Long>, SubRecordUpdater> {
+public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, Collection<Long>, SubRecordUpdater> {
 
   private Optional<Set<Long>> subRecordIds = Optional.empty();
   private boolean allowBulkUpdate = false;
@@ -22,7 +19,7 @@ public class SubRecordUpdater extends BaseCreatorExecutor<JsRecords, Set<Long>, 
     super(table, executionRecordId);
   }
 
-  public SubRecordUpdater whereSubRecordIds(Set<Long> subRecordIds) {
+  public SubRecordUpdater whereSubRecordIds(Collection<Long> subRecordIds) {
     if (this.subRecordIds.isPresent()) {
       this.subRecordIds.get().addAll(subRecordIds);
     } else {

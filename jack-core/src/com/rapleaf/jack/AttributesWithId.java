@@ -1,10 +1,10 @@
 package com.rapleaf.jack;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Set;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.rapleaf.jack.util.JackUtility;
 

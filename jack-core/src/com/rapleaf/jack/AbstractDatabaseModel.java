@@ -155,7 +155,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return instanceFromResultSet(rs, null);
   }
 
-  protected abstract T instanceFromResultSet(ResultSet rs, Set<Enum> selectedFields) throws SQLException;
+  protected abstract T instanceFromResultSet(ResultSet rs, Collection<Enum> selectedFields) throws SQLException;
 
   protected long realCreate(StatementCreator statementCreator) throws IOException {
     int retryCount = 0;
@@ -238,9 +238,9 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   @Override
-  public List<T> find(Set<Long> ids) throws IOException {
+  public List<T> find(Collection<Long> ids) throws IOException {
     List<T> foundList = new ArrayList<>();
-    Set<Long> notCachedIds = new HashSet<>();
+    Collection<Long> notCachedIds = new HashSet<>();
     if (useCache) {
       for (Long id : ids) {
         if (cachedById.containsKey(id)) {
@@ -277,7 +277,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   }
 
-  public List<T> findWithOrder(Set<Long> ids, ModelQuery query) throws IOException {
+  public List<T> findWithOrder(Collection<Long> ids, ModelQuery query) throws IOException {
     List<T> foundList = new ArrayList<>();
     if (!ids.isEmpty()) {
       String statement = query.getSelectClause();
@@ -394,7 +394,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     return query.getSelectedFields().stream().map(FieldSelector::getField).collect(Collectors.toSet());
   }
 
-  protected String getIdSetCondition(Set<Long> ids) {
+  protected String getIdSetCondition(Collection<Long> ids) {
     StringBuilder sb = new StringBuilder("id in (");
     Iterator<Long> iter = ids.iterator();
     while (iter.hasNext()) {
@@ -414,7 +414,7 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     executeQuery(foundSet, stmt, null);
   }
 
-  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Set<Enum> selectedFields) throws SQLException {
+  protected void executeQuery(Collection<T> foundSet, PreparedStatement stmt, Collection<Enum> selectedFields) throws SQLException {
     ResultSet rs = null;
 
     try {
@@ -572,11 +572,11 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
   }
 
   @Override
-  public List<T> findAllByForeignKey(String foreignKey, Set<Long> ids)
+  public List<T> findAllByForeignKey(String foreignKey, Collection<Long> ids)
       throws IOException {
     Map<Long, List<T>> foreignKeyCache = cachedByForeignKey.get(foreignKey);
     List<T> foundList = new ArrayList<>();
-    Set<Long> notCachedIds = new HashSet<>();
+    Collection<Long> notCachedIds = new HashSet<>();
     if (foreignKeyCache != null && useCache) {
       for (Long id : ids) {
         List<T> results = foreignKeyCache.get(id);
@@ -748,6 +748,13 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
     }
   }
 
+  /**
+   * @return true if the record was updated, false otherwise
+   *         A record can fail to be updated if (non-exhaustive list):
+   *           * it has been deleted
+   *           * it's optimistic lockable and someone else grabbed the lock
+   *           * the underlying table uses a non-unique `id` column
+   */
   @Override
   public boolean save(T model) throws IOException {
     return save(System.currentTimeMillis(), model);

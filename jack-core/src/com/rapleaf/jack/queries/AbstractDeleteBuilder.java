@@ -1,10 +1,10 @@
 package com.rapleaf.jack.queries;
 
+import java.io.IOException;
+import java.util.Collection;
+
 import com.rapleaf.jack.IModelPersistence;
 import com.rapleaf.jack.ModelWithId;
-
-import java.io.IOException;
-import java.util.Set;
 
 public abstract class AbstractDeleteBuilder<M extends ModelWithId> {
   private ModelDelete delete;
@@ -19,7 +19,7 @@ public abstract class AbstractDeleteBuilder<M extends ModelWithId> {
     delete.addConstraint(whereConstraint);
   }
 
-  protected void addIds(Set<Long> ids) {
+  protected void addIds(Collection<Long> ids) {
     delete.addIds(ids);
   }
 

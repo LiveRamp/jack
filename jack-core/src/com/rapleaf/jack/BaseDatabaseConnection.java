@@ -114,6 +114,14 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
     }
   }
 
+  public PreparedStatement getPreparedStatement(String statement, int resultSetType, int resultSetConcurrency) {
+    try {
+      return getConnection().prepareStatement(statement, resultSetType, resultSetConcurrency);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   /**
    * Sets this connection's auto-commit mode to the given state. If a connection
    * is in auto-commit mode, then all its SQL statements will be executed and
