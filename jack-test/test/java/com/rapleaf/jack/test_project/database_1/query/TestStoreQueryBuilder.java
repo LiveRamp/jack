@@ -49,7 +49,7 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder whereId(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    addWhereConstraint(new WhereConstraint<>(Column.fromId(null), operator, null));
     return this;
   }
 
@@ -89,12 +89,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder entryType(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_type, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereEntryType(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(TestStore._Fields.entry_type, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_type, operator));
     return this;
   }
 
@@ -109,12 +109,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder entryScope(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_scope, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereEntryScope(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.entry_scope, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_scope, operator));
     return this;
   }
 
@@ -129,12 +129,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder entryKey(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_key, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereEntryKey(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_key, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_key, operator));
     return this;
   }
 
@@ -149,12 +149,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder entryValue(String value) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_value, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereEntryValue(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(TestStore._Fields.entry_value, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.entry_value, operator));
     return this;
   }
 
@@ -169,12 +169,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder createdAt(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.created_at, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.created_at, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereCreatedAt(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.created_at, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.created_at, operator));
     return this;
   }
 
@@ -189,12 +189,12 @@ public class TestStoreQueryBuilder extends AbstractQueryBuilder<TestStore> {
   }
 
   public TestStoreQueryBuilder updatedAt(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.updated_at, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.updated_at, JackMatchers.equalTo(value)));
     return this;
   }
 
   public TestStoreQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(TestStore._Fields.updated_at, operator));
+    addWhereConstraint(new WhereConstraint<>(TestStore._Fields.updated_at, operator));
     return this;
   }
 

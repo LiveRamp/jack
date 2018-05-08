@@ -59,12 +59,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
     this.postQueryAction = postQueryAction;
     
   <% model_defns.each do |model_defn| %>
-    this.<%= model_defn.table_name %> = new LazyLoadPersistence<<%= model_defn.iface_name %>, IDatabases>(conn, databases) {
-      @Override
-      protected <%= model_defn.iface_name %> build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new <%= model_defn.impl_name %>(conn, databases);
-      }
-    };
+    this.<%= model_defn.table_name %> = new LazyLoadPersistence<>(conn, databases, <%= model_defn.impl_name %>::new);
   <% end %>
   }
 
@@ -90,7 +85,7 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
   public Records findBySql(String statement, List<?> params, Collection<Column> columns) throws IOException {
     final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
     try {
-      for (int i=0; i<params.size(); i++) {
+      for (int i = 0; i < params.size(); i++) {
         final Object param = params.get(i);
         final int paramIdx = i+1;
         preparedStatement.setObject(paramIdx, param);
@@ -110,16 +105,8 @@ public class <%=db_name%>Impl implements I<%=db_name%> {
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
-  <% if model_defns.any? %>
-    try {
-  <% end %>
   <% model_defns.each do |model_defn| %>
     success &= <%= model_defn.persistence_getter %>.isEmpty() || <%= model_defn.persistence_getter %>.deleteAll();
-  <% end %>
-  <% if model_defns.any? %>
-    } catch (IOException e) {
-      throw e;
-    }
   <% end %>
     return success;
   }

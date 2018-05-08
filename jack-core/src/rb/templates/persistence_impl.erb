@@ -78,7 +78,7 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
   }
 
   public List<<%= model_defn.model_name %>> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<<%= model_defn.model_name %>> foundList = new ArrayList<<%= model_defn.model_name %>>();
+    List<<%= model_defn.model_name %>> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -86,8 +86,8 @@ public class <%= model_defn.impl_name %> extends AbstractDatabaseModel<<%= model
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM <%= model_defn.table_name %> WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<<%= model_defn.model_name %>._Fields> nonNullValueFields = new ArrayList<<%= model_defn.model_name %>._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<<%= model_defn.model_name %>._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

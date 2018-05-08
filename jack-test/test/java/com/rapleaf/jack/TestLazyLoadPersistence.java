@@ -11,7 +11,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestLazyLoadPersistence {
-
   private static final DatabaseConnection DATABASE_CONNECTION1 = new MysqlDatabaseConnection("database1");
   private static final IDatabases dbs = new DatabasesImpl(DATABASE_CONNECTION1);
 
@@ -40,12 +39,6 @@ public class TestLazyLoadPersistence {
   }
 
   private LazyLoadPersistence<ICommentPersistence, IDatabases> getLazyLoadPersistence() {
-    return new LazyLoadPersistence<ICommentPersistence, IDatabases>(DATABASE_CONNECTION1, dbs) {
-      @Override
-      protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseCommentPersistenceImpl(conn, databases);
-      }
-    };
+    return new LazyLoadPersistence<>(DATABASE_CONNECTION1, dbs, BaseCommentPersistenceImpl::new);
   }
-
 }

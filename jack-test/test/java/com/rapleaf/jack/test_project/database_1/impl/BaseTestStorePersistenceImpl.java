@@ -153,7 +153,7 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
   }
 
   public List<TestStore> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<TestStore> foundList = new ArrayList<TestStore>();
+    List<TestStore> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -161,8 +161,8 @@ public class BaseTestStorePersistenceImpl extends AbstractDatabaseModel<TestStor
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM test_store WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<TestStore._Fields> nonNullValueFields = new ArrayList<TestStore._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<TestStore._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

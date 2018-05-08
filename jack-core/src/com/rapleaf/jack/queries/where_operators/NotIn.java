@@ -6,8 +6,8 @@ import com.rapleaf.jack.queries.MultiValue;
 
 public class NotIn<V> extends WhereOperator<V> {
 
-  public NotIn(V value1, V... otherValues) {
-    super(null, value1, otherValues);
+  public NotIn(V value, V... otherValues) {
+    super(null, value, otherValues);
     this.sqlStatement = createSqlStatement();
   }
 

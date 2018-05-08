@@ -1,5 +1,6 @@
 package com.rapleaf.jack.transaction;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
@@ -73,7 +74,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     // this config may need further adjustment
     config.setNumTestsPerEvictionRun(maxTotalConnections - minIdleConnections);
 
-    this.connectionPool = new GenericObjectPool<DB>(new DbPoolFactory<DB>(dbConstructor), config);
+    this.connectionPool = new GenericObjectPool<>(new DbPoolFactory<>(dbConstructor), config);
     this.metricsTrackingEnabled = metricsTrackingEnabled;
     this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config.getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
   }
@@ -152,11 +153,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     public PooledObject<DB> makeObject() throws Exception {
       DB connection = dbConstructor.call();
       connection.disableCaching();
-      return new DefaultPooledObject<DB>(connection);
+      return new DefaultPooledObject<>(connection);
     }
 
     @Override
-    public void destroyObject(PooledObject<DB> connection) throws Exception {
+    public void destroyObject(PooledObject<DB> connection) throws IOException {
       connection.getObject().close();
     }
 
@@ -175,7 +176,6 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
       connection.getObject().setAutoCommit(true);
       connection.getObject().setBulkOperation(false);
     }
-
   }
 
 }

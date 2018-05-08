@@ -49,7 +49,7 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder whereId(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    addWhereConstraint(new WhereConstraint<>(Column.fromId(null), operator, null));
     return this;
   }
 
@@ -89,12 +89,12 @@ public class ImageQueryBuilder extends AbstractQueryBuilder<Image> {
   }
 
   public ImageQueryBuilder userId(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(Image._Fields.user_id, JackMatchers.equalTo(value)));
     return this;
   }
 
   public ImageQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(Image._Fields.user_id, operator));
+    addWhereConstraint(new WhereConstraint<>(Image._Fields.user_id, operator));
     return this;
   }
 

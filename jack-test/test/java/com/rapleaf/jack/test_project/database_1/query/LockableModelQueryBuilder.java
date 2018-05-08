@@ -49,7 +49,7 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
   }
 
   public LockableModelQueryBuilder whereId(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    addWhereConstraint(new WhereConstraint<>(Column.fromId(null), operator, null));
     return this;
   }
 
@@ -89,12 +89,12 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
   }
 
   public LockableModelQueryBuilder lockVersion(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(LockableModel._Fields.lock_version, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.lock_version, JackMatchers.equalTo(value)));
     return this;
   }
 
   public LockableModelQueryBuilder whereLockVersion(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(LockableModel._Fields.lock_version, operator));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.lock_version, operator));
     return this;
   }
 
@@ -109,12 +109,12 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
   }
 
   public LockableModelQueryBuilder message(String value) {
-    addWhereConstraint(new WhereConstraint<String>(LockableModel._Fields.message, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.message, JackMatchers.equalTo(value)));
     return this;
   }
 
   public LockableModelQueryBuilder whereMessage(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(LockableModel._Fields.message, operator));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.message, operator));
     return this;
   }
 
@@ -129,12 +129,12 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
   }
 
   public LockableModelQueryBuilder createdAt(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(LockableModel._Fields.created_at, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.created_at, JackMatchers.equalTo(value)));
     return this;
   }
 
   public LockableModelQueryBuilder whereCreatedAt(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(LockableModel._Fields.created_at, operator));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.created_at, operator));
     return this;
   }
 
@@ -149,12 +149,12 @@ public class LockableModelQueryBuilder extends AbstractQueryBuilder<LockableMode
   }
 
   public LockableModelQueryBuilder updatedAt(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(LockableModel._Fields.updated_at, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.updated_at, JackMatchers.equalTo(value)));
     return this;
   }
 
   public LockableModelQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(LockableModel._Fields.updated_at, operator));
+    addWhereConstraint(new WhereConstraint<>(LockableModel._Fields.updated_at, operator));
     return this;
   }
 

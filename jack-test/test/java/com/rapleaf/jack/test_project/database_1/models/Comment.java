@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -90,20 +91,19 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, content, commenter_id, commented_on_id, created_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, final long created_at) {
     super(null);
     attributes = new Attributes(id, content, commenter_id, commented_on_id, created_at);
   }
-  
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, content, commenter_id, commented_on_id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final String content, final int commenter_id, final long commented_on_id) {
@@ -114,8 +114,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id, created_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final int commenter_id, final long commented_on_id, final long created_at) {
@@ -126,8 +126,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public Comment(long id, final int commenter_id, final long commented_on_id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, commenter_id, commented_on_id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-    this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+    this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
   }
 
   public Comment(long id, final int commenter_id, final long commented_on_id) {
@@ -144,8 +144,8 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+      this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
     }
   }
 
@@ -167,30 +167,30 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), (long) getCommenterId());
-      this.__assoc_post = new BelongsToAssociation<Post>(databases.getDatabase1().posts(), getCommentedOnId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), (long) getCommenterId());
+      this.__assoc_post = new BelongsToAssociation<>(databases.getDatabase1().posts(), getCommentedOnId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public String getContent(){
+  public String getContent() {
     return attributes.getContent();
   }
 
-  public Comment setContent(String newval){
+  public Comment setContent(String newval) {
     attributes.setContent(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public int getCommenterId(){
+  public int getCommenterId() {
     return attributes.getCommenterId();
   }
 
-  public Comment setCommenterId(int newval){
+  public Comment setCommenterId(int newval) {
     attributes.setCommenterId(newval);
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
@@ -199,11 +199,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     return this;
   }
 
-  public long getCommentedOnId(){
+  public long getCommentedOnId() {
     return attributes.getCommentedOnId();
   }
 
-  public Comment setCommentedOnId(long newval){
+  public Comment setCommentedOnId(long newval) {
     attributes.setCommentedOnId(newval);
     if(__assoc_post != null){
       this.__assoc_post.setOwnerId(newval);
@@ -212,11 +212,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     return this;
   }
 
-  public long getCreatedAt(){
+  public long getCreatedAt() {
     return attributes.getCreatedAt();
   }
 
-  public Comment setCreatedAt(long newval){
+  public Comment setCreatedAt(long newval) {
     attributes.setCreatedAt(newval);
     cachedHashCode = 0;
     return this;
@@ -225,16 +225,16 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
   public void setField(_Fields field, Object value) {
     switch (field) {
       case content:
-        setContent((String) value);
+        setContent((String)value);
         break;
       case commenter_id:
-        setCommenterId((Integer) value);
+        setCommenterId((Integer)value);
         break;
       case commented_on_id:
-        setCommentedOnId((Long) value);
+        setCommentedOnId((Long)value);
         break;
       case created_at:
-        setCreatedAt((Long) value);
+        setCreatedAt((Long)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -333,7 +333,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -435,12 +435,12 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
   public String toString() {
     return "<Comment"
-      + " id: " + this.getId()
-      + " content: " + getContent()
-      + " commenter_id: " + getCommenterId()
-      + " commented_on_id: " + getCommentedOnId()
-      + " created_at: " + getCreatedAt()
-      + ">";
+        + " id: " + this.getId()
+        + " content: " + getContent()
+        + " commenter_id: " + getCommenterId()
+        + " commented_on_id: " + getCommentedOnId()
+        + " created_at: " + getCreatedAt()
+        + ">";
   }
 
   public void unsetAssociations() {
@@ -449,7 +449,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     __assoc_post = null;
   }
 
-  public int compareTo(Comment that){
+  public int compareTo(Comment that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -504,10 +504,10 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      String content = (String) fieldsMap.get(Comment._Fields.content);
-      int commenter_id = (Integer) fieldsMap.get(Comment._Fields.commenter_id);
-      long commented_on_id = (Long) fieldsMap.get(Comment._Fields.commented_on_id);
-      Long created_at_tmp = (Long) fieldsMap.get(Comment._Fields.created_at);
+      String content = (String)fieldsMap.get(Comment._Fields.content);
+      int commenter_id = (Integer)fieldsMap.get(Comment._Fields.commenter_id);
+      long commented_on_id = (Long)fieldsMap.get(Comment._Fields.commented_on_id);
+      Long created_at_tmp = (Long)fieldsMap.get(Comment._Fields.created_at);
       long created_at = created_at_tmp == null ? 28800000L : created_at_tmp;
       this.__content = content;
       this.__commenter_id = commenter_id;
@@ -523,41 +523,41 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
       this.__created_at = other.getCreatedAt();
     }
 
-    public String getContent(){
+    public String getContent() {
       return __content;
     }
 
-    public Attributes setContent(String newval){
+    public Attributes setContent(String newval) {
       this.__content = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public int getCommenterId(){
+    public int getCommenterId() {
       return __commenter_id;
     }
 
-    public Attributes setCommenterId(int newval){
+    public Attributes setCommenterId(int newval) {
       this.__commenter_id = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public long getCommentedOnId(){
+    public long getCommentedOnId() {
       return __commented_on_id;
     }
 
-    public Attributes setCommentedOnId(long newval){
+    public Attributes setCommentedOnId(long newval) {
       this.__commented_on_id = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public long getCreatedAt(){
+    public long getCreatedAt() {
       return __created_at;
     }
 
-    public Attributes setCreatedAt(long newval){
+    public Attributes setCreatedAt(long newval) {
       this.__created_at = newval;
       cachedHashCode = 0;
       return this;
@@ -566,16 +566,16 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     public void setField(_Fields field, Object value) {
       switch (field) {
         case content:
-          setContent((String) value);
+          setContent((String)value);
           break;
         case commenter_id:
-          setCommenterId((Integer) value);
+          setCommenterId((Integer)value);
           break;
         case commented_on_id:
-          setCommentedOnId((Long) value);
+          setCommentedOnId((Long)value);
           break;
         case created_at:
-          setCreatedAt((Long) value);
+          setCreatedAt((Long)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -584,19 +584,19 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("content")) {
-        setContent((String)  value);
+        setContent((String)value);
         return;
       }
       if (fieldName.equals("commenter_id")) {
-        setCommenterId((Integer)  value);
+        setCommenterId((Integer)value);
         return;
       }
       if (fieldName.equals("commented_on_id")) {
-        setCommentedOnId((Long)  value);
+        setCommentedOnId((Long)value);
         return;
       }
       if (fieldName.equals("created_at")) {
-        setCreatedAt((Long)  value);
+        setCreatedAt((Long)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -708,11 +708,11 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     
     public String toString() {
       return "<Comment.Attributes"
-        + " content: " + getContent()
-        + " commenter_id: " + getCommenterId()
-        + " commented_on_id: " + getCommentedOnId()
-        + " created_at: " + getCreatedAt()
-        + ">";
+          + " content: " + getContent()
+          + " commenter_id: " + getCommenterId()
+          + " commented_on_id: " + getCommentedOnId()
+          + " created_at: " + getCreatedAt()
+          + ">";
     }
   }
 
@@ -727,7 +727,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -738,7 +738,7 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -750,29 +750,19 @@ public class Comment extends ModelWithId<Comment, IDatabases> implements Compara
 
     @Override
     public String toString() {
-      return "<Comment.Id: "+this.getId()+">";
+      return "<Comment.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<Comment> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Comment model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<Comment> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Comment model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<Comment> models) {
+    return models.stream()
+        .map(Comment::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Comment.class, User.class, "commenter_id"));

@@ -153,7 +153,7 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
   }
 
   public List<Comment> find(Collection<Long> ids, Map<Enum, Object> fieldsMap) throws IOException {
-    List<Comment> foundList = new ArrayList<Comment>();
+    List<Comment> foundList = new ArrayList<>();
 
     if (fieldsMap == null || fieldsMap.isEmpty()) {
       return foundList;
@@ -161,8 +161,8 @@ public class BaseCommentPersistenceImpl extends AbstractDatabaseModel<Comment> i
 
     StringBuilder statementString = new StringBuilder();
     statementString.append("SELECT * FROM comments WHERE (");
-    List<Object> nonNullValues = new ArrayList<Object>();
-    List<Comment._Fields> nonNullValueFields = new ArrayList<Comment._Fields>();
+    List<Object> nonNullValues = new ArrayList<>();
+    List<Comment._Fields> nonNullValueFields = new ArrayList<>();
 
     Iterator<Map.Entry<Enum, Object>> iter = fieldsMap.entrySet().iterator();
     while (iter.hasNext()) {

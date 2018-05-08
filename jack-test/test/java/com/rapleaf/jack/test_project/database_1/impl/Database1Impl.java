@@ -51,42 +51,12 @@ public class Database1Impl implements IDatabase1 {
     this.conn = conn;
     this.databases = databases;
     this.postQueryAction = postQueryAction;
-    this.comments = new LazyLoadPersistence<ICommentPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected ICommentPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseCommentPersistenceImpl(conn, databases);
-      }
-    };
-    this.images = new LazyLoadPersistence<IImagePersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IImagePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseImagePersistenceImpl(conn, databases);
-      }
-    };
-    this.lockable_models = new LazyLoadPersistence<ILockableModelPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected ILockableModelPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseLockableModelPersistenceImpl(conn, databases);
-      }
-    };
-    this.posts = new LazyLoadPersistence<IPostPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IPostPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BasePostPersistenceImpl(conn, databases);
-      }
-    };
-    this.test_store = new LazyLoadPersistence<ITestStorePersistence, IDatabases>(conn, databases) {
-      @Override
-      protected ITestStorePersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseTestStorePersistenceImpl(conn, databases);
-      }
-    };
-    this.users = new LazyLoadPersistence<IUserPersistence, IDatabases>(conn, databases) {
-      @Override
-      protected IUserPersistence build(BaseDatabaseConnection conn, IDatabases databases) {
-        return new BaseUserPersistenceImpl(conn, databases);
-      }
-    };
+    this.comments = new LazyLoadPersistence<>(conn, databases, BaseCommentPersistenceImpl::new);
+    this.images = new LazyLoadPersistence<>(conn, databases, BaseImagePersistenceImpl::new);
+    this.lockable_models = new LazyLoadPersistence<>(conn, databases, BaseLockableModelPersistenceImpl::new);
+    this.posts = new LazyLoadPersistence<>(conn, databases, BasePostPersistenceImpl::new);
+    this.test_store = new LazyLoadPersistence<>(conn, databases, BaseTestStorePersistenceImpl::new);
+    this.users = new LazyLoadPersistence<>(conn, databases, BaseUserPersistenceImpl::new);
   }
 
   public GenericInsertion.Builder createInsertion() {
@@ -111,7 +81,7 @@ public class Database1Impl implements IDatabase1 {
   public Records findBySql(String statement, List<?> params, Collection<Column> columns) throws IOException {
     final PreparedStatement preparedStatement = conn.getPreparedStatement(statement);
     try {
-      for (int i=0; i<params.size(); i++) {
+      for (int i = 0; i < params.size(); i++) {
         final Object param = params.get(i);
         final int paramIdx = i+1;
         preparedStatement.setObject(paramIdx, param);
@@ -148,16 +118,12 @@ public class Database1Impl implements IDatabase1 {
 
   public boolean deleteAll() throws IOException {
     boolean success = true;
-    try {
     success &= comments().isEmpty() || comments().deleteAll();
     success &= images().isEmpty() || images().deleteAll();
     success &= lockableModels().isEmpty() || lockableModels().deleteAll();
     success &= posts().isEmpty() || posts().deleteAll();
     success &= testStore().isEmpty() || testStore().deleteAll();
     success &= users().isEmpty() || users().deleteAll();
-    } catch (IOException e) {
-      throw e;
-    }
     return success;
   }
 

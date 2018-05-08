@@ -2,9 +2,7 @@ package com.rapleaf.jack.queries;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
+import java.util.stream.Collectors;
 
 import com.rapleaf.jack.queries.where_operators.Between;
 import com.rapleaf.jack.queries.where_operators.EqualTo;
@@ -46,28 +44,28 @@ public class Column<T> {
    * Construct ID column. This constructor is mainly for internal use.
    */
   public static Column<Long> fromId(String table) {
-    return new Column<Long>(table, null, Long.class);
+    return new Column<>(table, null, Long.class);
   }
 
   /**
    * Construct column other than ID, timestamp or date. This constructor is mainly for internal use.
    */
   public static <T> Column<T> fromField(String table, Enum field, Class<T> fieldType) {
-    return new Column<T>(table, field, fieldType);
+    return new Column<>(table, field, fieldType);
   }
 
   /**
    * Construct timestamp column. This constructor is mainly for internal use.
    */
   public static Column<Long> fromTimestamp(String table, Enum field) {
-    return new Column<Long>(table, field, java.sql.Timestamp.class);
+    return new Column<>(table, field, java.sql.Timestamp.class);
   }
 
   /**
    * Construct date column. This constructor is mainly for internal use.
    */
   public static Column<Long> fromDate(String table, Enum field) {
-    return new Column<Long>(table, field, java.sql.Date.class);
+    return new Column<>(table, field, java.sql.Date.class);
   }
 
   /**
@@ -77,7 +75,7 @@ public class Column<T> {
    * User.ID.equalTo(Post.USER_ID.as(Long.class))
    */
   public <M> Column<M> as(Class<M> type) {
-    return new Column<M>(this.table, this.field, type);
+    return new Column<>(this.table, this.field, type);
   }
 
   /**
@@ -116,30 +114,30 @@ public class Column<T> {
   }
 
   public GenericConstraint isNotNull() {
-    return new GenericConstraint<T>(this, new IsNotNull<T>());
+    return new GenericConstraint<>(this, new IsNotNull<>());
   }
 
   public GenericConstraint isNull() {
-    return new GenericConstraint<T>(this, new IsNull<T>());
+    return new GenericConstraint<>(this, new IsNull<>());
   }
 
   public GenericConstraint equalTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
-        return createDateConstraint(new EqualTo<Long>(Long.class.cast(value)));
+        return createDateConstraint(new EqualTo<>((Long)value));
       } else {
-        return new GenericConstraint<T>(this, new EqualTo<T>(value));
+        return new GenericConstraint<>(this, new EqualTo<>(value));
       }
     } else {
-      return new GenericConstraint<T>(this, new IsNull<T>());
+      return new GenericConstraint<>(this, new IsNull<>());
     }
   }
 
   public GenericConstraint equalTo(Column<T> column) {
     if (column != null) {
-      return new GenericConstraint<T>(this, new EqualTo<T>(column));
+      return new GenericConstraint<>(this, new EqualTo<>(column));
     } else {
-      return new GenericConstraint<T>(this, new IsNull<T>());
+      return new GenericConstraint<>(this, new IsNull<>());
     }
   }
 
@@ -150,20 +148,20 @@ public class Column<T> {
   public GenericConstraint notEqualTo(T value) {
     if (value != null) {
       if (isDateColumn()) {
-        return createDateConstraint(new NotEqualTo<Long>(Long.class.cast(value)));
+        return createDateConstraint(new NotEqualTo<>((Long)value));
       } else {
-        return new GenericConstraint<T>(this, new NotEqualTo<T>(value));
+        return new GenericConstraint<>(this, new NotEqualTo<>(value));
       }
     } else {
-      return new GenericConstraint<T>(this, new IsNotNull<T>());
+      return new GenericConstraint<>(this, new IsNotNull<>());
     }
   }
 
   public GenericConstraint notEqualTo(Column<T> column) {
     if (column != null) {
-      return new GenericConstraint<T>(this, new NotEqualTo<T>(column));
+      return new GenericConstraint<>(this, new NotEqualTo<>(column));
     } else {
-      return new GenericConstraint<T>(this, new IsNotNull<T>());
+      return new GenericConstraint<>(this, new IsNotNull<>());
     }
   }
 
@@ -173,14 +171,14 @@ public class Column<T> {
 
   public GenericConstraint greaterThan(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new GreaterThan<Long>(Long.class.cast(value)));
+      return createDateConstraint(new GreaterThan<>((Long)value));
     } else {
-      return new GenericConstraint<T>(this, new GreaterThan<T>(value));
+      return new GenericConstraint<>(this, new GreaterThan<>(value));
     }
   }
 
   public GenericConstraint greaterThan(Column<T> column) {
-    return new GenericConstraint<T>(this, new GreaterThan<T>(column));
+    return new GenericConstraint<>(this, new GreaterThan<>(column));
   }
 
   public GenericConstraint greaterThan(SingleValue<T> singleValue) {
@@ -189,14 +187,14 @@ public class Column<T> {
 
   public GenericConstraint greaterThanOrEqualTo(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new GreaterThanOrEqualTo<Long>(Long.class.cast(value)));
+      return createDateConstraint(new GreaterThanOrEqualTo<>(Long.class.cast(value)));
     } else {
-      return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
+      return new GenericConstraint<>(this, new GreaterThanOrEqualTo<>(value));
     }
   }
 
   public GenericConstraint greaterThanOrEqualTo(Column<T> value) {
-    return new GenericConstraint<T>(this, new GreaterThanOrEqualTo<T>(value));
+    return new GenericConstraint<>(this, new GreaterThanOrEqualTo<>(value));
   }
 
   public GenericConstraint greaterThanOrEqualTo(SingleValue<T> singleValue) {
@@ -205,14 +203,14 @@ public class Column<T> {
 
   public GenericConstraint lessThan(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new LessThan<Long>(Long.class.cast(value)));
+      return createDateConstraint(new LessThan<>(Long.class.cast(value)));
     } else {
-      return new GenericConstraint<T>(this, new LessThan<T>(value));
+      return new GenericConstraint<>(this, new LessThan<>(value));
     }
   }
 
   public GenericConstraint lessThan(Column<T> column) {
-    return new GenericConstraint<T>(this, new LessThan<T>(column));
+    return new GenericConstraint<>(this, new LessThan<>(column));
   }
 
   public GenericConstraint lessThan(SingleValue<T> singleValue) {
@@ -221,14 +219,14 @@ public class Column<T> {
 
   public GenericConstraint lessThanOrEqualTo(T value) {
     if (isDateColumn()) {
-      return createDateConstraint(new LessThanOrEqualTo<Long>(Long.class.cast(value)));
+      return createDateConstraint(new LessThanOrEqualTo<>(Long.class.cast(value)));
     } else {
-      return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
+      return new GenericConstraint<>(this, new LessThanOrEqualTo<>(value));
     }
   }
 
   public GenericConstraint lessThanOrEqualTo(Column<T> value) {
-    return new GenericConstraint<T>(this, new LessThanOrEqualTo<T>(value));
+    return new GenericConstraint<>(this, new LessThanOrEqualTo<>(value));
   }
 
   public GenericConstraint lessThanOrEqualTo(SingleValue<T> singleValue) {
@@ -237,73 +235,73 @@ public class Column<T> {
 
   public GenericConstraint between(T min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(Long.class.cast(min), Long.class.cast(max)));
+      return createDateConstraint(new Between<>((Long)min, (Long)max));
     } else {
-      return new GenericConstraint<T>(this, new Between<T>(min, max));
+      return new GenericConstraint<>(this, new Between<>(min, max));
     }
   }
 
   public GenericConstraint between(Column<T> min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(min.as(Long.class), Long.class.cast(max)));
+      return createDateConstraint(new Between<>(min.as(Long.class), (Long)max));
     } else {
-      return new GenericConstraint<T>(this, new Between<T>(min, max));
+      return new GenericConstraint<>(this, new Between<>(min, max));
     }
   }
 
   public GenericConstraint between(T min, Column<T> max) {
     if (isDateColumn()) {
-      return createDateConstraint(new Between<Long>(Long.class.cast(min), max.as(Long.class)));
+      return createDateConstraint(new Between<>((Long)min, max.as(Long.class)));
     } else {
-      return new GenericConstraint<T>(this, new Between<T>(min, max));
+      return new GenericConstraint<>(this, new Between<>(min, max));
     }
   }
 
   public GenericConstraint between(Column<T> min, Column<T> max) {
-    return new GenericConstraint<T>(this, new Between<T>(min, max));
+    return new GenericConstraint<>(this, new Between<>(min, max));
   }
 
   public GenericConstraint notBetween(T min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), Long.class.cast(max)));
+      return createDateConstraint(new NotBetween<>((Long)min, (Long)max));
     } else {
-      return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+      return new GenericConstraint<>(this, new NotBetween<>(min, max));
     }
   }
 
   public GenericConstraint notBetween(Column<T> min, T max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(min.as(Long.class), Long.class.cast(max)));
+      return createDateConstraint(new NotBetween<>(min.as(Long.class), (Long)max));
     } else {
-      return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+      return new GenericConstraint<>(this, new NotBetween<>(min, max));
     }
   }
 
   public GenericConstraint notBetween(T min, Column<T> max) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotBetween<Long>(Long.class.cast(min), max.as(Long.class)));
+      return createDateConstraint(new NotBetween<>((Long)min, max.as(Long.class)));
     } else {
-      return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+      return new GenericConstraint<>(this, new NotBetween<>(min, max));
     }
   }
 
   public GenericConstraint notBetween(Column<T> min, Column<T> max) {
-    return new GenericConstraint<T>(this, new NotBetween<T>(min, max));
+    return new GenericConstraint<>(this, new NotBetween<>(min, max));
   }
 
-  public GenericConstraint in(T value, T... otherValues) {
+  public GenericConstraint<?> in(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(new In<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
+      return createDateConstraint(new In<>((Long)value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
-      return new GenericConstraint<T>(this, new In<T>(value, otherValues));
+      return new GenericConstraint<>(this, new In<>(value, otherValues));
     }
   }
 
   public GenericConstraint in(Collection<T> values) {
     if (isDateColumn()) {
-      return createDateConstraint(new In<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)));
+      return createDateConstraint(new In<>(values.stream().map(Long.class::cast).collect(Collectors.toList())));
     } else {
-      return new GenericConstraint<T>(this, new In<T>(values));
+      return new GenericConstraint<>(this, new In<>(values));
     }
   }
 
@@ -313,17 +311,17 @@ public class Column<T> {
 
   public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotIn<Long>(Long.class.cast(value), Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
+      return createDateConstraint(new NotIn<>((Long) value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
-      return new GenericConstraint<T>(this, new NotIn<T>(value, otherValues));
+      return new GenericConstraint<>(this, new NotIn<>(value, otherValues));
     }
   }
 
   public GenericConstraint notIn(Collection<T> values) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotIn<Long>(Collections2.transform(values, JackUtility.LONG_CASTER)));
+      return createDateConstraint(new NotIn<>(values.stream().map(Long.class::cast).collect(Collectors.toList())));
     } else {
-      return new GenericConstraint<T>(this, new NotIn<T>(values));
+      return new GenericConstraint<>(this, new NotIn<>(values));
     }
   }
 
@@ -332,11 +330,11 @@ public class Column<T> {
   }
 
   public GenericConstraint matches(String pattern) {
-    return new GenericConstraint<String>(this.as(String.class), new Match(pattern));
+    return new GenericConstraint<>(this.as(String.class), new Match(pattern));
   }
 
   public GenericConstraint matches(Column<String> col, String prefix, String suffix) {
-    return new GenericConstraint<String>(this.as(String.class), new Match(col, prefix, suffix));
+    return new GenericConstraint<>(this.as(String.class), new Match(col, prefix, suffix));
   }
 
   public GenericConstraint contains(String string) {
@@ -348,11 +346,11 @@ public class Column<T> {
   }
 
   public GenericConstraint startsWith(String start) {
-    return new GenericConstraint<String>(this.as(String.class), new Match(start + "%"));
+    return new GenericConstraint<>(this.as(String.class), new Match(start + "%"));
   }
 
   public GenericConstraint endsWith(String end) {
-    return new GenericConstraint<String>(this.as(String.class), new Match("%" + end));
+    return new GenericConstraint<>(this.as(String.class), new Match("%" + end));
   }
 
   boolean isDateColumn() {
@@ -360,11 +358,11 @@ public class Column<T> {
   }
 
   private GenericConstraint createDateConstraint(WhereOperator<Long> operator) {
-    return new GenericConstraint<String>(
+    return new GenericConstraint<>(
         this.as(String.class),
-        new GenericOperator<String>(
+        new GenericOperator<>(
             operator.getSqlStatement(),
-            Lists.transform(operator.getParameters(), JackUtility.FORMATTER_FUNCTION_MAP.get(type))
+            operator.getParameters().stream().map(JackUtility.FORMATTER_FUNCTION_MAP.get(type)).collect(Collectors.toList())
         )
     );
   }
@@ -381,6 +379,6 @@ public class Column<T> {
 
   @Override
   public boolean equals(Object that) {
-    return that instanceof Column && this.toString().equals(((Column)that).toString());
+    return that instanceof Column && this.toString().equals(that.toString());
   }
 }

@@ -14,23 +14,23 @@ public class AggregatedColumn<T> extends Column<T> {
   }
 
   public static <T> AggregatedColumn<Integer> COUNT(Column<T> column) {
-    return new AggregatedColumn<Integer>(column.as(Integer.class), Function.COUNT);
+    return new AggregatedColumn<>(column.as(Integer.class), Function.COUNT);
   }
 
   public static <T extends Number> AggregatedColumn<Number> AVG(Column<T> column) {
-    return new AggregatedColumn<Number>(column, Function.AVG);
+    return new AggregatedColumn<>(column, Function.AVG);
   }
 
   public static <T extends Number> AggregatedColumn<T> SUM(Column<T> column) {
-    return new AggregatedColumn<T>(column, Function.SUM);
+    return new AggregatedColumn<>(column, Function.SUM);
   }
 
   public static <T extends Number> AggregatedColumn<T> MAX(Column<T> column) {
-    return new AggregatedColumn<T>(column, Function.MAX);
+    return new AggregatedColumn<>(column, Function.MAX);
   }
 
   public static <T extends Number> AggregatedColumn<T> MIN(Column<T> column) {
-    return new AggregatedColumn<T>(column, Function.MIN);
+    return new AggregatedColumn<>(column, Function.MIN);
   }
 
   @Override

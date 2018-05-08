@@ -49,7 +49,7 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder whereId(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Column.fromId(null), operator, null));
+    addWhereConstraint(new WhereConstraint<>(Column.fromId(null), operator, null));
     return this;
   }
 
@@ -89,12 +89,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder title(String value) {
-    addWhereConstraint(new WhereConstraint<String>(Post._Fields.title, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.title, JackMatchers.equalTo(value)));
     return this;
   }
 
   public PostQueryBuilder whereTitle(IWhereOperator<String> operator) {
-    addWhereConstraint(new WhereConstraint<String>(Post._Fields.title, operator));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.title, operator));
     return this;
   }
 
@@ -109,12 +109,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder postedAtMillis(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(Post._Fields.posted_at_millis, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.posted_at_millis, JackMatchers.equalTo(value)));
     return this;
   }
 
   public PostQueryBuilder wherePostedAtMillis(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Post._Fields.posted_at_millis, operator));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.posted_at_millis, operator));
     return this;
   }
 
@@ -129,12 +129,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder userId(Integer value) {
-    addWhereConstraint(new WhereConstraint<Integer>(Post._Fields.user_id, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.user_id, JackMatchers.equalTo(value)));
     return this;
   }
 
   public PostQueryBuilder whereUserId(IWhereOperator<Integer> operator) {
-    addWhereConstraint(new WhereConstraint<Integer>(Post._Fields.user_id, operator));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.user_id, operator));
     return this;
   }
 
@@ -149,12 +149,12 @@ public class PostQueryBuilder extends AbstractQueryBuilder<Post> {
   }
 
   public PostQueryBuilder updatedAt(Long value) {
-    addWhereConstraint(new WhereConstraint<Long>(Post._Fields.updated_at, JackMatchers.equalTo(value)));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.updated_at, JackMatchers.equalTo(value)));
     return this;
   }
 
   public PostQueryBuilder whereUpdatedAt(IWhereOperator<Long> operator) {
-    addWhereConstraint(new WhereConstraint<Long>(Post._Fields.updated_at, operator));
+    addWhereConstraint(new WhereConstraint<>(Post._Fields.updated_at, operator));
     return this;
   }
 

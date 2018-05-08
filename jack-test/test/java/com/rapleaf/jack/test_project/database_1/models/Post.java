@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -90,8 +91,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id, title, posted_at_millis, user_id, updated_at);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id, final String title, final Long posted_at_millis, final Integer user_id, final Long updated_at) {
@@ -102,8 +103,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public Post(long id, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id);
-    this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-    this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+    this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+    this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
   }
 
   public Post(long id) {
@@ -120,8 +121,8 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     this.attributes = attributes;
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
 
@@ -143,40 +144,40 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     attributes = new Attributes(other.getAttributes());
 
     if (databases != null) {
-      this.__assoc_user = new BelongsToAssociation<User>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
-      this.__assoc_comments = new HasManyAssociation<Comment>(databases.getDatabase1().comments(), "commented_on_id", getId());
+      this.__assoc_user = new BelongsToAssociation<>(databases.getDatabase1().users(), getUserId() == null ? null : getUserId().longValue());
+      this.__assoc_comments = new HasManyAssociation<>(databases.getDatabase1().comments(), "commented_on_id", getId());
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public String getTitle(){
+  public String getTitle() {
     return attributes.getTitle();
   }
 
-  public Post setTitle(String newval){
+  public Post setTitle(String newval) {
     attributes.setTitle(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getPostedAtMillis(){
+  public Long getPostedAtMillis() {
     return attributes.getPostedAtMillis();
   }
 
-  public Post setPostedAtMillis(Long newval){
+  public Post setPostedAtMillis(Long newval) {
     attributes.setPostedAtMillis(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Integer getUserId(){
+  public Integer getUserId() {
     return attributes.getUserId();
   }
 
-  public Post setUserId(Integer newval){
+  public Post setUserId(Integer newval) {
     attributes.setUserId(newval);
     if(__assoc_user != null){
       this.__assoc_user.setOwnerId(newval);
@@ -185,11 +186,11 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     return this;
   }
 
-  public Long getUpdatedAt(){
+  public Long getUpdatedAt() {
     return attributes.getUpdatedAt();
   }
 
-  public Post setUpdatedAt(Long newval){
+  public Post setUpdatedAt(Long newval) {
     attributes.setUpdatedAt(newval);
     cachedHashCode = 0;
     return this;
@@ -198,16 +199,16 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
   public void setField(_Fields field, Object value) {
     switch (field) {
       case title:
-        setTitle((String) value);
+        setTitle((String)value);
         break;
       case posted_at_millis:
-        setPostedAtMillis((Long) value);
+        setPostedAtMillis((Long)value);
         break;
       case user_id:
-        setUserId((Integer) value);
+        setUserId((Integer)value);
         break;
       case updated_at:
-        setUpdatedAt((Long) value);
+        setUpdatedAt((Long)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -306,7 +307,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -390,12 +391,12 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
   public String toString() {
     return "<Post"
-      + " id: " + this.getId()
-      + " title: " + getTitle()
-      + " posted_at_millis: " + getPostedAtMillis()
-      + " user_id: " + getUserId()
-      + " updated_at: " + getUpdatedAt()
-      + ">";
+        + " id: " + this.getId()
+        + " title: " + getTitle()
+        + " posted_at_millis: " + getPostedAtMillis()
+        + " user_id: " + getUserId()
+        + " updated_at: " + getUpdatedAt()
+        + ">";
   }
 
   public void unsetAssociations() {
@@ -404,7 +405,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     __assoc_comments = null;
   }
 
-  public int compareTo(Post that){
+  public int compareTo(Post that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -437,10 +438,10 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      String title = (String) fieldsMap.get(Post._Fields.title);
-      Long posted_at_millis = (Long) fieldsMap.get(Post._Fields.posted_at_millis);
-      Integer user_id = (Integer) fieldsMap.get(Post._Fields.user_id);
-      Long updated_at = (Long) fieldsMap.get(Post._Fields.updated_at);
+      String title = (String)fieldsMap.get(Post._Fields.title);
+      Long posted_at_millis = (Long)fieldsMap.get(Post._Fields.posted_at_millis);
+      Integer user_id = (Integer)fieldsMap.get(Post._Fields.user_id);
+      Long updated_at = (Long)fieldsMap.get(Post._Fields.updated_at);
       this.__title = title;
       this.__posted_at_millis = posted_at_millis;
       this.__user_id = user_id;
@@ -455,41 +456,41 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
       this.__updated_at = other.getUpdatedAt();
     }
 
-    public String getTitle(){
+    public String getTitle() {
       return __title;
     }
 
-    public Attributes setTitle(String newval){
+    public Attributes setTitle(String newval) {
       this.__title = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getPostedAtMillis(){
+    public Long getPostedAtMillis() {
       return __posted_at_millis;
     }
 
-    public Attributes setPostedAtMillis(Long newval){
+    public Attributes setPostedAtMillis(Long newval) {
       this.__posted_at_millis = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Integer getUserId(){
+    public Integer getUserId() {
       return __user_id;
     }
 
-    public Attributes setUserId(Integer newval){
+    public Attributes setUserId(Integer newval) {
       this.__user_id = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getUpdatedAt(){
+    public Long getUpdatedAt() {
       return __updated_at;
     }
 
-    public Attributes setUpdatedAt(Long newval){
+    public Attributes setUpdatedAt(Long newval) {
       this.__updated_at = newval;
       cachedHashCode = 0;
       return this;
@@ -498,16 +499,16 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     public void setField(_Fields field, Object value) {
       switch (field) {
         case title:
-          setTitle((String) value);
+          setTitle((String)value);
           break;
         case posted_at_millis:
-          setPostedAtMillis((Long) value);
+          setPostedAtMillis((Long)value);
           break;
         case user_id:
-          setUserId((Integer) value);
+          setUserId((Integer)value);
           break;
         case updated_at:
-          setUpdatedAt((Long) value);
+          setUpdatedAt((Long)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -516,19 +517,19 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("title")) {
-        setTitle((String)  value);
+        setTitle((String)value);
         return;
       }
       if (fieldName.equals("posted_at_millis")) {
-        setPostedAtMillis((Long)  value);
+        setPostedAtMillis((Long)value);
         return;
       }
       if (fieldName.equals("user_id")) {
-        setUserId((Integer)  value);
+        setUserId((Integer)value);
         return;
       }
       if (fieldName.equals("updated_at")) {
-        setUpdatedAt((Long)  value);
+        setUpdatedAt((Long)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -640,11 +641,11 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     
     public String toString() {
       return "<Post.Attributes"
-        + " title: " + getTitle()
-        + " posted_at_millis: " + getPostedAtMillis()
-        + " user_id: " + getUserId()
-        + " updated_at: " + getUpdatedAt()
-        + ">";
+          + " title: " + getTitle()
+          + " posted_at_millis: " + getPostedAtMillis()
+          + " user_id: " + getUserId()
+          + " updated_at: " + getUpdatedAt()
+          + ">";
     }
   }
 
@@ -659,7 +660,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -670,7 +671,7 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -682,29 +683,19 @@ public class Post extends ModelWithId<Post, IDatabases> implements Comparable<Po
 
     @Override
     public String toString() {
-      return "<Post.Id: "+this.getId()+">";
+      return "<Post.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<Post> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Post model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<Post> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (Post model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<Post> models) {
+    return models.stream()
+        .map(Post::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
       meta.add(new DefaultAssociationMetadata(AssociationType.BELONGS_TO, Post.class, User.class, "user_id"));

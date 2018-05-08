@@ -7,24 +7,25 @@
 package com.rapleaf.jack.test_project.database_1.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.rapleaf.jack.ModelWithId;
+import com.rapleaf.jack.AssociationType;
 import com.rapleaf.jack.AttributesWithId;
 import com.rapleaf.jack.BelongsToAssociation;
+import com.rapleaf.jack.DefaultAssociationMetadata;
 import com.rapleaf.jack.HasManyAssociation;
 import com.rapleaf.jack.HasOneAssociation;
-import com.rapleaf.jack.ModelIdWrapper;
 import com.rapleaf.jack.IAssociationMetadata;
 import com.rapleaf.jack.IModelAssociationMetadata;
-import com.rapleaf.jack.DefaultAssociationMetadata;
-import com.rapleaf.jack.AssociationType;
+import com.rapleaf.jack.ModelIdWrapper;
+import com.rapleaf.jack.ModelWithId;
 import com.rapleaf.jack.queries.AbstractTable;
 import com.rapleaf.jack.queries.Column;
 
@@ -145,66 +146,66 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     if (databases != null) {
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
-  public Integer getEntryType(){
+  public Integer getEntryType() {
     return attributes.getEntryType();
   }
 
-  public TestStore setEntryType(Integer newval){
+  public TestStore setEntryType(Integer newval) {
     attributes.setEntryType(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getEntryScope(){
+  public Long getEntryScope() {
     return attributes.getEntryScope();
   }
 
-  public TestStore setEntryScope(Long newval){
+  public TestStore setEntryScope(Long newval) {
     attributes.setEntryScope(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getEntryKey(){
+  public String getEntryKey() {
     return attributes.getEntryKey();
   }
 
-  public TestStore setEntryKey(String newval){
+  public TestStore setEntryKey(String newval) {
     attributes.setEntryKey(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public String getEntryValue(){
+  public String getEntryValue() {
     return attributes.getEntryValue();
   }
 
-  public TestStore setEntryValue(String newval){
+  public TestStore setEntryValue(String newval) {
     attributes.setEntryValue(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getCreatedAt(){
+  public Long getCreatedAt() {
     return attributes.getCreatedAt();
   }
 
-  public TestStore setCreatedAt(Long newval){
+  public TestStore setCreatedAt(Long newval) {
     attributes.setCreatedAt(newval);
     cachedHashCode = 0;
     return this;
   }
 
-  public Long getUpdatedAt(){
+  public Long getUpdatedAt() {
     return attributes.getUpdatedAt();
   }
 
-  public TestStore setUpdatedAt(Long newval){
+  public TestStore setUpdatedAt(Long newval) {
     attributes.setUpdatedAt(newval);
     cachedHashCode = 0;
     return this;
@@ -213,22 +214,22 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
   public void setField(_Fields field, Object value) {
     switch (field) {
       case entry_type:
-        setEntryType((Integer) value);
+        setEntryType((Integer)value);
         break;
       case entry_scope:
-        setEntryScope((Long) value);
+        setEntryScope((Long)value);
         break;
       case entry_key:
-        setEntryKey((String) value);
+        setEntryKey((String)value);
         break;
       case entry_value:
-        setEntryValue((String) value);
+        setEntryValue((String)value);
         break;
       case created_at:
-        setCreatedAt((Long) value);
+        setCreatedAt((Long)value);
         break;
       case updated_at:
-        setUpdatedAt((Long) value);
+        setUpdatedAt((Long)value);
         break;
       default:
         throw new IllegalStateException("Invalid field: " + field);
@@ -347,7 +348,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -414,21 +415,21 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
   public String toString() {
     return "<TestStore"
-      + " id: " + this.getId()
-      + " entry_type: " + getEntryType()
-      + " entry_scope: " + getEntryScope()
-      + " entry_key: " + getEntryKey()
-      + " entry_value: " + getEntryValue()
-      + " created_at: " + getCreatedAt()
-      + " updated_at: " + getUpdatedAt()
-      + ">";
+        + " id: " + this.getId()
+        + " entry_type: " + getEntryType()
+        + " entry_scope: " + getEntryScope()
+        + " entry_key: " + getEntryKey()
+        + " entry_value: " + getEntryValue()
+        + " created_at: " + getCreatedAt()
+        + " updated_at: " + getUpdatedAt()
+        + ">";
   }
 
   public void unsetAssociations() {
     unsetDatabaseReference();
   }
 
-  public int compareTo(TestStore that){
+  public int compareTo(TestStore that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -465,12 +466,12 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public Attributes(long id, Map<Enum, Object> fieldsMap) {
       super(id);
-      Integer entry_type = (Integer) fieldsMap.get(TestStore._Fields.entry_type);
-      Long entry_scope = (Long) fieldsMap.get(TestStore._Fields.entry_scope);
-      String entry_key = (String) fieldsMap.get(TestStore._Fields.entry_key);
-      String entry_value = (String) fieldsMap.get(TestStore._Fields.entry_value);
-      Long created_at = (Long) fieldsMap.get(TestStore._Fields.created_at);
-      Long updated_at = (Long) fieldsMap.get(TestStore._Fields.updated_at);
+      Integer entry_type = (Integer)fieldsMap.get(TestStore._Fields.entry_type);
+      Long entry_scope = (Long)fieldsMap.get(TestStore._Fields.entry_scope);
+      String entry_key = (String)fieldsMap.get(TestStore._Fields.entry_key);
+      String entry_value = (String)fieldsMap.get(TestStore._Fields.entry_value);
+      Long created_at = (Long)fieldsMap.get(TestStore._Fields.created_at);
+      Long updated_at = (Long)fieldsMap.get(TestStore._Fields.updated_at);
       this.__entry_type = entry_type;
       this.__entry_scope = entry_scope;
       this.__entry_key = entry_key;
@@ -489,61 +490,61 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
       this.__updated_at = other.getUpdatedAt();
     }
 
-    public Integer getEntryType(){
+    public Integer getEntryType() {
       return __entry_type;
     }
 
-    public Attributes setEntryType(Integer newval){
+    public Attributes setEntryType(Integer newval) {
       this.__entry_type = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getEntryScope(){
+    public Long getEntryScope() {
       return __entry_scope;
     }
 
-    public Attributes setEntryScope(Long newval){
+    public Attributes setEntryScope(Long newval) {
       this.__entry_scope = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getEntryKey(){
+    public String getEntryKey() {
       return __entry_key;
     }
 
-    public Attributes setEntryKey(String newval){
+    public Attributes setEntryKey(String newval) {
       this.__entry_key = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public String getEntryValue(){
+    public String getEntryValue() {
       return __entry_value;
     }
 
-    public Attributes setEntryValue(String newval){
+    public Attributes setEntryValue(String newval) {
       this.__entry_value = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getCreatedAt(){
+    public Long getCreatedAt() {
       return __created_at;
     }
 
-    public Attributes setCreatedAt(Long newval){
+    public Attributes setCreatedAt(Long newval) {
       this.__created_at = newval;
       cachedHashCode = 0;
       return this;
     }
 
-    public Long getUpdatedAt(){
+    public Long getUpdatedAt() {
       return __updated_at;
     }
 
-    public Attributes setUpdatedAt(Long newval){
+    public Attributes setUpdatedAt(Long newval) {
       this.__updated_at = newval;
       cachedHashCode = 0;
       return this;
@@ -552,22 +553,22 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     public void setField(_Fields field, Object value) {
       switch (field) {
         case entry_type:
-          setEntryType((Integer) value);
+          setEntryType((Integer)value);
           break;
         case entry_scope:
-          setEntryScope((Long) value);
+          setEntryScope((Long)value);
           break;
         case entry_key:
-          setEntryKey((String) value);
+          setEntryKey((String)value);
           break;
         case entry_value:
-          setEntryValue((String) value);
+          setEntryValue((String)value);
           break;
         case created_at:
-          setCreatedAt((Long) value);
+          setCreatedAt((Long)value);
           break;
         case updated_at:
-          setUpdatedAt((Long) value);
+          setUpdatedAt((Long)value);
           break;
         default:
           throw new IllegalStateException("Invalid field: " + field);
@@ -576,27 +577,27 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     public void setField(String fieldName, Object value) {
       if (fieldName.equals("entry_type")) {
-        setEntryType((Integer)  value);
+        setEntryType((Integer)value);
         return;
       }
       if (fieldName.equals("entry_scope")) {
-        setEntryScope((Long)  value);
+        setEntryScope((Long)value);
         return;
       }
       if (fieldName.equals("entry_key")) {
-        setEntryKey((String)  value);
+        setEntryKey((String)value);
         return;
       }
       if (fieldName.equals("entry_value")) {
-        setEntryValue((String)  value);
+        setEntryValue((String)value);
         return;
       }
       if (fieldName.equals("created_at")) {
-        setCreatedAt((Long)  value);
+        setCreatedAt((Long)value);
         return;
       }
       if (fieldName.equals("updated_at")) {
-        setUpdatedAt((Long)  value);
+        setUpdatedAt((Long)value);
         return;
       }
       throw new IllegalStateException("Invalid field: " + fieldName);
@@ -738,13 +739,13 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     
     public String toString() {
       return "<TestStore.Attributes"
-        + " entry_type: " + getEntryType()
-        + " entry_scope: " + getEntryScope()
-        + " entry_key: " + getEntryKey()
-        + " entry_value: " + getEntryValue()
-        + " created_at: " + getCreatedAt()
-        + " updated_at: " + getUpdatedAt()
-        + ">";
+          + " entry_type: " + getEntryType()
+          + " entry_scope: " + getEntryScope()
+          + " entry_key: " + getEntryKey()
+          + " entry_value: " + getEntryValue()
+          + " created_at: " + getCreatedAt()
+          + " updated_at: " + getUpdatedAt()
+          + ">";
     }
   }
 
@@ -759,7 +760,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -770,7 +771,7 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -782,29 +783,19 @@ public class TestStore extends ModelWithId<TestStore, IDatabases> implements Com
 
     @Override
     public String toString() {
-      return "<TestStore.Id: "+this.getId()+">";
+      return "<TestStore.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<TestStore> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (TestStore model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<TestStore> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (TestStore model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<TestStore> models) {
+    return models.stream()
+        .map(TestStore::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
     }

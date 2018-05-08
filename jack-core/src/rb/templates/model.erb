@@ -17,24 +17,25 @@
 package <%= root_package %>.models;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import <%= JACK_NAMESPACE %>.ModelWithId;
+import <%= JACK_NAMESPACE %>.AssociationType;
 import <%= JACK_NAMESPACE %>.AttributesWithId;
 import <%= JACK_NAMESPACE %>.BelongsToAssociation;
+import <%= JACK_NAMESPACE %>.DefaultAssociationMetadata;
 import <%= JACK_NAMESPACE %>.HasManyAssociation;
 import <%= JACK_NAMESPACE %>.HasOneAssociation;
-import <%= JACK_NAMESPACE %>.ModelIdWrapper;
 import <%= JACK_NAMESPACE %>.IAssociationMetadata;
 import <%= JACK_NAMESPACE %>.IModelAssociationMetadata;
-import <%= JACK_NAMESPACE %>.DefaultAssociationMetadata;
-import <%= JACK_NAMESPACE %>.AssociationType;
+import <%= JACK_NAMESPACE %>.ModelIdWrapper;
+import <%= JACK_NAMESPACE %>.ModelWithId;
 import <%= JACK_NAMESPACE %>.queries.AbstractTable;
 import <%= JACK_NAMESPACE %>.queries.Column;
 
@@ -115,7 +116,6 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   }
 
 <% if model_defn.should_make_created_at_methods %>
-  
   public <%= model_defn.model_name %>(long id<%= model_defn.create_signature_full("created_at").empty? ? "" : ", " %><%= model_defn.create_signature_full("created_at") %>, IDatabases databases) {
     super(databases);
     attributes = new Attributes(id<%= model_defn.fields.select{|fd| fd.name != "created_at"}.map{|fd| ", #{fd.name}"}.join %>);
@@ -207,18 +207,18 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
   <% end %>
     }
   }
-  
+
   public Attributes getAttributes() {
     return attributes;
   }
 
 <% model_defn.fields.each do |field_defn| %>
 
-  public <%= field_defn.java_type %> <%= field_defn.getter %>{
+  public <%= field_defn.java_type %> <%= field_defn.getter %> {
     return attributes.<%= field_defn.getter %>;
   }
 
-  public <%= model_defn.model_name %> set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
+  public <%= model_defn.model_name %> set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval) {
     attributes.set<%= field_defn.name.camelcase %>(newval);
     <% if field_defn.association != nil and field_defn.association.type == "belongs_to" %>
     if(<%= field_defn.association.field_name %> != null){
@@ -234,7 +234,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     switch (field) {
   <% model_defn.fields.each do |field_defn| %>
       case <%= field_defn.name %>:
-        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>) value);
+        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)value);
         break;
   <% end %>
       default:
@@ -301,7 +301,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     }
     throw new IllegalStateException("Invalid field: " + field);
   }
-  
+
   public boolean hasField(String fieldName) {
     if (fieldName.equals("id")) {
       return true;
@@ -392,11 +392,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   public String toString() {
     return "<<%= model_defn.model_name %>"
-      + " id: " + this.getId()
-      <% model_defn.fields.each do |field_defn| %>
-      + " <%= field_defn.name %>: " + <%= field_defn.getter %>
-      <% end %>
-      + ">";
+        + " id: " + this.getId()
+        <% model_defn.fields.each do |field_defn| %>
+        + " <%= field_defn.name %>: " + <%= field_defn.getter %>
+        <% end %>
+        + ">";
   }
 
   public void unsetAssociations() {
@@ -406,7 +406,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
    <% end %>
   }
 
-  public int compareTo(<%= model_defn.model_name %> that){
+  public int compareTo(<%= model_defn.model_name %> that) {
     return Long.valueOf(this.getId()).compareTo(that.getId());
   }
   
@@ -482,9 +482,9 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       super(id);
       <% model_defn.fields.each do |field_defn| %>
       <% if field_defn.default_value.nil? %>
-      <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+      <%= field_defn.java_type %> <%= field_defn.name %> = (<%= field_defn.java_type(true) %>)fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
       <% else %>
-      <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>) fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
+      <%= field_defn.java_type(true) %> <%= field_defn.name %>_tmp = (<%= field_defn.java_type(true) %>)fieldsMap.get(<%= model_defn.model_name %>._Fields.<%= field_defn.name %>);
       <%= field_defn.java_type %> <%= field_defn.name %> = <%= field_defn.name %>_tmp == null ? <%= field_defn.default_value %> : <%= field_defn.name %>_tmp;
       <% end %>
       <% end %>
@@ -505,11 +505,11 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
   <% model_defn.fields.each do |field_defn| %>
 
-    public <%= field_defn.java_type %> <%= field_defn.getter %>{
+    public <%= field_defn.java_type %> <%= field_defn.getter %> {
       return __<%= field_defn.name %>;
     }
 
-    public Attributes set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval){
+    public Attributes set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval) {
       this.__<%= field_defn.name %> = newval;
       cachedHashCode = 0;
       return this;
@@ -520,7 +520,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
       switch (field) {
     <% model_defn.fields.each do |field_defn| %>
         case <%= field_defn.name %>:
-          set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>) value);
+          set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)value);
           break;
     <% end %>
         default:
@@ -531,7 +531,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     public void setField(String fieldName, Object value) {
     <% model_defn.fields.each do |field_defn| %>
       if (fieldName.equals("<%= field_defn.name %>")) {
-        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)  value);
+        set<%= field_defn.name.camelcase %>((<%= field_defn.java_type(true) %>)value);
         return;
       }
     <% end %>
@@ -611,10 +611,10 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     
     public String toString() {
       return "<<%= model_defn.model_name %>.Attributes"
-        <% model_defn.fields.each do |field_defn| %>
-        + " <%= field_defn.name %>: " + <%= field_defn.getter %>
-        <% end %>
-        + ">";
+          <% model_defn.fields.each do |field_defn| %>
+          + " <%= field_defn.name %>: " + <%= field_defn.getter %>
+          <% end %>
+          + ">";
     }
   }
 
@@ -629,7 +629,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
     @Override
     public Long getId() {
-      return Long.valueOf(this.id);
+      return id;
     }
 
     @Override
@@ -640,7 +640,7 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
     @Override
     public boolean equals(Object other) {
       if (other instanceof Id) {
-        return this.getId().equals(((Id) other).getId());
+        return this.getId().equals(((Id)other).getId());
       }
       return false;
     }
@@ -652,29 +652,19 @@ public class <%=model_defn.model_name%> extends ModelWithId<<%= model_defn.model
 
     @Override
     public String toString() {
-      return "<<%= model_defn.model_name %>.Id: "+this.getId()+">";
+      return "<<%= model_defn.model_name %>.Id: " + this.getId() + ">";
     }
   }
 
-  public static Set<Attributes> convertToAttributesSet(Set<<%= model_defn.model_name%>> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (<%= model_defn.model_name %> model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
-  }
-
-  public static Set<Attributes> convertToAttributesSet(List<<%= model_defn.model_name%>> models) {
-    Set<Attributes> attributes = new HashSet<Attributes>();
-    for (<%= model_defn.model_name %> model : models) {
-      attributes.add(model.getAttributes());
-    }
-    return attributes;
+  public static Set<Attributes> convertToAttributesSet(Collection<<%= model_defn.model_name%>> models) {
+    return models.stream()
+        .map(<%= model_defn.model_name%>::getAttributes)
+        .collect(Collectors.toSet());
   }
 
   public static class AssociationMetadata implements IModelAssociationMetadata {
 
-    private List<IAssociationMetadata> meta = new ArrayList<IAssociationMetadata>();
+    private List<IAssociationMetadata> meta = new ArrayList<>();
 
     public AssociationMetadata(){
     <% model_defn.associations.each do |assoc| %>
