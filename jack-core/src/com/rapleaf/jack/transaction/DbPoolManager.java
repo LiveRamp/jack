@@ -25,7 +25,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   public static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 3;
   public static final int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
   public static final long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
-  public static final long DEFAULT_KEEP_ALIVE_TIME = -1;  // when this parameter is less than zero, there is no eviction
+  public static final long DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(5).getMillis();
   public static final boolean DEFAULT_METRICS_TRACKING_ENABLED = false;
 
   private final DbMetricsImpl metrics;
@@ -44,7 +44,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
    *                            mean that the block can be infinite.
    * @param keepAliveTime       The minimum amount of time the connection may sit idle in the pool before it is
    *                            eligible for eviction (with the extra condition that at least {@code minIdleConnections}
-   *                            connections remain in the pool).
+   *                            connections remain in the pool). When this parameter is less than zero, there is no
+   *                            eviction.
    */
   DbPoolManager(Callable<DB> dbConstructor, int maxTotalConnections, int minIdleConnections, long maxWaitTime, long keepAliveTime, boolean metricsTrackingEnabled) {
     GenericObjectPoolConfig config = new GenericObjectPoolConfig();
