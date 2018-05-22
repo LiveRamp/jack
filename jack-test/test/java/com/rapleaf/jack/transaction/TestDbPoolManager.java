@@ -93,8 +93,9 @@ public class TestDbPoolManager extends JackTestCase {
     initializeDbPoolManager();
     getAndReturnAllConnections();
 
-    // all idle connections should be available
+    // before eviction, all idle connections should be available
     assertIdleConnections(maxConnections);
+    // after eviction, only min idle connections should exist
     assertEvictionTime((int)keepAliveTime / 1000, 2);
   }
 
