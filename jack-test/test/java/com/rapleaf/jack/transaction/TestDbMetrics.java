@@ -1,12 +1,12 @@
 package com.rapleaf.jack.transaction;
 
 
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.google.common.base.Stopwatch;
-import org.joda.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,7 +152,7 @@ public class TestDbMetrics extends JackTestCase {
 
   @Test
   public void testAverageIdleConnections() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.millis(50)).get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.ofMillis(50)).get();
     transactor.execute(a -> {sleepMillis(100);});
     long startIdleTime = stopwatch.elapsedMillis();
     sleepMillis(100);

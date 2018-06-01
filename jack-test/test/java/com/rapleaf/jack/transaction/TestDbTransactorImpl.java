@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.joda.time.Duration;
+import java.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -191,7 +191,7 @@ public class TestDbTransactorImpl extends JackTestCase {
 
   @Test
   public void testWaitForConnectionTimeout() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).setMaxWaitTime(Duration.millis(500)).get();
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).setMaxWaitTime(Duration.ofMillis(500)).get();
 
     executorService = Executors.newFixedThreadPool(2);
 

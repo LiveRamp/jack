@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.google.common.collect.Lists;
-import org.joda.time.Duration;
+import java.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class TestDbPoolManager extends JackTestCase {
   public void testKeepAliveTime() throws Exception {
     maxConnections = 15;
     minIdleConnections = 5;
-    keepAliveTime = Duration.standardSeconds(1).getMillis();
+    keepAliveTime = Duration.ofSeconds(1).toMillis();
     initializeDbPoolManager();
     getAndReturnAllConnections();
 
@@ -102,7 +102,7 @@ public class TestDbPoolManager extends JackTestCase {
   @Test(timeout = 10 * 1000L) // 10s
   public void testMaxWaitTime() throws Exception {
     maxConnections = 1;
-    maxWaitTime = Duration.standardSeconds(8).getMillis();
+    maxWaitTime = Duration.ofSeconds(8).toMillis();
     initializeDbPoolManager();
 
     executorService = Executors.newFixedThreadPool(2);
@@ -133,7 +133,7 @@ public class TestDbPoolManager extends JackTestCase {
       dbPoolManager.getConnection();
 
       // check wait time
-      int waitSeconds = getSecondsSince(startTime);
+      long waitSeconds = getSecondsSince(startTime);
       LOG.info("Second task DB waited for connection: {} seconds", waitSeconds);
       assertRoughEqual(waitSeconds, expectedWaitSeconds, 2);
 
@@ -149,7 +149,7 @@ public class TestDbPoolManager extends JackTestCase {
   @Test(timeout = 10 * 1000L) // 10s
   public void testNoAvailableConnectionAfterWait() throws Exception {
     maxConnections = 1;
-    maxWaitTime = Duration.standardSeconds(1).getMillis();
+    maxWaitTime = Duration.ofSeconds(1).toMillis();
     initializeDbPoolManager();
 
     executorService = Executors.newFixedThreadPool(2);
@@ -180,7 +180,7 @@ public class TestDbPoolManager extends JackTestCase {
         fail();
       } catch (NoAvailableConnectionException e) {
         // check exception is thrown after wait time
-        int waitSeconds = getSecondsSince(startTime);
+        long waitSeconds = getSecondsSince(startTime);
         LOG.info("Second task DB waited for connection: {} seconds", waitSeconds);
         assertRoughEqual(waitSeconds, maxWaitTime / 1000, 1);
       }
@@ -213,8 +213,8 @@ public class TestDbPoolManager extends JackTestCase {
     }
   }
 
-  private int getSecondsSince(long startTime) {
-    return Duration.millis(System.currentTimeMillis() - startTime).toStandardSeconds().getSeconds();
+  private long getSecondsSince(long startTime) {
+    return Duration.ofMillis(System.currentTimeMillis() - startTime).getSeconds();
   }
 
   private void assertIdleConnections(int idleConnections) {
@@ -238,7 +238,7 @@ public class TestDbPoolManager extends JackTestCase {
     while (true) {
       LOG.info("Active connections: {}", dbPoolManager.getConnectionPool().getNumIdle());
       if (dbPoolManager.getConnectionPool().getNumIdle() == minIdleConnections) {
-        int waitSeconds = getSecondsSince(startTime);
+        long waitSeconds = getSecondsSince(startTime);
         LOG.info("Idle connections are evicted after {} seconds", waitSeconds);
         // allow two seconds delay
         assertInRange(waitSeconds, expectedSeconds, expectedSeconds + error);
@@ -263,7 +263,7 @@ public class TestDbPoolManager extends JackTestCase {
       dbPoolManager.returnConnection(connections);
 
       // check connection use time
-      int returnTime = getSecondsSince(startTime);
+      long returnTime = getSecondsSince(startTime);
       LOG.info("First task returned DB connection in {} seconds", returnTime);
       assertTrue(returnTime >= threadProcessTime);
 

@@ -1,9 +1,9 @@
 package com.rapleaf.jack.transaction;
 
+import java.time.Duration;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Preconditions;
-import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,9 +188,21 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
      *                    should block before throwing an exception when the pool is exhausted. Negative values
      *                    mean that the block can be infinite.
+     * Deprecated, use the version with java.time.Duration instead.
+     */
+    @Deprecated
+    public Builder<DB> setMaxWaitTime(org.joda.time.Duration maxWaitTime) {
+      this.maxWaitMillis = maxWaitTime.getMillis();
+      return this;
+    }
+
+    /**
+     * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
+     *                    should block before throwing an exception when the pool is exhausted. Negative values
+     *                    mean that the block can be infinite.
      */
     public Builder<DB> setMaxWaitTime(Duration maxWaitTime) {
-      this.maxWaitMillis = maxWaitTime.getMillis();
+      this.maxWaitMillis = maxWaitTime.toMillis();
       return this;
     }
 
@@ -206,9 +218,21 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * @param keepAliveTime The minimum amount of time the connection may sit idle in the pool before it is
      *                      eligible for eviction (with the extra condition that at least {@code minIdleConnections}
      *                      connections remain in the pool).
+     * Deprecated, use the version with java.time.Duration instead.
+     */
+    @Deprecated
+    public Builder<DB> setKeepAliveTime(org.joda.time.Duration keepAliveTime) {
+      this.keepAliveMillis = keepAliveTime.getMillis();
+      return this;
+    }
+
+    /***
+     * @param keepAliveTime The minimum amount of time the connection may sit idle in the pool before it is
+     *                      eligible for eviction (with the extra condition that at least {@code minIdleConnections}
+     *                      connections remain in the pool).
      */
     public Builder<DB> setKeepAliveTime(Duration keepAliveTime) {
-      this.keepAliveMillis = keepAliveTime.getMillis();
+      this.keepAliveMillis = keepAliveTime.toMillis();
       return this;
     }
 
