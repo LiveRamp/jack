@@ -1,9 +1,9 @@
 package com.rapleaf.jack.store.iface;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import org.joda.time.DateTime;
 
 public interface ValueContainer<E extends ValueContainer<E>> {
 
@@ -17,7 +17,7 @@ public interface ValueContainer<E extends ValueContainer<E>> {
 
   Double getDouble(String key);
 
-  DateTime getDateTime(String key);
+  LocalDateTime getDateTime(String key);
 
   String getString(String key);
 
@@ -33,7 +33,7 @@ public interface ValueContainer<E extends ValueContainer<E>> {
 
   List<Double> getDoubleList(String key);
 
-  List<DateTime> getDateTimeList(String key);
+  List<LocalDateTime> getDateTimeList(String key);
 
   List<String> getStringList(String key);
 

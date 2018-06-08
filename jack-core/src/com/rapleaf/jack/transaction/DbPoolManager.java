@@ -1,6 +1,7 @@
 package com.rapleaf.jack.transaction;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
@@ -11,7 +12,6 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +24,8 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
   public static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 3;
   public static final int DEFAULT_MIN_IDLE_CONNECTIONS = 1;
-  public static final long DEFAULT_MAX_WAIT_TIME = Duration.standardSeconds(30).getMillis();
-  public static final long DEFAULT_KEEP_ALIVE_TIME = Duration.standardMinutes(5).getMillis();
+  public static final long DEFAULT_MAX_WAIT_TIME = Duration.ofSeconds(30).toMillis();
+  public static final long DEFAULT_KEEP_ALIVE_TIME = Duration.ofMinutes(5).toMillis();
   public static final boolean DEFAULT_METRICS_TRACKING_ENABLED = false;
 
   private final DbMetricsImpl metrics;

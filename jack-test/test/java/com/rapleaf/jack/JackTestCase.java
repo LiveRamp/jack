@@ -1,10 +1,11 @@
 package com.rapleaf.jack;
 
+import java.time.Duration;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.joda.time.Duration;
 import org.junit.Before;
 
 public class JackTestCase {
@@ -36,7 +37,7 @@ public class JackTestCase {
 
   protected void sleepSeconds(int seconds) {
     try {
-      Thread.sleep(Duration.standardSeconds(seconds).getMillis());
+      Thread.sleep(Duration.ofSeconds(seconds).toMillis());
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

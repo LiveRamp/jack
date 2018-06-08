@@ -3,7 +3,6 @@ package com.rapleaf.jack.queries;
 import java.io.IOException;
 
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +13,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
+import com.rapleaf.jack.util.JackUtility;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,9 +33,9 @@ public class TestSubQuery extends JackTestCase {
     users.deleteAll();
     posts.deleteAll();
 
-    userA = users.createDefaultInstance().setNumPosts(12).setBio("A").setSomeDatetime(DateTime.parse("2017-09-10").getMillis());
-    userB = users.createDefaultInstance().setNumPosts(11).setBio("B").setSomeDatetime(DateTime.parse("2017-09-11").getMillis());
-    userC = users.createDefaultInstance().setNumPosts(10).setBio("C").setSomeDatetime(DateTime.parse("2017-09-12").getMillis());
+    userA = users.createDefaultInstance().setNumPosts(12).setBio("A").setSomeDatetime(JackUtility.DATE_STRING_TO_MILLIS.apply("2017-09-10"));
+    userB = users.createDefaultInstance().setNumPosts(11).setBio("B").setSomeDatetime(JackUtility.DATE_STRING_TO_MILLIS.apply("2017-09-11"));
+    userC = users.createDefaultInstance().setNumPosts(10).setBio("C").setSomeDatetime(JackUtility.DATE_STRING_TO_MILLIS.apply("2017-09-12"));
     userA.save();
     userB.save();
     userC.save();
@@ -157,7 +157,7 @@ public class TestSubQuery extends JackTestCase {
     // sub query result: userB, userC
     SubTable subQuery = db.createQuery()
         .from(User.TBL)
-        .where(User.SOME_DATETIME.notEqualTo(DateTime.parse("2017-09-10").getMillis()))
+        .where(User.SOME_DATETIME.notEqualTo(JackUtility.DATE_STRING_TO_MILLIS.apply("2017-09-10")))
         .asSubTable("subQuery");
 
     records = db.createQuery()

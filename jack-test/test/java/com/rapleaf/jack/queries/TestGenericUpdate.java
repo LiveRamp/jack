@@ -1,6 +1,7 @@
 package com.rapleaf.jack.queries;
 
-import org.joda.time.DateTime;
+import java.time.LocalDate;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,6 +9,7 @@ import com.rapleaf.jack.exception.BulkOperationException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.Post;
+import com.rapleaf.jack.util.JackUtility;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -23,7 +25,7 @@ public class TestGenericUpdate {
   private static final String TITLE_2 = "title2";
   private static final int USER_ID_1 = 51;
   private static final int USER_ID_2 = 52;
-  private static final long DATE = DateTime.parse("2017-08-17").getMillis();
+  private static final long DATE = JackUtility.DATE_TO_MILLIS.apply(LocalDate.parse("2017-08-17"));
 
   private Post post1;
   private Post post2;
@@ -61,7 +63,7 @@ public class TestGenericUpdate {
 
   @Test
   public void testUpdateDate() throws Exception {
-    long newDate = DateTime.parse("2017-09-10").getMillis();
+    long newDate = JackUtility.DATE_STRING_TO_MILLIS.apply("2017-09-10");
     assertEquals(DATE, db.posts().find(post1.getId()).getPostedAtMillis().longValue());
     Updates updates = db.createUpdate()
         .table(Post.TBL)

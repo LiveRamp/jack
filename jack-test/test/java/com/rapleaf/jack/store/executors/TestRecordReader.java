@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
@@ -16,6 +16,7 @@ import com.rapleaf.jack.store.json.JsonDbConstants;
 import com.rapleaf.jack.store.json.JsonDbHelper;
 import com.rapleaf.jack.store.json.JsonDbTuple;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
+import com.rapleaf.jack.util.JackUtility;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -64,8 +65,8 @@ public class TestRecordReader extends BaseExecutorTestCase {
     assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertNull(record.get(key));
-    } else if (value instanceof DateTime) {
-      assertEquals(((DateTime)value).getMillis(), ((DateTime)record.get(key)).getMillis());
+    } else if (value instanceof LocalDateTime) {
+      assertEquals(JackUtility.DATETIME_TO_MILLIS.apply((LocalDateTime)value), JackUtility.DATETIME_TO_MILLIS.apply((LocalDateTime)record.get(key)));
     } else {
       assertEquals(value, record.get(key));
     }
@@ -91,10 +92,10 @@ public class TestRecordReader extends BaseExecutorTestCase {
     assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertTrue(record.getList(key).isEmpty());
-    } else if (values.get(0) instanceof DateTime) {
+    } else if (values.get(0) instanceof LocalDateTime) {
       assertEquals(
-          ((List<Object>)values).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList()),
-          ((List<Object>)record.getList(key)).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList())
+          ((List<Object>)values).stream().map(v -> JackUtility.DATETIME_TO_MILLIS.apply((LocalDateTime)v)).collect(Collectors.toList()),
+          ((List<Object>)record.getList(key)).stream().map(v -> JackUtility.DATETIME_TO_MILLIS.apply(((LocalDateTime)v))).collect(Collectors.toList())
       );
     } else {
       assertEquals(values, record.getList(key));

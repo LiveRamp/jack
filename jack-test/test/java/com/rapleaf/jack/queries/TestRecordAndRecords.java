@@ -1,10 +1,10 @@
 package com.rapleaf.jack.queries;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +15,7 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
+import com.rapleaf.jack.util.JackUtility;
 
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static org.junit.Assert.assertArrayEquals;
@@ -42,7 +43,7 @@ public class TestRecordAndRecords {
     results = null;
     // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
-    date = DateTime.parse("2015-04-16").getMillis();
+    date = JackUtility.DATE_TO_MILLIS.apply(LocalDate.parse("2015-04-16"));
   }
 
   @Test
