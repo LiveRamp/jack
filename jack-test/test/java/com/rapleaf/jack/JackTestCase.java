@@ -1,6 +1,10 @@
 package com.rapleaf.jack;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.function.Function;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -8,8 +12,17 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.junit.Before;
 
+import com.rapleaf.jack.util.JackUtility;
+
 public class JackTestCase {
   private static final String SEPARATOR = "--------------------";
+
+  protected static final ZoneId SYSTEM_ZONE = ZoneId.systemDefault();
+  protected static final Function<LocalDateTime, Long> DATETIME_TO_MILLIS = dateTime -> dateTime.atZone(SYSTEM_ZONE).toInstant().toEpochMilli();
+  protected static final Function<LocalDate, Long> DATE_TO_MILLIS = date -> date.atStartOfDay(SYSTEM_ZONE).toInstant().toEpochMilli();
+
+  protected static final Function<String, Long> DATE_STRING_TO_MILLIS = date -> DATE_TO_MILLIS.apply(LocalDate.parse(date, JackUtility.DATE_FORMATTER));
+  protected static final Function<String, Long> DATETIME_STRING_TO_MILLIS = dateTime -> DATETIME_TO_MILLIS.apply(LocalDateTime.parse(dateTime, JackUtility.TIMESTAMP_FORMATTER));
 
   public JackTestCase() {
     Logger rootLogger = Logger.getRootLogger();

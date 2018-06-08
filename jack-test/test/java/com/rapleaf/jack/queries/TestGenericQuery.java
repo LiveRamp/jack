@@ -2,7 +2,6 @@ package com.rapleaf.jack.queries;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -14,6 +13,7 @@ import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.exception.InvalidIndexHintException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -23,7 +23,6 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import com.rapleaf.jack.util.JackUtility;
 
 import static com.rapleaf.jack.queries.AggregatedColumn.AVG;
 import static com.rapleaf.jack.queries.AggregatedColumn.COUNT;
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestGenericQuery {
+public class TestGenericQuery extends JackTestCase {
   protected static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
   private final IUserPersistence users = db.users();
@@ -59,7 +58,7 @@ public class TestGenericQuery {
     results2 = null;
     // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
-    date = JackUtility.DATE_TO_MILLIS.apply(LocalDate.parse("2015-04-16"));
+    date = DATE_STRING_TO_MILLIS.apply("2015-04-16");
   }
 
   @Test

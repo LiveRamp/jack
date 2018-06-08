@@ -24,7 +24,6 @@ import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
 import com.rapleaf.jack.transaction.ITransactor;
-import com.rapleaf.jack.util.JackUtility;
 
 public class BaseExecutorTestCase extends JackTestCase {
 
@@ -67,7 +66,7 @@ public class BaseExecutorTestCase extends JackTestCase {
   protected static final List<Double> DOUBLE_LIST_VALUE = Lists.newArrayList(100.5, 110.5);
 
   protected static final String DATETIME_LIST_KEY = "datetime-list";
-  protected static final List<java.time.LocalDateTime> DATETIME_LIST_VALUE = Lists.newArrayList(LocalDateTime.now(), LocalDateTime.now().minusDays(1));
+  protected static final List<LocalDateTime> DATETIME_LIST_VALUE = Lists.newArrayList(LocalDateTime.now(), LocalDateTime.now().minusDays(1));
 
   protected static final String STRING_LIST_KEY = "string-list";
   protected static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");

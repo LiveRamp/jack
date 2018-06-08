@@ -2,7 +2,6 @@ package com.rapleaf.jack.store.field;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.executors.BaseExecutorTestCase;
 import com.rapleaf.jack.store.executors.RecordUpdater;
-import com.rapleaf.jack.util.JackUtility;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -70,15 +68,7 @@ public class TestJsField extends BaseExecutorTestCase {
       return jackStore.rootRecord().read().execute(db);
     });
 
-    if (values.get(0) instanceof LocalDateTime) {
-
-      assertEquals(
-          values.stream().map(v -> JackUtility.DATETIME_TO_MILLIS.apply((LocalDateTime)v)).collect(Collectors.toList()),
-          field.getReadFunction().apply(record).stream().map(v -> JackUtility.DATETIME_TO_MILLIS.apply((LocalDateTime)v)).collect(Collectors.toList())
-      );
-    } else {
-      assertEquals(values, field.getReadFunction().apply(record));
-    }
+    assertEquals(values, field.getReadFunction().apply(record));
   }
 
 }

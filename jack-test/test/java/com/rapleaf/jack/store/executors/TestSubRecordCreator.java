@@ -1,8 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -12,14 +10,13 @@ import com.rapleaf.jack.queries.Records;
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.ValueType;
 import com.rapleaf.jack.test_project.database_1.models.TestStore;
-import com.rapleaf.jack.util.JackUtility;
 
 import static org.junit.Assert.assertEquals;
 
 public class TestSubRecordCreator extends BaseExecutorTestCase {
 
   @Test
-  public void testSubScopeCreation2() throws Exception {
+  public void testSubScopeCreation2() {
     int size = Math.max(3, RANDOM.nextInt(10));
     List<String> names = Lists.newArrayListWithCapacity(size);
     List<Long> values = Lists.newArrayListWithCapacity(size);
@@ -71,7 +68,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
   }
 
   @Test
-  public void testCreateSubRecordAndRead() throws Exception {
+  public void testCreateSubRecordAndRead() {
     JsRecord jsRecord = transactor.queryAsTransaction(db ->
         jackStore.rootRecord().createSubRecord()
             .put(BOOLEAN_KEY, BOOLEAN_VALUE)
@@ -103,7 +100,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
     assertEquals(INT_LIST_VALUE, jsRecord.getList(INT_LIST_KEY));
     assertEquals(LONG_LIST_VALUE, jsRecord.getList(LONG_LIST_KEY));
     assertEquals(DOUBLE_LIST_VALUE, jsRecord.getList(DOUBLE_LIST_KEY));
-    assertEquals(DATETIME_LIST_VALUE.stream().map(JackUtility.DATETIME_TO_MILLIS).collect(Collectors.toList()), ((List<LocalDateTime>)jsRecord.getList(DATETIME_LIST_KEY)).stream().map(JackUtility.DATETIME_TO_MILLIS).collect(Collectors.toList()));
+    assertEquals(DATETIME_LIST_VALUE, jsRecord.getList(DATETIME_LIST_KEY));
     assertEquals(STRING_LIST_VALUE, jsRecord.getList(STRING_LIST_KEY));
   }
 

@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;
@@ -15,7 +16,6 @@ import com.rapleaf.jack.test_project.database_1.iface.IUserPersistence;
 import com.rapleaf.jack.test_project.database_1.models.Comment;
 import com.rapleaf.jack.test_project.database_1.models.Post;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import com.rapleaf.jack.util.JackUtility;
 
 import static com.rapleaf.jack.queries.QueryOrder.ASC;
 import static org.junit.Assert.assertArrayEquals;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestRecordAndRecords {
+public class TestRecordAndRecords extends JackTestCase {
   private static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
   private static final double DELTA = 0.000001;
@@ -43,7 +43,7 @@ public class TestRecordAndRecords {
     results = null;
     // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
-    date = JackUtility.DATE_TO_MILLIS.apply(LocalDate.parse("2015-04-16"));
+    date = DATE_TO_MILLIS.apply(LocalDate.parse("2015-04-16"));
   }
 
   @Test

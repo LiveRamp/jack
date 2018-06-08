@@ -39,7 +39,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 public class TestModelQuery {
 
   private static final IDatabases dbs = new DatabasesImpl();
