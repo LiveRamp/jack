@@ -8,17 +8,15 @@ import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public final class JackUtility {
 
-  public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
-  public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+  private static final String DATE_FORMAT = "yyyy-MM-dd";
+  private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   public static final Map<Class<?>, Function<Long, String>> FORMATTER_FUNCTION_MAP = ImmutableMap.of(
-      java.sql.Date.class, new DateFormatter(DATE_FORMATTER),
-      java.sql.Timestamp.class, new DateFormatter(TIMESTAMP_FORMATTER)
+      java.sql.Date.class, date -> new DateTime(date).toString(DATE_FORMAT),
+      java.sql.Timestamp.class, dateTime -> new DateTime(dateTime).toString(TIMESTAMP_FORMAT)
   );
 
   private JackUtility() {
@@ -29,20 +27,6 @@ public final class JackUtility {
       throw new IllegalArgumentException(l + " cannot be cast to int without changing its value.");
     }
     return (int)l;
-  }
-
-  private static final class DateFormatter implements Function<Long, String> {
-
-    private final DateTimeFormatter formatter;
-
-    DateFormatter(final DateTimeFormatter formatter) {
-      this.formatter = formatter;
-    }
-
-    @Override
-    public String apply(final Long date) {
-      return new DateTime(date).toString(formatter);
-    }
   }
 
   public static boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
