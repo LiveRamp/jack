@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store.executors;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -8,7 +9,6 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.joda.time.DateTime;
 import org.junit.Before;
 
 import com.rapleaf.jack.IDb;
@@ -44,7 +44,7 @@ public class BaseExecutorTestCase extends JackTestCase {
   protected static final double DOUBLE_VALUE = 30.5;
 
   protected static final String DATETIME_KEY = "datetime";
-  protected static final DateTime DATETIME_VALUE = DateTime.now();
+  protected static final LocalDateTime DATETIME_VALUE = LocalDateTime.now();
 
   protected static final String STRING_KEY = "string";
   protected static final String STRING_VALUE = "s40";
@@ -66,7 +66,7 @@ public class BaseExecutorTestCase extends JackTestCase {
   protected static final List<Double> DOUBLE_LIST_VALUE = Lists.newArrayList(100.5, 110.5);
 
   protected static final String DATETIME_LIST_KEY = "datetime-list";
-  protected static final List<DateTime> DATETIME_LIST_VALUE = Lists.newArrayList(DateTime.now(), DateTime.now().minusDays(1));
+  protected static final List<LocalDateTime> DATETIME_LIST_VALUE = Lists.newArrayList(LocalDateTime.now(), LocalDateTime.now().minusDays(1));
 
   protected static final String STRING_LIST_KEY = "string-list";
   protected static final List<String> STRING_LIST_VALUE = Lists.newArrayList("s120", "s130", "s140");

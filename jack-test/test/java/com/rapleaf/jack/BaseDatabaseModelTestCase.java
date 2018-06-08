@@ -16,9 +16,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rapleaf.jack.test_project.database_1.IDatabase1;
-
 import com.rapleaf.jack.test_project.IDatabases;
+import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.iface.ICommentPersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IImagePersistence;
 import com.rapleaf.jack.test_project.database_1.iface.IPostPersistence;

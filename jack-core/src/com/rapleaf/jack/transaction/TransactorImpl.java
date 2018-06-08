@@ -188,18 +188,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
      *                    should block before throwing an exception when the pool is exhausted. Negative values
      *                    mean that the block can be infinite.
-     * Deprecated, use the version with java.time.Duration instead.
-     */
-    @Deprecated
-    public Builder<DB> setMaxWaitTime(org.joda.time.Duration maxWaitTime) {
-      this.maxWaitMillis = maxWaitTime.getMillis();
-      return this;
-    }
-
-    /**
-     * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
-     *                    should block before throwing an exception when the pool is exhausted. Negative values
-     *                    mean that the block can be infinite.
      */
     public Builder<DB> setMaxWaitTime(Duration maxWaitTime) {
       this.maxWaitMillis = maxWaitTime.toMillis();
@@ -211,18 +199,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      */
     public Builder<DB> enableInfiniteWait() {
       this.maxWaitMillis = -1L;
-      return this;
-    }
-
-    /***
-     * @param keepAliveTime The minimum amount of time the connection may sit idle in the pool before it is
-     *                      eligible for eviction (with the extra condition that at least {@code minIdleConnections}
-     *                      connections remain in the pool).
-     * Deprecated, use the version with java.time.Duration instead.
-     */
-    @Deprecated
-    public Builder<DB> setKeepAliveTime(org.joda.time.Duration keepAliveTime) {
-      this.keepAliveMillis = keepAliveTime.getMillis();
       return this;
     }
 

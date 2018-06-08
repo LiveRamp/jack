@@ -1,9 +1,9 @@
 package com.rapleaf.jack.store.iface;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import org.joda.time.DateTime;
 
 public interface ValueIndexer<E extends ValueIndexer<E>> {
 
@@ -17,7 +17,7 @@ public interface ValueIndexer<E extends ValueIndexer<E>> {
 
   E putDouble(String key, Double value);
 
-  E putDateTime(String key, DateTime value);
+  E putDateTime(String key, LocalDateTime value);
 
   E putString(String key, String value);
 
@@ -33,7 +33,7 @@ public interface ValueIndexer<E extends ValueIndexer<E>> {
 
   E putDoubleList(String key, List<Double> valueList);
 
-  E putDateTimeList(String key, List<DateTime> valueList);
+  E putDateTimeList(String key, List<LocalDateTime> valueList);
 
   E putStringList(String key, List<String> valueList);
 

@@ -1,9 +1,9 @@
 package com.rapleaf.jack.store.field;
 
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
-import org.joda.time.DateTime;
 
 import com.rapleaf.jack.store.JsRecord;
 import com.rapleaf.jack.store.iface.ValueIndexer;
@@ -35,7 +35,7 @@ public final class JsFields {
     return new JsValueField<>(key, ValueIndexer::putDouble, JsRecord::getDouble);
   }
 
-  public static JsValueField<DateTime> createDateTimeField(String key) {
+  public static JsValueField<LocalDateTime> createDateTimeField(String key) {
     return new JsValueField<>(key, ValueIndexer::putDateTime, JsRecord::getDateTime);
   }
 
@@ -65,7 +65,7 @@ public final class JsFields {
     return new JsListField<>(key, ValueIndexer::putDoubleList, JsRecord::getDoubleList);
   }
 
-  public static JsListField<DateTime> createDateTimeListField(String key) {
+  public static JsListField<LocalDateTime> createDateTimeListField(String key) {
     return new JsListField<>(key, ValueIndexer::putDateTimeList, JsRecord::getDateTimeList);
   }
 

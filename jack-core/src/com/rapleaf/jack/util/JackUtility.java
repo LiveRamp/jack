@@ -3,18 +3,20 @@ package com.rapleaf.jack.util;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public final class JackUtility {
 
-  public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
-  public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+  private static final ZoneId SYSTEM_ZONE = ZoneId.systemDefault();
+
+  public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  public static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   public static final Map<Class<?>, Function<Long, String>> FORMATTER_FUNCTION_MAP = ImmutableMap.of(
       java.sql.Date.class, new DateFormatter(DATE_FORMATTER),
@@ -32,7 +34,6 @@ public final class JackUtility {
   }
 
   private static final class DateFormatter implements Function<Long, String> {
-
     private final DateTimeFormatter formatter;
 
     DateFormatter(final DateTimeFormatter formatter) {
@@ -41,7 +42,7 @@ public final class JackUtility {
 
     @Override
     public String apply(final Long date) {
-      return new DateTime(date).toString(formatter);
+      return Instant.ofEpochMilli(date).atZone(SYSTEM_ZONE).format(formatter);
     }
   }
 

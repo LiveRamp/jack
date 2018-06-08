@@ -1,10 +1,8 @@
 package com.rapleaf.jack.store.executors;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.rapleaf.jack.queries.Record;
@@ -18,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class TestSubRecordCreator extends BaseExecutorTestCase {
 
   @Test
-  public void testSubScopeCreation2() throws Exception {
+  public void testSubScopeCreation2() {
     int size = Math.max(3, RANDOM.nextInt(10));
     List<String> names = Lists.newArrayListWithCapacity(size);
     List<Long> values = Lists.newArrayListWithCapacity(size);
@@ -70,7 +68,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
   }
 
   @Test
-  public void testCreateSubRecordAndRead() throws Exception {
+  public void testCreateSubRecordAndRead() {
     JsRecord jsRecord = transactor.queryAsTransaction(db ->
         jackStore.rootRecord().createSubRecord()
             .put(BOOLEAN_KEY, BOOLEAN_VALUE)
@@ -93,7 +91,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
     assertEquals(INT_VALUE, jsRecord.get(INT_KEY));
     assertEquals(LONG_VALUE, jsRecord.get(LONG_KEY));
     assertEquals(DOUBLE_VALUE, jsRecord.get(DOUBLE_KEY));
-    assertEquals(DATETIME_VALUE.getMillis(), ((DateTime)jsRecord.get(DATETIME_KEY)).getMillis());
+    assertEquals(DATETIME_VALUE, jsRecord.get(DATETIME_KEY));
     assertEquals(STRING_VALUE, jsRecord.get(STRING_KEY));
 
     assertEquals(JSON_VALUE, jsRecord.get(JSON_KEY));
@@ -102,7 +100,7 @@ public class TestSubRecordCreator extends BaseExecutorTestCase {
     assertEquals(INT_LIST_VALUE, jsRecord.getList(INT_LIST_KEY));
     assertEquals(LONG_LIST_VALUE, jsRecord.getList(LONG_LIST_KEY));
     assertEquals(DOUBLE_LIST_VALUE, jsRecord.getList(DOUBLE_LIST_KEY));
-    assertEquals(DATETIME_LIST_VALUE.stream().map(DateTime::getMillis).collect(Collectors.toList()), ((List<DateTime>)jsRecord.getList(DATETIME_LIST_KEY)).stream().map(DateTime::getMillis).collect(Collectors.toList()));
+    assertEquals(DATETIME_LIST_VALUE, jsRecord.getList(DATETIME_LIST_KEY));
     assertEquals(STRING_LIST_VALUE, jsRecord.getList(STRING_LIST_KEY));
   }
 

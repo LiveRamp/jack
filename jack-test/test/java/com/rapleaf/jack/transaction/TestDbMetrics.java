@@ -40,7 +40,8 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testTotalQueries() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).get();
-    transactor.execute(db -> {});
+    transactor.execute(db -> {
+    });
     DbMetrics dbMetrics = transactor.getDbMetrics();
 
     assertTrue(dbMetrics.getTotalQueries() == 1);
@@ -50,9 +51,15 @@ public class TestDbMetrics extends JackTestCase {
   public void testOpenedConnectionsNumber() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(2).get();
 
-    Future future1 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(50);}));
-    Future future2 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(70);}));
-    Future future3 = executorService.submit(() -> transactor.execute(a -> {sleepMillis(90);}));
+    Future future1 = executorService.submit(() -> transactor.execute(a -> {
+      sleepMillis(50);
+    }));
+    Future future2 = executorService.submit(() -> transactor.execute(a -> {
+      sleepMillis(70);
+    }));
+    Future future3 = executorService.submit(() -> transactor.execute(a -> {
+      sleepMillis(90);
+    }));
     future1.get();
     future2.get();
     future3.get();
@@ -65,7 +72,9 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionsProportion() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
-    transactor.execute(a -> {sleepMillis(100);});
+    transactor.execute(a -> {
+      sleepMillis(100);
+    });
     long timeActive = stopwatch.elapsedMillis();
     sleepMillis(100);
     long totalTime = stopwatch.elapsedMillis();
@@ -81,7 +90,8 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testMaxConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
-    transactor.execute(a -> {});
+    transactor.execute(a -> {
+    });
     double firstMaxConnectionWaitingTime = transactor.getDbMetrics().getMaxConnectionWaitingTime();
     int connectionCount = 5;
     final Long[] startingTimes = new Long[connectionCount];
@@ -116,7 +126,8 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testAverageConnectionWaitingTime() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(1).get();
-    transactor.execute(a -> {});
+    transactor.execute(a -> {
+    });
     double firstAverageConnectionWaitingTime = transactor.getDbMetrics().getAverageConnectionWaitingTime();
     int connectionCount = 5;
     final Long[] startingTimes = new Long[connectionCount];
@@ -153,7 +164,9 @@ public class TestDbMetrics extends JackTestCase {
   @Test
   public void testAverageIdleConnections() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).setMaxTotalConnections(2).setMinIdleConnections(1).setKeepAliveTime(Duration.ofMillis(50)).get();
-    transactor.execute(a -> {sleepMillis(100);});
+    transactor.execute(a -> {
+      sleepMillis(100);
+    });
     long startIdleTime = stopwatch.elapsedMillis();
     sleepMillis(100);
     long idleTime = stopwatch.elapsedMillis() - startIdleTime;
@@ -169,7 +182,9 @@ public class TestDbMetrics extends JackTestCase {
   public void testAverageActiveConnections() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMetricsTracking(true).get();
     long startActive = stopwatch.elapsedMillis();
-    transactor.execute(db -> {sleepMillis(100);});
+    transactor.execute(db -> {
+      sleepMillis(100);
+    });
     long activeTime = stopwatch.elapsedMillis() - startActive;
     sleepMillis(100);
     DbMetrics dbMetrics = transactor.getDbMetrics();

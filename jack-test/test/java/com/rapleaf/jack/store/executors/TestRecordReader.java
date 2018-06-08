@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.rapleaf.jack.store.JsRecord;
@@ -64,8 +63,6 @@ public class TestRecordReader extends BaseExecutorTestCase {
     assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertNull(record.get(key));
-    } else if (value instanceof DateTime) {
-      assertEquals(((DateTime)value).getMillis(), ((DateTime)record.get(key)).getMillis());
     } else {
       assertEquals(value, record.get(key));
     }
@@ -91,11 +88,6 @@ public class TestRecordReader extends BaseExecutorTestCase {
     assertEquals(recordId, record.getRecordId().longValue());
     if (nullValue) {
       assertTrue(record.getList(key).isEmpty());
-    } else if (values.get(0) instanceof DateTime) {
-      assertEquals(
-          ((List<Object>)values).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList()),
-          ((List<Object>)record.getList(key)).stream().map(v -> ((DateTime)v).getMillis()).collect(Collectors.toList())
-      );
     } else {
       assertEquals(values, record.getList(key));
     }

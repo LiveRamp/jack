@@ -1,6 +1,7 @@
 package com.rapleaf.jack.store.executors;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-import org.joda.time.DateTime;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.store.JsTable;
@@ -48,8 +48,8 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     if (value instanceof Double) {
       return putDouble(key, (Double)value);
     }
-    if (value instanceof DateTime) {
-      return putDateTime(key, (DateTime)value);
+    if (value instanceof LocalDateTime) {
+      return putDateTime(key, (LocalDateTime)value);
     }
     if (value instanceof String) {
       return putString(key, (String)value);
@@ -92,7 +92,7 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
   }
 
   @Override
-  public E putDateTime(String key, DateTime value) {
+  public E putDateTime(String key, LocalDateTime value) {
     types.put(key, ValueType.DATETIME);
     values.put(key, value);
     return getSelf();
@@ -131,7 +131,7 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
     if (value instanceof Double) {
       return (E)putDoubleList(key, valueList);
     }
-    if (value instanceof DateTime) {
+    if (value instanceof LocalDateTime) {
       return (E)putDateTimeList(key, valueList);
     }
     if (value instanceof String) {
@@ -169,7 +169,7 @@ abstract class BaseCreatorExecutor<TF, TL, E extends BaseCreatorExecutor<TF, TL,
   }
 
   @Override
-  public E putDateTimeList(String key, List<DateTime> valueList) {
+  public E putDateTimeList(String key, List<LocalDateTime> valueList) {
     types.put(key, ValueType.DATETIME_LIST);
     values.put(key, nullifyEmptyList(valueList));
     return getSelf();

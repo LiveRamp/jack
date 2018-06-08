@@ -1,5 +1,6 @@
 package com.rapleaf.jack.store;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
-import org.joda.time.DateTime;
 
 import com.rapleaf.jack.exception.JackRuntimeException;
 import com.rapleaf.jack.store.iface.ValueContainer;
@@ -70,7 +70,7 @@ public class JsRecord implements ValueContainer<JsRecord> {
       case DOUBLE:
         return checkTypeAndGetNullable(key, ValueType.DOUBLE, Double::valueOf);
       case DATETIME:
-        return checkTypeAndGetNullable(key, ValueType.DATETIME, DateTime::parse);
+        return checkTypeAndGetNullable(key, ValueType.DATETIME, LocalDateTime::parse);
       case STRING:
         return checkTypeAndGetNullable(key, ValueType.STRING, Function.identity());
       default:
@@ -106,9 +106,9 @@ public class JsRecord implements ValueContainer<JsRecord> {
   }
 
   @Override
-  public DateTime getDateTime(String key) {
+  public LocalDateTime getDateTime(String key) {
     checkKey(key);
-    return checkTypeAndGetNullable(key, ValueType.DATETIME, DateTime::parse);
+    return checkTypeAndGetNullable(key, ValueType.DATETIME, LocalDateTime::parse);
   }
 
   @Override
@@ -140,7 +140,7 @@ public class JsRecord implements ValueContainer<JsRecord> {
       case DOUBLE_LIST:
         return checkTypeAndGetList(key, ValueType.DOUBLE_LIST, Double::valueOf);
       case DATETIME_LIST:
-        return checkTypeAndGetList(key, ValueType.DATETIME_LIST, DateTime::parse);
+        return checkTypeAndGetList(key, ValueType.DATETIME_LIST, LocalDateTime::parse);
       case STRING_LIST:
         return checkTypeAndGetList(key, ValueType.STRING_LIST, Function.identity());
       default:
@@ -173,9 +173,9 @@ public class JsRecord implements ValueContainer<JsRecord> {
   }
 
   @Override
-  public List<DateTime> getDateTimeList(String key) {
+  public List<LocalDateTime> getDateTimeList(String key) {
     checkKey(key);
-    return checkTypeAndGetList(key, ValueType.DATETIME_LIST, DateTime::parse);
+    return checkTypeAndGetList(key, ValueType.DATETIME_LIST, LocalDateTime::parse);
   }
 
   @Override

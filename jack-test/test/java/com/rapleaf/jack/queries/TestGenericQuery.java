@@ -10,10 +10,10 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rapleaf.jack.JackTestCase;
 import com.rapleaf.jack.exception.InvalidIndexHintException;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestGenericQuery {
+public class TestGenericQuery extends JackTestCase {
   protected static final IDatabase1 db = new DatabasesImpl().getDatabase1();
 
   private final IUserPersistence users = db.users();
@@ -58,7 +58,7 @@ public class TestGenericQuery {
     results2 = null;
     // mysql with version < 5.6.4 does not support nano second resolution
     datetime = Timestamp.valueOf("2015-03-20 14:23:00").getTime();
-    date = DateTime.parse("2015-04-16").getMillis();
+    date = DATE_STRING_TO_MILLIS.apply("2015-04-16");
   }
 
   @Test
