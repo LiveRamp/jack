@@ -86,7 +86,7 @@ public class WhereClause {
     Iterator<WhereConstraint> it = whereConstraints.iterator();
     while (it.hasNext()) {
       WhereConstraint constraint = it.next();
-      sb.append(constraint.getSqlStatement());
+      sb.append("(").append(constraint.getSqlStatement()).append(")");
 
       if (it.hasNext()) {
         sb.append(" AND ");
