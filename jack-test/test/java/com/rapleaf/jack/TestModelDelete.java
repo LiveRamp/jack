@@ -39,7 +39,7 @@ public class TestModelDelete {
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, equalTo(5)));
 
-    String expectedStatement = "DELETE FROM posts WHERE (id in (1,50,3,10) AND `title` = ? AND `user_id` = ?)".toLowerCase();
+    String expectedStatement = "DELETE FROM posts WHERE (id in (1,50,3,10) AND (`title` = ?) AND (`user_id` = ?))".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
@@ -63,7 +63,7 @@ public class TestModelDelete {
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.title, equalTo("Obama")));
     deleteStatement.addConstraint(new WhereConstraint<>(Post._Fields.user_id, in(5, 10)));
 
-    String expectedStatement = "DELETE FROM posts WHERE (`title` = ? AND `user_id` IN (?, ?))".toLowerCase();
+    String expectedStatement = "DELETE FROM posts WHERE ((`title` = ?) AND (`user_id` IN (?, ?)))".toLowerCase();
     assertEquals(expectedStatement, deleteStatement.getStatement(tableName).trim().toLowerCase());
   }
 
