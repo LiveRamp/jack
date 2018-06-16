@@ -168,13 +168,22 @@ public class TestModelQuery {
     assertEquals(1, result.size());
     assertTrue(result.contains(casey));
 
+    // Is Null
     result = users.query().whereSomeDatetime(JackMatchers.<Long>isNull()).find();
     assertEquals(3, result.size());
 
+    // Is Not Null
     result = users.query().whereSomeDatetime(JackMatchers.<Long>isNotNull()).find();
     assertEquals(2, result.size());
     assertTrue(result.contains(brandon));
     assertTrue(result.contains(james));
+
+    // No Op
+    result = users.query()
+        .whereSomeDatetime(JackMatchers.isNotNull())
+        .whereBio(JackMatchers.noop())
+        .find();
+    assertEquals(2, result.size());
 
     // If a null parameter is passed, an exception should be thrown
     try {
