@@ -54,7 +54,7 @@ module ActiveRecord
 
   class Index
     include FromHash
-    attr_accessor :name, :fields, :unique, :length, :table
+    attr_accessor :name, :fields, :unique, :length, :table, :using
   end
 
   class Table
