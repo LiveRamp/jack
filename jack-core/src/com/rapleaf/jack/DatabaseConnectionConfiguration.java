@@ -9,8 +9,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import org.jvyaml.YAML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatabaseConnectionConfiguration {
+
+  private final static Logger LOG = LoggerFactory.getLogger(DatabaseConnectionConfiguration.class);
 
   public static final String ADAPTER_PROP_PREFIX = "jack.db.adapter";
   public static final String HOST_PROP_PREFIX = "jack.db.host";
@@ -48,6 +52,7 @@ public class DatabaseConnectionConfiguration {
     Map<String, Object> dbInfo;
     // load database info from some file - first check env, then props, then default location
     envInfo = fetchInfoMap(
+        "environment",
         new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)),
         new PropertyProvider(ENVIRONMENT_YML_PROP),
         new FileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
@@ -58,6 +63,7 @@ public class DatabaseConnectionConfiguration {
     String db_info_name = (String)envInfo.get(dbNameKey);
 
     dbInfo = (Map<String, Object>)fetchInfoMap(
+        "database",
         new EnvVarProvider(envVar(DATABASE_YML_PROP)),
         new PropertyProvider(DATABASE_YML_PROP),
         new FileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
@@ -89,7 +95,7 @@ public class DatabaseConnectionConfiguration {
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
   }
 
-  private static Map<String, Object> fetchInfoMap(ReaderProvider... readers) {
+  private static Map<String, Object> fetchInfoMap(String configName, ReaderProvider... readers) {
     for (ReaderProvider reader : readers) {
       try {
         Optional<Reader> readerOptional = reader.get();
@@ -100,6 +106,7 @@ public class DatabaseConnectionConfiguration {
         //move to next reader
       }
     }
+    LOG.error("no yaml found for config: " + configName);
     return Maps.newHashMap();
   }
 
@@ -136,7 +143,8 @@ public class DatabaseConnectionConfiguration {
           "Unable to find required configuration " + readableName + ". Please set using one of:\n" +
               "Environment Variable: " + envVar + "\n" +
               "Java System Property: " + javaProp + "\n" +
-              "Entry in config/" + mapYmlFile + ".yml: " + mapKey);
+              "Entry in config/" + mapYmlFile + ".yml: " + mapKey + "\n" +
+              "Found following keys: " + map.keySet());
     }
   }
 
