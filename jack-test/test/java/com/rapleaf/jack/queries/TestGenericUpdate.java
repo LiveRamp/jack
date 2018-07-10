@@ -46,7 +46,7 @@ public class TestGenericUpdate {
         .set(Post.USER_ID, USER_ID_1 * 10)
         .execute();
 
-    assertEquals(2, updates.getUpdatedRowCount());
+    assertEquals(2, updates.getMatchedRowCount());
     assertEquals(USER_ID_1 * 10, db.posts().find(post1.getId()).getUserId().longValue());
     assertEquals(USER_ID_1 * 10, db.posts().find(post2.getId()).getUserId().longValue());
   }
@@ -69,7 +69,7 @@ public class TestGenericUpdate {
         .where(Post.ID.equalTo(post1.getId()))
         .execute();
 
-    assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(1, updates.getMatchedRowCount());
     assertEquals(newDate, db.posts().find(post1.getId()).getPostedAtMillis().longValue());
   }
 
@@ -82,7 +82,7 @@ public class TestGenericUpdate {
         .where(Post.TITLE.equalTo(TITLE_1))
         .execute();
 
-    assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(1, updates.getMatchedRowCount());
     assertEquals(USER_ID_2, db.posts().find(post2.getId()).getUserId().longValue());
     assertEquals(TITLE_2, db.posts().find(post2.getId()).getTitle());
     assertEquals(USER_ID_1 * 10, db.posts().find(post1.getId()).getUserId().longValue());
@@ -97,7 +97,7 @@ public class TestGenericUpdate {
         .where(Post.USER_ID.equalTo(USER_ID_1))
         .execute();
 
-    assertEquals(1, updates.getUpdatedRowCount());
+    assertEquals(1, updates.getMatchedRowCount());
     assertNull(db.posts().find(post1.getId()).getTitle());
   }
 
