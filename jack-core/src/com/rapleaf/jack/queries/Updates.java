@@ -2,34 +2,38 @@ package com.rapleaf.jack.queries;
 
 public class Updates {
 
-  private final int updatedRowCount;
+  private final int matchedRowCount;
 
-  public Updates(int updatedRowCount) {
-    this.updatedRowCount = updatedRowCount;
+  public Updates(int matchedRowCount) {
+    this.matchedRowCount = matchedRowCount;
   }
 
-  public int getUpdatedRowCount() {
-    return updatedRowCount;
+  /**
+   * @return the number of rows matched by the update statement. Matched rows may not have changed.
+   * See comments in {@link UpdateFetcher#getUpdateResults}.
+   */
+  public int getMatchedRowCount() {
+    return matchedRowCount;
   }
 
   @Override
   public String toString() {
     return Updates.class.getSimpleName() +
         "{" +
-        "updateRowCount=" + updatedRowCount +
+        "matchedRowCount=" + matchedRowCount +
         "}";
   }
 
   @Override
   public int hashCode() {
-    return updatedRowCount;
+    return matchedRowCount;
   }
 
   @Override
   public boolean equals(Object other) {
     return this == other
         || other instanceof Updates
-        && this.updatedRowCount == ((Updates)other).updatedRowCount;
+        && this.matchedRowCount == ((Updates)other).matchedRowCount;
   }
 
 }
