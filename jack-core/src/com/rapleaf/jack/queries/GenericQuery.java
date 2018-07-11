@@ -156,6 +156,13 @@ public class GenericQuery extends AbstractExecution {
     return this;
   }
 
+  public GenericQuery select(AbstractTable table, AbstractTable... tbls){
+    this.selectedColumns.addAll(table.getAllColumns());
+    for (AbstractTable tbl : tbls) {
+      this.selectedColumns.addAll(tbl.getAllColumns());
+    }
+  }
+
   public GenericQuery distinct() {
     this.selectDistinct = true;
     return this;
