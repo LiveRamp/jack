@@ -161,6 +161,7 @@ public class GenericQuery extends AbstractExecution {
     for (AbstractTable tbl : tbls) {
       this.selectedColumns.addAll(tbl.getAllColumns());
     }
+    return this;
   }
 
   public GenericQuery distinct() {
