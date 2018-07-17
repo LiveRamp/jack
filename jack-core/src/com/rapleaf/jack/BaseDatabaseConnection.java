@@ -83,8 +83,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   }
 
   /**
-   * Creates a Statement object that can be used to send SQL queries to the RapLeaf
-   * database.
+   * Creates a Statement object that can be used to send SQL queries to the database.
    */
   public Statement getStatement() {
     try {
@@ -95,8 +94,7 @@ public abstract class BaseDatabaseConnection implements Serializable, Closeable 
   }
 
   /**
-   * Creates a PreparedStatement object that can be used to send SQL queries to the
-   * RapLeaf database.
+   * Creates a PreparedStatement object that can be used to send SQL queries to the database.
    */
   public PreparedStatement getPreparedStatement(String statement) {
     try {
