@@ -4,7 +4,6 @@ describe SchemaRbParser do
   before(:context) do
     schema_file = File.expand_path('../../test_project/database_1/db/schema.rb', __FILE__)
     @models, @version = SchemaRbParser.parse(schema_file, ['profiles'])
-    puts @models.inspect
   end
 
   describe 'parser output' do
