@@ -67,7 +67,7 @@ module ActiveRecord
     fattr(:columns) { [] }
 
     def __column(type, name, ops = {})
-      self.columns << Column.new(ops.merge(type: type, name: name))
+      self.columns << Column.new(ops.merge(type: type, name: name)) unless FORBIDDEN_FIELD_NAMES.include?(name)
     end
 
     %w(integer text datetime boolean string float binary date decimal varbinary).each do |f|
@@ -80,7 +80,7 @@ module ActiveRecord
       res = ModelDefn.new(42)
       res.table_name = name
       res.model_name = name.singularize.camelize
-      res.fields = columns.each_with_index.map { |x,i| x.to_model_defn(i) }.compact
+      res.fields = columns.each_with_index.map { |x,i| x.to_model_defn(i) }
       res.migration_number = schema.version.to_s
       res
     end
@@ -96,7 +96,6 @@ module ActiveRecord
       name = f.delete('name')
       type = f.delete('type').to_sym
       raise "bad" unless name && type
-      return nil if FORBIDDEN_FIELD_NAMES.include?(f['name'])
 
       if default.kind_of?(Numeric) && [:float,:decimal].include?(type)
         f['default'] = default.to_f
