@@ -120,7 +120,7 @@ module ActiveRecord
 end
 
 class SchemaRbParser
-  def self.parse(schema_rb, ignored_tables)
+  def self.parse(schema_rb, ignored_tables = [])
     load schema_rb
     defns = $schema.tables.map(&:to_model_defn).compact.reject { |x| ignored_tables.include?(x.table_name) }
     [defns, $schema.version.to_s]
