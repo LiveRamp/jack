@@ -50,6 +50,10 @@ module ActiveRecord
     def add_index(table, fields, ops = {})
       self.indexes << Index.new(ops.merge(table: table, fields: fields))
     end
+
+    def method_missing(m, *args, &block)
+      puts "Warning: schema method #{m} is not currently supported"
+    end
   end
 
   class Index
