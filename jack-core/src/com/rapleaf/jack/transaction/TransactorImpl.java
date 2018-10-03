@@ -74,8 +74,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
     DB connection = dbManager.getConnection();
-    connection.setAutoCommit(!asTransaction);
     try {
+      connection.setAutoCommit(!asTransaction);
       long startTime = System.currentTimeMillis();
       T value = query.query(connection);
       if (asTransaction) {
@@ -100,8 +100,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private void execute(IExecution<DB> execution, boolean asTransaction) {
     DB connection = dbManager.getConnection();
-    connection.setAutoCommit(!asTransaction);
     try {
+      connection.setAutoCommit(!asTransaction);
       long startTime = System.currentTimeMillis();
       execution.execute(connection);
       if (asTransaction) {
