@@ -1,7 +1,7 @@
 #!/bin/bash -l
 pushd `pwd`
 cd $1
-bundle install
+bundle install --path vendor/bundle
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]
 then
