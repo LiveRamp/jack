@@ -110,8 +110,7 @@
               <executable>/bin/sh</executable>
               <arguments>
                 <argument>-c</argument>
-                <argument>bundle</argument>
-                <argument>install</argument>
+                <argument>bundle install --path vendor/bundle</argument>
               </arguments>
             </configuration>
 
