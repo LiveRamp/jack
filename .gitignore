@@ -11,3 +11,4 @@ jack-test/test/test_project/*/Gemfile*
 lib
 target
 .idea
+**/vendor/bundle
