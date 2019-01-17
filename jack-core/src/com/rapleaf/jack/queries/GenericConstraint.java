@@ -45,7 +45,7 @@ public class GenericConstraint<T> implements QueryCondition {
         .append(operator.getSqlStatement());
 
     for (List<GenericConstraint> orConstraints : chainedOrConstraints) {
-      statement.append(" OR ");
+      statement.append(" OR (");
 
       Iterator<GenericConstraint> it = orConstraints.iterator();
       while (it.hasNext()) {
@@ -54,7 +54,9 @@ public class GenericConstraint<T> implements QueryCondition {
           statement.append(" AND ");
         }
       }
+      statement.append(")");
     }
+
 
     return statement.append(")").toString();
   }
