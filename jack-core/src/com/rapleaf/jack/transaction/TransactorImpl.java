@@ -176,7 +176,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
      *                    should block before throwing an exception when the pool is exhausted. Negative values
      *                    mean that the block can be infinite.
-     *                    Deprecated, use the version with java.time.Duration instead.
+     * Deprecated, use the version with java.time.Duration instead.
      */
     @Deprecated
     public Builder<DB> setMaxWaitTime(org.joda.time.Duration maxWaitTime) {
