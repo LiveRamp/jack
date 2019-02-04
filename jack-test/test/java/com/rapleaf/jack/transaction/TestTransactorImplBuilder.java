@@ -27,7 +27,7 @@ public class TestTransactorImplBuilder extends JackTestCase {
     assertEquals(minIdleConnections, builder.minIdleConnections);
 
     // parameter values are not changed after transactor construction
-    TransactorImpl<IDatabase1> transactor1 = builder.get();
+    builder.get();
     assertEquals(maxTotalConnections, builder.maxTotalConnections);
     assertEquals(minIdleConnections, builder.minIdleConnections);
 
