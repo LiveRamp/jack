@@ -133,27 +133,15 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
 
-    private final Callable<DB> dbConstructor;
-    private int maxTotalConnections;
-    private int minIdleConnections;
-    private long maxWaitMillis;
-    private long keepAliveMillis;
-    private boolean metricsTrackingEnabled;
+    final Callable<DB> dbConstructor;
+    int maxTotalConnections = DbPoolManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
+    int minIdleConnections = DbPoolManager.DEFAULT_MIN_IDLE_CONNECTIONS;
+    long maxWaitMillis = DbPoolManager.DEFAULT_MAX_WAIT_TIME;
+    long keepAliveMillis = DbPoolManager.DEFAULT_KEEP_ALIVE_TIME;
+    boolean metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
 
     Builder(Callable<DB> dbConstructor) {
-      initialize();
       this.dbConstructor = dbConstructor;
-    }
-
-    /**
-     * (Re)initialize the parameters to allow builder reuse.
-     */
-    private void initialize() {
-      this.maxTotalConnections = DbPoolManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
-      this.minIdleConnections = DbPoolManager.DEFAULT_MIN_IDLE_CONNECTIONS;
-      this.maxWaitMillis = DbPoolManager.DEFAULT_MAX_WAIT_TIME;
-      this.keepAliveMillis = DbPoolManager.DEFAULT_KEEP_ALIVE_TIME;
-      this.metricsTrackingEnabled = DbPoolManager.DEFAULT_METRICS_TRACKING_ENABLED;
     }
 
     /**
@@ -188,7 +176,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
      * @param maxWaitTime The maximum amount of time that the {@link DbPoolManager#getConnection} method
      *                    should block before throwing an exception when the pool is exhausted. Negative values
      *                    mean that the block can be infinite.
-     * Deprecated, use the version with java.time.Duration instead.
+     *                    Deprecated, use the version with java.time.Duration instead.
      */
     @Deprecated
     public Builder<DB> setMaxWaitTime(org.joda.time.Duration maxWaitTime) {
@@ -241,16 +229,9 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       return this;
     }
 
-    /**
-     * Returns a new transactor impl using the parameters specified during the building
-     * process. After building, builder parameters are re-initialized and not shared
-     * amongst built instances.
-     */
     @Override
     public TransactorImpl<DB> get() {
-      TransactorImpl<DB> transactor = Builder.build(this);
-      initialize();
-      return transactor;
+      return Builder.build(this);
     }
 
     private static <DB extends IDb> TransactorImpl<DB> build(Builder<DB> builder) {
