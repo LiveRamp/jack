@@ -258,4 +258,26 @@ public class TestSubQuery extends JackTestCase {
     assertEquals(postB, records.get(1).getModel(postTable.model(Post.TBL), db.getDatabases()));
   }
 
+  @Test
+  public void testAggregatedColumnSubQuery() throws Exception {
+    SubTable postTable = db.createQuery()
+        .from(Post.TBL)
+        .groupBy(Post.USER_ID)
+        .select(Post.USER_ID, AggregatedColumn.COUNT(Post.ID))
+        .asSubTable("post_table");
+
+    // both columns refer to "COUNT(posts.id)" for the subquery table
+    Column<Integer> postCountColumn1 = AggregatedColumn.COUNT(Post.ID).forTable("post_table");
+    Column<Integer> postCountColumn2 = postTable.column(AggregatedColumn.COUNT(Post.ID));
+
+    records = db.createQuery()
+        .from(postTable)
+        .select(postCountColumn1)
+        .fetch();
+
+    for (Record record : records) {
+      assertEquals(1, record.get(postCountColumn1).intValue());
+      assertEquals(1, record.get(postCountColumn2).intValue());
+    }
+  }
 }
