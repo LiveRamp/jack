@@ -92,14 +92,16 @@ public class Column<T> {
   }
 
   /**
-   * @return SQL keyword for select clause.
+   * @return SQL keyword for select clause. For ordinary column,
+   * it is the same as {@link #getSqlKeyword()}.
    */
   String getSelectKeyword() {
     return getSqlKeyword();
   }
 
   /**
-   * @return column alias for select clause.
+   * @return column alias for select clause. For ordinary column,
+   * it is the same as {@link #getSqlKeyword()}.
    */
   String getSelectAlias() {
     return getSqlKeyword();
