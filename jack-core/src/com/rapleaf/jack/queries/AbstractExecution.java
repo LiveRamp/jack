@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.exception.BulkOperationException;
@@ -72,7 +73,8 @@ public abstract class AbstractExecution {
 
   protected abstract List<Object> getParameters();
 
-  static String getClauseFromColumns(Collection<Column> columns, String initialKeyword, String separator, String terminalKeyword) {
+  static String getClauseFromColumns(Collection<Column> columns, Function<Column, String> columnKeyword,
+                                     String initialKeyword, String separator, String terminalKeyword) {
     if (columns.isEmpty()) {
       return "";
     }
@@ -80,7 +82,7 @@ public abstract class AbstractExecution {
     StringBuilder clause = new StringBuilder(initialKeyword);
     Iterator<Column> it = columns.iterator();
     while (it.hasNext()) {
-      clause.append(it.next().getSqlKeyword());
+      clause.append(columnKeyword.apply(it.next()));
       if (it.hasNext()) {
         clause.append(separator);
       }
@@ -89,7 +91,8 @@ public abstract class AbstractExecution {
     return clause.append(terminalKeyword).toString();
   }
 
-  static <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword, String separator, String terminalKeyword) {
+  static <T extends QueryCondition> String getClauseFromQueryConditions(Collection<T> conditions, String initialKeyword,
+                                                                        String separator, String terminalKeyword) {
     if (conditions.isEmpty()) {
       return "";
     }

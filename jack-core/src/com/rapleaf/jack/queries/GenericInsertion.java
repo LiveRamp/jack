@@ -131,7 +131,7 @@ public class GenericInsertion extends AbstractExecution {
   }
 
   private String getColumnsClause() {
-    return getClauseFromColumns(values.keySet(), "(", ", ", ") ");
+    return getClauseFromColumns(values.keySet(), Column::getSqlKeyword, "(", ", ", ") ");
   }
 
   private String getValuesClause() {

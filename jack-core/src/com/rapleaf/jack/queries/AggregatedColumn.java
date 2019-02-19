@@ -7,10 +7,21 @@ public class AggregatedColumn<T> extends Column<T> {
   }
 
   private final Function function;
+  private final String sqlKeyword;
+  private final String alias;
 
   private AggregatedColumn(Column column, Function function) {
-    super(column);
+    super(column.table, column.field, column.type);
     this.function = function;
+    this.sqlKeyword = function.toString() + "(" + column.getSqlKeyword() + ")";
+    this.alias = column.getSqlKeyword().replaceAll("\\.", "_") + "_" + function.name().toLowerCase();
+  }
+
+  private AggregatedColumn(Column column, Function function, String sqlKeyword, String alias) {
+    super(column.table, column.field, column.type);
+    this.function = function;
+    this.sqlKeyword = sqlKeyword;
+    this.alias = alias;
   }
 
   public static <T> AggregatedColumn<Integer> COUNT(Column<T> column) {
@@ -34,7 +45,22 @@ public class AggregatedColumn<T> extends Column<T> {
   }
 
   @Override
+  AggregatedColumn<T> forTable(String tableAlias) {
+    return new AggregatedColumn<>(super.forTable(tableAlias), function, alias, alias);
+  }
+
+  @Override
+  String getSelectKeyword() {
+    return sqlKeyword + " AS " + alias;
+  }
+
+  @Override
+  String getSelectAlias() {
+    return alias;
+  }
+
+  @Override
   public String getSqlKeyword() {
-    return function.toString() + "(" + super.getSqlKeyword() + ")";
+    return sqlKeyword;
   }
 }

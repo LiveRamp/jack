@@ -34,12 +34,6 @@ public class Column<T> {
     this.type = type;
   }
 
-  protected <M> Column(Column<M> that) {
-    this.table = that.table;
-    this.field = that.field;
-    this.type = that.type;
-  }
-
   /**
    * Construct ID column. This constructor is mainly for internal use.
    */
@@ -81,7 +75,7 @@ public class Column<T> {
   /**
    * Change table alias.
    */
-  <K> Column<K> forTable(String tableAlias) {
+  Column<T> forTable(String tableAlias) {
     return new Column<>(tableAlias, this.field, type);
   }
 
@@ -95,6 +89,20 @@ public class Column<T> {
 
   public Class getType() {
     return type;
+  }
+
+  /**
+   * @return SQL keyword for select clause.
+   */
+  String getSelectKeyword() {
+    return getSqlKeyword();
+  }
+
+  /**
+   * @return column alias for select clause.
+   */
+  String getSelectAlias() {
+    return getSqlKeyword();
   }
 
   public String getSqlKeyword() {
@@ -311,7 +319,7 @@ public class Column<T> {
 
   public GenericConstraint notIn(T value, T... otherValues) {
     if (isDateColumn()) {
-      return createDateConstraint(new NotIn<>((Long) value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
+      return createDateConstraint(new NotIn<>((Long)value, Arrays.copyOf(otherValues, otherValues.length, Long[].class)));
     } else {
       return new GenericConstraint<>(this, new NotIn<>(value, otherValues));
     }

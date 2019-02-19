@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Timestamp;
-import java.util.Map;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -75,7 +75,7 @@ public class QueryFetcher extends BaseFetcher {
 
     Record record = new Record(selectedColumns.size());
     for (Column column : selectedColumns) {
-      String sqlKeyword = column.getSqlKeyword();
+      String sqlKeyword = column.getSelectAlias();
       Class type = column.getType();
       Object value;
       ItemGetter itemGetter = ITEM_GETTERS.containsKey(type) ? ITEM_GETTERS.get(type) : ResultSet::getObject;
