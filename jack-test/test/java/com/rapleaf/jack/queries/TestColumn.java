@@ -16,7 +16,11 @@ public class TestColumn {
   @Test
   public void testForTable() {
     assertEquals("users", User.ID.table);
+    // table name is updated
     assertEquals("user_table", User.ID.forTable("user_table").table);
+    // table field and type are the same
+    assertEquals(User.ID.field, User.ID.forTable("user_table").field);
+    assertEquals(User.ID.type, User.ID.forTable("user_table").type);
   }
 
   @Test

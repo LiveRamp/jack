@@ -49,11 +49,19 @@ public class AggregatedColumn<T> extends Column<T> {
     return new AggregatedColumn<>(super.forTable(tableAlias), function, alias, alias);
   }
 
+  /**
+   * @return SQL keyword for select clause. For aggregated column,
+   * it is in the form of "column AS alias".
+   */
   @Override
   String getSelectKeyword() {
     return sqlKeyword + " AS " + alias;
   }
 
+  /**
+   * @return column alias for select clause. For aggregated column,
+   * it is just the alias.
+   */
   @Override
   String getSelectAlias() {
     return alias;
