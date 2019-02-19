@@ -166,9 +166,9 @@ public class TestSubQuery extends JackTestCase {
 
     assertEquals(2, records.size());
     assertEquals(userB, records.get(0).getModel(subQuery.model(User.TBL), db.getDatabases()));
-    assertEquals(userB, records.get(0).getModel(User.TBL.alias("subQuery"), db.getDatabases()));
+    assertEquals(userB, records.get(0).getModel(User.Tbl.as("subQuery"), db.getDatabases()));
     assertEquals(userC, records.get(1).getModel(subQuery.model(User.TBL), db.getDatabases()));
-    assertEquals(userC, records.get(1).getModel(User.TBL.alias("subQuery"), db.getDatabases()));
+    assertEquals(userC, records.get(1).getModel(User.Tbl.as("subQuery"), db.getDatabases()));
 
     /*
      * sub query with select clause
@@ -251,10 +251,10 @@ public class TestSubQuery extends JackTestCase {
 
     assertEquals(2, records.size());
     assertEquals(userC, records.get(0).getModel(User.TBL, db.getDatabases()));
-    assertEquals(postC, records.get(0).getModel(Post.TBL.alias("post_table"), db.getDatabases()));
+    assertEquals(postC, records.get(0).getModel(Post.Tbl.as("post_table"), db.getDatabases()));
     assertEquals(postC, records.get(0).getModel(postTable.model(Post.TBL), db.getDatabases()));
     assertEquals(userB, records.get(1).getModel(User.TBL, db.getDatabases()));
-    assertEquals(postB, records.get(1).getModel(Post.TBL.alias("post_table"), db.getDatabases()));
+    assertEquals(postB, records.get(1).getModel(Post.Tbl.as("post_table"), db.getDatabases()));
     assertEquals(postB, records.get(1).getModel(postTable.model(Post.TBL), db.getDatabases()));
   }
 
