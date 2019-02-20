@@ -35,7 +35,11 @@ public class AbstractTable<A extends AttributesWithId, M extends ModelWithId> im
     this.allColumns = table.allColumns;
   }
 
-  public AbstractTable<A, M> alias(String alias) {
+  /**
+   * This method is used internally only. Users should call {@code Tbl#as}
+   * on each respective table to get an aliased reference.
+   */
+  AbstractTable<A, M> alias(String alias) {
     return new AbstractTable<>(name, alias, attributesType, modelType);
   }
 

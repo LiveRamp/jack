@@ -166,9 +166,9 @@ public class TestSubQuery extends JackTestCase {
 
     assertEquals(2, records.size());
     assertEquals(userB, records.get(0).getModel(subQuery.model(User.TBL), db.getDatabases()));
-    assertEquals(userB, records.get(0).getModel(User.TBL.alias("subQuery"), db.getDatabases()));
+    assertEquals(userB, records.get(0).getModel(User.Tbl.as("subQuery"), db.getDatabases()));
     assertEquals(userC, records.get(1).getModel(subQuery.model(User.TBL), db.getDatabases()));
-    assertEquals(userC, records.get(1).getModel(User.TBL.alias("subQuery"), db.getDatabases()));
+    assertEquals(userC, records.get(1).getModel(User.Tbl.as("subQuery"), db.getDatabases()));
 
     /*
      * sub query with select clause
@@ -251,11 +251,33 @@ public class TestSubQuery extends JackTestCase {
 
     assertEquals(2, records.size());
     assertEquals(userC, records.get(0).getModel(User.TBL, db.getDatabases()));
-    assertEquals(postC, records.get(0).getModel(Post.TBL.alias("post_table"), db.getDatabases()));
+    assertEquals(postC, records.get(0).getModel(Post.Tbl.as("post_table"), db.getDatabases()));
     assertEquals(postC, records.get(0).getModel(postTable.model(Post.TBL), db.getDatabases()));
     assertEquals(userB, records.get(1).getModel(User.TBL, db.getDatabases()));
-    assertEquals(postB, records.get(1).getModel(Post.TBL.alias("post_table"), db.getDatabases()));
+    assertEquals(postB, records.get(1).getModel(Post.Tbl.as("post_table"), db.getDatabases()));
     assertEquals(postB, records.get(1).getModel(postTable.model(Post.TBL), db.getDatabases()));
   }
 
+  @Test
+  public void testAggregatedColumnSubQuery() throws Exception {
+    SubTable postTable = db.createQuery()
+        .from(Post.TBL)
+        .groupBy(Post.USER_ID)
+        .select(Post.USER_ID, AggregatedColumn.COUNT(Post.ID))
+        .asSubTable("post_table");
+
+    // both columns refer to "COUNT(posts.id)" for the subquery table
+    Column<Integer> postCountColumn1 = AggregatedColumn.COUNT(Post.ID).forTable("post_table");
+    Column<Integer> postCountColumn2 = postTable.column(AggregatedColumn.COUNT(Post.ID));
+
+    records = db.createQuery()
+        .from(postTable)
+        .select(postCountColumn1)
+        .fetch();
+
+    for (Record record : records) {
+      assertEquals(1, record.get(postCountColumn1).intValue());
+      assertEquals(1, record.get(postCountColumn2).intValue());
+    }
+  }
 }
