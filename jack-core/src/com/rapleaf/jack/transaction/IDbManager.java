@@ -15,4 +15,6 @@ interface IDbManager<DB extends IDb> extends Closeable {
 
   DbMetrics getMetrics();
 
+  DbPoolStatus getDbPoolStatus();
+
 }

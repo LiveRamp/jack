@@ -31,6 +31,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   private final DbMetricsImpl metrics;
   private final boolean metricsTrackingEnabled;
   private final GenericObjectPool<DB> connectionPool;
+  private final DbPoolStatus poolStatus;
 
   /**
    * Create a new DbPoolManager.
@@ -78,6 +79,7 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     this.connectionPool = new GenericObjectPool<>(new DbPoolFactory<>(dbConstructor), config);
     this.metricsTrackingEnabled = metricsTrackingEnabled;
     this.metrics = new DbMetricsImpl(config.getMaxTotal(), config.getMinIdle(), config.getMaxWaitMillis(), config.getSoftMinEvictableIdleTimeMillis());
+    this.poolStatus = new DbPoolStatusImpl(connectionPool);
   }
 
   /**
@@ -141,6 +143,11 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   @VisibleForTesting
   ObjectPool<DB> getConnectionPool() {
     return connectionPool;
+  }
+
+  @Override
+  public DbPoolStatus getDbPoolStatus() {
+    return this.poolStatus;
   }
 
   private static class DbPoolFactory<DB extends IDb> implements PooledObjectFactory<DB> {
