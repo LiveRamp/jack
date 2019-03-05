@@ -17,7 +17,7 @@ public class TestTransactorImplBuilder extends JackTestCase {
   public void testParameterSpecification() {
     TransactorImpl.Builder<IDatabase1> builder = new DatabasesImpl().getDatabase1Transactor();
     Random random = ThreadLocalRandom.current();
-    int maxTotalConnections = random.nextInt(20);
+    int maxTotalConnections = random.nextInt(20) + 1; // total connections cannot be zero
     int minIdleConnections = random.nextInt(10);
 
     // parameter should have the specified value
