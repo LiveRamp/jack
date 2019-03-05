@@ -131,6 +131,11 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     dbManager.close();
   }
 
+  @Override
+  public DbPoolStatus getDbPoolStatus() {
+    return this.dbManager.getDbPoolStatus();
+  }
+
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
 
     final Callable<DB> dbConstructor;

@@ -17,6 +17,8 @@ public interface ITransactor<DB extends IDb> extends Closeable {
   @Override
   void close();
 
+  DbPoolStatus getDbPoolStatus();
+
   interface Builder<DB extends IDb, Impl extends ITransactor<DB>> {
     Impl get();
   }
