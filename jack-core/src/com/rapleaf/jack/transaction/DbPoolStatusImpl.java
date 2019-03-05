@@ -1,12 +1,12 @@
 package com.rapleaf.jack.transaction;
 
 import com.rapleaf.jack.IDb;
-import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 
 public class DbPoolStatusImpl<DB extends IDb> implements DbPoolStatus {
 
-  private final ObjectPool<DB> connectionPool;
-  public DbPoolStatusImpl(ObjectPool<DB> connectionPool) {
+  private final GenericObjectPool<DB> connectionPool;
+  public DbPoolStatusImpl(GenericObjectPool<DB> connectionPool) {
     this.connectionPool = connectionPool;
   }
 
@@ -31,6 +31,6 @@ public class DbPoolStatusImpl<DB extends IDb> implements DbPoolStatus {
    */
   @Override
   public int getNumWaiters() {
-    return this.connectionPool.getNumActive();
+    return this.connectionPool.getNumWaiters();
   }
 }

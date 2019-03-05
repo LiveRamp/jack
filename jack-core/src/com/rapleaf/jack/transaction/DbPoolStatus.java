@@ -7,4 +7,5 @@ public interface DbPoolStatus {
   int getNumIdle();
 
   int getNumWaiters();
+
 }
