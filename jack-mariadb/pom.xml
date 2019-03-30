@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>jack-mariadb</artifactId>
+  <version>1.2-SNAPSHOT</version>
+
+  <parent>
+    <groupId>com.liveramp</groupId>
+    <artifactId>jack</artifactId>
+    <version>1.2-SNAPSHOT</version>
+  </parent>
+
+  <properties>
+    <db.user>root</db.user>
+    <db.pass>""</db.pass>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
+  <scm>
+    <connection>scm:git:git@github.com:LiveRamp/jack.git</connection>
+    <url>scm:git:git@github.com:LiveRamp/jack.git</url>
+    <developerConnection>scm:git:git@github.com:LiveRamp/jack.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jack-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.vorburger.mariaDB4j</groupId>
+      <artifactId>mariaDB4j</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <directory>${basedir}/build</directory>
+    <sourceDirectory>${basedir}/src</sourceDirectory>
+
+    <plugins>
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <version>1.3.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <failIfNoTests>false</failIfNoTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
