@@ -1,30 +1,33 @@
 language:
-  - ruby
-
+- ruby
 rvm:
-  - 2.3.0
-
+- 2.3.0
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 env:
   global:
-    - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
-
+  - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
+  - secure: aB+J2d/LuddkTmGJ/ygnUFBL7NBJaWXwX5myI7jzJRdiMVvnw6jqpZFqrGJZ3pFp7q5sN+lZCXIG/UGCTHtr/a9I2Yg3wMjSpwp62m+2/1N6vxT+AAz96f76HDTZsIGOkhxOOhLvSg6gOrgLh8wn2xSKbcVRHJjxchD1jTxD6+o=
+  - secure: mIG7WfaKMeDCnENGCPn6nc3kZta7dKhQcy7mIbmceofifYVa6uXcbpKf7YyXOAlN9nHYUNQsHrThWB94BKh2Ch0/rpZx2E/yKN0ILjSO2xkfWW7LtE9C6LePMDh72VNVKOKJ2mPaLGSHHAYp8prKkGEro5H3WrWb7cPy8Jnln2I=
+  - secure: ZSBAwRsYDWVLMDuIbwCZhL003XSF1auo9koZ7SFV4adGcZiP+itWkeN7BaFlCLB4SmAHPxFroapyAibVvhEEAYUTeIYwWpb2Wxi0JPdku1nmx4jcRojNTjsmAmicNVykGeZWwJZpCma54OKeRzpdr/6kgIuKC54lwmujIYwhNT4=
+  - secure: mfJkzhFguMNu2KRSEVgn/1Oi3qJZoc2jbRWwINNuQ0ffk6LhmXh1rdgUWfi86YPoChs+YNEsAt+wgIdsZ4d/N0vthS6wyJge5E+fPHbR2dSqkRSORMLaaoK8ijhoqCQtDFijndGS2IcadoCaYEKk6z0tlVSG4olgy2p11nGHgSA=
 notifications:
   email: false
-
 services:
-  - mysql
-
+- mysql
 install: true
-
 before_script:
-  - export RAILS_ENV=development
-  # This variable needs to be unset because after rvm installs ruby 2.3, BUNDLE_GEMFILE is set to the
-  # Gemfile under the root path, which fails the dependency installation in the two test projects.
-  - unset BUNDLE_GEMFILE
-
+- export RAILS_ENV=development
+- unset BUNDLE_GEMFILE
 script:
-  - mvn test -B -Pmysql
-  - bundle exec rspec
+- mvn test -B -Pmysql
+- bundle exec rspec
+before_deploy:
+- openssl aes-256-cbc -K $encrypted_498697054cdc_key -iv $encrypted_498697054cdc_iv
+  -in .travis/gpg.asc.enc -out .travis/gpg.asc -d
+deploy:
+  skip_cleanup: true
+  on:
+    branch: sonatype # TODO(joshk) change to master before merge
+  provider: script
+  script: ./deploy
