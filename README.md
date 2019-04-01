@@ -1,7 +1,6 @@
-Project Jack
-------------
+# Jack
 
-[![Build Status](https://travis-ci.org/LiveRamp/jack.svg?branch=master)](https://travis-ci.org/LiveRamp/jack)
+[![Build Status](https://travis-ci.com/LiveRamp/jack.svg?branch=master)](https://travis-ci.com/LiveRamp/jack)
 
 Do you use Ruby/Rails and Java in your company? We do. And we're sick and tired of maintaining two different sets of schemas, models, and whatnot!
 
@@ -11,15 +10,14 @@ To that end, we've created Jack (**J**ava **AC**tive record (+**K**)). The proje
 - a Ruby parser for schema.rb and ActiveRecord models that generates Java code
 - a Java library that provides model-oriented database access and database-wide query on top of standard database connections
 
-Project Organization
-====
+## Project Organization
 
 A Jack project consists of two things:
 
 1. The **project definition file**
 1. One or more Rails project
 
-### Project Definition File ###
+### Project Definition File
 
 The project definition file is a YAML file that tells Jack where to find your Rails projects and how to generate code. Here's an annotated example:
 
@@ -50,22 +48,20 @@ databases:
     models: database_2/app/models
 ```
 
-### Rails Projects ###
+### Rails Projects
 
 Jack supports generating code for an arbitrary number of inter-related Rails 3 projects. If you only have one Rails project, then things are easy - just configure your project.yml appropriately.
 
 If you have more than one project, here's the setup we suggest. (We use this ourselves.)
 
     /all_my_databases
-      /project.yml 
+      /project.yml
       /rails_project_1
       /rails_project_2
     /ruby_project_that_uses_rails_project_2
       /include/rails_project_2              # <= svn external to /all_my_databases/rails_project_2
 
-
-Running the Generator
-====
+### Running the Generator
 
 Running the Jack generator is easy. From a fresh clone, do the following:
 
@@ -83,16 +79,15 @@ Assuming everything is configured correctly, that's it.
 
 _Note: We know that the path thing stinks. We're going to improve this in a future version._
 
-Layout of the Generated Code
-====
+### Layout of the Generated Code
 
 The Java code that Jack produces is designed around interfaces so that it is very modular and mockable.
 
-### Models ###
+#### Models
 
 The generated models contain getters and setters for all the fields, as well as getters for detected associations. In contrast to ActiveRecord models, there are no CRUD methods on the Java models.
 
-### Model Persistences ###
+#### Model Persistences
 
 This is where the CRUD methods live. The generic base class supports:
 
@@ -108,38 +103,45 @@ while there is a unique, per-model interface and implementation that additionall
 
 - create
 
-### Databases ###
+#### Databases
 
 You get one Database per database entry in your project.yml. Their main purpose is to provide a collection of all the individual model persistences. You can also execute queries across all models within each database.
 
-### All Databases ###
+#### All Databases
 
 Finally, there is one overarching Databases class that serves as a collection for all of the databases configured in your project.yml. Generally, this is what you will instantiate, though you can subsequently get the Database or Persistence instance you actually care about and use that.
 
-Download
-====
-You can either build jack from source or pull the latest jar from the Liveramp Maven repository:
+## Download
+
+You can either build jack from source or pull the latest snapshot from
+Sonatype:
 
 ```xml
 <repository>
-  <id>repository.liveramp.com</id>
-  <name>liveramp-repositories</name>
-  <url>http://repository.liveramp.com/artifactory/liveramp-repositories</url>
+  <id>sonatype-snapshots</id>
+  <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+  <layout>default</layout>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+  <snapshots>
+    <enabled>true</enabled>
+    <updatePolicy>always</updatePolicy>
+  </snapshots>
 </repository>
 ```
 
-The 1.0-SNAPSHOT build can be retrieved there:
+Depend on the JAR like so:
 
 ```xml
 <dependency>
-    <groupId>com.liveramp</groupId>
-    <artifactId>jack</artifactId>
-    <version>1.0-SNAPSHOT</version>
+  <groupId>com.liveramp</groupId>
+  <artifactId>jack</artifactId>
+  <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 
-License
-====
+## License
 
 Copyright 2014 LiveRamp
 
