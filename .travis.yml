@@ -1,7 +1,7 @@
 language:
 - ruby
 rvm:
-- 2.3.0
+- '2.3'
 jdk:
 - oraclejdk8
 env:
@@ -30,4 +30,4 @@ deploy:
   on:
     branch: sonatype # TODO(joshk) change to master before merge
   provider: script
-  script: ./deploy
+  script: rvm use $TRAVIS_RUBY_VERSION do ./deploy
