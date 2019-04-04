@@ -28,6 +28,6 @@ before_deploy:
 deploy:
   skip_cleanup: true
   on:
-    branch: sonatype # TODO(joshk) change to master before merge
+    branch: master
   provider: script
   script: rvm use $TRAVIS_RUBY_VERSION do ./deploy
