@@ -36,7 +36,7 @@ public class TestMysqlContainerDb extends JackTestCase {
    * instance, these accessors point to a single "database1" MySQL container within the same JVM.
    */
   private static class Database1ContainerDb {
-    private static final String DB_NAME = "database_1";
+    private static final String DB_NAME = "jack_1";
     private static final LazyLoadingSingletonFactory<MySQLContainer> DB_PROVIDER = new MysqlContainerSingletonProvider(DB_NAME);
 
     public static ContainerDbImpl<IDatabase1> get() {
