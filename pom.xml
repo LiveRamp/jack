@@ -56,6 +56,7 @@
     <module>jack-redshift</module>
     <module>jack-store</module>
     <module>jack-test</module>
+    <module>jack-testcontainers</module>
   </modules>
 
   <repositories>
