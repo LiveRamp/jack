@@ -17,7 +17,10 @@ public class ModelQuery {
   private List<Enum> groupByFields;
   private Optional<LimitCriterion> limitCriterion;
 
-  public ModelQuery() {
+  /**
+   * This class should only be constructed in {@link AbstractQueryBuilder}.
+   */
+  ModelQuery() {
     this.whereClause = new WhereClause();
     this.orderCriteria = new ArrayList<>();
     this.selectedFields = new ArrayList<>();
