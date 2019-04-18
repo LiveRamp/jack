@@ -8,7 +8,10 @@ import java.util.Collection;
 public class ModelDelete {
   private WhereClause whereClause;
 
-  public ModelDelete() {
+  /**
+   * This class should only be constructed in {@link AbstractDeleteBuilder}.
+   */
+  ModelDelete() {
     this.whereClause = new WhereClause();
   }
 
