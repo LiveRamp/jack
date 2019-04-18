@@ -224,7 +224,7 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <executable>${project.build.directory}/bin/dump_schema.sh</executable>
+              <executable>${project.build.directory}/../bin/dump_schema.sh</executable>
               <failWithEmptyArgument>false</failWithEmptyArgument>
               <arguments>
                 <argument>${basedir}</argument>
