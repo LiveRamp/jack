@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -786,13 +787,18 @@ public abstract class AbstractDatabaseModel<T extends ModelWithId<T, ? extends G
 
   @Override
   public boolean delete(long id) throws IOException {
+    return delete(Collections.singleton(id));
+  }
+
+  @Override
+  public boolean delete(Collection<Long> ids) throws IOException {
     PreparedStatement stmt = conn.getPreparedStatement(String.format(
-        "DELETE FROM %s WHERE id=%d", tableName, id));
+        "DELETE FROM %s WHERE id IN (%s)", tableName, ids.stream().map(Object::toString).collect(Collectors.joining(","))));
     try {
-      boolean success = stmt.executeUpdate() == 1;
+      boolean success = stmt.executeUpdate() == ids.size();
       stmt.close();
       if (success) {
-        cachedById.remove(id);
+        ids.forEach(cachedById::remove);
       }
       clearForeignKeyCache();
       return success;

@@ -501,13 +501,23 @@ public abstract class BaseDatabaseModelTestCase {
   }
 
   @Test
-  public void testDelete() throws Exception {
+  public void testDeleteSingle() throws Exception {
     IPostPersistence posts = dbs.getDatabase1().posts();
     Post post = posts.create(null, 10L, 1, 0l);
     long id = post.getId();
     posts.delete(id);
     assertNull(posts.find(id));
   }
+
+  @Test
+  public void testDeleteMultiple() throws Exception {
+    IPostPersistence posts = dbs.getDatabase1().posts();
+    long post1 = posts.create(null, 10L, 1, 0l).getId();
+    long post2 = posts.create(null, 10L, 1, 0l).getId();
+    posts.delete(Arrays.asList(post1, post2));
+    assertTrue(posts.find(Arrays.asList(post1, post2)).isEmpty());
+  }
+
 
   @Test
   public void testSave() throws Exception {
