@@ -102,6 +102,11 @@ public interface IModelPersistence<T extends ModelWithId> extends Serializable {
   boolean delete(long id) throws IOException;
 
   /**
+   * @return true if all records deleted, false otherwise
+   */
+  boolean delete(Collection<Long> ids) throws IOException;
+
+  /**
    * Delete all records in this persistence.
    *
    * @return
