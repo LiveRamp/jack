@@ -23,7 +23,7 @@ import com.rapleaf.jack.tracking.NoOpAction;
 import com.rapleaf.jack.tracking.PostQueryAction;
 import com.rapleaf.jack.tracking.QueryStatistics;
 
-public class GenericQuery extends AbstractExecution implements JoinableExecution {
+public class GenericQuery extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericQuery.class);
   protected static int MAX_CONNECTION_RETRIES = 1;
 
@@ -80,29 +80,27 @@ public class GenericQuery extends AbstractExecution implements JoinableExecution
     }
   }
 
-  public JoinConditionBuilder<GenericQuery> leftJoin(Table table) {
+  public JoinConditionBuilder leftJoin(Table table) {
     this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.LEFT_JOIN, table);
+    return new JoinConditionBuilder(this, JoinType.LEFT_JOIN, table);
   }
 
-  public JoinConditionBuilder<GenericQuery> rightJoin(Table table) {
+  public JoinConditionBuilder rightJoin(Table table) {
     this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.RIGHT_JOIN, table);
+    return new JoinConditionBuilder(this, JoinType.RIGHT_JOIN, table);
   }
 
-  public JoinConditionBuilder<GenericQuery> innerJoin(Table table) {
+  public JoinConditionBuilder innerJoin(Table table) {
     this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.INNER_JOIN, table);
+    return new JoinConditionBuilder(this, JoinType.INNER_JOIN, table);
   }
 
-  @Override
-  public void addJoinCondition(JoinCondition joinCondition) {
+  void addJoinCondition(JoinCondition joinCondition) {
     this.includedTables.add(joinCondition.getTable());
     this.joinConditions.add(joinCondition);
   }
 
-  @Override
-  public void addParameters(List parameters) {
+  void addParameters(List parameters) {
     this.parameters.addAll(parameters);
   }
 

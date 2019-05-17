@@ -13,37 +13,24 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.BaseDatabaseConnection;
 
-public class GenericDeletion extends AbstractExecution implements JoinableExecution {
+public class GenericDeletion extends AbstractExecution {
   private static final Logger LOG = LoggerFactory.getLogger(GenericDeletion.class);
 
   private final boolean allowBulkOperation;
-  private final List<Table> includedTables;
-  private final List<JoinCondition> joinConditions;
+  private final AbstractTable table;
   private final List<GenericConstraint> whereConstraints;
-  private final List<Object> parameters;
+  private final List<Object> whereParameters;
 
   private GenericDeletion(BaseDatabaseConnection dbConnection, boolean allowBulkOperation, AbstractTable table) {
     super(dbConnection);
     this.allowBulkOperation = allowBulkOperation;
-    this.includedTables = Lists.newArrayList(table);
-    this.joinConditions = Lists.newArrayList();
+    this.table = table;
     this.whereConstraints = Lists.newLinkedList();
-    this.parameters = Lists.newLinkedList();
+    this.whereParameters = Lists.newLinkedList();
   }
 
   public static Builder create(BaseDatabaseConnection dbConnection, boolean allowBulkOperation) {
     return new Builder(dbConnection, allowBulkOperation);
-  }
-
-  @Override
-  public void addParameters(List parameters) {
-    this.parameters.addAll(parameters);
-  }
-
-  @Override
-  public void addJoinCondition(JoinCondition joinCondition) {
-    this.includedTables.add(joinCondition.getTable());
-    this.joinConditions.add(joinCondition);
   }
 
   public static class Builder {
@@ -60,27 +47,12 @@ public class GenericDeletion extends AbstractExecution implements JoinableExecut
     }
   }
 
-  public JoinConditionBuilder<GenericDeletion> leftJoin(Table table) {
-    this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.LEFT_JOIN, table);
-  }
-
-  public JoinConditionBuilder<GenericDeletion> rightJoin(Table table) {
-    this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.RIGHT_JOIN, table);
-  }
-
-  public JoinConditionBuilder<GenericDeletion> innerJoin(Table table) {
-    this.parameters.addAll(table.getParameters());
-    return new JoinConditionBuilder<>(this, JoinType.INNER_JOIN, table);
-  }
-
   public GenericDeletion where(GenericConstraint constraint, GenericConstraint... constraints) {
     this.whereConstraints.add(constraint);
-    this.parameters.addAll(constraint.getParameters());
+    this.whereParameters.addAll(constraint.getParameters());
     for (GenericConstraint genericConstraint : constraints) {
       this.whereConstraints.add(genericConstraint);
-      this.parameters.addAll(genericConstraint.getParameters());
+      this.whereParameters.addAll(genericConstraint.getParameters());
     }
     return this;
   }
@@ -108,17 +80,11 @@ public class GenericDeletion extends AbstractExecution implements JoinableExecut
   @Override
   public String getQueryStatement() {
     return getFromClause() +
-        getJoinClause() +
         getWhereClause();
   }
 
   private String getFromClause() {
-    Table firstTable = includedTables.get(0);
-    return "DELETE " + firstTable.getName() + " FROM " + firstTable.getName() + " ";
-  }
-
-  private String getJoinClause() {
-    return getClauseFromQueryConditions(joinConditions, "", "", " ");
+    return "DELETE FROM " + table.getName() + " ";
   }
 
   private String getWhereClause() {
@@ -127,6 +93,6 @@ public class GenericDeletion extends AbstractExecution implements JoinableExecut
 
   @Override
   protected List<Object> getParameters() {
-    return parameters;
+    return whereParameters;
   }
 }

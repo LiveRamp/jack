@@ -4,18 +4,18 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class JoinConditionBuilder<E extends JoinableExecution> {
-  private final E genericQuery;
+public class JoinConditionBuilder {
+  private final GenericQuery genericQuery;
   private final JoinType joinType;
   private final Table table;
 
-  JoinConditionBuilder(E genericQuery, JoinType joinType, Table table) {
+  JoinConditionBuilder(GenericQuery genericQuery, JoinType joinType, Table table) {
     this.genericQuery = genericQuery;
     this.joinType = joinType;
     this.table = table;
   }
 
-  public E on(GenericConstraint constraint, GenericConstraint... constraints) {
+  public GenericQuery on(GenericConstraint constraint, GenericConstraint... constraints) {
     List<GenericConstraint> joinConstraints = Lists.newArrayList(constraint);
     genericQuery.addParameters(constraint.getParameters());
     for (GenericConstraint genericConstraint : constraints) {
