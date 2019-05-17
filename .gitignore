@@ -12,3 +12,5 @@ lib
 target
 .idea
 **/vendor/bundle
+node_modules
+_book

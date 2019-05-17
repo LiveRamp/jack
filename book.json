@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    "-sharing",
+    "github",
+    "anchors",
+    "splitter"
+  ],
+
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/LiveRamp/jack"
+    }
+  }
+}
