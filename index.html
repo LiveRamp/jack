@@ -1,0 +1,339 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Introduction · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-anchors/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter active" data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Introduction</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="jack"><a name="jack" class="plugin-anchor" href="#jack"><i class="fa fa-link" aria-hidden="true"></i></a>Jack</h1>
+<p><a href="https://travis-ci.com/LiveRamp/jack" target="_blank"><img src="https://travis-ci.com/LiveRamp/jack.svg?branch=master" alt="Build Status"></a></p>
+<p>Do you use Ruby/Rails and Java in your company? We do. And we&apos;re sick and tired of maintaining two different sets of schemas, models, and whatnot!</p>
+<p>To that end, we&apos;ve created Jack (<strong>J</strong>ava <strong>AC</strong>tive record (+<strong>K</strong>)). The project consists of:</p>
+<ul>
+<li>a scheme for defining and managing multiple Rails projects that contribute models</li>
+<li>a Ruby parser for schema.rb and ActiveRecord models that generates Java code</li>
+<li>a Java library that provides model-oriented database access and database-wide query on top of standard database connections</li>
+</ul>
+<h2 id="project-organization"><a name="project-organization" class="plugin-anchor" href="#project-organization"><i class="fa fa-link" aria-hidden="true"></i></a>Project Organization</h2>
+<p>A Jack project consists of two things:</p>
+<ol>
+<li>The <strong>project definition file</strong></li>
+<li>One or more Rails project</li>
+</ol>
+<h3 id="project-definition-file"><a name="project-definition-file" class="plugin-anchor" href="#project-definition-file"><i class="fa fa-link" aria-hidden="true"></i></a>Project Definition File</h3>
+<p>The project definition file is a YAML file that tells Jack where to find your Rails projects and how to generate code. Here&apos;s an annotated example:</p>
+<pre><code class="lang-yaml"><span class="hljs-comment"># This is the class path where you want the top-level generated code to go.</span>
+<span class="hljs-attr">databases_namespace:</span> com.rapleaf.jack.test_project
+<span class="hljs-comment"># Here, we define each of the separate databases for which Jack should</span>
+<span class="hljs-comment"># generate code. Each database is roughly equivalent to a Rails project.</span>
+<span class="hljs-attr">databases:</span>
+<span class="hljs-bullet">  -</span>
+    <span class="hljs-comment"># The root namespace for this database. It&apos;s nice, but not required, to</span>
+    <span class="hljs-comment"># have this be a subpackage of the &apos;databases_namespace&apos;.</span>
+<span class="hljs-attr">    root_namespace:</span> com.rapleaf.jack.test_project.database_1
+    <span class="hljs-comment"># What do you want to call this database? Leave out the &quot;_production&quot;.</span>
+<span class="hljs-attr">    db_name:</span> Database1
+    <span class="hljs-comment"># The path to the schema.rb in your Rails project.</span>
+<span class="hljs-attr">    schema_rb:</span> database_1/db/schema.rb
+    <span class="hljs-comment"># The path to the app/models dir in your Rails project.</span>
+<span class="hljs-attr">    models:</span> database_1/app/models
+    <span class="hljs-comment"># Tables to be ignored. No code will be generated for them.</span>
+<span class="hljs-attr">    ignored_tables:</span>
+      table_1
+      table_2
+<span class="hljs-bullet">  -</span>
+<span class="hljs-attr">    root_namespace:</span> com.rapleaf.jack.test_project.database_2
+<span class="hljs-attr">    db_name:</span> Database2
+<span class="hljs-attr">    schema_rb:</span> database_2/db/schema.rb
+<span class="hljs-attr">    models:</span> database_2/app/models
+</code></pre>
+<h3 id="rails-projects"><a name="rails-projects" class="plugin-anchor" href="#rails-projects"><i class="fa fa-link" aria-hidden="true"></i></a>Rails Projects</h3>
+<p>Jack supports generating code for an arbitrary number of inter-related Rails 3 projects. If you only have one Rails project, then things are easy - just configure your project.yml appropriately.</p>
+<p>If you have more than one project, here&apos;s the setup we suggest. (We use this ourselves.)</p>
+<pre><code>/all_my_databases
+  /project.yml
+  /rails_project_1
+  /rails_project_2
+/ruby_project_that_uses_rails_project_2
+  /include/rails_project_2              # &lt;= svn external to /all_my_databases/rails_project_2
+</code></pre><h3 id="running-the-generator"><a name="running-the-generator" class="plugin-anchor" href="#running-the-generator"><i class="fa fa-link" aria-hidden="true"></i></a>Running the Generator</h3>
+<p>Running the Jack generator is easy. From a fresh clone, do the following:</p>
+<pre><code class="lang-sh"><span class="hljs-built_in">export</span> PATH=<span class="hljs-variable">$PATH</span>:`<span class="hljs-built_in">pwd</span>`/src/rb
+</code></pre>
+<p>Then, change directories to wherever your project.yml lives and run:</p>
+<pre><code class="lang-sh">ruby jack.rb project.yml /path/<span class="hljs-keyword">for</span>/generated/code
+</code></pre>
+<p>Assuming everything is configured correctly, that&apos;s it.</p>
+<p><em>Note: We know that the path thing stinks. We&apos;re going to improve this in a future version.</em></p>
+<h3 id="layout-of-the-generated-code"><a name="layout-of-the-generated-code" class="plugin-anchor" href="#layout-of-the-generated-code"><i class="fa fa-link" aria-hidden="true"></i></a>Layout of the Generated Code</h3>
+<p>The Java code that Jack produces is designed around interfaces so that it is very modular and mockable.</p>
+<h4 id="models"><a name="models" class="plugin-anchor" href="#models"><i class="fa fa-link" aria-hidden="true"></i></a>Models</h4>
+<p>The generated models contain getters and setters for all the fields, as well as getters for detected associations. In contrast to ActiveRecord models, there are no CRUD methods on the Java models.</p>
+<h4 id="model-persistences"><a name="model-persistences" class="plugin-anchor" href="#model-persistences"><i class="fa fa-link" aria-hidden="true"></i></a>Model Persistences</h4>
+<p>This is where the CRUD methods live. The generic base class supports:</p>
+<ul>
+<li>find</li>
+<li>find all (with and without conditions)</li>
+<li>finding by foreign key</li>
+<li>delete by id or instance</li>
+<li>delete all</li>
+<li>save (update)</li>
+<li>cache manipulators</li>
+</ul>
+<p>while there is a unique, per-model interface and implementation that additionally provides:</p>
+<ul>
+<li>create</li>
+</ul>
+<h4 id="databases"><a name="databases" class="plugin-anchor" href="#databases"><i class="fa fa-link" aria-hidden="true"></i></a>Databases</h4>
+<p>You get one Database per database entry in your project.yml. Their main purpose is to provide a collection of all the individual model persistences. You can also execute queries across all models within each database.</p>
+<h4 id="all-databases"><a name="all-databases" class="plugin-anchor" href="#all-databases"><i class="fa fa-link" aria-hidden="true"></i></a>All Databases</h4>
+<p>Finally, there is one overarching Databases class that serves as a collection for all of the databases configured in your project.yml. Generally, this is what you will instantiate, though you can subsequently get the Database or Persistence instance you actually care about and use that.</p>
+<h2 id="download"><a name="download" class="plugin-anchor" href="#download"><i class="fa fa-link" aria-hidden="true"></i></a>Download</h2>
+<p>You can either build jack from source or pull the latest snapshot from
+Sonatype:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">repository</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">id</span>&gt;</span>sonatype-snapshots<span class="hljs-tag">&lt;/<span class="hljs-name">id</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">url</span>&gt;</span>http://oss.sonatype.org/content/repositories/snapshots<span class="hljs-tag">&lt;/<span class="hljs-name">url</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">layout</span>&gt;</span>default<span class="hljs-tag">&lt;/<span class="hljs-name">layout</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">releases</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">enabled</span>&gt;</span>false<span class="hljs-tag">&lt;/<span class="hljs-name">enabled</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">releases</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">snapshots</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">enabled</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">enabled</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">updatePolicy</span>&gt;</span>always<span class="hljs-tag">&lt;/<span class="hljs-name">updatePolicy</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">snapshots</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">repository</span>&gt;</span>
+</code></pre>
+<p>Depend on the JAR like so:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.liveramp<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>jack<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0-SNAPSHOT<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span>
+</code></pre>
+<h2 id="license"><a name="license" class="plugin-anchor" href="#license"><i class="fa fa-link" aria-hidden="true"></i></a>License</h2>
+<p>Copyright 2014 LiveRamp</p>
+<p>Licensed under the Apache License, Version 2.0</p>
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["-sharing","github","anchors","splitter"],"pluginsConfig":{"github":{"url":"https://github.com/LiveRamp/jack"},"anchors":{},"splitter":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2019-05-17T18:57:46.154Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-05-17T19:14:24.552Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
