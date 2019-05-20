@@ -113,7 +113,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     }
   }
 
-  private void execute(final IExecution<DB> execution, boolean asTransaction) {
+  private void execute(IExecution<DB> execution, boolean asTransaction) {
     query(db -> {
       execution.execute(db);
       return Optional.empty();
