@@ -102,14 +102,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
       dbManager.returnConnection(connection);
       throw new SqlExecutionFailureException(e);
-    } catch (Throwable t) {
-
-      // We still try to explicitly rollback the transaction if a throwable is thrown.
-      if (asTransaction) {
-        connection.rollback();
-      }
-
-      throw t;
     }
   }
 
