@@ -1,14 +1,14 @@
 package com.rapleaf.jack.transaction;
 
-import java.time.Duration;
-import java.util.concurrent.Callable;
-
 import com.google.common.base.Preconditions;
+import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.SqlExecutionFailureException;
+import java.time.Duration;
+import java.util.Optional;
+import java.util.concurrent.Callable;
 
 /**
  * If there is any exception while executing the query, throws {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
@@ -21,6 +21,7 @@ import com.rapleaf.jack.exception.SqlExecutionFailureException;
  * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
+
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private final IDbManager<DB> dbManager;
@@ -85,42 +86,38 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
       if (metricsTrackingEnabled) {
         queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
       }
+
+      // We don't return the connection in a finally block because we don't want to
+      // do so in the case that a Throwable is thrown. In that case, the JVM is almost certainly
+      // about to exit, so returning the connection isn't important and in some cases can actually
+      // cause harm like committing a half-complete transaction (part of returning the connection is setting
+      // its autocommit property to true, which would commit a half-complete transaction).
+      dbManager.returnConnection(connection);
       return value;
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
       if (asTransaction) {
         connection.rollback();
       }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
-    }
-  }
 
-  private void execute(IExecution<DB> execution, boolean asTransaction) {
-    DB connection = dbManager.getConnection();
-    try {
-      connection.setAutoCommit(!asTransaction);
-      long startTime = System.currentTimeMillis();
-      execution.execute(connection);
-      if (asTransaction) {
-        connection.commit();
-      }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
+      dbManager.returnConnection(connection);
+      throw new SqlExecutionFailureException(e);
+    } catch (Throwable t) {
+
+      // We still try to explicitly rollback the transaction if a throwable is thrown.
       if (asTransaction) {
         connection.rollback();
       }
-      throw new SqlExecutionFailureException(e);
-    } finally {
-      // connection should be reset in PooledObjectFactory
-      dbManager.returnConnection(connection);
+
+      throw t;
     }
+  }
+
+  private void execute(final IExecution<DB> execution, boolean asTransaction) {
+    query(db -> {
+      execution.execute(db);
+      return Optional.empty();
+    });
   }
 
   @Override
