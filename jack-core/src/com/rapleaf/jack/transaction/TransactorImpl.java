@@ -21,7 +21,6 @@ import java.util.concurrent.Callable;
  * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
-
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
 
   private final IDbManager<DB> dbManager;
