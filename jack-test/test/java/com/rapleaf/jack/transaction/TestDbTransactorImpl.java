@@ -103,6 +103,34 @@ public class TestDbTransactorImpl extends JackTestCase {
     }
   }
 
+  @Test
+  public void testTransactionRollbackThrowable() throws Exception{
+    TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
+
+    String originalBio = "original";
+    User user = transactor.queryAsTransaction(db -> {
+      User u = db.users().createDefaultInstance();
+      u.setBio(originalBio).save();
+      return u;
+    });
+
+    assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
+
+    try {
+      transactor.executeAsTransaction((IExecution<IDatabase1>)db -> {
+        String newBio = "new";
+        user.setBio(newBio).save();
+        // within the transaction, the change is visible
+        assertEquals(newBio, db.users().find(user.getId()).getBio());
+        throw new OutOfMemoryError();
+      });
+      fail();
+    } catch (Throwable t) {
+      // after rollback, there is no change
+      assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
+    }
+  }
+
   @Test(timeout = 5 * 1000) // 5s
   public void testSimultaneousQuery() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(5).get();
