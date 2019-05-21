@@ -117,7 +117,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     query(
         db -> {
           execution.execute(db);
-          return Optional.empty();
+          return null;
         },
         asTransaction
     );
