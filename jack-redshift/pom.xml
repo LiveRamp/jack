@@ -40,6 +40,13 @@
 
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>redshift</id>
+      <url>https://s3.amazonaws.com/redshift-maven-repository/release</url>
+    </repository>
+  </repositories>
+
   <build>
 
     <directory>${basedir}/build</directory>
