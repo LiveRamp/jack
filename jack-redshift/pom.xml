@@ -34,11 +34,18 @@
 
     <dependency>
       <groupId>com.amazon.redshift</groupId>
-      <artifactId>jdbc41</artifactId>
+      <artifactId>redshift-jdbc41</artifactId>
       <version>1.1.17.1017</version>
     </dependency>
 
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>redshift</id>
+      <url>https://s3.amazonaws.com/redshift-maven-repository/release</url>
+    </repository>
+  </repositories>
 
   <build>
 
