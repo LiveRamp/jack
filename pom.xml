@@ -2,18 +2,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>com.liveramp</groupId>
   <artifactId>jack</artifactId>
   <version>1.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <parent>
-    <groupId>com.liveramp</groupId>
-    <artifactId>pom-common</artifactId>
-    <version>1.1-SNAPSHOT</version>
-  </parent>
-
   <name>Jack</name>
-  <description>A set of scripts for generating fully functional Java database models from Ruby's ActiveRecord models and migrations.</description>
+  <description>A set of scripts for generating fully functional Java database models from Ruby's ActiveRecord models and
+    migrations.
+  </description>
   <developers>
     <developer>
       <name>LiveRamp Engineering</name>
@@ -58,33 +55,26 @@
     <module>jack-test</module>
   </modules>
 
-  <repositories>
-    <repository>
-      <id>sonatype-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <releases><enabled>false</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>sonatype-releases</id>
-      <url>http://oss.sonatype.org/content/repositories/releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>clojars.org</id>
-      <url>http://clojars.org/repo</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <plugins>
+
       <plugin>
         <artifactId>exec-maven-plugin</artifactId>
         <groupId>org.codehaus.mojo</groupId>
         <version>1.3.2</version>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <release>8</release>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -95,17 +85,17 @@
         <plugins>
           <!-- Used to build a JAR containing the source code from this project -->
           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-source-plugin</artifactId>
-              <version>2.4</version>
-              <executions>
-                  <execution>
-                      <id>attach-sources</id>
-                      <goals>
-                          <goal>jar-no-fork</goal>
-                      </goals>
-                  </execution>
-              </executions>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.4</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
 
           <!-- Used to generate javadocs for this project -->
@@ -115,8 +105,8 @@
             <version>3.0.0</version>
             <executions>
               <execution>
-              <!-- Disable javadoc linting until CD is setup, then you
-                        can enable it if you'd like -->
+                <!-- Disable javadoc linting until CD is setup, then you
+                          can enable it if you'd like -->
                 <configuration>
                   <doclint>none</doclint>
                 </configuration>
