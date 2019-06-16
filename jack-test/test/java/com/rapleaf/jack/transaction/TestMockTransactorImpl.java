@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class TestMockTransactorImpl extends JackTestCase {
 
   private IDatabase1 db;
-  private IDbManager<IDatabase1> dbManager;
+  private IDbManager dbManager;
   private TransactorImpl<IDatabase1> transactor;
 
   @Before
