@@ -137,7 +137,7 @@ Depend on the JAR like so:
 <dependency>
   <groupId>com.liveramp</groupId>
   <artifactId>jack</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
