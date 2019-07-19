@@ -101,21 +101,39 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * Get a Connection to a database. If there is no connection, create a new one.
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
+   *
+   * Because of the potential downtime of CloudSQL, it implements exponential retry policy.
+   * The default retry policy retries five times, which handles SQL downtime less than approx. two minutes.
+   *
    */
 
   public Connection getConnectionInternal() {
-    try {
-      if (conn == null) {
-        Class.forName(driverClass);
-        conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
-      } else if (isExpired() || conn.isClosed()) {
-        resetConnection();
+    int MAX_RETRIES = 7;
+    for (int retryCount = 0; retryCount < MAX_RETRIES; ++retryCount) {
+      try {
+        if  (conn == null) {
+          Class.forName(driverClass);
+          conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
+        } else if (isExpired() || conn.isClosed()) {
+          resetConnection();
+        }
+        updateExpiration();
+        return conn;
+      } catch (Exception e) { //IOEx., SQLEx.
+        // if it is the last retry, throw exception
+        if (retryCount == MAX_RETRIES - 1) {
+          throw new RuntimeException(e);
+        }
+        // Wait (2^retryCount) seconds
+        try {
+          Thread.sleep(Math.round(Math.pow(2, retryCount)) * 1000);
+        } catch (Exception ignored) {
+          // Catches interruptions in the sleep
+        }
       }
-      updateExpiration();
-      return conn;
-    } catch (Exception e) { //IOEx., SQLEx.
-      throw new RuntimeException(e);
     }
+    // it should never reach at this point
+    return null;
   }
 
 
