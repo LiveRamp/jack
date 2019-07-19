@@ -103,7 +103,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
    * <p>
-   * Because of the potential downtime of CloudSQL, it implements exponential retry policy.
+   * Because of the intermittent downtime of SQL service, it implements exponential retry policy.
    * The default retry policy retries seven times, which handles SQL downtime less than approx. two minutes.
    */
 
