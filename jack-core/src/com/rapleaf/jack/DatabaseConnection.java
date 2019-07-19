@@ -36,6 +36,7 @@ import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
+  private static final int GET_CONNECTION_MAX_RETRIES = 7;
 
   static final Map VALID_ADAPTER_CONSTANTS = Collections.unmodifiableMap(new HashMap() {
     private static final long serialVersionUID = 1L;
@@ -101,17 +102,15 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    * Get a Connection to a database. If there is no connection, create a new one.
    * If the connection hasn't been used in a long time, close it and create a new one.
    * We do this because MySQL has an 8 hour idle connection timeout.
-   *
+   * <p>
    * Because of the potential downtime of CloudSQL, it implements exponential retry policy.
-   * The default retry policy retries five times, which handles SQL downtime less than approx. two minutes.
-   *
+   * The default retry policy retries seven times, which handles SQL downtime less than approx. two minutes.
    */
 
   public Connection getConnectionInternal() {
-    int MAX_RETRIES = 7;
-    for (int retryCount = 0; retryCount < MAX_RETRIES; ++retryCount) {
+    for (int retryCount = 0; retryCount < GET_CONNECTION_MAX_RETRIES; ++retryCount) {
       try {
-        if  (conn == null) {
+        if (conn == null) {
           Class.forName(driverClass);
           conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
         } else if (isExpired() || conn.isClosed()) {
@@ -121,8 +120,9 @@ public class DatabaseConnection extends BaseDatabaseConnection {
         return conn;
       } catch (Exception e) { //IOEx., SQLEx.
         // if it is the last retry, throw exception
-        if (retryCount == MAX_RETRIES - 1) {
-          throw new RuntimeException(e);
+        if (retryCount == GET_CONNECTION_MAX_RETRIES - 1) {
+          throw new RuntimeException(String.format("Could not establish connection after %d attempts",
+              GET_CONNECTION_MAX_RETRIES), e);
         }
         // Wait (2^retryCount) seconds
         try {
@@ -132,8 +132,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
         }
       }
     }
-    // it should never reach at this point
-    return null;
+    throw new RuntimeException(String.format("Could not establish connection after %d attempts",
+        GET_CONNECTION_MAX_RETRIES));
   }
 
 
@@ -154,7 +154,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       if (partitionNumber != null) {
         return base_name + partitionNumber;
       } else {
-        throw new RuntimeException("Expected the " + PARTITION_NUM_ENV_VARIABLE_NAME + " environment variable to be set, but it wasn't. Either disable parallel tests or make sure the variable is defined.");
+        throw new RuntimeException("Expected the " + PARTITION_NUM_ENV_VARIABLE_NAME + " environment variable to be " +
+            "set, but it wasn't. Either disable parallel tests or make sure the variable is defined.");
       }
     }
   }
