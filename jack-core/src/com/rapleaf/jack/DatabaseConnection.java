@@ -108,7 +108,6 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    */
 
   public Connection getConnectionInternal() {
-    Exception runtimeException = new Exception();
     for (int retryCount = 0; retryCount < GET_CONNECTION_MAX_RETRIES; ++retryCount) {
       try {
         if (conn == null) {
@@ -125,17 +124,16 @@ public class DatabaseConnection extends BaseDatabaseConnection {
           throw new RuntimeException(String.format("Could not establish connection after %d attempts",
               GET_CONNECTION_MAX_RETRIES), e);
         }
-        runtimeException = e;
         // Wait (2^retryCount) seconds
         try {
           Thread.sleep(Math.round(Math.pow(2, retryCount)) * 1000);
         } catch (Exception ignored) {
-          // ignore InterruptedException during sleep
+          // Catches interruptions in the sleep
         }
       }
     }
     throw new RuntimeException(String.format("Could not establish connection after %d attempts",
-        GET_CONNECTION_MAX_RETRIES), runtimeException);
+        GET_CONNECTION_MAX_RETRIES));
   }
 
 
