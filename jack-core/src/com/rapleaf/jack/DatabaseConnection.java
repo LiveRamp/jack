@@ -36,7 +36,8 @@ import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
  */
 public class DatabaseConnection extends BaseDatabaseConnection {
   private static final String PARTITION_NUM_ENV_VARIABLE_NAME = "TLB_PARTITION_NUMBER";
-  private static final int GET_CONNECTION_MAX_RETRIES = 7;
+  private static final int DEFAULT_CONNECTION_MAX_RETRIES = 7;
+  private static final int DEFAULT_VALIDATION_TIMEOUT_SECONDS = 3;
 
   static final Map VALID_ADAPTER_CONSTANTS = Collections.unmodifiableMap(new HashMap() {
     private static final long serialVersionUID = 1L;
@@ -63,13 +64,14 @@ public class DatabaseConnection extends BaseDatabaseConnection {
   private final String connectionString;
   private final Optional<String> username;
   private final Optional<String> password;
+  private final int connectionMaxRetries;
+  private final int validationTimeoutSeconds;
 
   protected String driverClass;
   private long expiresAt;
   private long expiration;
 
   public DatabaseConnection(String dbname_key, long expiration, String driverClass) {
-
     DatabaseConnectionConfiguration config = DatabaseConnectionConfiguration.loadFromEnvironment(dbname_key);
     // get server credentials from database info
     String adapter = config.getAdapter();
@@ -94,6 +96,11 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     username = config.getUsername();
     password = config.getPassword();
 
+    connectionMaxRetries = config.getConnectionMaxRetries()
+        .or(DEFAULT_CONNECTION_MAX_RETRIES);
+    validationTimeoutSeconds = config.getConnectionValidationTimeout()
+        .or(DEFAULT_VALIDATION_TIMEOUT_SECONDS);
+
     this.expiration = expiration;
     updateExpiration();
   }
@@ -108,21 +115,22 @@ public class DatabaseConnection extends BaseDatabaseConnection {
    */
 
   public Connection getConnectionInternal() {
-    for (int retryCount = 0; retryCount < GET_CONNECTION_MAX_RETRIES; ++retryCount) {
+    for (int retryCount = 0; retryCount < connectionMaxRetries; ++retryCount) {
       try {
         if (conn == null) {
           Class.forName(driverClass);
           conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
-        } else if (isExpired() || conn.isClosed()) {
+        } else if (isExpired() || !conn.isValid(validationTimeoutSeconds)) {
           resetConnection();
         }
         updateExpiration();
         return conn;
       } catch (Exception e) { //IOEx., SQLEx.
         // if it is the last retry, throw exception
-        if (retryCount == GET_CONNECTION_MAX_RETRIES - 1) {
+        if (retryCount == connectionMaxRetries - 1) {
           throw new RuntimeException(String.format("Could not establish connection after %d attempts",
-              GET_CONNECTION_MAX_RETRIES), e);
+              connectionMaxRetries
+          ), e);
         }
         // Wait (2^retryCount) seconds
         try {
@@ -133,7 +141,8 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       }
     }
     throw new RuntimeException(String.format("Could not establish connection after %d attempts",
-        GET_CONNECTION_MAX_RETRIES));
+        connectionMaxRetries
+    ));
   }
 
 
