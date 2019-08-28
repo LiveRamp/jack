@@ -71,6 +71,8 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-pool2</artifactId>
+      <!-- Be careful about updating this dependency to anything greater than 2.4.2. -->
+      <!-- See https://github.com/LiveRamp/jack/issues/195#issuecomment-455738622 -->
       <version>2.4.2</version>
     </dependency>
 
