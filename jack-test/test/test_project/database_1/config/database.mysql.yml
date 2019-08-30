@@ -6,3 +6,5 @@ development:
   host: 127.0.0.1
   pool: 5
   timeout: 5000
+  connection_max_retries: 3
+  connection_validation_timeout: 1

@@ -27,6 +27,8 @@ public class DatabaseConnectionConfiguration {
   public static final String ENVIRONMENT_YML_PROP = "jack.db.environment.yml";
   public static final String DATABASE_PATH_PROP = "jack.db.database.config.path";
   public static final String ENVIRONMENT_PATH_PROP = "jack.db.environment.config.path";
+  public static final String CONNECTION_MAX_RETRIES = "jack.db.connection_max_retries";
+  public static final String CONNECTION_VALIDATION_TIMEOUT = "jack.db.connection_validation_timeout";
 
 
   private String adapter;
@@ -36,8 +38,24 @@ public class DatabaseConnectionConfiguration {
   private Optional<Boolean> parallelTest;
   private Optional<String> username;
   private Optional<String> password;
+  private Optional<Integer> connectionMaxRetries;
+  private Optional<Integer> connectionValidationTimeout;
 
   public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parallelTest, Optional<String> username, Optional<String> password) {
+    this(
+        adapter,
+        host,
+        dbName,
+        port,
+        parallelTest,
+        username,
+        password,
+        Optional.absent(),
+        Optional.absent()
+    );
+  }
+
+  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parallelTest, Optional<String> username, Optional<String> password, Optional<Integer> connectionMaxRetries, Optional<Integer> connectionValidationTimeout) {
     this.adapter = adapter;
     this.host = host;
     this.dbName = dbName;
@@ -45,6 +63,8 @@ public class DatabaseConnectionConfiguration {
     this.parallelTest = parallelTest;
     this.username = username;
     this.password = password;
+    this.connectionMaxRetries = connectionMaxRetries;
+    this.connectionValidationTimeout = connectionValidationTimeout;
   }
 
   public static DatabaseConnectionConfiguration loadFromEnvironment(String dbNameKey) {
@@ -92,7 +112,23 @@ public class DatabaseConnectionConfiguration {
     Optional<String> password = loadOpt(dbInfo, "password",
         envVar(PASSWORD_PROP_PREFIX, dbNameKey), prop(PASSWORD_PROP_PREFIX, dbNameKey), new StringIdentity());
 
-    return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password);
+    Optional<Integer> connectionMaxRetries = loadOpt(dbInfo, "connection_max_retries",
+        envVar(CONNECTION_MAX_RETRIES, dbNameKey), prop(CONNECTION_MAX_RETRIES, dbNameKey), new ToLong())
+        /**
+         * This transform is necessary because the underlying type parsed by
+         * {@link #loadOpt(Map, String, String, String, Function)} is actually a Long. This is a
+         * result of the YAML parser loading all numbers as Longs, not Integers. The only reason we
+         * don't see this issue with the port config as well is because we never actually treat it
+         * as an int later on. Without doing this, we'll get a {@link ClassCastException} when we
+         * attempt to unwrap this into an int later on.
+         */
+        .transform(Long::intValue);
+
+    Optional<Integer> connectionValidationTimeout = loadOpt(dbInfo, "connection_validation_timeout",
+        envVar(CONNECTION_VALIDATION_TIMEOUT, dbNameKey), prop(CONNECTION_VALIDATION_TIMEOUT, dbNameKey), new ToLong())
+        .transform(Long::intValue);
+
+    return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password, connectionMaxRetries, connectionValidationTimeout);
   }
 
   private static Map<String, Object> fetchInfoMap(String configName, ReaderProvider... readers) {
@@ -195,6 +231,14 @@ public class DatabaseConnectionConfiguration {
     return password;
   }
 
+  public Optional<Integer> getConnectionMaxRetries() {
+    return connectionMaxRetries;
+  }
+
+  public Optional<Integer> getConnectionValidationTimeout() {
+    return connectionValidationTimeout;
+  }
+
   private static class StringIdentity implements Function<String, String> {
     public String apply(String s) {
       return s;
@@ -204,6 +248,12 @@ public class DatabaseConnectionConfiguration {
   private static class ToInteger implements Function<String, Integer> {
     public Integer apply(String s) {
       return Integer.parseInt(s);
+    }
+  }
+
+  private static class ToLong implements Function<String, Long> {
+    public Long apply(String s) {
+      return Long.parseLong(s);
     }
   }
 

@@ -1,6 +1,10 @@
 package com.rapleaf.jack.transaction;
 
+import com.rapleaf.jack.queries.Column;
+import com.rapleaf.jack.queries.Records;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
@@ -55,9 +59,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
     config.setJmxEnabled(false);
     config.setLifo(false);
     config.setTestOnCreate(false);
-    config.setTestOnBorrow(false);
     config.setTestOnReturn(false);
-    config.setTestWhileIdle(false);
+    config.setTestOnBorrow(true);
+    config.setTestWhileIdle(true);
 
     config.setMaxTotal(maxTotalConnections);
     config.setMaxIdle(maxTotalConnections);
@@ -151,6 +155,9 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   }
 
   private static class DbPoolFactory<DB extends IDb> implements PooledObjectFactory<DB> {
+    private static final String VALIDATION_QUERY = "SELECT 1 AS id";
+    private static final Collection<Column> VALIDATION_COLUMN_LIST =
+        Collections.singletonList(Column.fromId(null));
     private final Callable<DB> dbConstructor;
 
     DbPoolFactory(Callable<DB> dbConstructor) {
@@ -171,7 +178,13 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
 
     @Override
     public boolean validateObject(PooledObject<DB> connection) {
-      return true;
+      try {
+        Records records = connection.getObject()
+            .findBySql(VALIDATION_QUERY, Collections.emptyList(), VALIDATION_COLUMN_LIST);
+        return records.size() == 1;
+      } catch (IOException e) {
+        return false;
+      }
     }
 
     @Override
