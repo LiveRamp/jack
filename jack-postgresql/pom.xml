@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.liveramp</groupId>
     <artifactId>jack</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4.0</version>
   </parent>
 
   <properties>
