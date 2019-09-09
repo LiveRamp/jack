@@ -112,21 +112,33 @@ public class DatabaseConnectionConfiguration {
     Optional<String> password = loadOpt(dbInfo, "password",
         envVar(PASSWORD_PROP_PREFIX, dbNameKey), prop(PASSWORD_PROP_PREFIX, dbNameKey), new StringIdentity());
 
-    Optional<Integer> connectionMaxRetries = loadOpt(dbInfo, "connection_max_retries",
-        envVar(CONNECTION_MAX_RETRIES, dbNameKey), prop(CONNECTION_MAX_RETRIES, dbNameKey), new ToLong())
-        /**
-         * This transform is necessary because the underlying type parsed by
-         * {@link #loadOpt(Map, String, String, String, Function)} is actually a Long. This is a
-         * result of the YAML parser loading all numbers as Longs, not Integers. The only reason we
-         * don't see this issue with the port config as well is because we never actually treat it
-         * as an int later on. Without doing this, we'll get a {@link ClassCastException} when we
-         * attempt to unwrap this into an int later on.
-         */
-        .transform(Long::intValue);
+    Optional<Long> connectionMaxRetriesLong = loadOpt(dbInfo, "connection_max_retries",
+        envVar(CONNECTION_MAX_RETRIES, dbNameKey), prop(CONNECTION_MAX_RETRIES, dbNameKey), new ToLong());
 
-    Optional<Integer> connectionValidationTimeout = loadOpt(dbInfo, "connection_validation_timeout",
-        envVar(CONNECTION_VALIDATION_TIMEOUT, dbNameKey), prop(CONNECTION_VALIDATION_TIMEOUT, dbNameKey), new ToLong())
-        .transform(Long::intValue);
+    Optional<Integer> connectionMaxRetries = Optional.absent();
+    if (connectionMaxRetriesLong.isPresent()) {
+      /**
+       * This manual transformation is necessary because the underlying type parsed by
+       * {@link #loadOpt(Map, String, String, String, Function)} is actually a Long. This is a
+       * result of the YAML parser loading all numbers as Longs, not Integers. The only reason we
+       * don't see this issue with the port config as well is because we never actually treat it
+       * as an int later on. Without doing this, we'll get a {@link ClassCastException} when we
+       * attempt to unwrap this into an int later on.
+       */
+      connectionMaxRetries = Optional.of(connectionMaxRetriesLong.get().intValue());
+    }
+
+    Optional<Long> connectionValidationTimeoutLong = loadOpt(dbInfo,
+        "connection_validation_timeout",
+        envVar(CONNECTION_VALIDATION_TIMEOUT, dbNameKey),
+        prop(CONNECTION_VALIDATION_TIMEOUT, dbNameKey),
+        new ToLong()
+    );
+
+    Optional<Integer> connectionValidationTimeout = Optional.absent();
+    if (connectionValidationTimeoutLong.isPresent()) {
+      connectionValidationTimeout = Optional.of(connectionValidationTimeoutLong.get().intValue());
+    }
 
     return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password, connectionMaxRetries, connectionValidationTimeout);
   }
