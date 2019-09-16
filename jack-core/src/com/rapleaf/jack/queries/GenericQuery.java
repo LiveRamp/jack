@@ -219,6 +219,11 @@ public class GenericQuery extends AbstractExecution {
     }
   }
 
+  /***
+   * For cases where you don't want sql to send all the records at once. This is NOT just a convenience method to use
+   * java streams, this is using JDBC built-in streaming
+   * https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-implementation-notes.html
+   */
   public Stream<Record> fetchAsStream() throws IOException {
     int retryCount = 0;
     final QueryStatistics.Measurer statTracker = new QueryStatistics.Measurer();
