@@ -96,7 +96,15 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
       if (asTransaction) {
-        connection.rollback();
+        try {
+          connection.rollback();
+        } catch (Exception e2) {
+          LOG.warn("Failed to rollback an active transaction", e2);
+          // ignore. We can't actually do anything about this, and we need to return the connection
+          // to the pool under all circumstances where the application will continue running
+          // otherwise we will slowly leak connections until all connections are exhausted from the
+          // pool and will never be returned.
+        }
       }
 
       dbManager.returnConnection(connection);

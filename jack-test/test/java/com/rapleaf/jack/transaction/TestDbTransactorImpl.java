@@ -1,6 +1,11 @@
 package com.rapleaf.jack.transaction;
 
+import com.rapleaf.jack.BaseDatabaseConnection;
+import com.rapleaf.jack.MysqlDatabaseConnection;
+import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
+import com.rapleaf.jack.tracking.NoOpAction;
 import java.io.IOException;
+import java.sql.SQLRecoverableException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,6 +23,7 @@ import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
 import com.rapleaf.jack.test_project.database_1.models.User;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,6 +42,51 @@ public class TestDbTransactorImpl extends JackTestCase {
   @After
   public void cleanup() throws Exception {
     executorService = null;
+  }
+
+  @Test
+  public void testConnectionsReturnedOnRollbackFailure() {
+    final MysqlDatabaseConnection realConnection = new MysqlDatabaseConnection("database1");
+    final BaseDatabaseConnection sBaseDatabaseConnection = Mockito.spy(realConnection);
+    final IDatabase1 database1 =
+        new Database1Impl(
+            sBaseDatabaseConnection,
+            new DatabasesImpl(sBaseDatabaseConnection),
+            new NoOpAction()
+        );
+
+    Mockito.doAnswer(invocationOnMock1 -> {
+      throw new SQLRecoverableException("Commit failure");
+    }).when(sBaseDatabaseConnection).commit();
+
+    Mockito.doAnswer(invocationOnMock -> {
+      throw new SQLRecoverableException("Rollback failure");
+    }).when(sBaseDatabaseConnection).rollback();
+
+    final DbPoolManager<IDatabase1> sDbPoolManager = Mockito.spy(
+        new DbPoolManager<>(
+            () -> database1,
+            1,
+            1,
+            100,
+            Integer.MAX_VALUE,
+            false
+        ));
+    final TransactorImpl<IDatabase1> transactor = new TransactorImpl<>(sDbPoolManager, false);
+
+    final int dummyUserId = 1; // This doesn't necessarily exist. We just need some id to execute a query.
+    try {
+      transactor.queryAsTransaction(db -> db.users().find(dummyUserId));
+      fail();
+    } catch (Exception e) {
+      // Ignoring this as we expect an exception to be thrown in the try block.
+    }
+
+    Mockito.verify(sDbPoolManager, Mockito.times(1))
+        .returnConnection(Mockito.any(IDatabase1.class));
+
+    // This simply needs to not throw, demonstrating that the connection pool is not exhausted.
+    transactor.query(db -> db.users().find(dummyUserId));
   }
 
   @Test
