@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 /**
@@ -74,6 +73,8 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
   private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
     DB connection = dbManager.getConnection();
+    boolean connectionSafeToReturn = true;
+
     try {
       connection.setAutoCommit(!asTransaction);
       long startTime = System.currentTimeMillis();
@@ -86,30 +87,43 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
         queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
       }
 
-      // We don't return the connection in a finally block because we don't want to
-      // do so in the case that a Throwable is thrown. In that case, the JVM is almost certainly
-      // about to exit, so returning the connection isn't important and in some cases can actually
-      // cause harm like committing a half-complete transaction (part of returning the connection is setting
-      // its autocommit property to true, which would commit a half-complete transaction).
-      dbManager.returnConnection(connection);
       return value;
     } catch (Exception e) {
       LOG.error("SQL execution failure", e);
       if (asTransaction) {
-        connection.rollback();
+        connectionSafeToReturn = tryToSafelyRollback(connection);
       }
 
-      dbManager.returnConnection(connection);
       throw new SqlExecutionFailureException(e);
     } catch (Throwable t) {
-
       // We still try to explicitly rollback the transaction if a throwable is thrown.
       if (asTransaction) {
-        connection.rollback();
+        connectionSafeToReturn = tryToSafelyRollback(connection);
       }
 
       throw t;
+    } finally {
+      if (connectionSafeToReturn) {
+        dbManager.returnConnection(connection);
+      } else {
+        dbManager.invalidateConnection(connection);
+      }
     }
+  }
+
+  /**
+   * @param connection The connection to rollback
+   * @return True if the connection was successfully rolled back. False if it failed to rollback.
+   */
+  private boolean tryToSafelyRollback(DB connection) {
+    try {
+      connection.rollback();
+    } catch (Exception e) {
+      LOG.warn("Failed to rollback an active transaction", e);
+      return false;
+    }
+
+    return true;
   }
 
   private void execute(IExecution<DB> execution, boolean asTransaction) {

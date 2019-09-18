@@ -194,6 +194,20 @@ public class TestDbPoolManager extends JackTestCase {
     executorService.shutdownNow();
   }
 
+  @Test
+  public void testInvalidatingConnectionRemovesItFromThePool() {
+    maxConnections = 1;
+    initializeDbPoolManager();
+
+    IDatabase1 connection = dbPoolManager.getConnection();
+    assertActiveConnections(maxConnections);
+    assertIdleConnections(0);
+
+    dbPoolManager.invalidateConnection(connection);
+    assertActiveConnections(0);
+    assertIdleConnections(0);
+  }
+
   private void getAllConnections() {
     for (int i = 0; i < maxConnections; ++i) {
       dbPoolManager.getConnection();
