@@ -130,6 +130,19 @@ class DbPoolManager<DB extends IDb> implements IDbManager<DB> {
   }
 
   @Override
+  public void invalidateConnection(final DB connection) {
+    try {
+      if (metricsTrackingEnabled) {
+        metrics.update(false, connectionPool);
+      }
+      connectionPool.invalidateObject(connection);
+      metrics.update(false, connectionPool);
+    } catch (Exception e) {
+      LOG.error("Failed to invalidate connection. This will likely lead to a connection leak!", e);
+    }
+  }
+
+  @Override
   public void close() {
     connectionPool.close();
   }

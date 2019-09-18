@@ -45,7 +45,7 @@ public class TestDbTransactorImpl extends JackTestCase {
   }
 
   @Test
-  public void testConnectionsReturnedOnRollbackFailure() {
+  public void testConnectionInvalidatedOnRollbackFailure() {
     final MysqlDatabaseConnection realConnection = new MysqlDatabaseConnection("database1");
     final BaseDatabaseConnection sBaseDatabaseConnection = Mockito.spy(realConnection);
     final IDatabase1 database1 =
@@ -82,6 +82,51 @@ public class TestDbTransactorImpl extends JackTestCase {
       // Ignoring this as we expect an exception to be thrown in the try block.
     }
 
+    Mockito.verify(sDbPoolManager, Mockito.times(1))
+        .invalidateConnection(Mockito.any(IDatabase1.class));
+    Mockito.verify(sDbPoolManager, Mockito.times(0))
+        .returnConnection(Mockito.any(IDatabase1.class));
+
+    // This simply needs to not throw, demonstrating that the connection pool is not exhausted.
+    transactor.query(db -> db.users().find(dummyUserId));
+  }
+
+  @Test
+  public void testConnectionReturnedOnRollbackSuccess() {
+    final MysqlDatabaseConnection realConnection = new MysqlDatabaseConnection("database1");
+    final BaseDatabaseConnection sBaseDatabaseConnection = Mockito.spy(realConnection);
+    final IDatabase1 database1 =
+        new Database1Impl(
+            sBaseDatabaseConnection,
+            new DatabasesImpl(sBaseDatabaseConnection),
+            new NoOpAction()
+        );
+
+    Mockito.doAnswer(invocationOnMock1 -> {
+      throw new SQLRecoverableException("Commit failure");
+    }).when(sBaseDatabaseConnection).commit();
+
+    final DbPoolManager<IDatabase1> sDbPoolManager = Mockito.spy(
+        new DbPoolManager<>(
+            () -> database1,
+            1,
+            1,
+            100,
+            Integer.MAX_VALUE,
+            false
+        ));
+    final TransactorImpl<IDatabase1> transactor = new TransactorImpl<>(sDbPoolManager, false);
+
+    final int dummyUserId = 1; // This doesn't necessarily exist. We just need some id to execute a query.
+    try {
+      transactor.queryAsTransaction(db -> db.users().find(dummyUserId));
+      fail();
+    } catch (Exception e) {
+      // Ignoring this as we expect an exception to be thrown in the try block.
+    }
+
+    Mockito.verify(sDbPoolManager, Mockito.times(0))
+        .invalidateConnection(Mockito.any(IDatabase1.class));
     Mockito.verify(sDbPoolManager, Mockito.times(1))
         .returnConnection(Mockito.any(IDatabase1.class));
 
