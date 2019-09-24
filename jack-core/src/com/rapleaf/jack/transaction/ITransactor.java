@@ -6,12 +6,18 @@ import com.rapleaf.jack.IDb;
 
 public interface ITransactor<DB extends IDb> extends Closeable {
 
-  <T> T query(IQuery<DB, T> query);
+  ITransactor<DB> asTransaction();
 
-  <T> T queryAsTransaction(IQuery<DB, T> query);
+  ITransactor<DB> allowRetries(RetryPolicy retryPolicy);
+
+  <T> T query(IQuery<DB, T> query);
 
   void execute(IExecution<DB> execution);
 
+  @Deprecated
+  <T> T queryAsTransaction(IQuery<DB, T> query);
+
+  @Deprecated
   void executeAsTransaction(IExecution<DB> execution);
 
   @Override
@@ -23,4 +29,14 @@ public interface ITransactor<DB extends IDb> extends Closeable {
     Impl get();
   }
 
+  interface RetryPolicy {
+
+    boolean shouldRetry();
+
+    void updateOnFailure();
+
+    void updateOnSuccess();
+
+    void execute();
+  }
 }
