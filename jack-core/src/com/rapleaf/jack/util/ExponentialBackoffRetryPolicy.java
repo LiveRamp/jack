@@ -13,28 +13,46 @@ public class ExponentialBackoffRetryPolicy implements ITransactor.RetryPolicy {
 
   private static final Logger LOG = LoggerFactory.getLogger(ExponentialBackoffRetryPolicy.class);
 
-  private int maxRetries = 0;
-  private int numFailures = 0;
-  private int retryInterval = 0;
+  public static final int DEFAULT_MAX_RETRIES = 3;
+  public static final double DEFAULT_INTERVAL_MULTIPLIER = 2.0;
+
   private boolean succeeded = false;
+  private int numFailures = 0;
+
+  private int maxRetries;
+  private int retryInterval;
+  private double multiplier;
 
   public ExponentialBackoffRetryPolicy() {
+    setMaxRetries(DEFAULT_MAX_RETRIES).setMultiplier(DEFAULT_INTERVAL_MULTIPLIER)
+        .setRetryInterval(new Random().nextInt(5000) + 10000);
   }
 
-  public ExponentialBackoffRetryPolicy(int maxRetries) {
-    this(maxRetries, new Random().nextInt(5000) + 10000);
-  }
-
-  public ExponentialBackoffRetryPolicy(int maxRetries, int retryIntervalMs) {
-    Preconditions.checkArgument(retryIntervalMs > 0, "Retry interval must be greater than 0 ms.");
+  public ExponentialBackoffRetryPolicy setMaxRetries(int maxRetries) {
     Preconditions.checkArgument(maxRetries > 0, "Number of retries must be greater than 0.");
     this.maxRetries = maxRetries;
-    this.retryInterval = retryIntervalMs;
+    return this;
+  }
+
+  public ExponentialBackoffRetryPolicy setRetryInterval(int retryInterval) {
+    Preconditions.checkArgument(retryInterval > 0, "Retry interval must be greater than 0 ms.");
+    this.retryInterval = retryInterval;
+    return this;
+  }
+
+  public ExponentialBackoffRetryPolicy setMultiplier(double intervalMultiplier) {
+    Preconditions.checkArgument(intervalMultiplier > 0, "Multiplier must be a positive number");
+    this.multiplier = intervalMultiplier;
+    return this;
   }
 
   @Override
   public boolean shouldRetry() {
-    return (!succeeded && numFailures > 0 && numFailures <= maxRetries);
+
+    if (numFailures == 0) {
+      return false;
+    }
+    return (!succeeded && numFailures <= maxRetries);
   }
 
   @Override
@@ -52,7 +70,7 @@ public class ExponentialBackoffRetryPolicy implements ITransactor.RetryPolicy {
     if (shouldRetry()) {
       LOG.warn("Retry #" + numFailures + ": Going to sleep for " + retryInterval + " milliseconds.");
       sleep(retryInterval);
-      retryInterval <<= 1;
+      retryInterval *= multiplier;
     }
   }
 
@@ -65,11 +83,15 @@ public class ExponentialBackoffRetryPolicy implements ITransactor.RetryPolicy {
     }
   }
 
-  protected int getMaxRetries() {
+  public int getMaxRetries() {
     return maxRetries;
   }
 
-  protected int getRetryInterval() {
+  public int getRetryInterval() {
     return retryInterval;
+  }
+
+  public double getMultiplier() {
+    return multiplier;
   }
 }

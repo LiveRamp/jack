@@ -1,15 +1,37 @@
 package com.rapleaf.jack.util;
 
+import java.util.Random;
+
 import org.junit.Assert;
+import org.junit.Test;
 
 public class TestExponentialBackoffPolicy extends TestQueryRetryPolicy {
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testNoRetriesAndNoFailures() {
+    super.testNoRetriesAndNoFailures();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testNoRetriesOnFailure() {
+    super.testNoRetriesOnFailure();
+  }
+
   @Override
   protected void testRetriesInternal(int numFailures, int maxRetries) {
-    int numRetries = Math.min(numFailures, maxRetries);
-    MockRetryPolicy policy = maxRetries == 0 ? new MockRetryPolicy() : new MockRetryPolicy(maxRetries);
-    int duration = numRetries == 0 ? 0 : (policy.getRetryInterval() << (numRetries - 1));
 
+    int numRetries = Math.min(numFailures, maxRetries);
+    MockRetryPolicy policy = new MockRetryPolicy();
+    int duration = 0;
+
+    policy.setMaxRetries(maxRetries);
+
+    if (numRetries > 0) {
+      /* Set multiplier randomly in the range [1, 3] */
+      double multiplier = 1 + new Random().nextInt(2000) / 2000;
+      policy.setMultiplier(multiplier);
+      duration = policy.getRetryInterval() * (int)Math.pow(multiplier, (numRetries - 1));
+    }
     /* Policy should not execute when no failure has occurred (Initial Condition) */
     Assert.assertFalse(policy.shouldRetry());
     policy.execute();
@@ -38,14 +60,6 @@ public class TestExponentialBackoffPolicy extends TestQueryRetryPolicy {
 
     int numSleepCalled = 0;
     int lastSleptDuration = 0;
-
-    MockRetryPolicy() {
-      super();
-    }
-
-    MockRetryPolicy(int maxRetries) {
-      super(maxRetries);
-    }
 
     @Override
     protected void sleep(int duration) {

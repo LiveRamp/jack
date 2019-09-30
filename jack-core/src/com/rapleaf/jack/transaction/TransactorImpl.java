@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
-import com.rapleaf.jack.util.ExponentialBackoffRetryPolicy;
 
 /**
  * If there is any exception while executing the query, throws
@@ -177,6 +176,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
 
     @Override
     public ITransactor<DB> allowRetries(RetryPolicy retryPolicy) {
+      Preconditions.checkArgument(retryPolicy != null);
       this.retryPolicy = retryPolicy;
       return this;
     }
@@ -217,7 +217,25 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     }
   }
 
-  class NoRetryPolicy extends ExponentialBackoffRetryPolicy {}
+  public static class NoRetryPolicy implements ITransactor.RetryPolicy {
+
+    @Override
+    public boolean shouldRetry() {
+      return false;
+    }
+
+    @Override
+    public void updateOnFailure() {
+    }
+
+    @Override
+    public void updateOnSuccess() {
+    }
+
+    @Override
+    public void execute() {
+    }
+  }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {
 

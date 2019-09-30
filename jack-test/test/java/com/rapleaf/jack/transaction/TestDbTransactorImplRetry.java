@@ -58,7 +58,8 @@ public class TestDbTransactorImplRetry extends TestQueryRetryPolicy {
         return 0;
       }).when(query).query(Mockito.any(IDatabase1.class));
     } catch (Exception e) {
-      /* Do Nothing */
+      /* This should not really happen */
+      throw new RuntimeException(e);
     }
     try {
       transactor.allowRetries(policy).query(query);
@@ -68,7 +69,7 @@ public class TestDbTransactorImplRetry extends TestQueryRetryPolicy {
       Mockito.verify(policy, Mockito.times(maxRetries + 1)).updateOnFailure();
       throw se;
     } finally {
-      final int numExecutions = Math.min(numFailures, maxRetries) + 1;
+      int numExecutions = Math.min(numFailures, maxRetries) + 1;
       Mockito.verify(policy, Mockito.times(numExecutions)).execute();
     }
   }
