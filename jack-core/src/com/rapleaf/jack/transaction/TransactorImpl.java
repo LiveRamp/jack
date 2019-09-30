@@ -163,7 +163,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return this.dbManager.getDbPoolStatus();
   }
 
-  class ExecutionContext implements ITransactor<DB> {
+  private class ExecutionContext implements ITransactor<DB> {
 
     boolean asTransaction = false;
     RetryPolicy retryPolicy = new NoRetryPolicy();
