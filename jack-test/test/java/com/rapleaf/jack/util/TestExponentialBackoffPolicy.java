@@ -22,16 +22,12 @@ public class TestExponentialBackoffPolicy extends TestQueryRetryPolicy {
 
     int numRetries = Math.min(numFailures, maxRetries);
     MockRetryPolicy policy = new MockRetryPolicy();
-    int duration = 0;
+    int duration = numRetries == 0 ? 0 : policy.getRetryInterval();
 
     policy.setMaxRetries(maxRetries);
+    /* Set multiplier randomly in the range [1, 3] */
+    policy.setMultiplier(1 + new Random().nextInt(2000) / 2000.0);
 
-    if (numRetries > 0) {
-      /* Set multiplier randomly in the range [1, 3] */
-      double multiplier = 1 + new Random().nextInt(2000) / 2000;
-      policy.setMultiplier(multiplier);
-      duration = policy.getRetryInterval() * (int)Math.pow(multiplier, (numRetries - 1));
-    }
     /* Policy should not execute when no failure has occurred (Initial Condition) */
     Assert.assertFalse(policy.shouldRetry());
     policy.execute();
@@ -43,6 +39,12 @@ public class TestExponentialBackoffPolicy extends TestQueryRetryPolicy {
       Assert.assertEquals("Retry : " + (i + 1), i < maxRetries, policy.shouldRetry());
       policy.execute();
     }
+
+    /* Cannot use Math.pow() here due to rounding errors */
+    for (int i = 0; i < numRetries - 1; ++i) {
+      duration *= policy.getMultiplier();
+    }
+
     if (numFailures <= maxRetries) {
       policy.updateOnSuccess();
     }
@@ -53,7 +55,7 @@ public class TestExponentialBackoffPolicy extends TestQueryRetryPolicy {
     Assert.assertFalse(policy.shouldRetry());
     policy.execute();
     Assert.assertEquals(numRetries, policy.numSleepCalled);
-    Assert.assertEquals(duration, policy.lastSleptDuration);
+    Assert.assertEquals("Multiplier: " + policy.getMultiplier(), duration, policy.lastSleptDuration);
   }
 
   private static class MockRetryPolicy extends ExponentialBackoffRetryPolicy {
