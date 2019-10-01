@@ -126,6 +126,10 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
         } else {
           dbManager.invalidateConnection(connection);
         }
+        /*
+         * {@link RetryPolicy.execute} is very likely to block (sleep or perform a long running task);
+         * We make sure it is called only after the connection has been invalidated/returned to the pool.
+         */
         context.retryPolicy.execute();
       }
     }
