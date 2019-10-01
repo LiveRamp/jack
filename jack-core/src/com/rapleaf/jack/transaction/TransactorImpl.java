@@ -1,23 +1,26 @@
 package com.rapleaf.jack.transaction;
 
-import com.google.common.base.Preconditions;
-import com.rapleaf.jack.IDb;
-import com.rapleaf.jack.exception.SqlExecutionFailureException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.rapleaf.jack.IDb;
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
+
 /**
- * If there is any exception while executing the query, throws {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
+ * If there is any exception while executing the query, throws
+ * {@link com.rapleaf.jack.exception.SqlExecutionFailureException}.
  * <p>
  * If there is no available connections, throws {@link com.rapleaf.jack.exception.NoAvailableConnectionException}.
  * Users can either increase the max total connections or max wait time.
  * <p>
  * If the DB manager has already been closed, throws {@link IllegalStateException}.
  * <p>
- * If new DB connections cannot be created, throws {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
+ * If new DB connections cannot be created, throws
+ * {@link com.rapleaf.jack.exception.ConnectionCreationFailureException}.
  */
 public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   private static final Logger LOG = LoggerFactory.getLogger(TransactorImpl.class);
@@ -39,24 +42,40 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return new Builder<>(dbConstructor);
   }
 
-  @Override
-  public <T> T query(IQuery<DB, T> query) {
-    return query(query, false);
+  ITransactor<DB> newContext() {
+    return new ExecutionContext();
   }
 
   @Override
+  public ITransactor<DB> asTransaction() {
+    return newContext().asTransaction();
+  }
+
+  @Override
+  public ITransactor<DB> allowRetries(RetryPolicy retryPolicy) {
+    return newContext().allowRetries(retryPolicy);
+  }
+
+  @Override
+  public <T> T query(IQuery<DB, T> query) {
+    return newContext().query(query);
+  }
+
+  @Deprecated
+  @Override
   public <T> T queryAsTransaction(IQuery<DB, T> query) {
-    return query(query, true);
+    return asTransaction().query(query);
   }
 
   @Override
   public void execute(IExecution<DB> execution) {
-    execute(execution, false);
+    newContext().execute(execution);
   }
 
+  @Deprecated
   @Override
   public void executeAsTransaction(IExecution<DB> execution) {
-    execute(execution, true);
+    asTransaction().execute(execution);
   }
 
   TransactorMetrics getQueryMetrics() {
@@ -71,42 +90,47 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return dbManager.getMetrics();
   }
 
-  private <T> T query(IQuery<DB, T> query, boolean asTransaction) {
-    DB connection = dbManager.getConnection();
-    boolean connectionSafeToReturn = true;
+  private <T> T query(IQuery<DB, T> query, ExecutionContext context) {
+    while (true) {
+      DB connection = dbManager.getConnection();
+      boolean connectionSafeToReturn = true;
+      try {
+        connection.setAutoCommit(!context.asTransaction);
+        long startTime = System.currentTimeMillis();
+        T value = query.query(connection);
+        if (context.asTransaction) {
+          connection.commit();
+        }
+        long executionTime = System.currentTimeMillis() - startTime;
+        context.retryPolicy.onSuccess();
+        if (metricsTrackingEnabled) {
+          queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
+        }
+        return value;
+      } catch (Exception e) {
+        LOG.error("SQL execution failure", e);
+        if (context.asTransaction) {
+          connectionSafeToReturn = tryToSafelyRollback(connection);
+        }
+        context.retryPolicy.onFailure(e);
+      } catch (Throwable t) {
+        // We still try to explicitly rollback the transaction if a throwable is thrown.
+        if (context.asTransaction) {
+          connectionSafeToReturn = tryToSafelyRollback(connection);
+        }
 
-    try {
-      connection.setAutoCommit(!asTransaction);
-      long startTime = System.currentTimeMillis();
-      T value = query.query(connection);
-      if (asTransaction) {
-        connection.commit();
-      }
-      long executionTime = System.currentTimeMillis() - startTime;
-      if (metricsTrackingEnabled) {
-        queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
-      }
-
-      return value;
-    } catch (Exception e) {
-      LOG.error("SQL execution failure", e);
-      if (asTransaction) {
-        connectionSafeToReturn = tryToSafelyRollback(connection);
-      }
-
-      throw new SqlExecutionFailureException(e);
-    } catch (Throwable t) {
-      // We still try to explicitly rollback the transaction if a throwable is thrown.
-      if (asTransaction) {
-        connectionSafeToReturn = tryToSafelyRollback(connection);
-      }
-
-      throw t;
-    } finally {
-      if (connectionSafeToReturn) {
-        dbManager.returnConnection(connection);
-      } else {
-        dbManager.invalidateConnection(connection);
+        throw t;
+      } finally {
+        if (connectionSafeToReturn) {
+          dbManager.returnConnection(connection);
+        } else {
+          dbManager.invalidateConnection(connection);
+        }
+        /*
+         * {@link RetryPolicy.execute} is very likely to block (sleep or perform a long running task);
+         * We make sure it is called only after the connection has been invalidated/returned to the pool.
+         */
+        context.retryPolicy.execute();
       }
     }
   }
@@ -126,16 +150,6 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
     return true;
   }
 
-  private void execute(IExecution<DB> execution, boolean asTransaction) {
-    query(
-        db -> {
-          execution.execute(db);
-          return null;
-        },
-        asTransaction
-    );
-  }
-
   @Override
   public void close() {
     if (metricsTrackingEnabled) {
@@ -147,6 +161,77 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   @Override
   public DbPoolStatus getDbPoolStatus() {
     return this.dbManager.getDbPoolStatus();
+  }
+
+  private class ExecutionContext implements ITransactor<DB> {
+
+    boolean asTransaction = false;
+    RetryPolicy retryPolicy = new NoRetryPolicy();
+
+    @Override
+    public ITransactor<DB> asTransaction() {
+      asTransaction = true;
+      return this;
+    }
+
+    @Override
+    public ITransactor<DB> allowRetries(RetryPolicy retryPolicy) {
+      Preconditions.checkArgument(retryPolicy != null);
+      this.retryPolicy = retryPolicy;
+      return this;
+    }
+
+    @Override
+    public <T> T query(IQuery<DB, T> query) {
+      return TransactorImpl.this.query(query, this);
+    }
+
+    @Override
+    public void execute(IExecution<DB> execution) {
+      query(db -> {
+        execution.execute(db);
+        return null;
+      });
+    }
+
+    @Deprecated
+    @Override
+    public <T> T queryAsTransaction(IQuery<DB, T> query) {
+      return asTransaction().query(query);
+    }
+
+    @Deprecated
+    @Override
+    public void executeAsTransaction(IExecution<DB> execution) {
+      asTransaction().execute(execution);
+    }
+
+    @Override
+    public void close() {
+      TransactorImpl.this.close();
+    }
+
+    @Override
+    public DbPoolStatus getDbPoolStatus() {
+      return TransactorImpl.this.getDbPoolStatus();
+    }
+  }
+
+  public static class NoRetryPolicy implements ITransactor.RetryPolicy {
+
+    @Override
+    public void onFailure(Exception cause) {
+      throw new SqlExecutionFailureException(cause);
+    }
+
+    @Override
+    public void onSuccess() {
+    }
+
+    @Override
+    public boolean execute() {
+      return false;
+    }
   }
 
   public static class Builder<DB extends IDb> implements ITransactor.Builder<DB, TransactorImpl<DB>> {

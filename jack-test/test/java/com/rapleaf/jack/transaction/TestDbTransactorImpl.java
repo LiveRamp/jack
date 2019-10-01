@@ -1,29 +1,29 @@
 package com.rapleaf.jack.transaction;
 
-import com.rapleaf.jack.BaseDatabaseConnection;
-import com.rapleaf.jack.MysqlDatabaseConnection;
-import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
-import com.rapleaf.jack.tracking.NoOpAction;
 import java.io.IOException;
 import java.sql.SQLRecoverableException;
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import java.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.rapleaf.jack.BaseDatabaseConnection;
 import com.rapleaf.jack.IDb;
 import com.rapleaf.jack.JackTestCase;
+import com.rapleaf.jack.MysqlDatabaseConnection;
 import com.rapleaf.jack.exception.NoAvailableConnectionException;
 import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.queries.where_operators.JackMatchers;
 import com.rapleaf.jack.test_project.DatabasesImpl;
 import com.rapleaf.jack.test_project.database_1.IDatabase1;
+import com.rapleaf.jack.test_project.database_1.impl.Database1Impl;
 import com.rapleaf.jack.test_project.database_1.models.User;
-import org.mockito.Mockito;
+import com.rapleaf.jack.tracking.NoOpAction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -76,7 +76,7 @@ public class TestDbTransactorImpl extends JackTestCase {
 
     final int dummyUserId = 1; // This doesn't necessarily exist. We just need some id to execute a query.
     try {
-      transactor.queryAsTransaction(db -> db.users().find(dummyUserId));
+      transactor.asTransaction().query(db -> db.users().find(dummyUserId));
       fail();
     } catch (Exception e) {
       // Ignoring this as we expect an exception to be thrown in the try block.
@@ -119,7 +119,7 @@ public class TestDbTransactorImpl extends JackTestCase {
 
     final int dummyUserId = 1; // This doesn't necessarily exist. We just need some id to execute a query.
     try {
-      transactor.queryAsTransaction(db -> db.users().find(dummyUserId));
+      transactor.asTransaction().query(db -> db.users().find(dummyUserId));
       fail();
     } catch (Exception e) {
       // Ignoring this as we expect an exception to be thrown in the try block.
@@ -153,7 +153,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String expectedBio = "test";
-    String actualBio = transactor.queryAsTransaction(db -> {
+    String actualBio = transactor.asTransaction().query(db -> {
       User user = db.users().createDefaultInstance();
       user.setBio(expectedBio).save();
       return user.getBio();
@@ -176,7 +176,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String originalBio = "original";
-    User user = transactor.queryAsTransaction(db -> {
+    User user = transactor.asTransaction().query(db -> {
       User u = db.users().createDefaultInstance();
       u.setBio(originalBio).save();
       return u;
@@ -185,7 +185,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
 
     try {
-      transactor.executeAsTransaction((IExecution<IDatabase1>)db -> {
+      transactor.asTransaction().execute((IExecution<IDatabase1>)db -> {
         String newBio = "new";
         user.setBio(newBio).save();
         // within the transaction, the change is visible
@@ -200,11 +200,11 @@ public class TestDbTransactorImpl extends JackTestCase {
   }
 
   @Test
-  public void testTransactionRollbackThrowable() throws Exception{
+  public void testTransactionRollbackThrowable() throws Exception {
     TransactorImpl<IDatabase1> transactor = transactorBuilder.get();
 
     String originalBio = "original";
-    User user = transactor.queryAsTransaction(db -> {
+    User user = transactor.asTransaction().query(db -> {
       User u = db.users().createDefaultInstance();
       u.setBio(originalBio).save();
       return u;
@@ -213,7 +213,7 @@ public class TestDbTransactorImpl extends JackTestCase {
     assertEquals(originalBio, transactor.query(db -> db.users().find(user.getId()).getBio()));
 
     try {
-      transactor.executeAsTransaction((IExecution<IDatabase1>)db -> {
+      transactor.asTransaction().execute((IExecution<IDatabase1>)db -> {
         String newBio = "new";
         user.setBio(newBio).save();
         // within the transaction, the change is visible
@@ -315,7 +315,8 @@ public class TestDbTransactorImpl extends JackTestCase {
 
   @Test
   public void testWaitForConnectionTimeout() throws Exception {
-    TransactorImpl<IDatabase1> transactor = transactorBuilder.setMaxTotalConnections(1).setMaxWaitTime(Duration.ofMillis(500)).get();
+    TransactorImpl<IDatabase1> transactor =
+        transactorBuilder.setMaxTotalConnections(1).setMaxWaitTime(Duration.ofMillis(500)).get();
 
     executorService = Executors.newFixedThreadPool(2);
 
