@@ -102,7 +102,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
           connection.commit();
         }
         long executionTime = System.currentTimeMillis() - startTime;
-        context.retryPolicy.updateOnSuccess();
+        context.retryPolicy.onSuccess();
         if (metricsTrackingEnabled) {
           queryMetrics.update(executionTime, Thread.currentThread().getStackTrace()[3]);
         }
@@ -112,11 +112,7 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
         if (context.asTransaction) {
           connectionSafeToReturn = tryToSafelyRollback(connection);
         }
-
-        context.retryPolicy.updateOnFailure();
-        if (!context.retryPolicy.shouldRetry()) {
-          throw new SqlExecutionFailureException(e);
-        }
+        context.retryPolicy.onFailure(e);
       } catch (Throwable t) {
         // We still try to explicitly rollback the transaction if a throwable is thrown.
         if (context.asTransaction) {
@@ -220,20 +216,17 @@ public class TransactorImpl<DB extends IDb> implements ITransactor<DB> {
   public static class NoRetryPolicy implements ITransactor.RetryPolicy {
 
     @Override
-    public boolean shouldRetry() {
+    public void onFailure(Exception cause) {
+      throw new SqlExecutionFailureException(cause);
+    }
+
+    @Override
+    public void onSuccess() {
+    }
+
+    @Override
+    public boolean execute() {
       return false;
-    }
-
-    @Override
-    public void updateOnFailure() {
-    }
-
-    @Override
-    public void updateOnSuccess() {
-    }
-
-    @Override
-    public void execute() {
     }
   }
 

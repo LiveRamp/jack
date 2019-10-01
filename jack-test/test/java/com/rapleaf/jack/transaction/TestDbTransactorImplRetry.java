@@ -48,8 +48,12 @@ public class TestDbTransactorImplRetry extends TestQueryRetryPolicy {
     ITransactor.RetryPolicy policy = Mockito.mock(ITransactor.RetryPolicy.class);
     IQuery<IDatabase1, Integer> query = Mockito.mock(IQuery.class);
 
-    Mockito.doAnswer(x -> failCount.incrementAndGet()).when(policy).updateOnFailure();
-    Mockito.doAnswer(x -> (failCount.get() <= maxRetries)).when(policy).shouldRetry();
+    Mockito.doAnswer(x -> {
+      if (failCount.incrementAndGet() > maxRetries) {
+        throw new SqlExecutionFailureException(x.getArgument(0));
+      }
+      return null;
+    }).when(policy).onFailure(Mockito.any(Exception.class));
     try {
       Mockito.doAnswer(x -> {
         if (queryCount.getAndIncrement() < numFailures) {
@@ -63,10 +67,11 @@ public class TestDbTransactorImplRetry extends TestQueryRetryPolicy {
     }
     try {
       transactor.allowRetries(policy).query(query);
-      Mockito.verify(policy, Mockito.times(numFailures)).updateOnFailure();
-      Mockito.verify(policy, Mockito.times(1)).updateOnSuccess();
+      Mockito.verify(policy, Mockito.times(numFailures)).onFailure(Mockito.any(SQLRecoverableException.class));
+      Mockito.verify(policy, Mockito.times(1)).onSuccess();
     } catch (SqlExecutionFailureException se) {
-      Mockito.verify(policy, Mockito.times(maxRetries + 1)).updateOnFailure();
+      Mockito.verify(policy, Mockito.times(maxRetries + 1))
+          .onFailure(Mockito.any(SQLRecoverableException.class));
       throw se;
     } finally {
       int numExecutions = Math.min(numFailures, maxRetries) + 1;

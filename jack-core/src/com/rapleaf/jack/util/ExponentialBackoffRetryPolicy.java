@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.rapleaf.jack.exception.SqlExecutionFailureException;
 import com.rapleaf.jack.transaction.ITransactor;
 
 public class ExponentialBackoffRetryPolicy implements ITransactor.RetryPolicy {
@@ -47,31 +48,33 @@ public class ExponentialBackoffRetryPolicy implements ITransactor.RetryPolicy {
   }
 
   @Override
-  public boolean shouldRetry() {
-
-    if (numFailures == 0) {
-      return false;
-    }
-    return (!succeeded && numFailures <= maxRetries);
-  }
-
-  @Override
-  public void updateOnFailure() {
+  public void onFailure(Exception cause) {
+    Preconditions.checkState(!succeeded, "Cannot register failure after previous success");
     ++numFailures;
+    if (numFailures > maxRetries) {
+      throw new SqlExecutionFailureException(cause);
+    }
   }
 
   @Override
-  public void updateOnSuccess() {
+  public void onSuccess() {
     succeeded = true;
   }
 
   @Override
-  public void execute() {
-    if (shouldRetry()) {
-      LOG.warn("Retry #" + numFailures + ": Going to sleep for " + retryInterval + " milliseconds.");
-      sleep(retryInterval);
-      retryInterval *= multiplier;
+  public boolean execute() {
+    /* Do not execute policy if:
+       1. Already succeeded OR
+       2. No failure has occurred yet OR
+       3. Retries have been exhausted
+     */
+    if (succeeded || numFailures == 0 || numFailures > maxRetries) {
+      return false;
     }
+    LOG.warn("Retry #" + numFailures + ": Going to sleep for " + retryInterval + " milliseconds.");
+    sleep(retryInterval);
+    retryInterval *= multiplier;
+    return true;
   }
 
   @VisibleForTesting

@@ -31,12 +31,10 @@ public interface ITransactor<DB extends IDb> extends Closeable {
 
   interface RetryPolicy {
 
-    boolean shouldRetry();
+    void onFailure(Exception cause);
 
-    void updateOnFailure();
+    void onSuccess();
 
-    void updateOnSuccess();
-
-    void execute();
+    boolean execute();
   }
 }
