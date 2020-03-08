@@ -18,6 +18,7 @@ FORBIDDEN_FIELD_NAMES = ["tbl", "id"]
 
 module FromHash
   def from_hash(ops)
+    ops.delete(:options)
     ops.each do |k,v|
       send("#{k}=",v)
     end
@@ -124,9 +125,20 @@ end
 
 class SchemaRbParser
   def self.parse(schema_rb, ignored_tables = [])
-    load schema_rb
+    translated_contents = Rails3To5Translator.new(schema_rb).translate
+    old_filename = schema_rb.split('/').last
+    new_schema_rb = schema_rb.sub(old_filename, 'TEMP_rails_3_compatible_schema.rb')
+    FileUtils.touch(new_schema_rb)
+    File.write(new_schema_rb, translated_contents)
+    load_new_schema(new_schema_rb, ignored_tables)
+  end
+
+  def self.load_new_schema(translated_schema_rb, ignored_tables)
+    load translated_schema_rb
     defns = $schema.tables.map(&:to_model_defn).compact.reject { |x| ignored_tables.include?(x.table_name) }
     [defns, $schema.version.to_s]
+  ensure
+    FileUtils.rm(translated_schema_rb)
   end
 end
 
