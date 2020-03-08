@@ -1,29 +1,27 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (4.2.5)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
+    activesupport (5.2.4.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    concurrent-ruby (1.0.5)
+    concurrent-ruby (1.1.6)
     fattr (2.4.0)
-    i18n (0.9.1)
+    i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    json (1.8.6)
-    minitest (5.10.3)
+    minitest (5.14.0)
     thread_safe (0.3.6)
-    tzinfo (1.2.4)
+    tzinfo (1.2.6)
       thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (~> 4.1)
+  activesupport (>= 4.1)
   fattr
-  i18n (~> 0.9)
+  i18n (>= 0.9)
 
 BUNDLED WITH
-   1.16.1
+   1.17.2
