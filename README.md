@@ -113,33 +113,26 @@ Finally, there is one overarching Databases class that serves as a collection fo
 
 ## Download
 
-You can either build jack from source or pull the latest snapshot from
-Sonatype:
+You can [find releases] on The Central Repository and [find snapshots] on
+[Sonatype OSSRH] (OSS Repository Hosting).
+
+To get snapshots, add the OSSRH snapshot repository.  See the [guide to using
+multiple repositories].
 
 ```xml
 <repository>
-  <id>sonatype-snapshots</id>
-  <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-  <layout>default</layout>
-    <releases>
-      <enabled>false</enabled>
-    </releases>
-  <snapshots>
-    <enabled>true</enabled>
-    <updatePolicy>always</updatePolicy>
-  </snapshots>
+  <id>ossrh-snapshots</id>
+  <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+  <releases>
+    <enabled>false</enabled>
+  </releases>
 </repository>
 ```
 
-Depend on the JAR like so:
-
-```xml
-<dependency>
-  <groupId>com.liveramp</groupId>
-  <artifactId>jack</artifactId>
-  <version>1.3.0</version>
-</dependency>
-```
+[find releases]: https://search.maven.org/search?q=g:com.liveramp%20a:jack-*
+[find snapshots]: https://oss.sonatype.org/#nexus-search;gav~com.liveramp~jack*~~~
+[guide to using multiple repositories]: https://maven.apache.org/guides/mini/guide-multiple-repositories.html
+[Sonatype OSSRH]: https://central.sonatype.org/pages/ossrh-guide.html
 
 ## License
 
