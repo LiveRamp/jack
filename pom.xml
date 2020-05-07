@@ -55,6 +55,16 @@
     <module>jack-test</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.49</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <plugins>
 
