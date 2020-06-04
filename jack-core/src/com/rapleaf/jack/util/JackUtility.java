@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 public final class JackUtility {
 
   private static final String DATE_FORMAT = "yyyy-MM-dd";
-  private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
   public static final Map<Class<?>, Function<Long, String>> FORMATTER_FUNCTION_MAP = ImmutableMap.of(
       java.sql.Date.class, date -> new DateTime(date).toString(DATE_FORMAT),
