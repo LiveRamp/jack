@@ -14,3 +14,4 @@ target
 **/vendor/bundle
 node_modules
 _book
+.flattened-pom.xml
