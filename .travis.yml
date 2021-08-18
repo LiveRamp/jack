@@ -38,3 +38,7 @@ deploy:
   script: rvm use $TRAVIS_RUBY_VERSION do ./deploy
   on:
     tags: true
+
+cache:
+  directories:
+  - $HOME/.m2
