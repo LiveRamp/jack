@@ -18,12 +18,12 @@ import static com.rapleaf.jack.DatabaseConnectionConstants.MYSQL_JDBC_DRIVER;
 import static com.rapleaf.jack.DatabaseConnectionConstants.POSTGRESQL_JDBC_DRIVER;
 import static com.rapleaf.jack.DatabaseConnectionConstants.REDSHIFT_JDBC_DRIVER;
 
-import com.google.common.base.Optional;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -113,9 +113,9 @@ public class DatabaseConnection extends BaseDatabaseConnection {
     password = config.getPassword();
 
     connectionMaxRetries = config.getConnectionMaxRetries()
-        .or(DEFAULT_CONNECTION_MAX_RETRIES);
+        .orElse(DEFAULT_CONNECTION_MAX_RETRIES);
     validationTimeoutSeconds = config.getConnectionValidationTimeout()
-        .or(DEFAULT_VALIDATION_TIMEOUT_SECONDS);
+        .orElse(DEFAULT_VALIDATION_TIMEOUT_SECONDS);
 
     this.expiration = expiration;
     updateExpiration();
@@ -134,7 +134,7 @@ public class DatabaseConnection extends BaseDatabaseConnection {
       try {
         if (conn == null) {
           Class.forName(driverClass);
-          conn = DriverManager.getConnection(connectionString, username.orNull(), password.orNull());
+          conn = DriverManager.getConnection(connectionString, username.orElse(null), password.orElse(null));
         } else if (isExpired() || !conn.isValid(validationTimeoutSeconds)) {
           resetConnection();
         }
