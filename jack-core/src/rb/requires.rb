@@ -6,7 +6,7 @@ require "fileutils"
 require 'yaml'
 require 'digest'
 
-gem 'activesupport', ">=3.0.0"
+gem 'activesupport', ">=4.2.8"
 require "active_support/all"
 
 require File.expand_path(File.dirname(__FILE__) + "/hash_regex_helpers")
