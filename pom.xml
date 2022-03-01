@@ -37,7 +37,7 @@
     <db.user>root</db.user>
     <db.pass>""</db.pass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.7-SNAPSHOT</revision>
+    <revision>1.8-SNAPSHOT</revision>
   </properties>
 
   <scm>
