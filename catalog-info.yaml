@@ -1,0 +1,14 @@
+# BEGIN TERRAFORM MANAGED BLOCK
+"apiVersion": "backstage.io/v1alpha1"
+"kind": "Location"
+"metadata":
+  "annotations":
+    "github.com/project-slug": "LiveRamp/jack"
+  "description": "A set of scripts for generating fully functional Java database models
+    from Ruby's ActiveRecord models and migrations."
+  "name": "jack"
+  "tags":
+  - "activerecord-model"
+  - "orm"
+"spec": {}
+# END TERRAFORM MANAGED BLOCK
