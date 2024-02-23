@@ -37,7 +37,7 @@
     <db.user>root</db.user>
     <db.pass>""</db.pass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.8-SNAPSHOT</revision>
+    <revision>1.9-SNAPSHOT</revision>
   </properties>
 
   <scm>
@@ -59,9 +59,9 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.49</version>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>8.0.33</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
