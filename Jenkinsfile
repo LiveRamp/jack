@@ -5,5 +5,6 @@ mvnBuildPipeline {
     environment {
         JAVA_HOME = '/usr/lib/jvm/java-8-openjdk-amd64'
     }
+    mavenCmdOverride = 'help:active-profiles'
     mavenPropertiesOverride = '-Dmaven.test.failure.ignore=false -Ddb.user=$HUDSON_DB_USER -Ddb.pass=$HUDSON_DB_PASS -Pmysql,liveramp-ci'
 }
