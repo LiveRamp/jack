@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://public-gems.liveramp.net'
 
 gem 'rails', '~> 4.2.10'
 
