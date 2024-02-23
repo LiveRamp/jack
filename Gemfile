@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://public-gems.liveramp.net'
 
 gem 'activesupport', '~> 4.2.8'
 gem 'bigdecimal', '1.3.5'
