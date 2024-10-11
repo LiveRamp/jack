@@ -187,12 +187,18 @@ public class DatabaseConnectionConfiguration {
     if (result.isPresent()) {
       return result.get();
     } else {
+      String foundKeys;
+      if (map == null) {
+        foundKeys = "No keys found";
+      } else {
+        foundKeys = map.keySet().toString();
+      }
       throw new RuntimeException(
           "Unable to find required configuration " + readableName + ". Please set using one of:\n" +
               "Environment Variable: " + envVar + "\n" +
               "Java System Property: " + javaProp + "\n" +
               "Entry in config/" + mapYmlFile + ".yml: " + mapKey + "\n" +
-              "Found following keys: " + map.keySet());
+              "Found following keys: " + foundKeys);
     }
   }
 
