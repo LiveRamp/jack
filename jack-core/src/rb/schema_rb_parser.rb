@@ -63,14 +63,14 @@ module ActiveRecord
 
   class Table
     include FromHash
-    attr_accessor :name, :force, :id, :schema
+    attr_accessor :name, :force, :id, :limit, :options, :schema
     fattr(:columns) { [] }
 
     def __column(type, name, ops = {})
-      self.columns << Column.new(ops.merge(type: type, name: name)) unless FORBIDDEN_FIELD_NAMES.include?(name)
+      self.columns << Column.new(ops.merge(type: type, name: name)) unless FORBIDDEN_FIELD_NAMES.include?(name) || type == 'index'
     end
 
-    %w(integer text datetime boolean string float binary date decimal varbinary).each do |f|
+    %w(bigint integer index text datetime boolean string float binary date decimal varbinary).each do |f|
       define_method(f) do |*args|
         self.__column(f, *args)
       end
@@ -88,7 +88,7 @@ module ActiveRecord
 
   class Column
     include FromHash
-    attr_accessor :type, :name, :limit, :null, :default, :precision, :scale
+    attr_accessor :type, :name, :length, :limit, :null, :default, :precision, :scale, :unique
 
     def to_model_defn(col_index)
       f = to_h
