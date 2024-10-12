@@ -3,18 +3,17 @@ package com.rapleaf.jack;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
+import java.util.Optional;
+import java.util.function.Function;
 import org.jvyaml.YAML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DatabaseConnectionConfiguration {
 
-  private final static Logger LOG = LoggerFactory.getLogger(DatabaseConnectionConfiguration.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DatabaseConnectionConfiguration.class);
 
   public static final String ADAPTER_PROP_PREFIX = "jack.db.adapter";
   public static final String HOST_PROP_PREFIX = "jack.db.host";
@@ -41,7 +40,15 @@ public class DatabaseConnectionConfiguration {
   private Optional<Integer> connectionMaxRetries;
   private Optional<Integer> connectionValidationTimeout;
 
-  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parallelTest, Optional<String> username, Optional<String> password) {
+  public DatabaseConnectionConfiguration(
+      String adapter,
+      String host,
+      String dbName,
+      Optional<Integer> port,
+      Optional<Boolean> parallelTest,
+      Optional<String> username,
+      Optional<String> password
+  ) {
     this(
         adapter,
         host,
@@ -50,12 +57,22 @@ public class DatabaseConnectionConfiguration {
         parallelTest,
         username,
         password,
-        Optional.absent(),
-        Optional.absent()
+        Optional.empty(),
+        Optional.empty()
     );
   }
 
-  public DatabaseConnectionConfiguration(String adapter, String host, String dbName, Optional<Integer> port, Optional<Boolean> parallelTest, Optional<String> username, Optional<String> password, Optional<Integer> connectionMaxRetries, Optional<Integer> connectionValidationTimeout) {
+  public DatabaseConnectionConfiguration(
+      String adapter,
+      String host,
+      String dbName,
+      Optional<Integer> port,
+      Optional<Boolean> parallelTest,
+      Optional<String> username,
+      Optional<String> password,
+      Optional<Integer> connectionMaxRetries,
+      Optional<Integer> connectionValidationTimeout
+  ) {
     this.adapter = adapter;
     this.host = host;
     this.dbName = dbName;
@@ -73,49 +90,53 @@ public class DatabaseConnectionConfiguration {
     // load database info from some file - first check env, then props, then default location
     envInfo = fetchInfoMap(
         "environment",
-        new EnvVarProvider(envVar(ENVIRONMENT_YML_PROP)),
-        new PropertyProvider(ENVIRONMENT_YML_PROP),
-        new FileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
-        new FileReaderProvider(System.getProperty(ENVIRONMENT_PATH_PROP)),
-        new FileReaderProvider("config/environment.yml"),
-        new FileReaderProvider("environment.yml"));
+        envVarProvider(envVar(ENVIRONMENT_YML_PROP)),
+        propertyProvider(ENVIRONMENT_YML_PROP),
+        fileReaderProvider(System.getenv(envVar(ENVIRONMENT_PATH_PROP))),
+        fileReaderProvider(System.getProperty(ENVIRONMENT_PATH_PROP)),
+        fileReaderProvider("config/environment.yml"),
+        fileReaderProvider("environment.yml"));
 
-    String db_info_name = (String)envInfo.get(dbNameKey);
+    String db_info_name = (String) envInfo.get(dbNameKey);
 
-    dbInfo = (Map<String, Object>)fetchInfoMap(
+    dbInfo = (Map<String, Object>) fetchInfoMap(
         "database",
-        new EnvVarProvider(envVar(DATABASE_YML_PROP)),
-        new PropertyProvider(DATABASE_YML_PROP),
-        new FileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
-        new FileReaderProvider(System.getProperty(DATABASE_PATH_PROP)),
-        new FileReaderProvider("config/database.yml"),
-        new FileReaderProvider("database.yml")).get(db_info_name);
+        envVarProvider(envVar(DATABASE_YML_PROP)),
+        propertyProvider(DATABASE_YML_PROP),
+        fileReaderProvider(System.getenv(envVar(DATABASE_PATH_PROP))),
+        fileReaderProvider(System.getProperty(DATABASE_PATH_PROP)),
+        fileReaderProvider("config/database.yml"),
+        fileReaderProvider("database.yml")).get(db_info_name);
 
     String adapter = load("adapter", dbInfo, "adapter", "database",
-        envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), new StringIdentity());
+        envVar(ADAPTER_PROP_PREFIX, dbNameKey), prop(ADAPTER_PROP_PREFIX, dbNameKey), Function.identity());
 
     String host = load("host", dbInfo, "host", "database",
-        envVar(HOST_PROP_PREFIX, dbNameKey), prop(HOST_PROP_PREFIX, dbNameKey), new StringIdentity());
+        envVar(HOST_PROP_PREFIX, dbNameKey), prop(HOST_PROP_PREFIX, dbNameKey), Function.identity());
 
     String dbName = load("database name", dbInfo, "database", "database",
-        envVar(NAME_PROP_PREFIX, dbNameKey), prop(NAME_PROP_PREFIX, dbNameKey), new StringIdentity());
+        envVar(NAME_PROP_PREFIX, dbNameKey), prop(NAME_PROP_PREFIX, dbNameKey), Function.identity());
 
     Optional<Integer> port = loadOpt(dbInfo, "port",
-        envVar(PORT_PROP_PREFIX, dbNameKey), prop(PORT_PROP_PREFIX, dbNameKey), new ToInteger());
+        envVar(PORT_PROP_PREFIX, dbNameKey), prop(PORT_PROP_PREFIX, dbNameKey), Integer::parseInt);
 
-    Optional<Boolean> parallelTesting = loadOpt(envInfo, "enable_parallel_tests",
-        envVar(PARALLEL_TEST_PROP_PREFIX, dbNameKey), prop(PARALLEL_TEST_PROP_PREFIX, dbNameKey), new ToBoolean());
+    Optional<Boolean> parallelTesting = loadOpt(
+        envInfo,
+        "enable_parallel_tests",
+        envVar(PARALLEL_TEST_PROP_PREFIX, dbNameKey),
+        prop(PARALLEL_TEST_PROP_PREFIX, dbNameKey),
+        Boolean::parseBoolean);
 
     Optional<String> username = loadOpt(dbInfo, "username",
-        envVar(USERNAME_PROP_PREFIX, dbNameKey), prop(USERNAME_PROP_PREFIX, dbNameKey), new StringIdentity());
+        envVar(USERNAME_PROP_PREFIX, dbNameKey), prop(USERNAME_PROP_PREFIX, dbNameKey), Function.identity());
 
     Optional<String> password = loadOpt(dbInfo, "password",
-        envVar(PASSWORD_PROP_PREFIX, dbNameKey), prop(PASSWORD_PROP_PREFIX, dbNameKey), new StringIdentity());
+        envVar(PASSWORD_PROP_PREFIX, dbNameKey), prop(PASSWORD_PROP_PREFIX, dbNameKey), Function.identity());
 
     Optional<Long> connectionMaxRetriesLong = loadOpt(dbInfo, "connection_max_retries",
-        envVar(CONNECTION_MAX_RETRIES, dbNameKey), prop(CONNECTION_MAX_RETRIES, dbNameKey), new ToLong());
+        envVar(CONNECTION_MAX_RETRIES, dbNameKey), prop(CONNECTION_MAX_RETRIES, dbNameKey), Long::parseLong);
 
-    Optional<Integer> connectionMaxRetries = Optional.absent();
+    Optional<Integer> connectionMaxRetries = Optional.empty();
     if (connectionMaxRetriesLong.isPresent()) {
       /**
        * This manual transformation is necessary because the underlying type parsed by
@@ -128,19 +149,29 @@ public class DatabaseConnectionConfiguration {
       connectionMaxRetries = Optional.of(connectionMaxRetriesLong.get().intValue());
     }
 
-    Optional<Long> connectionValidationTimeoutLong = loadOpt(dbInfo,
+    Optional<Long> connectionValidationTimeoutLong = loadOpt(
+        dbInfo,
         "connection_validation_timeout",
         envVar(CONNECTION_VALIDATION_TIMEOUT, dbNameKey),
         prop(CONNECTION_VALIDATION_TIMEOUT, dbNameKey),
-        new ToLong()
+        Long::parseLong
     );
 
-    Optional<Integer> connectionValidationTimeout = Optional.absent();
+    Optional<Integer> connectionValidationTimeout = Optional.empty();
     if (connectionValidationTimeoutLong.isPresent()) {
       connectionValidationTimeout = Optional.of(connectionValidationTimeoutLong.get().intValue());
     }
 
-    return new DatabaseConnectionConfiguration(adapter, host, dbName, port, parallelTesting, username, password, connectionMaxRetries, connectionValidationTimeout);
+    return new DatabaseConnectionConfiguration(
+        adapter,
+        host,
+        dbName,
+        port,
+        parallelTesting,
+        username,
+        password,
+        connectionMaxRetries,
+        connectionValidationTimeout);
   }
 
   private static Map<String, Object> fetchInfoMap(String configName, ReaderProvider... readers) {
@@ -148,17 +179,18 @@ public class DatabaseConnectionConfiguration {
       try {
         Optional<Reader> readerOptional = reader.get();
         if (readerOptional.isPresent()) {
-          return (Map<String, Object>)YAML.load(readerOptional.get());
+          return (Map<String, Object>) YAML.load(readerOptional.get());
         }
       } catch (Exception e) {
         //move to next reader
       }
     }
     LOG.error("no yaml found for config: " + configName);
-    return Maps.newHashMap();
+    return new HashMap<>();
   }
 
   private interface ReaderProvider {
+
     Optional<Reader> get() throws Exception;
   }
 
@@ -181,7 +213,8 @@ public class DatabaseConnectionConfiguration {
       String mapYmlFile,
       String envVar,
       String javaProp,
-      Function<String, T> fromString) {
+      Function<String, T> fromString
+  ) {
 
     Optional<T> result = loadOpt(map, mapKey, envVar, javaProp, fromString);
     if (result.isPresent()) {
@@ -201,17 +234,18 @@ public class DatabaseConnectionConfiguration {
       String mapKey,
       String envVar,
       String javaProp,
-      Function<String, T> fromString) {
+      Function<String, T> fromString
+  ) {
     if (System.getenv(envVar) != null) {
-      return Optional.fromNullable(fromString.apply(System.getenv(envVar)));
+      return Optional.ofNullable(fromString.apply(System.getenv(envVar)));
     }
     if (System.getProperty(javaProp) != null) {
-      return Optional.fromNullable(fromString.apply(System.getProperty(javaProp)));
+      return Optional.ofNullable(fromString.apply(System.getProperty(javaProp)));
     }
     if (map != null && map.containsKey(mapKey)) {
-      return Optional.fromNullable((T)map.get(mapKey));
+      return Optional.ofNullable((T) map.get(mapKey));
     }
-    return Optional.absent();
+    return Optional.empty();
   }
 
 
@@ -232,7 +266,7 @@ public class DatabaseConnectionConfiguration {
   }
 
   public Boolean enableParallelTests() {
-    return parallelTest.isPresent() ? parallelTest.get() : false;
+    return parallelTest.orElse(false);
   }
 
   public Optional<String> getUsername() {
@@ -251,81 +285,24 @@ public class DatabaseConnectionConfiguration {
     return connectionValidationTimeout;
   }
 
-  private static class StringIdentity implements Function<String, String> {
-    public String apply(String s) {
-      return s;
-    }
-  }
-
-  private static class ToInteger implements Function<String, Integer> {
-    public Integer apply(String s) {
-      return Integer.parseInt(s);
-    }
-  }
-
-  private static class ToLong implements Function<String, Long> {
-    public Long apply(String s) {
-      return Long.parseLong(s);
-    }
-  }
-
-  private static class ToBoolean implements Function<String, Boolean> {
-    public Boolean apply(String s) {
-      return Boolean.parseBoolean(s);
-    }
-  }
-
-  private static class FileReaderProvider implements ReaderProvider {
-
-    private String file;
-
-    public FileReaderProvider(String file) {
-      this.file = file;
-    }
-
-    @Override
-    public Optional<Reader> get() throws Exception {
+  // FileReader::new can throw an exception, so we can't use the Optional::map shorthand
+  private static ReaderProvider fileReaderProvider(String file) {
+    return () -> {
       if (file != null) {
         return Optional.of(new FileReader(file));
       } else {
-        return Optional.absent();
+        return Optional.empty();
       }
-    }
+    };
   }
 
-  private static class EnvVarProvider implements ReaderProvider {
-
-    private String envVar;
-
-    public EnvVarProvider(String envVar) {
-      this.envVar = envVar;
-    }
-
-    @Override
-    public Optional<Reader> get() throws Exception {
-      if (System.getenv(envVar) != null) {
-        return Optional.of(new StringReader(System.getenv(envVar)));
-      } else {
-        return Optional.absent();
-      }
-    }
+  private static ReaderProvider envVarProvider(String envVar) {
+    return () -> Optional.ofNullable(System.getenv(envVar))
+        .map(StringReader::new);
   }
 
-  private static class PropertyProvider implements ReaderProvider {
-
-    private String property;
-
-    public PropertyProvider(String property) {
-      this.property = property;
-    }
-
-    @Override
-    public Optional<Reader> get() throws Exception {
-      if (System.getProperty(property) != null) {
-        return Optional.of(new StringReader(System.getProperty(property)));
-      } else {
-        return Optional.absent();
-      }
-    }
+  private static ReaderProvider propertyProvider(String property) {
+    return () -> Optional.ofNullable(System.getProperty(property))
+        .map(StringReader::new);
   }
 }
