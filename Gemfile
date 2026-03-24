@@ -1,6 +1,6 @@
 source 'https://public-gems.liveramp.net'
 
-gem 'activesupport', '~> 4.2.8'
+gem 'activesupport', '~> 7.2.3', '>= 7.2.3.1'
 gem 'bigdecimal', '1.3.5'
 gem 'fattr'
 gem 'i18n', '~> 0.9'
