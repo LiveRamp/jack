@@ -152,6 +152,71 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
+  it 'C11: t.timestamp normalizes to datetime (MySQL TIMESTAMP dumped as datetime by 4.2)' do
+    legacy = <<~RUBY
+      ActiveRecord::Schema.define(version: 1) do
+        create_table "t", force: :cascade do |t|
+          t.datetime "a"
+          t.datetime "b", null: false
+        end
+      end
+    RUBY
+    modern = <<~RUBY
+      ActiveRecord::Schema[7.1].define(version: 1) do
+        create_table "t", charset: "utf8", force: :cascade do |t|
+          t.timestamp "a", precision: nil
+          t.timestamp "b", precision: nil, null: false
+        end
+      end
+    RUBY
+    expect_equivalent(legacy, modern)
+  end
+
+  it 'C12: expression (lambda) defaults are dropped to match the 4.2 dump' do
+    # Rails >= 5 captures CURRENT_TIMESTAMP-style defaults as a lambda; the 4.2
+    # dumper never captured them, so the committed Java carries no such default.
+    legacy = <<~RUBY
+      ActiveRecord::Schema.define(version: 1) do
+        create_table "t", force: :cascade do |t|
+          t.datetime "created_at", null: false
+          t.datetime "updated_at", null: false
+        end
+      end
+    RUBY
+    modern = <<~RUBY
+      ActiveRecord::Schema[7.1].define(version: 1) do
+        create_table "t", charset: "utf8", force: :cascade do |t|
+          t.datetime  "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
+          t.timestamp "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" }, null: false
+        end
+      end
+    RUBY
+    expect_equivalent(legacy, modern)
+  end
+
+  it 'T1: modern table-level options (primary_key/options/charset) do not crash' do
+    # Composite-PK partitioned table: `id: false` + explicit "id" column in 4.2,
+    # `primary_key: [...]` + options string in 7.1. The "id" column is forbidden
+    # either way, so both reduce to the same non-id columns.
+    legacy = <<~RUBY
+      ActiveRecord::Schema.define(version: 1) do
+        create_table "t", id: false, force: :cascade do |t|
+          t.integer "id",  limit: 8, null: false
+          t.integer "fk",  limit: 8, null: false
+        end
+      end
+    RUBY
+    modern = <<~RUBY
+      ActiveRecord::Schema[7.1].define(version: 1) do
+        create_table "t", primary_key: ["id", "fk"], charset: "latin1", options: "ENGINE=InnoDB", force: :cascade do |t|
+          t.bigint "id", null: false, auto_increment: true
+          t.bigint "fk", null: false
+        end
+      end
+    RUBY
+    expect_equivalent(legacy, modern)
+  end
+
   it 'C5: an unknown size: value raises loudly' do
     body = <<~RUBY
       ActiveRecord::Schema[7.1].define(version: 1) do

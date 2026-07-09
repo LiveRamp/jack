@@ -72,7 +72,7 @@ module ActiveRecord
     # :charset/:collation/:comment are table-level kwargs emitted by Rails >= 5
     # dumps (e.g. `create_table "x", charset: "utf8mb4", ...`).  They are
     # accepted here and ignored downstream (no effect on generated Java). [T1]
-    attr_accessor :name, :force, :id, :limit, :options, :schema, :charset, :collation, :comment
+    attr_accessor :name, :force, :id, :limit, :options, :schema, :charset, :collation, :comment, :primary_key
     fattr(:columns) { [] }
 
     # Rails >= 5 dumpers elide column options that equal the MySQL adapter
@@ -100,6 +100,11 @@ module ActiveRecord
         type = 'integer'
         ops[:limit] ||= 8
       end
+      # C11: Rails >= 5 renders MySQL TIMESTAMP columns as `t.timestamp`; the 4.2
+      # dumper had no distinct :timestamp type and rendered them as `t.datetime`
+      # (and the committed Java treats them as datetime — Column.fromTimestamp,
+      # Long).  Normalize back to datetime so data_type and the UID are unchanged.
+      type = 'datetime' if type == 'timestamp'
       # C5: map `size: :tiny/:medium/:long` on text/binary to the legacy limit.
       if (size = ops.delete(:size))
         ops[:limit] ||= SIZE_TO_LIMIT.fetch(size.to_sym) { raise "unknown size #{size.inspect} on column #{name}" }
@@ -112,10 +117,18 @@ module ActiveRecord
         puts "Warning: ignoring option #{opt.inspect} on column #{name}"
         ops.delete(opt)
       end
+      # C12: expression/function defaults (e.g. `default: -> { "CURRENT_TIMESTAMP
+      # ON UPDATE CURRENT_TIMESTAMP" }`) are dumped as a lambda by Rails >= 5; the
+      # 4.2 dumper never captured them, so the committed Java carries no such
+      # default.  Drop them to preserve byte-identity. [C12]
+      if ops[:default].is_a?(Proc)
+        puts "Warning: ignoring expression default on column #{name}"
+        ops.delete(:default)
+      end
       self.columns << Column.new(ops.merge(type: type, name: name))
     end
 
-    %w(bigint integer index text datetime boolean string float binary date decimal varbinary).each do |f|
+    %w(bigint integer index text datetime timestamp boolean string float binary date decimal varbinary).each do |f|
       define_method(f) do |*args|
         self.__column(f, *args)
       end
