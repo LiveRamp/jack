@@ -30,8 +30,8 @@ end
 
 module ActiveRecord
   class Schema
-    # Rails >= 6 dumps `ActiveRecord::Schema[7.1].define(...)`.  The [] selector
-    # returns the class itself so the subsequent .define call is unchanged. [S1]
+    # Rails >= 6 dumps `ActiveRecord::Schema[7.1].define(...)`; accept the
+    # version selector and ignore it.
     def self.[](_version)
       self
     end
@@ -69,58 +69,48 @@ module ActiveRecord
 
   class Table
     include FromHash
-    # :charset/:collation/:comment are table-level kwargs emitted by Rails >= 5
-    # dumps (e.g. `create_table "x", charset: "utf8mb4", ...`).  They are
-    # accepted here and ignored downstream (no effect on generated Java). [T1]
+    # charset/collation/comment/primary_key are table options emitted by
+    # Rails >= 5 dumps; accepted here, unused downstream.
     attr_accessor :name, :force, :id, :limit, :options, :schema, :charset, :collation, :comment, :primary_key
     fattr(:columns) { [] }
 
-    # Rails >= 5 dumpers elide column options that equal the MySQL adapter
-    # default.  These tables re-materialize those defaults so a modern dump
-    # produces byte-identical parse state (and serialVersionUIDs) to the legacy
-    # 4.2 dump, where every sized column carried an explicit limit.
+    # Rails >= 5 dumps elide column options that equal the MySQL adapter
+    # default; 4.2 dumps wrote them out.  Refill them so both dialects parse
+    # to the same state (and the same serialVersionUIDs).
     DEFAULT_LIMITS = {
       'integer' => 4, 'string' => 255, 'text' => 65535, 'binary' => 65535, 'float' => 24
     }.freeze
-    # `size:` is the Rails shorthand for text/binary blob sizing. [C5]
+    # Rails >= 6 dumps text/binary sizes as `size: :tiny/:medium/:long`.
     SIZE_TO_LIMIT = { tiny: 255, medium: 16_777_215, long: 4_294_967_295 }.freeze
-    # Column options that modern dumps may emit but that the 4.2-era dump never
-    # did; they carry no information used by the Java layer, so they are dropped
-    # (with a warning) before Column construction rather than crashing it. [C9]
+    # Column options newer dumps may emit that 4.2 never did.  Nothing
+    # downstream uses them, so drop them (with a warning) instead of crashing.
     IGNORED_COLUMN_OPTIONS = [:collation, :charset, :comment, :unsigned,
                               :auto_increment, :as, :stored].freeze
 
     def __column(type, name, ops = {})
       return if FORBIDDEN_FIELD_NAMES.include?(name) || type == 'index'
       ops = ops.dup
-      # C1: Rails >= 5 renders 8-byte integers as `t.bigint`; the legacy dump
-      # rendered them as `t.integer ..., limit: 8`.  Normalize to the legacy
-      # form so data_type and the UID component are unchanged.
+      # Rails >= 5 dumps 8-byte integers as `t.bigint`; 4.2 wrote
+      # `t.integer ..., limit: 8`.  Normalize to the old form.
       if type == 'bigint'
         type = 'integer'
         ops[:limit] ||= 8
       end
-      # C11: Rails >= 5 renders MySQL TIMESTAMP columns as `t.timestamp`; the 4.2
-      # dumper had no distinct :timestamp type and rendered them as `t.datetime`
-      # (and the committed Java treats them as datetime — Column.fromTimestamp,
-      # Long).  Normalize back to datetime so data_type and the UID are unchanged.
+      # Rails >= 5 dumps MySQL TIMESTAMP columns as `t.timestamp`; 4.2 had no
+      # :timestamp type and wrote `t.datetime`.  Normalize to datetime.
       type = 'datetime' if type == 'timestamp'
-      # C5: map `size: :tiny/:medium/:long` on text/binary to the legacy limit.
+      # Map `size:` to the explicit limit 4.2 would have written.
       if (size = ops.delete(:size))
         ops[:limit] ||= SIZE_TO_LIMIT.fetch(size.to_sym) { raise "unknown size #{size.inspect} on column #{name}" }
       end
-      # C2/C3/C4/C6: refill an elided limit with the adapter default.
       ops[:limit] ||= DEFAULT_LIMITS[type] if DEFAULT_LIMITS.key?(type)
-      # C9: drop modern-only column options that Column cannot accept.
       IGNORED_COLUMN_OPTIONS.each do |opt|
         next unless ops.key?(opt)
         puts "Warning: ignoring option #{opt.inspect} on column #{name}"
         ops.delete(opt)
       end
-      # C12: expression/function defaults (e.g. `default: -> { "CURRENT_TIMESTAMP
-      # ON UPDATE CURRENT_TIMESTAMP" }`) are dumped as a lambda by Rails >= 5; the
-      # 4.2 dumper never captured them, so the committed Java carries no such
-      # default.  Drop them to preserve byte-identity. [C12]
+      # Rails >= 5 dumps expression defaults (`default: -> { "CURRENT_TIMESTAMP" }`)
+      # as a lambda; 4.2 never captured them.  Drop them.
       if ops[:default].is_a?(Proc)
         puts "Warning: ignoring expression default on column #{name}"
         ops.delete(:default)
@@ -155,11 +145,9 @@ module ActiveRecord
       type = f.delete('type').to_sym
       raise "bad" unless name && type
 
-      # C7: float/decimal defaults must land as a Ruby Float in args.  Legacy
-      # dumps rendered them as a numeric literal (`default: 0.0`); Rails >= 5
-      # renders them as a string (`default: "0.0"`).  Coerce both to Float so
-      # the UID component (":default0.0") is identical either way.  Other string
-      # defaults keep their existing quoted-literal treatment.
+      # 4.2 dumped float/decimal defaults as a numeric literal (`default: 0.0`);
+      # Rails >= 5 dumps a string (`default: "0.0"`).  Coerce both to Float so
+      # the default — a serialVersionUID input — is identical either way.
       if [:float, :decimal].include?(type)
         f['default'] = Float(default) unless default.nil?
       elsif default.kind_of?(String)

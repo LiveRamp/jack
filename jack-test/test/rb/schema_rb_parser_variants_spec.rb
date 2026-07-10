@@ -22,7 +22,7 @@ describe 'SchemaRbParser normalization variants' do
     expect(components_for(modern)).to eq(components_for(legacy))
   end
 
-  it 'C5: text size: matches explicit limit:, plain text refills 65535' do
+  it 'text size: matches explicit limit:, plain text refills 65535' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -46,7 +46,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C5: binary/blob size: matches explicit limit:, plain binary refills 65535' do
+  it 'binary/blob size: matches explicit limit:, plain binary refills 65535' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -68,7 +68,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C1: bigint matches integer limit: 8' do
+  it 'bigint matches integer limit: 8' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -88,7 +88,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C2/C3/C6: elided integer/string/float limits refill to adapter defaults' do
+  it 'elided integer/string/float limits refill to adapter defaults' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -110,7 +110,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C7: decimal/float string default matches numeric default' do
+  it 'decimal/float string default matches numeric default' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -130,7 +130,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C9: dropped modern column options leave UID components unchanged' do
+  it 'dropped modern column options leave UID components unchanged' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -152,7 +152,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C11: t.timestamp normalizes to datetime (MySQL TIMESTAMP dumped as datetime by 4.2)' do
+  it 't.timestamp normalizes to datetime (MySQL TIMESTAMP dumped as datetime by 4.2)' do
     legacy = <<~RUBY
       ActiveRecord::Schema.define(version: 1) do
         create_table "t", force: :cascade do |t|
@@ -172,7 +172,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C12: expression (lambda) defaults are dropped to match the 4.2 dump' do
+  it 'expression (lambda) defaults are dropped to match the 4.2 dump' do
     # Rails >= 5 captures CURRENT_TIMESTAMP-style defaults as a lambda; the 4.2
     # dumper never captured them, so the committed Java carries no such default.
     legacy = <<~RUBY
@@ -194,7 +194,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'T1: modern table-level options (primary_key/options/charset) do not crash' do
+  it 'modern table-level options (primary_key/options/charset) do not crash' do
     # Composite-PK partitioned table: `id: false` + explicit "id" column in 4.2,
     # `primary_key: [...]` + options string in 7.1. The "id" column is forbidden
     # either way, so both reduce to the same non-id columns.
@@ -217,7 +217,7 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
-  it 'C5: an unknown size: value raises loudly' do
+  it 'an unknown size: value raises loudly' do
     body = <<~RUBY
       ActiveRecord::Schema[7.1].define(version: 1) do
         create_table "t", force: :cascade do |t|
