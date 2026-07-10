@@ -1,5 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper.rb")
 
+# NOT run by the Maven build/CI — run manually from jack-test:
+#   bundle exec rspec test/rb
+#
 # Proves that a Rails 7.1-dialect schema dump normalizes to parse state that is
 # bit-identical to the equivalent Rails 4.2 dump — same version, same per-model
 # serialVersionUID inputs, same field args — and therefore produces byte-

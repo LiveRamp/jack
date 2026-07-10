@@ -8,7 +8,8 @@
 # PRE-EXISTING drift there is surfaced separately — the load-bearing check is
 # the A-vs-B (4.2-vs-7.1) diff, which must always be empty.
 #
-# Run from the jack-test directory:  bash test/diff_rails71.sh
+# NOT run by the Maven build/CI — run manually after any parser change.
+# From the jack-test directory:  bash test/diff_rails71.sh
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"

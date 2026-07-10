@@ -79,6 +79,27 @@ Assuming everything is configured correctly, that's it.
 
 _Note: We know that the path thing stinks. We're going to improve this in a future version._
 
+### Schema-dialect parser specs (manual)
+
+The parser accepts schema.rb in both the Rails 4.2 dump format and the modern (Rails 5+/7.1)
+format, normalizing the modern forms so both produce identical parse state — and therefore
+byte-identical generated Java, including `serialVersionUID`s. The specs for this live in
+`jack-test/test/rb/` and are **not wired into the Maven build or CI** — the enforced gate is
+downstream, in each consuming repo's generate-and-diff check against its committed generated code.
+
+Run them manually whenever you touch `jack-core/src/rb/` (especially `schema_rb_parser.rb`) or
+anything feeding UID computation (`field_defn.rb`, `model_defn.rb`):
+
+```sh
+cd jack-test
+bundle install   # Ruby 2.7.x
+bundle exec rspec test/rb        # dialect-equivalence, per-rule variants, UID recipe pin
+bash test/diff_rails71.sh        # full generation from both dialects, byte-diffed
+```
+
+If the UID recipe spec fails, the wire-compat stamp of every generated model has moved — treat
+that as a breaking change for any consumer that Java-serializes models, not a spec to update.
+
 ### Layout of the Generated Code
 
 The Java code that Jack produces is designed around interfaces so that it is very modular and mockable.
