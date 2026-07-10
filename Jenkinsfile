@@ -1,4 +1,4 @@
-@Library('liveramp-base@v2') _
+@Library('liveramp-base@v3.0') _
 
 mvnBuildPipeline {
     agentLabel = 'ubuntu-2004'
