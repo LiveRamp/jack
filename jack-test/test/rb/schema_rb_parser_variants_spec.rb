@@ -217,6 +217,25 @@ describe 'SchemaRbParser normalization variants' do
     expect_equivalent(legacy, modern)
   end
 
+  it 'check constraints (dumped by MySQL >= 8.0) are ignored' do
+    legacy = <<~RUBY
+      ActiveRecord::Schema.define(version: 1) do
+        create_table "t", force: :cascade do |t|
+          t.string "kind", limit: 255
+        end
+      end
+    RUBY
+    modern = <<~RUBY
+      ActiveRecord::Schema[7.1].define(version: 1) do
+        create_table "t", charset: "utf8mb3", force: :cascade do |t|
+          t.string "kind"
+          t.check_constraint "\`kind\` in (_utf8mb3'a',_utf8mb3'b')", name: "kind_values"
+        end
+      end
+    RUBY
+    expect_equivalent(legacy, modern)
+  end
+
   it 'an unknown size: value raises loudly' do
     body = <<~RUBY
       ActiveRecord::Schema[7.1].define(version: 1) do

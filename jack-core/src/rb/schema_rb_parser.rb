@@ -123,6 +123,14 @@ module ActiveRecord
         self.__column(f, *args)
       end
     end
+
+    # MySQL 8.0 enforces CHECK constraints (5.7 parsed but ignored them), so
+    # dumps taken against 8.0 include them.  They are not columns and nothing
+    # downstream uses them.
+    def check_constraint(_expression, ops = {})
+      puts "Warning: ignoring check constraint #{ops[:name].inspect} on table #{name}"
+    end
+
     def to_model_defn
       return nil if name == 'schema_info'
       res = ModelDefn.new(42)
