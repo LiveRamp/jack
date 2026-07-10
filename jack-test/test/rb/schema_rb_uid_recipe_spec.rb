@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper.rb")
 
-# NOT run by the Maven build/CI — run manually from jack-test:
-#   bundle exec rspec test/rb
+# Run by the Maven build (jack-test pom, run-parser-specs execution) and
+# directly from jack-test with:  bundle exec rspec test/rb
 #
 # Pins the serialVersionUID recipe against future refactors of FieldDefn /
 # ModelDefn.  The acs_inputs model's committed UID is 3515946867191399219

@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper.rb")
 require 'tempfile'
 
-# NOT run by the Maven build/CI — run manually from jack-test:
-#   bundle exec rspec test/rb
+# Run by the Maven build (jack-test pom, run-parser-specs execution) and
+# directly from jack-test with:  bundle exec rspec test/rb
 #
 # Per-rule equivalence checks: for each normalization rule, a Rails 7.1 dump
 # form and its Rails 4.2 canonical form must produce identical
