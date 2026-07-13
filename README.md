@@ -97,23 +97,22 @@ bash test/diff_rails71.sh        # manual only: full generation from both dialec
 **What diff_rails71.sh checks.** It generates the full Java model layer twice — once from the
 4.2-format fixture, once from the 7.1-format fixture — and diffs the two outputs. That diff is
 deterministic and must always be empty: same schema meaning, same bytes out. The script also
-diffs against the committed golden `test/java` as a sanity check, and only that comparison is
-machine-dependent: the fixture schema (unlike real schemas) has datetime columns with literal
-defaults, the generator converts those to epoch milliseconds in the machine's local timezone,
-and the goldens were committed from a PST machine — so off PST the golden diff shows shifted
-epoch constants, in both dialects equally. That fixture-only quirk is why this script is run
-by a person rather than CI. For real schemas, byte-identity is additionally enforced
-downstream: each consuming repo regenerates in CI and diffs against its committed code.
+diffs against the committed golden `test/java` as a sanity check. Unfortunately, that comparison is
+somewhat dependent on the machine running it: the existing fixture schema (unlike the real rldb schema)
+has datetime columns with literal defaults, and the generator converts those to epoch milliseconds
+in **the machine's local timezone**. We kept this behavior to minimize the blast radius of the ActiveRecord upgrade.
+Since the fixtures were committed from a PST machine, any time this script is run in a machine that's elsewhere,
+the diff will show different epoch constants. That is a fixture-only quirk, but also makes it inappropriate
+to include this script in CI.
 
 **What the UID recipe spec pins.** Java serialization stamps every class with a
 `serialVersionUID`; when one JVM deserializes bytes another JVM wrote (Spark/Hadoop shuffles,
 caches — anything crossing a process or deploy boundary), the stamps must match or Java throws
 `InvalidClassException`. Jack computes that stamp for each generated model from the schema
-itself — a hash over every column's name, type, position, and options — which is why parse
-state must stay identical across dump dialects. The spec hard-codes one known stamp and
-re-derives it from first principles. If it fails, the derivation changed and every generated
-model gets a new stamp, breaking any consumer that holds serialized models across a deploy.
-The fix is almost always to revert the change, not to update the pinned constant.
+itself — a hash over every column's name, type, position, and options. The spec hard-codes one known stamp and
+re-derives it. If it fails, we know that the derivation method itself has changed, meaning that every generated
+model gets a new stamp, even if the schema has not changed. This would break any consumer that holds serialized models across a deploy.
+The correct fix is most likely to revert the change in serialization method, not to update the constant in the spec.
 
 ### Layout of the Generated Code
 
