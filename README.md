@@ -94,14 +94,26 @@ bundle exec rspec test/rb        # dialect-equivalence, per-rule variants, UID r
 bash test/diff_rails71.sh        # manual only: full generation from both dialects, byte-diffed
 ```
 
-`diff_rails71.sh` is deliberately not in CI: it also compares against the committed golden
-`test/java`, which carries timezone-dependent datetime defaults, so it is only reliable run
-by a person who can eyeball the diff. The load-bearing byte-identity gate for real schemas is
-downstream anyway, in each consuming repo's generate-and-diff check against its committed
-generated code.
+**What diff_rails71.sh checks.** It generates the full Java model layer twice — once from the
+4.2-format fixture, once from the 7.1-format fixture — and diffs the two outputs. That diff is
+deterministic and must always be empty: same schema meaning, same bytes out. The script also
+diffs against the committed golden `test/java` as a sanity check, and only that comparison is
+machine-dependent: the fixture schema (unlike real schemas) has datetime columns with literal
+defaults, the generator converts those to epoch milliseconds in the machine's local timezone,
+and the goldens were committed from a PST machine — so off PST the golden diff shows shifted
+epoch constants, in both dialects equally. That fixture-only quirk is why this script is run
+by a person rather than CI. For real schemas, byte-identity is additionally enforced
+downstream: each consuming repo regenerates in CI and diffs against its committed code.
 
-If the UID recipe spec fails, the wire-compat stamp of every generated model has moved — treat
-that as a breaking change for any consumer that Java-serializes models, not a spec to update.
+**What the UID recipe spec pins.** Java serialization stamps every class with a
+`serialVersionUID`; when one JVM deserializes bytes another JVM wrote (Spark/Hadoop shuffles,
+caches — anything crossing a process or deploy boundary), the stamps must match or Java throws
+`InvalidClassException`. Jack computes that stamp for each generated model from the schema
+itself — a hash over every column's name, type, position, and options — which is why parse
+state must stay identical across dump dialects. The spec hard-codes one known stamp and
+re-derives it from first principles. If it fails, the derivation changed and every generated
+model gets a new stamp, breaking any consumer that holds serialized models across a deploy.
+The fix is almost always to revert the change, not to update the pinned constant.
 
 ### Layout of the Generated Code
 
