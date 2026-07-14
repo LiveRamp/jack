@@ -28,10 +28,39 @@ module FromHash
   end
 end
 
+# How this "parser" works (it is not a text parser):
+# A Rails schema.rb is Ruby source that, when executed, calls into ActiveRecord
+# to build up a schema. We never load real ActiveRecord. Instead the stub
+# classes below stand in for it, so when SchemaRbParser.parse runs `load` on the
+# dump, each line of the dump becomes a method call on one of these stubs, and
+# the stubs record just enough to emit model definitions. For example:
+#
+#     create_table "users" do |t|
+#       t.string "email", limit: 255
+#     end
+#
+# runs Schema#create_table, then Table#string (see the define_method loop that
+# generates one method per column type), which records a column.
+#
+# A few DSL calls take non-obvious forms:
+#   * `ActiveRecord::Schema[7.1].define` — `[]` is just a method, so `Schema[7.1]`
+#     is a method call (see `self.[]` below).
+#   * `attr_accessor`/`fattr` generate getter/setter methods; listing an option
+#     name there is how a stub accepts (and later ignores) that dump option.
+#   * A DSL call with no matching method raises NoMethodError and aborts the
+#     parse, EXCEPT on Schema, whose `method_missing` downgrades unknown calls to
+#     a warning. Tables have no such fallback, so a new table-level directive
+#     needs its own method here (see `check_constraint`).
+#
+# Much of the normalization below exists because newer Rails versions dump the
+# same schema using different DSL calls and option shapes than the 4.2-era dumps
+# this was originally built for. Each case is normalized back so that old and new
+# dumps produce identical model definitions (and identical serialVersionUIDs).
 module ActiveRecord
   class Schema
-    # Rails >= 6 dumps `ActiveRecord::Schema[7.1].define(...)`; accept the
-    # version selector and ignore it.
+    # `[]` is an ordinary Ruby method, so `ActiveRecord::Schema[7.1]` is a call
+    # that passes the version and expects an object back to call `.define` on.
+    # Rails >= 6 dumps this form; return the class itself and ignore the version.
     def self.[](_version)
       self
     end
@@ -118,6 +147,11 @@ module ActiveRecord
       self.columns << Column.new(ops.merge(type: type, name: name))
     end
 
+    # Generate one Table method per column type so that a dump call like
+    # `t.integer` or `t.string` dispatches into __column tagged with that type.
+    # define_method builds these at load time instead of us writing each out by
+    # hand. `timestamp` is dumped by Rails >= 5 (see __column); the rest predate
+    # it, but all route through the same path.
     %w(bigint integer index text datetime timestamp boolean string float binary date decimal varbinary).each do |f|
       define_method(f) do |*args|
         self.__column(f, *args)
@@ -125,8 +159,10 @@ module ActiveRecord
     end
 
     # MySQL 8.0 enforces CHECK constraints (5.7 parsed but ignored them), so
-    # dumps taken against 8.0 include them.  They are not columns and nothing
-    # downstream uses them.
+    # dumps taken against 8.0 include a `t.check_constraint` line. It is not a
+    # column and nothing downstream uses it. A Table has no method_missing
+    # fallback, so without a method here that dump line would raise NoMethodError
+    # and abort the parse; define a no-op that records nothing and just warns.
     def check_constraint(_expression, ops = {})
       puts "Warning: ignoring check constraint #{ops[:name].inspect} on table #{name}"
     end
