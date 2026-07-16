@@ -28,8 +28,43 @@ module FromHash
   end
 end
 
+# How this "parser" works (it is not a text parser):
+# A Rails schema.rb is Ruby source that, when executed, calls into ActiveRecord
+# to build up a schema. We never load real ActiveRecord. Instead the stub
+# classes below stand in for it, so when SchemaRbParser.parse runs `load` on the
+# dump, each line of the dump becomes a method call on one of these stubs, and
+# the stubs record just enough to emit model definitions. For example:
+#
+#     create_table "users" do |t|
+#       t.string "email", limit: 255
+#     end
+#
+# runs Schema#create_table, then Table#string (see the define_method loop that
+# generates one method per column type), which records a column.
+#
+# A few DSL calls take non-obvious forms:
+#   * `ActiveRecord::Schema[7.1].define` — `[]` is just a method, so `Schema[7.1]`
+#     is a method call (see `self.[]` below).
+#   * `attr_accessor`/`fattr` generate getter/setter methods; listing an option
+#     name there is how a stub accepts (and later ignores) that dump option.
+#   * A DSL call with no matching method raises NoMethodError and aborts the
+#     parse, EXCEPT on Schema, whose `method_missing` downgrades unknown calls to
+#     a warning. Tables have no such fallback, so a new table-level directive
+#     needs its own method here (see `check_constraint`).
+#
+# Much of the normalization below exists because newer Rails versions dump the
+# same schema using different DSL calls and option shapes than the 4.2-era dumps
+# this was originally built for. Each case is normalized back so that old and new
+# dumps produce identical model definitions (and identical serialVersionUIDs).
 module ActiveRecord
   class Schema
+    # `[]` is an ordinary Ruby method, so `ActiveRecord::Schema[7.1]` is a call
+    # that passes the version and expects an object back to call `.define` on.
+    # Rails >= 6 dumps this form; return the class itself and ignore the version.
+    def self.[](_version)
+      self
+    end
+
     def self.define(ops = {}, &b)
       $schema = s = new(ops)
       s.instance_eval(&b)
@@ -63,18 +98,75 @@ module ActiveRecord
 
   class Table
     include FromHash
-    attr_accessor :name, :force, :id, :limit, :options, :schema
+    # charset/collation/comment/primary_key are table options emitted by
+    # Rails >= 5 dumps; accepted here, unused downstream.
+    attr_accessor :name, :force, :id, :limit, :options, :schema, :charset, :collation, :comment, :primary_key
     fattr(:columns) { [] }
 
+    # Rails >= 5 dumps elide column options that equal the MySQL adapter
+    # default; 4.2 dumps wrote them out.  Refill them so both dialects parse
+    # to the same state (and the same serialVersionUIDs).
+    DEFAULT_LIMITS = {
+      'integer' => 4, 'string' => 255, 'text' => 65535, 'binary' => 65535, 'float' => 24
+    }.freeze
+    # Rails >= 6 dumps text/binary sizes as `size: :tiny/:medium/:long`.
+    SIZE_TO_LIMIT = { tiny: 255, medium: 16_777_215, long: 4_294_967_295 }.freeze
+    # Column options newer dumps may emit that 4.2 never did.  Nothing
+    # downstream uses them, so drop them (with a warning) instead of crashing.
+    IGNORED_COLUMN_OPTIONS = [:collation, :charset, :comment, :unsigned,
+                              :auto_increment, :as, :stored].freeze
+
     def __column(type, name, ops = {})
-      self.columns << Column.new(ops.merge(type: type, name: name)) unless FORBIDDEN_FIELD_NAMES.include?(name) || type == 'index'
+      return if FORBIDDEN_FIELD_NAMES.include?(name) || type == 'index'
+      ops = ops.dup
+      # Rails >= 5 dumps 8-byte integers as `t.bigint`; 4.2 wrote
+      # `t.integer ..., limit: 8`.  Normalize to the old form.
+      if type == 'bigint'
+        type = 'integer'
+        ops[:limit] ||= 8
+      end
+      # Rails >= 5 dumps MySQL TIMESTAMP columns as `t.timestamp`; 4.2 had no
+      # :timestamp type and wrote `t.datetime`.  Normalize to datetime.
+      type = 'datetime' if type == 'timestamp'
+      # Map `size:` to the explicit limit 4.2 would have written.
+      if (size = ops.delete(:size))
+        ops[:limit] ||= SIZE_TO_LIMIT.fetch(size.to_sym) { raise "unknown size #{size.inspect} on column #{name}" }
+      end
+      ops[:limit] ||= DEFAULT_LIMITS[type] if DEFAULT_LIMITS.key?(type)
+      IGNORED_COLUMN_OPTIONS.each do |opt|
+        next unless ops.key?(opt)
+        puts "Warning: ignoring option #{opt.inspect} on column #{name}"
+        ops.delete(opt)
+      end
+      # Rails >= 5 dumps expression defaults (`default: -> { "CURRENT_TIMESTAMP" }`)
+      # as a lambda; 4.2 never captured them.  Drop them.
+      if ops[:default].is_a?(Proc)
+        puts "Warning: ignoring expression default on column #{name}"
+        ops.delete(:default)
+      end
+      self.columns << Column.new(ops.merge(type: type, name: name))
     end
 
-    %w(bigint integer index text datetime boolean string float binary date decimal varbinary).each do |f|
+    # Generate one Table method per column type so that a dump call like
+    # `t.integer` or `t.string` dispatches into __column tagged with that type.
+    # define_method builds these at load time instead of us writing each out by
+    # hand. `timestamp` is dumped by Rails >= 5 (see __column); the rest predate
+    # it, but all route through the same path.
+    %w(bigint integer index text datetime timestamp boolean string float binary date decimal varbinary).each do |f|
       define_method(f) do |*args|
         self.__column(f, *args)
       end
     end
+
+    # MySQL 8.0 enforces CHECK constraints (5.7 parsed but ignored them), so
+    # dumps taken against 8.0 include a `t.check_constraint` line. It is not a
+    # column and nothing downstream uses it. A Table has no method_missing
+    # fallback, so without a method here that dump line would raise NoMethodError
+    # and abort the parse; define a no-op that records nothing and just warns.
+    def check_constraint(_expression, ops = {})
+      puts "Warning: ignoring check constraint #{ops[:name].inspect} on table #{name}"
+    end
+
     def to_model_defn
       return nil if name == 'schema_info'
       res = ModelDefn.new(42)
@@ -97,8 +189,11 @@ module ActiveRecord
       type = f.delete('type').to_sym
       raise "bad" unless name && type
 
-      if default.kind_of?(Numeric) && [:float,:decimal].include?(type)
-        f['default'] = default.to_f
+      # 4.2 dumped float/decimal defaults as a numeric literal (`default: 0.0`);
+      # Rails >= 5 dumps a string (`default: "0.0"`).  Coerce both to Float so
+      # the default — a serialVersionUID input — is identical either way.
+      if [:float, :decimal].include?(type)
+        f['default'] = Float(default) unless default.nil?
       elsif default.kind_of?(String)
         f['default'] = '"' + default + '"'
       end

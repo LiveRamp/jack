@@ -128,6 +128,23 @@
             </configuration>
 
           </execution>
+          <!--schema-dialect parser specs: dialect equivalence, per-rule
+              variants, serialVersionUID recipe pin-->
+          <execution>
+            <id>run-parser-specs</id>
+            <phase>test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>/bin/sh</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>bundle exec rspec test/rb</argument>
+              </arguments>
+            </configuration>
+
+          </execution>
           <execution>
             <id>configure-ruby-db1</id>
             <phase>generate-test-sources</phase>
